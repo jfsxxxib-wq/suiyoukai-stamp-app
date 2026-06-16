@@ -1,0 +1,4547 @@
+:root {
+  color-scheme: light;
+  --ink: #2f2a25;
+  --muted: #74685e;
+  --paper: #fffaf0;
+  --paper-strong: rgba(255, 250, 240, 0.92);
+  --paper-deep: #f4e5c8;
+  --green: #3f7652;
+  --rose: #b94c61;
+  --gold: #c5963a;
+  --sea: #8fb8be;
+  --line: rgba(75, 55, 36, 0.18);
+}
+
+/* Final modal version: keep the teacher card plain and move the 5/5 celebration outside it. */
+.info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) {
+  display: grid;
+  gap: 12px;
+  width: min(100%, 360px);
+  min-height: 0;
+  padding: 16px;
+  overflow: hidden;
+}
+
+.info-dock.is-detail-open .teacher-detail .teacher-card-heading {
+  display: grid;
+  justify-items: center;
+  margin: 0;
+}
+
+.info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) .teacher-photo {
+  position: relative;
+  z-index: 1;
+  width: min(72%, 230px);
+  height: auto;
+  aspect-ratio: 3 / 4;
+  margin: 0 auto;
+  border-radius: 16px;
+}
+
+.info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) .teacher-photo::after {
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  background-size: cover;
+  background-position: center top;
+}
+
+.info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) .bloom-ring,
+.info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) .fairy-badge,
+.info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) .fairy-achievement {
+  display: none !important;
+}
+
+.info-dock.is-detail-open .teacher-detail .card-stamp-count {
+  position: static;
+  z-index: 1;
+  margin: 0;
+}
+
+.info-dock.is-detail-open .teacher-detail .teacher-photo-card .detail-actions {
+  position: static;
+  z-index: 1;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.achievement-modal[hidden] {
+  display: none;
+}
+
+.achievement-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+}
+
+.achievement-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(43, 35, 24, 0.48);
+  backdrop-filter: blur(3px);
+}
+
+.achievement-modal-card {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  width: min(100%, 390px);
+  min-height: 540px;
+  overflow: hidden;
+  padding: 28px 24px 24px;
+  border: 2px solid rgba(184, 151, 73, 0.72);
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at 18% 18%, rgba(255, 220, 160, 0.34), transparent 26%),
+    radial-gradient(circle at 82% 30%, rgba(249, 175, 189, 0.26), transparent 28%),
+    linear-gradient(180deg, rgba(255, 253, 243, 0.98), rgba(249, 235, 202, 0.98));
+  box-shadow: 0 28px 60px rgba(35, 27, 18, 0.32);
+  text-align: center;
+}
+
+.achievement-modal-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 4;
+  width: 34px;
+  height: 34px;
+  border: 1px solid rgba(126, 100, 48, 0.46);
+  border-radius: 50%;
+  background: rgba(255, 250, 240, 0.86);
+  color: var(--ink);
+  font-size: 1.35rem;
+  line-height: 1;
+}
+
+.achievement-modal-kicker {
+  position: relative;
+  z-index: 2;
+  margin: 0;
+  padding: 7px 18px;
+  border: 1px solid rgba(214, 165, 61, 0.82);
+  border-radius: 999px;
+  background: rgba(255, 248, 229, 0.9);
+  color: #b07a1d;
+  font-weight: 900;
+}
+
+.achievement-modal h2 {
+  position: relative;
+  z-index: 2;
+  margin: 0;
+  color: var(--ink);
+  font-family: "Yu Mincho", "Hiragino Mincho ProN", serif;
+  font-size: clamp(1.65rem, 7vw, 2.35rem);
+  line-height: 1.18;
+}
+
+.achievement-modal-teacher {
+  position: relative;
+  z-index: 2;
+  margin: 0;
+  color: var(--green);
+  font-weight: 900;
+}
+
+.achievement-modal-fairy {
+  position: relative;
+  z-index: 2;
+  width: min(58vw, 210px);
+  max-height: 250px;
+  object-fit: contain;
+  filter: drop-shadow(0 16px 16px rgba(48, 38, 26, 0.26));
+}
+
+.achievement-modal-copy {
+  position: relative;
+  z-index: 2;
+  max-width: 18em;
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+  line-height: 1.7;
+}
+
+.achievement-modal-profile {
+  position: relative;
+  z-index: 2;
+  width: min(100%, 280px);
+  min-height: 48px;
+  border: 1px solid rgba(184, 126, 34, 0.82);
+  border-radius: 14px;
+  background: linear-gradient(180deg, #fff8e6, #f3dfb5);
+  color: var(--ink);
+  font-weight: 900;
+  box-shadow: 0 10px 20px rgba(48, 38, 26, 0.14);
+}
+
+.achievement-modal-petals {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.achievement-modal-petals span {
+  position: absolute;
+  top: -34px;
+  width: 16px;
+  height: 24px;
+  border-radius: 60% 40% 62% 38%;
+  background: linear-gradient(135deg, #ffd3df, #fff4b6);
+  box-shadow: 0 0 0 1px rgba(221, 116, 137, 0.28);
+  animation: modalPetalFall 4.6s linear infinite;
+}
+
+.achievement-modal-petals span:nth-child(1) { left: 8%; animation-delay: -0.2s; }
+.achievement-modal-petals span:nth-child(2) { left: 18%; animation-delay: -2.1s; }
+.achievement-modal-petals span:nth-child(3) { left: 27%; animation-delay: -1.2s; }
+.achievement-modal-petals span:nth-child(4) { left: 36%; animation-delay: -3.4s; }
+.achievement-modal-petals span:nth-child(5) { left: 46%; animation-delay: -0.8s; }
+.achievement-modal-petals span:nth-child(6) { left: 56%; animation-delay: -2.8s; }
+.achievement-modal-petals span:nth-child(7) { left: 66%; animation-delay: -1.7s; }
+.achievement-modal-petals span:nth-child(8) { left: 76%; animation-delay: -3.8s; }
+.achievement-modal-petals span:nth-child(9) { left: 86%; animation-delay: -0.5s; }
+.achievement-modal-petals span:nth-child(10) { left: 14%; animation-delay: -4.1s; }
+.achievement-modal-petals span:nth-child(11) { left: 52%; animation-delay: -3.1s; }
+.achievement-modal-petals span:nth-child(12) { left: 91%; animation-delay: -2.4s; }
+
+@keyframes modalPetalFall {
+  0% {
+    transform: translate3d(0, -30px, 0) rotate(0deg);
+    opacity: 0;
+  }
+
+  12% {
+    opacity: 0.95;
+  }
+
+  100% {
+    transform: translate3d(26px, 600px, 0) rotate(260deg);
+    opacity: 0;
+  }
+}
+
+/* Teacher card restore: achievement effects stay outside the card. */
+.info-dock.is-detail-open .teacher-detail > h3,
+.info-dock.is-detail-open .detail-label {
+  display: block;
+}
+
+.info-dock.is-detail-open .teacher-detail > h3 {
+  margin: 0 0 8px;
+}
+
+.info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) {
+  position: relative;
+  display: grid;
+  gap: 14px;
+  width: min(100%, 350px);
+  min-height: 0;
+  margin: 0 auto;
+  padding: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(214, 185, 132, 0.78);
+  border-radius: 8px;
+  background: rgba(255, 250, 240, 0.82);
+  box-shadow: 0 10px 24px rgba(50, 42, 30, 0.08);
+}
+
+.info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card)::before {
+  display: none;
+}
+
+.info-dock.is-detail-open .teacher-detail .teacher-card-heading {
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  margin: 0;
+  color: var(--ink);
+  text-align: center;
+}
+
+.info-dock.is-detail-open .teacher-detail .teacher-card-heading strong {
+  font-family: inherit;
+  font-size: clamp(1.25rem, 5vw, 1.7rem);
+  line-height: 1.35;
+  font-weight: 800;
+}
+
+.info-dock.is-detail-open .teacher-detail .teacher-card-heading span {
+  color: var(--green);
+  font-size: 0.88rem;
+  font-weight: 800;
+}
+
+.info-dock.is-detail-open .teacher-detail .teacher-card-heading span::before,
+.info-dock.is-detail-open .teacher-detail .teacher-card-heading span::after {
+  display: none;
+}
+
+.info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) .teacher-photo {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 240px);
+  height: auto;
+  aspect-ratio: 1 / 1;
+  min-height: 0;
+  margin: 0 auto;
+  overflow: hidden;
+  border: 1px solid rgba(214, 185, 132, 0.7);
+  border-radius: 8px;
+  background: rgba(245, 238, 225, 0.9);
+  box-shadow: none;
+}
+
+.info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) .teacher-photo::before {
+  display: none;
+}
+
+.info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) .teacher-photo::after {
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  border-radius: 0;
+  background-size: contain;
+  background-position: center center;
+  background-repeat: no-repeat;
+  box-shadow: none;
+}
+
+.info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) .bloom-ring,
+.info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) .fairy-badge,
+.info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) .fairy-achievement {
+  display: none !important;
+}
+
+.info-dock.is-detail-open .teacher-detail .card-stamp-count {
+  position: static;
+  display: grid;
+  justify-items: center;
+  gap: 3px;
+  min-height: 0;
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px solid rgba(214, 185, 132, 0.72);
+  border-radius: 8px;
+  background: rgba(255, 253, 246, 0.9);
+  box-shadow: none;
+}
+
+.info-dock.is-detail-open .teacher-detail .card-stamp-count small {
+  font-size: 0.78rem;
+}
+
+.info-dock.is-detail-open .teacher-detail .card-stamp-count strong {
+  font-size: clamp(1.4rem, 7vw, 2.2rem);
+}
+
+.info-dock.is-detail-open .teacher-detail .teacher-photo-card .detail-actions {
+  position: static;
+  display: grid;
+  gap: 10px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.info-dock.is-detail-open .teacher-detail .teacher-photo-card .stamp-flow-steps,
+.info-dock.is-detail-open .teacher-detail .teacher-photo-card .stamp-confirm-card {
+  display: grid;
+}
+
+.info-dock.is-detail-open .teacher-detail .teacher-photo-card .detail-actions p {
+  display: block;
+}
+
+.info-dock.is-detail-open .teacher-detail dl {
+  display: grid;
+}
+
+/* Photo contain fix: normal teacher photos must not be cropped or shifted. */
+.info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) .teacher-photo {
+  display: grid !important;
+  place-items: center !important;
+  width: min(100%, 250px) !important;
+  height: auto !important;
+  aspect-ratio: 1 / 1 !important;
+  overflow: hidden !important;
+}
+
+.info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) .teacher-photo::before {
+  display: none !important;
+}
+
+.info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) .teacher-photo::after {
+  top: 0 !important;
+  left: 0 !important;
+  right: auto !important;
+  bottom: auto !important;
+  width: 100% !important;
+  height: 100% !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background-position: center center !important;
+  background-size: contain !important;
+  background-repeat: no-repeat !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+.info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) .teacher-photo[data-teacher-photo="akari"]::after {
+  background: url("assets/teacher-photo-1-soft-bg.png") center center / contain no-repeat, #c5d6c8 !important;
+}
+
+.info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) .teacher-photo[data-teacher-photo="yamashiro"]::after {
+  background: url("assets/teacher-yamashiro-soft-bg.png") center center / contain no-repeat, #d2cadc !important;
+}
+
+.info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) .teacher-photo[data-teacher-photo="yuki"]::after {
+  background: url("assets/teacher-yuki-soft-bg.png") center center / contain no-repeat, #d6c8bc !important;
+}
+
+.info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) .teacher-photo[data-teacher-photo="koike"]::after {
+  background: url("assets/teacher-koike-soft-bg.png") center center / contain no-repeat, #d7d7c7 !important;
+}
+
+.info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) .teacher-photo[data-teacher-photo="matsumoto"]::after {
+  background: url("assets/teacher-matsumoto-soft-bg.png") center center / contain no-repeat, #d9cfc6 !important;
+}
+
+/* Photo size balance: larger portrait frame while preserving each teacher photo ratio. */
+.info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) {
+  width: min(100%, 390px) !important;
+}
+
+.info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) .teacher-photo {
+  width: min(100%, 300px) !important;
+  aspect-ratio: 4 / 5 !important;
+}
+
+.info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) .teacher-photo::after {
+  background-size: contain !important;
+  background-position: center center !important;
+  background-repeat: no-repeat !important;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: "Yu Gothic", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+  color: var(--ink);
+  background:
+    linear-gradient(90deg, rgba(63, 118, 82, 0.05) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(75, 55, 36, 0.05) 1px, transparent 1px),
+    #f6eddb;
+  background-size: 28px 28px, 28px 28px, cover;
+}
+
+button {
+  font: inherit;
+}
+
+.record-book {
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  align-items: end;
+  padding: clamp(18px, 4vw, 46px);
+}
+
+.map-hero {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: #fbf4e5;
+}
+
+.map-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url("assets/shonan-watercolor-map.png") center / cover no-repeat;
+  opacity: 0;
+}
+
+.map-hero img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 40%;
+}
+
+.map-veil {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(255, 250, 240, 0.02), rgba(255, 250, 240, 0.2)),
+    linear-gradient(90deg, rgba(255, 250, 240, 0.12), transparent 46%);
+  pointer-events: none;
+}
+
+.journey-title {
+  position: absolute;
+  left: clamp(20px, 5vw, 72px);
+  top: clamp(20px, 6vw, 72px);
+  max-width: min(540px, 76vw);
+  padding: 14px 18px 16px;
+  border-left: 4px solid rgba(63, 118, 82, 0.44);
+  border-radius: 0 8px 8px 0;
+  background:
+    linear-gradient(90deg, rgba(255, 250, 240, 0.64), rgba(255, 250, 240, 0.18) 78%, transparent);
+  color: var(--ink);
+  text-shadow: 0 1px 0 rgba(255, 250, 240, 0.86);
+}
+
+.journey-title p,
+.journey-title h1 {
+  margin: 0;
+}
+
+.journey-title p {
+  color: #386b4b;
+  font-family: "Yu Mincho", "Hiragino Mincho ProN", serif;
+  font-size: clamp(1.5rem, 4vw, 2.45rem);
+  line-height: 1.12;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.journey-title h1 {
+  margin-top: 9px;
+  color: #5f5549;
+  font-family: "Yu Mincho", "Hiragino Mincho ProN", serif;
+  font-size: clamp(0.98rem, 2.35vw, 1.36rem);
+  line-height: 1.25;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.guidebook-button {
+  position: absolute;
+  left: clamp(22px, 5vw, 78px);
+  top: clamp(154px, 20vw, 220px);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 34px;
+  padding: 7px 11px;
+  border: 1px solid rgba(75, 55, 36, 0.14);
+  border-radius: 999px;
+  background: rgba(255, 250, 240, 0.58);
+  color: #5f5549;
+  box-shadow: 0 8px 20px rgba(48, 38, 26, 0.08);
+  font-size: 0.78rem;
+  font-weight: 900;
+  cursor: pointer;
+  backdrop-filter: blur(3px);
+}
+
+.guidebook-button span {
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  border: 1px solid rgba(63, 118, 82, 0.28);
+  border-radius: 3px;
+  color: transparent;
+  background:
+    linear-gradient(90deg, rgba(63, 118, 82, 0.22), transparent 38%),
+    rgba(255, 250, 240, 0.72);
+}
+
+.guidebook-button:hover,
+.guidebook-button:focus-visible {
+  border-color: rgba(63, 118, 82, 0.28);
+  background: rgba(255, 250, 240, 0.74);
+  outline: none;
+}
+
+.info-dock {
+  position: relative;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  justify-self: end;
+  align-self: end;
+  gap: 10px;
+  width: min(520px, 100%);
+  margin: 0 clamp(10px, 3vw, 42px) clamp(8px, 2vw, 18px) 0;
+  z-index: 2;
+  transform: rotate(-1.2deg);
+  transition: transform 220ms ease;
+}
+
+.info-dock.is-collapsed {
+  width: min(460px, 100%);
+  transform: translateY(calc(100% - 68px)) rotate(-1.2deg);
+}
+
+.info-dock::before,
+.info-dock::after {
+  content: "";
+  position: absolute;
+  inset: 72px 18px 12px;
+  border: 1px solid rgba(75, 55, 36, 0.12);
+  border-radius: 8px;
+  background: rgba(255, 250, 240, 0.58);
+  box-shadow: 0 18px 38px rgba(48, 38, 26, 0.14);
+  transform: rotate(4deg);
+  z-index: -2;
+}
+
+.info-dock.is-collapsed::before,
+.info-dock.is-collapsed::after {
+  opacity: 0;
+}
+
+.info-dock::after {
+  inset: 58px 8px 22px;
+  background: rgba(255, 250, 240, 0.46);
+  transform: rotate(-3deg);
+  z-index: -1;
+}
+
+.info-tabs {
+  display: grid;
+  grid-template-columns: 1.16fr 1.08fr 0.76fr 0.7fr;
+  gap: 6px;
+  padding: 7px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 250, 240, 0.82);
+  box-shadow: 0 12px 28px rgba(48, 38, 26, 0.15);
+  backdrop-filter: blur(5px);
+}
+
+.info-dock.is-collapsed .info-tabs {
+  box-shadow:
+    8px 8px 0 rgba(255, 250, 240, 0.34),
+    0 16px 34px rgba(48, 38, 26, 0.16);
+}
+
+.info-tab {
+  position: relative;
+  min-height: 46px;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 0.86rem;
+  font-weight: 900;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.info-tab span,
+.info-tab small {
+  display: block;
+}
+
+.info-tab small {
+  margin-top: 1px;
+  color: var(--gold);
+  font-size: 0.64rem;
+  line-height: 1;
+  font-weight: 900;
+}
+
+.info-tab[data-panel="field-guide"] {
+  border-color: rgba(197, 150, 58, 0.24);
+  background: rgba(255, 250, 240, 0.58);
+  color: var(--green);
+  box-shadow: inset 0 -3px 0 rgba(197, 150, 58, 0.2);
+}
+
+.info-tab:hover,
+.info-tab:focus-visible {
+  border-color: rgba(63, 118, 82, 0.24);
+  outline: none;
+}
+
+.info-tab.is-active {
+  border-color: rgba(197, 150, 58, 0.32);
+  background:
+    linear-gradient(90deg, rgba(197, 150, 58, 0.16), transparent 44%),
+    rgba(255, 250, 240, 0.9);
+  color: var(--ink);
+  box-shadow: 0 8px 18px rgba(48, 38, 26, 0.1);
+}
+
+.info-tab[data-panel="field-guide"].is-active {
+  color: var(--ink);
+  box-shadow:
+    inset 0 -3px 0 rgba(197, 150, 58, 0.34),
+    0 8px 18px rgba(48, 38, 26, 0.1);
+}
+
+.info-panel {
+  position: relative;
+  min-height: 390px;
+  padding: 28px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background:
+    linear-gradient(90deg, rgba(63, 118, 82, 0.08), transparent 24%),
+    repeating-linear-gradient(0deg, transparent 0 35px, rgba(75, 55, 36, 0.055) 36px),
+    var(--paper-strong);
+  box-shadow:
+    10px 10px 0 rgba(255, 250, 240, 0.38),
+    0 24px 60px rgba(48, 38, 26, 0.2);
+  backdrop-filter: blur(5px);
+  transform-origin: 86% 100%;
+  animation: paper-rise 220ms ease both;
+}
+
+.close-panel {
+  position: absolute;
+  right: 16px;
+  top: 14px;
+  z-index: 5;
+  min-height: 34px;
+  padding: 6px 11px;
+  border: 1px solid rgba(75, 55, 36, 0.16);
+  border-radius: 999px;
+  background: rgba(255, 250, 240, 0.68);
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.close-panel:hover,
+.close-panel:focus-visible {
+  color: var(--ink);
+  outline: none;
+  border-color: rgba(63, 118, 82, 0.28);
+}
+
+@keyframes paper-rise {
+  from {
+    opacity: 0;
+    transform: translateY(28px) rotate(2deg);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) rotate(0);
+  }
+}
+
+.panel-view {
+  display: none;
+}
+
+.panel-view.is-active {
+  display: block;
+}
+
+.adventurer-card {
+  position: relative;
+  overflow: hidden;
+  padding: 18px;
+  border: 1px solid rgba(75, 55, 36, 0.16);
+  border-radius: 8px;
+  background:
+    radial-gradient(circle at 90% 8%, rgba(197, 150, 58, 0.14) 0 18%, transparent 19%),
+    radial-gradient(circle at 5% 92%, rgba(63, 118, 82, 0.12) 0 22%, transparent 23%),
+    linear-gradient(180deg, rgba(255, 250, 240, 0.92), rgba(244, 229, 200, 0.54));
+  box-shadow:
+    inset 0 0 0 5px rgba(255, 250, 240, 0.32),
+    0 12px 28px rgba(48, 38, 26, 0.1);
+}
+
+.adventurer-card::before {
+  content: "";
+  position: absolute;
+  inset: 12px;
+  border: 1px solid rgba(197, 150, 58, 0.22);
+  border-radius: 7px;
+  pointer-events: none;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 0 86px 18px 0;
+}
+
+.card-label,
+.stamp-count,
+.panel-kicker {
+  margin: 0;
+}
+
+.panel-kicker {
+  padding-right: 92px;
+}
+
+.card-label,
+.panel-kicker {
+  color: var(--green);
+  font-size: 0.92rem;
+  font-weight: 900;
+}
+
+.stamp-count {
+  padding: 5px 10px;
+  border: 1px solid rgba(63, 118, 82, 0.25);
+  border-radius: 999px;
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.48);
+  font-size: 0.78rem;
+  white-space: nowrap;
+}
+
+.info-panel h2 {
+  margin: 0;
+  line-height: 1.12;
+  letter-spacing: 0;
+}
+
+.panel-view h1 {
+  margin: 0;
+  margin-bottom: 26px;
+  font-size: clamp(2.2rem, 6vw, 3.5rem);
+  line-height: 1.12;
+  letter-spacing: 0;
+}
+
+.adventurer-name-block {
+  position: relative;
+  display: grid;
+  grid-template-columns: 58px 1fr;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.adventurer-name-block small,
+.current-title small {
+  display: block;
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 900;
+}
+
+.adventurer-name-block h1 {
+  margin: 2px 0 0;
+  font-size: clamp(1.95rem, 5vw, 3.1rem);
+}
+
+.adventurer-seal {
+  display: grid;
+  place-items: center;
+  width: 58px;
+  height: 58px;
+  border: 2px solid rgba(63, 118, 82, 0.38);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(255, 250, 240, 0.9) 0 34%, transparent 35%),
+    radial-gradient(circle at 50% 50%, rgba(185, 76, 97, 0.24) 0 56%, transparent 57%),
+    rgba(255, 250, 240, 0.72);
+  color: var(--green);
+  font-family: "Yu Mincho", "Hiragino Mincho ProN", serif;
+  font-size: 1.34rem;
+  font-weight: 900;
+}
+
+.current-title {
+  position: relative;
+  margin-bottom: 12px;
+  padding: 12px 14px;
+  border: 1px dashed rgba(197, 150, 58, 0.42);
+  border-radius: 8px;
+  background:
+    linear-gradient(90deg, rgba(197, 150, 58, 0.16), transparent 56%),
+    rgba(255, 250, 240, 0.62);
+}
+
+.current-title strong {
+  display: block;
+  margin-top: 3px;
+  color: var(--ink);
+  font-size: clamp(1.08rem, 3.6vw, 1.45rem);
+  line-height: 1.28;
+}
+
+.info-panel h2 {
+  margin-top: 6px;
+  font-size: clamp(1.8rem, 5vw, 2.8rem);
+}
+
+.first-step-note {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 0.82rem;
+  line-height: 1.5;
+  font-weight: 800;
+}
+
+.profile-list {
+  display: grid;
+  gap: 0;
+  margin: 0;
+}
+
+.profile-list > div {
+  display: grid;
+  grid-template-columns: 122px 1fr;
+  gap: 14px;
+  align-items: center;
+  padding: 13px 0;
+  border-top: 1px solid var(--line);
+}
+
+.profile-list > div:last-child {
+  border-bottom: 1px solid var(--line);
+}
+
+dt {
+  color: var(--muted);
+  font-size: 0.92rem;
+  font-weight: 800;
+}
+
+dd {
+  margin: 0;
+  font-size: clamp(1.22rem, 4vw, 1.9rem);
+  font-weight: 900;
+}
+
+.adventurer-card dd {
+  font-size: clamp(1.06rem, 3.5vw, 1.45rem);
+}
+
+.medal-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.profile-medal {
+  display: inline-grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(255, 250, 240, 0.72);
+  box-shadow: inset 0 0 0 1px rgba(75, 55, 36, 0.12);
+  font-size: 1.1rem;
+}
+
+.guide-progress-number {
+  display: inline-block;
+  margin-right: 8px;
+  font-variant-numeric: tabular-nums;
+}
+
+.guide-progress-track {
+  display: inline-flex;
+  width: min(130px, 42vw);
+  height: 10px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(244, 229, 200, 0.9);
+  box-shadow: inset 0 0 0 1px rgba(75, 55, 36, 0.12);
+  vertical-align: middle;
+}
+
+.guide-progress-track span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--green), var(--rose), var(--gold));
+}
+
+.profile-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+
+.badge-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px;
+  padding: 5px 9px;
+  border: 1px solid rgba(75, 55, 36, 0.13);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.42);
+  color: var(--muted);
+  font-size: 0.74rem;
+  font-weight: 900;
+}
+
+.badge-chip.is-active {
+  border-color: rgba(197, 150, 58, 0.42);
+  color: #6d4f11;
+  background: rgba(197, 150, 58, 0.15);
+}
+
+.badge-chip.is-locked {
+  opacity: 0.5;
+}
+
+.profile-fairies {
+  display: grid;
+  gap: 8px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+
+.profile-fairies p,
+.profile-fairies small {
+  margin: 0;
+}
+
+.profile-fairies p {
+  color: var(--green);
+  font-size: 0.82rem;
+  font-weight: 900;
+}
+
+.profile-fairies small {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 800;
+  line-height: 1.5;
+}
+
+.profile-fairy-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.profile-fairy-item,
+.profile-empty {
+  min-height: 58px;
+  border: 1px solid rgba(75, 55, 36, 0.13);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.46);
+}
+
+.profile-fairy-item {
+  display: grid;
+  grid-template-columns: 42px 1fr;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+}
+
+.profile-fairy-item img {
+  width: 42px;
+  height: 48px;
+  object-fit: contain;
+  filter: drop-shadow(0 6px 6px rgba(45, 34, 23, 0.16));
+}
+
+.profile-fairy-item strong {
+  display: block;
+  color: var(--ink);
+  font-size: 0.78rem;
+  line-height: 1.25;
+}
+
+.profile-fairy-item span {
+  display: block;
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 0.68rem;
+  font-weight: 800;
+}
+
+.profile-empty {
+  grid-column: 1 / -1;
+  display: grid;
+  place-items: center;
+  padding: 10px;
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 900;
+  text-align: center;
+}
+
+.profile-achievement-results {
+  display: grid;
+  gap: 8px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+
+.profile-achievement-results p {
+  margin: 0;
+  color: var(--green);
+  font-size: 0.82rem;
+  font-weight: 900;
+}
+
+.profile-achievement-list {
+  display: grid;
+  gap: 7px;
+}
+
+.profile-achievement-list article {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 2px 8px;
+  padding: 8px 10px;
+  border: 1px solid rgba(75, 55, 36, 0.13);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.46);
+}
+
+.profile-achievement-list strong {
+  color: var(--ink);
+  font-size: 0.78rem;
+}
+
+.profile-achievement-list span {
+  color: var(--green);
+  font-size: 0.76rem;
+  font-weight: 900;
+  text-align: right;
+}
+
+.profile-achievement-list small {
+  grid-column: 1 / -1;
+  color: var(--muted);
+  font-size: 0.68rem;
+  font-weight: 800;
+}
+
+.admin-card {
+  display: grid;
+  gap: 14px;
+  margin-top: 18px;
+  padding: 16px;
+  border: 1px solid rgba(75, 55, 36, 0.15);
+  border-radius: 8px;
+  background:
+    linear-gradient(90deg, rgba(63, 118, 82, 0.08), transparent 38%),
+    rgba(255, 250, 240, 0.68);
+}
+
+.admin-status {
+  display: grid;
+  gap: 4px;
+  padding: 12px;
+  border: 1px dashed rgba(197, 150, 58, 0.42);
+  border-radius: 8px;
+  background: rgba(255, 250, 240, 0.62);
+}
+
+.admin-status span {
+  color: var(--green);
+  font-size: 0.72rem;
+  font-weight: 900;
+}
+
+.admin-status strong {
+  font-size: 1.05rem;
+  line-height: 1.35;
+}
+
+.admin-check-list {
+  display: grid;
+  gap: 0;
+  margin: 0;
+}
+
+.admin-check-list > div {
+  display: grid;
+  grid-template-columns: 92px 1fr;
+  gap: 10px;
+  align-items: center;
+  padding: 11px 0;
+  border-top: 1px solid var(--line);
+}
+
+.admin-check-list > div:last-child {
+  border-bottom: 1px solid var(--line);
+}
+
+.admin-check-list dd {
+  font-size: clamp(0.98rem, 3vw, 1.22rem);
+}
+
+.admin-stamp-button {
+  min-height: 46px;
+  border: 1px solid rgba(197, 150, 58, 0.46);
+  border-radius: 8px;
+  background:
+    linear-gradient(90deg, rgba(197, 150, 58, 0.22), transparent 52%),
+    rgba(255, 250, 240, 0.9);
+  color: var(--ink);
+  font-size: 0.92rem;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.admin-stamp-button:hover,
+.admin-stamp-button:focus-visible {
+  border-color: rgba(63, 118, 82, 0.38);
+  outline: none;
+}
+
+.admin-stamp-button:disabled {
+  cursor: default;
+  opacity: 0.62;
+}
+
+.admin-note {
+  margin: -4px 0 0;
+  color: var(--muted);
+  font-size: 0.78rem;
+  line-height: 1.5;
+  font-weight: 800;
+}
+
+.progress-area {
+  display: grid;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.progress-track {
+  height: 14px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--paper-deep);
+  box-shadow: inset 0 0 0 1px rgba(75, 55, 36, 0.14);
+}
+
+.progress-fill {
+  display: block;
+  width: 33.333%;
+  height: 100%;
+  background: linear-gradient(90deg, var(--green), var(--rose), var(--gold));
+}
+
+.progress-area p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.94rem;
+  font-weight: 800;
+}
+
+.flower-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.flower-grid span {
+  aspect-ratio: 1;
+  border: 1px solid rgba(75, 55, 36, 0.14);
+  border-radius: 7px;
+  background:
+    radial-gradient(circle at 50% 42%, rgba(255, 250, 240, 0.9) 0 13%, transparent 14%),
+    radial-gradient(circle at 36% 44%, rgba(185, 76, 97, 0.72) 0 16%, transparent 17%),
+    radial-gradient(circle at 64% 44%, rgba(185, 76, 97, 0.72) 0 16%, transparent 17%),
+    radial-gradient(circle at 50% 28%, rgba(197, 150, 58, 0.65) 0 15%, transparent 16%),
+    rgba(255, 255, 255, 0.45);
+}
+
+.participation-stamp {
+  display: grid;
+  grid-template-columns: 46px 1fr;
+  gap: 10px;
+  align-items: center;
+  margin-top: 14px;
+  padding: 10px 12px;
+  border: 1px dashed rgba(197, 150, 58, 0.48);
+  border-radius: 8px;
+  background:
+    linear-gradient(90deg, rgba(185, 76, 97, 0.1), transparent 44%),
+    rgba(255, 250, 240, 0.6);
+}
+
+.participation-stamp .stamp-flower {
+  width: 46px;
+  height: 46px;
+}
+
+.participation-stamp small,
+.participation-stamp strong,
+.participation-stamp em {
+  display: block;
+}
+
+.participation-stamp small {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-style: normal;
+  font-weight: 900;
+}
+
+.participation-stamp strong {
+  margin-top: 2px;
+  font-size: 1rem;
+}
+
+.participation-stamp em {
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-style: normal;
+  font-weight: 800;
+}
+
+.teacher-layout {
+  display: block;
+  margin-top: 18px;
+}
+
+.teacher-screen {
+  display: none;
+}
+
+.teacher-screen.is-active {
+  display: block;
+}
+
+.teacher-list,
+.teacher-detail {
+  border: 1px solid rgba(75, 55, 36, 0.14);
+  border-radius: 8px;
+  background: rgba(255, 250, 240, 0.58);
+}
+
+.teacher-list {
+  display: none;
+  gap: 8px;
+  padding: 12px;
+}
+
+.teacher-list.is-active {
+  display: grid;
+}
+
+.teacher-list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.teacher-list-header h3,
+.teacher-detail h3,
+.detail-label {
+  margin: 0;
+}
+
+.teacher-list-header h3 {
+  font-size: 0.95rem;
+}
+
+.teacher-list-header span {
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-weight: 900;
+}
+
+.teacher-card {
+  display: grid;
+  grid-template-columns: 34px 1fr;
+  gap: 10px;
+  align-items: center;
+  width: 100%;
+  min-height: 58px;
+  padding: 9px;
+  border: 1px solid rgba(75, 55, 36, 0.12);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.34);
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+}
+
+.teacher-card:hover,
+.teacher-card:focus-visible,
+.teacher-card.is-selected {
+  border-color: rgba(197, 150, 58, 0.42);
+  background: rgba(255, 250, 240, 0.82);
+  outline: none;
+}
+
+.teacher-card.next-teacher {
+  border-color: rgba(197, 150, 58, 0.54);
+  background:
+    linear-gradient(90deg, rgba(197, 150, 58, 0.16), transparent 62%),
+    rgba(255, 250, 240, 0.82);
+}
+
+.teacher-card.next-teacher::after {
+  content: "未記録";
+  justify-self: end;
+  grid-column: 2;
+  margin-top: -2px;
+  padding: 2px 7px;
+  border: 1px solid rgba(197, 150, 58, 0.42);
+  border-radius: 999px;
+  color: #7a5a20;
+  background: rgba(255, 250, 240, 0.82);
+  font-size: 0.64rem;
+  font-weight: 900;
+}
+
+.teacher-card.is-recorded {
+  border-color: rgba(63, 118, 82, 0.2);
+}
+
+.teacher-card.is-recorded::after {
+  content: "済";
+  justify-self: end;
+  grid-column: 2;
+  margin-top: -2px;
+  padding: 2px 7px;
+  border: 1px solid rgba(63, 118, 82, 0.28);
+  border-radius: 999px;
+  color: var(--green);
+  background: rgba(255, 250, 240, 0.72);
+  font-size: 0.64rem;
+  font-weight: 900;
+}
+
+.teacher-flower {
+  width: 34px;
+  height: 34px;
+  border: 1px solid rgba(75, 55, 36, 0.14);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(255, 250, 240, 0.95) 0 16%, transparent 17%),
+    radial-gradient(circle at 35% 42%, rgba(185, 76, 97, 0.72) 0 18%, transparent 19%),
+    radial-gradient(circle at 65% 42%, rgba(185, 76, 97, 0.72) 0 18%, transparent 19%),
+    radial-gradient(circle at 50% 25%, rgba(197, 150, 58, 0.7) 0 17%, transparent 18%),
+    rgba(255, 255, 255, 0.5);
+}
+
+.teacher-flower-hydrangea {
+  background:
+    radial-gradient(circle at 50% 50%, rgba(255, 250, 240, 0.95) 0 14%, transparent 15%),
+    radial-gradient(circle at 34% 38%, rgba(109, 139, 190, 0.72) 0 18%, transparent 19%),
+    radial-gradient(circle at 65% 39%, rgba(151, 178, 218, 0.76) 0 18%, transparent 19%),
+    radial-gradient(circle at 42% 66%, rgba(129, 155, 204, 0.72) 0 17%, transparent 18%),
+    radial-gradient(circle at 66% 67%, rgba(94, 128, 178, 0.66) 0 17%, transparent 18%),
+    rgba(255, 255, 255, 0.5);
+}
+
+.teacher-flower-camellia {
+  background:
+    radial-gradient(circle at 50% 50%, rgba(255, 250, 240, 0.94) 0 14%, transparent 15%),
+    radial-gradient(circle at 38% 39%, rgba(177, 63, 80, 0.78) 0 21%, transparent 22%),
+    radial-gradient(circle at 62% 40%, rgba(194, 78, 92, 0.75) 0 21%, transparent 22%),
+    radial-gradient(circle at 50% 66%, rgba(151, 47, 65, 0.7) 0 20%, transparent 21%),
+    radial-gradient(circle at 50% 28%, rgba(217, 180, 78, 0.7) 0 14%, transparent 15%),
+    rgba(255, 255, 255, 0.5);
+}
+
+.teacher-flower-sun {
+  background:
+    radial-gradient(circle at 50% 52%, rgba(116, 98, 77, 0.22) 0 10%, transparent 11%),
+    radial-gradient(circle at 34% 42%, rgba(237, 190, 75, 0.82) 0 20%, transparent 21%),
+    radial-gradient(circle at 66% 42%, rgba(237, 190, 75, 0.82) 0 20%, transparent 21%),
+    radial-gradient(circle at 50% 25%, rgba(247, 204, 88, 0.86) 0 21%, transparent 22%),
+    radial-gradient(circle at 50% 70%, rgba(218, 162, 52, 0.72) 0 19%, transparent 20%),
+    rgba(255, 255, 255, 0.5);
+}
+
+.teacher-flower-sakura {
+  background:
+    radial-gradient(circle at 50% 52%, rgba(247, 204, 88, 0.84) 0 10%, transparent 11%),
+    radial-gradient(circle at 34% 42%, rgba(227, 139, 152, 0.78) 0 19%, transparent 20%),
+    radial-gradient(circle at 66% 42%, rgba(227, 139, 152, 0.78) 0 19%, transparent 20%),
+    radial-gradient(circle at 50% 25%, rgba(239, 171, 179, 0.82) 0 20%, transparent 21%),
+    radial-gradient(circle at 50% 70%, rgba(206, 111, 130, 0.68) 0 18%, transparent 19%),
+    rgba(255, 255, 255, 0.5);
+}
+
+.teacher-card strong,
+.teacher-card small {
+  display: block;
+}
+
+.teacher-card strong {
+  font-size: 0.9rem;
+  line-height: 1.25;
+}
+
+.teacher-card small {
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 0.74rem;
+  font-weight: 800;
+}
+
+.circle-stamps {
+  margin-top: 10px;
+  padding: 14px;
+  border: 1px solid rgba(197, 150, 58, 0.34);
+  border-radius: 8px;
+  background:
+    radial-gradient(circle at 12% 6%, rgba(185, 76, 97, 0.12) 0 18%, transparent 19%),
+    radial-gradient(circle at 88% 4%, rgba(63, 118, 82, 0.1) 0 16%, transparent 17%),
+    linear-gradient(180deg, rgba(255, 252, 245, 0.94), rgba(244, 229, 200, 0.34));
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.46),
+    0 10px 24px rgba(75, 55, 36, 0.08);
+}
+
+.circle-stamps-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.circle-stamps h4 {
+  margin: 0;
+  max-width: 13em;
+  color: #314f34;
+  font-size: 0.94rem;
+  line-height: 1.2;
+}
+
+.circle-stamps-header span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 26px;
+  padding: 4px 9px;
+  border: 1px solid rgba(185, 76, 97, 0.22);
+  border-radius: 999px;
+  color: #8a4351;
+  background: rgba(255, 255, 255, 0.54);
+  font-size: 0.72rem;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.circle-stamp-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 10px;
+}
+
+.circle-stamp {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 5px;
+  min-height: 104px;
+  padding: 10px 8px 9px;
+  border: 1px solid rgba(75, 55, 36, 0.12);
+  border-radius: 8px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.42), rgba(255, 250, 240, 0.52)),
+    rgba(255, 250, 240, 0.62);
+  text-align: center;
+}
+
+.circle-stamp-feature {
+  grid-template-columns: auto minmax(0, 1fr);
+  justify-items: start;
+  align-items: center;
+  column-gap: 12px;
+  min-height: 128px;
+  padding: 14px 12px;
+  overflow: hidden;
+  border-color: rgba(197, 150, 58, 0.38);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.58), rgba(255, 250, 240, 0.74)),
+    rgba(255, 250, 240, 0.68);
+  text-align: left;
+}
+
+.circle-stamp-feature::before {
+  content: "";
+  position: absolute;
+  right: -28px;
+  bottom: -34px;
+  width: 118px;
+  height: 118px;
+  border: 1px solid rgba(197, 150, 58, 0.16);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, rgba(197, 150, 58, 0.08) 0 45%, transparent 46%);
+}
+
+.circle-stamp strong,
+.circle-stamp small {
+  display: block;
+}
+
+.circle-stamp strong {
+  position: relative;
+  color: #3f3523;
+  font-size: 0.78rem;
+  line-height: 1.25;
+}
+
+.circle-stamp small {
+  position: relative;
+  color: var(--muted);
+  font-size: 0.64rem;
+  line-height: 1.35;
+  font-weight: 800;
+}
+
+.circle-stamp-feature strong {
+  color: #314f34;
+  font-size: 1.02rem;
+}
+
+.circle-stamp-feature small {
+  max-width: 15em;
+  margin-top: 4px;
+  font-size: 0.72rem;
+}
+
+.circle-stamp-copy {
+  position: relative;
+  z-index: 1;
+}
+
+.circle-stamp-status {
+  position: relative;
+  z-index: 1;
+  grid-column: 1 / -1;
+  justify-self: stretch;
+  display: block;
+  min-height: 25px;
+  margin-top: 2px;
+  color: transparent;
+  font-size: 0.66rem;
+  font-weight: 900;
+}
+
+.circle-stamp-status::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 9px;
+  overflow: hidden;
+  border-radius: 999px;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(63, 118, 82, 0.72) 0 var(--round-progress, 80%),
+      rgba(255, 250, 240, 0.72) var(--round-progress, 80%) 100%
+    );
+}
+
+.circle-stamp-status::after {
+  content: attr(data-status);
+  position: absolute;
+  right: 0;
+  top: 0;
+  color: #6d4f11;
+  font-size: 0.66rem;
+  font-weight: 900;
+}
+
+.circle-medal {
+  position: relative;
+  display: block;
+  width: 58px;
+  height: 58px;
+  border: 2px solid rgba(197, 150, 58, 0.56);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(255, 250, 240, 0.96) 0 18%, transparent 19%),
+    radial-gradient(circle at 50% 50%, rgba(197, 150, 58, 0.18) 0 48%, transparent 49%),
+    rgba(255, 250, 240, 0.72);
+  box-shadow:
+    inset 0 0 0 4px rgba(255, 250, 240, 0.62),
+    0 5px 12px rgba(48, 38, 26, 0.1);
+}
+
+.circle-stamp-feature .circle-medal {
+  width: 82px;
+  height: 82px;
+  border-width: 3px;
+  box-shadow:
+    inset 0 0 0 5px rgba(255, 250, 240, 0.62),
+    0 10px 20px rgba(48, 38, 26, 0.13);
+}
+
+.circle-medal::before,
+.circle-medal::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 14px;
+  height: 22px;
+  border-radius: 999px 999px 4px 4px;
+  background: rgba(63, 118, 82, 0.24);
+  transform-origin: 50% 100%;
+}
+
+.circle-medal::before {
+  transform: translate(-80%, -8%) rotate(-35deg);
+}
+
+.circle-medal::after {
+  transform: translate(-20%, -8%) rotate(35deg);
+}
+
+.circle-medal i {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 50% 52%, rgba(255, 250, 240, 0.92) 0 18%, transparent 19%),
+    rgba(185, 76, 97, 0.68);
+  box-shadow: 0 1px 4px rgba(48, 38, 26, 0.08);
+}
+
+.circle-medal i:nth-child(1) {
+  transform: translate(-50%, -50%) rotate(-90deg) translateY(-22px);
+}
+
+.circle-medal i:nth-child(2) {
+  transform: translate(-50%, -50%) rotate(-18deg) translateY(-22px);
+}
+
+.circle-medal i:nth-child(3) {
+  transform: translate(-50%, -50%) rotate(54deg) translateY(-22px);
+}
+
+.circle-medal i:nth-child(4) {
+  transform: translate(-50%, -50%) rotate(126deg) translateY(-22px);
+}
+
+.circle-medal i:nth-child(5) {
+  transform: translate(-50%, -50%) rotate(198deg) translateY(-22px);
+}
+
+.circle-stamp-feature .circle-medal i {
+  width: 20px;
+  height: 20px;
+}
+
+.circle-stamp-feature .circle-medal i:nth-child(1) {
+  transform: translate(-50%, -50%) rotate(-90deg) translateY(-31px);
+}
+
+.circle-stamp-feature .circle-medal i:nth-child(2) {
+  transform: translate(-50%, -50%) rotate(-18deg) translateY(-31px);
+}
+
+.circle-stamp-feature .circle-medal i:nth-child(3) {
+  transform: translate(-50%, -50%) rotate(54deg) translateY(-31px);
+}
+
+.circle-stamp-feature .circle-medal i:nth-child(4) {
+  transform: translate(-50%, -50%) rotate(126deg) translateY(-31px);
+}
+
+.circle-stamp-feature .circle-medal i:nth-child(5) {
+  transform: translate(-50%, -50%) rotate(198deg) translateY(-31px);
+}
+
+.circle-stamp.is-complete {
+  border-color: rgba(197, 150, 58, 0.42);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(247, 204, 88, 0.18) 0 34%, transparent 35%),
+    linear-gradient(180deg, rgba(255, 250, 240, 0.9), rgba(244, 229, 200, 0.5));
+}
+
+.circle-stamp.is-complete::after {
+  content: "達成";
+  position: absolute;
+  right: 7px;
+  top: 7px;
+  padding: 2px 6px;
+  border: 1px solid rgba(197, 150, 58, 0.42);
+  border-radius: 999px;
+  color: #8a6424;
+  background: rgba(255, 250, 240, 0.8);
+  font-size: 0.62rem;
+  font-weight: 900;
+}
+
+.circle-stamp-feature.is-complete::after {
+  right: 10px;
+  top: 10px;
+  padding: 4px 9px;
+  background: rgba(255, 250, 240, 0.88);
+  font-size: 0.68rem;
+}
+
+.circle-stamp.is-complete .circle-medal {
+  background:
+    radial-gradient(circle at 50% 50%, rgba(255, 250, 240, 0.95) 0 18%, transparent 19%),
+    radial-gradient(circle at 50% 50%, rgba(247, 204, 88, 0.44) 0 50%, transparent 51%),
+    rgba(255, 250, 240, 0.72);
+}
+
+.circle-stamp.is-next .circle-medal i:nth-child(n + 3) {
+  opacity: 0.24;
+  filter: saturate(0.4);
+}
+
+.circle-stamp-feature.is-next .circle-medal i:nth-child(-n + 4) {
+  opacity: 1;
+  filter: none;
+}
+
+.circle-stamp-feature.is-next .circle-medal i:nth-child(5) {
+  opacity: 0.24;
+  filter: saturate(0.4);
+}
+
+.circle-stamp-nexts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.circle-stamp-nexts .circle-stamp {
+  min-height: 96px;
+  opacity: 0.78;
+}
+
+.circle-stamp-nexts .circle-medal {
+  width: 44px;
+  height: 44px;
+}
+
+.circle-stamp-nexts .circle-medal i {
+  width: 11px;
+  height: 11px;
+}
+
+.circle-stamp-nexts .circle-medal i:nth-child(1) {
+  transform: translate(-50%, -50%) rotate(-90deg) translateY(-17px);
+}
+
+.circle-stamp-nexts .circle-medal i:nth-child(2) {
+  transform: translate(-50%, -50%) rotate(-18deg) translateY(-17px);
+}
+
+.circle-stamp-nexts .circle-medal i:nth-child(3) {
+  transform: translate(-50%, -50%) rotate(54deg) translateY(-17px);
+}
+
+.circle-stamp-nexts .circle-medal i:nth-child(4) {
+  transform: translate(-50%, -50%) rotate(126deg) translateY(-17px);
+}
+
+.circle-stamp-nexts .circle-medal i:nth-child(5) {
+  transform: translate(-50%, -50%) rotate(198deg) translateY(-17px);
+}
+
+.circle-stamp.is-new {
+  border-color: rgba(143, 184, 190, 0.42);
+  background:
+    radial-gradient(circle at 50% 12%, rgba(143, 184, 190, 0.16) 0 36%, transparent 37%),
+    linear-gradient(180deg, rgba(255, 250, 240, 0.86), rgba(143, 184, 190, 0.16));
+}
+
+.circle-stamp.is-new .circle-medal {
+  border-color: rgba(143, 184, 190, 0.7);
+}
+
+.circle-stamp.is-new .circle-medal i {
+  background:
+    radial-gradient(circle at 50% 52%, rgba(255, 250, 240, 0.92) 0 18%, transparent 19%),
+    rgba(143, 184, 190, 0.72);
+}
+
+.teacher-detail {
+  position: relative;
+  padding: 12px 14px 14px;
+}
+
+.back-to-list {
+  min-height: 34px;
+  margin: 0 0 8px;
+  padding: 6px 11px;
+  border: 1px solid rgba(75, 55, 36, 0.16);
+  border-radius: 999px;
+  background: rgba(255, 250, 240, 0.68);
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.back-to-list:hover,
+.back-to-list:focus-visible {
+  color: var(--ink);
+  outline: none;
+  border-color: rgba(63, 118, 82, 0.28);
+}
+
+.detail-label {
+  color: var(--green);
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
+.teacher-detail h3 {
+  margin-top: 4px;
+  font-size: clamp(1.35rem, 4vw, 1.9rem);
+  line-height: 1.18;
+}
+
+.teacher-photo-card {
+  position: relative;
+  width: min(430px, 100%);
+  margin: 8px auto 0;
+  padding: 12px;
+  border: 1px solid rgba(75, 55, 36, 0.14);
+  border-radius: 8px;
+  background:
+    linear-gradient(180deg, rgba(255, 250, 240, 0.62), rgba(255, 250, 240, 0.24)),
+    rgba(255, 255, 255, 0.24);
+}
+
+.detail-actions {
+  position: relative;
+  z-index: 3;
+  display: grid;
+  gap: 7px;
+  margin-top: 10px;
+}
+
+.stamp-flow-steps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.stamp-flow-steps li {
+  display: grid;
+  place-items: center;
+  min-height: 28px;
+  padding: 4px 5px;
+  border: 1px solid rgba(75, 55, 36, 0.12);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.34);
+  color: var(--muted);
+  font-size: 0.66rem;
+  font-weight: 900;
+  text-align: center;
+}
+
+.stamp-flow-steps li.is-active {
+  border-color: rgba(197, 150, 58, 0.42);
+  background: rgba(197, 150, 58, 0.16);
+  color: #6d4f11;
+}
+
+.stamp-flow-steps li.is-complete {
+  border-color: rgba(63, 118, 82, 0.28);
+  background: rgba(63, 118, 82, 0.12);
+  color: var(--green);
+}
+
+.stamp-confirm-card {
+  position: relative;
+  display: grid;
+  gap: 2px;
+  padding: 10px 12px;
+  border: 1px dashed rgba(197, 150, 58, 0.42);
+  border-radius: 8px;
+  background: rgba(255, 250, 240, 0.68);
+}
+
+.stamp-confirm-card[hidden] {
+  display: none;
+}
+
+.stamp-confirm-card small,
+.stamp-confirm-card span {
+  color: var(--muted);
+  font-size: 0.7rem;
+  font-weight: 900;
+}
+
+.stamp-confirm-card strong {
+  color: var(--ink);
+  font-size: 0.92rem;
+  line-height: 1.3;
+}
+
+.stamp-confirm-card.is-achievement-preview {
+  overflow: hidden;
+  gap: 4px;
+  padding: 12px 13px;
+  border-style: solid;
+  border-color: rgba(197, 150, 58, 0.58);
+  background:
+    radial-gradient(circle at 92% 18%, rgba(247, 204, 88, 0.22), transparent 28%),
+    linear-gradient(90deg, rgba(197, 150, 58, 0.18), rgba(255, 250, 240, 0.78) 44%),
+    rgba(255, 250, 240, 0.9);
+  box-shadow: 0 8px 18px rgba(197, 150, 58, 0.12);
+}
+
+.stamp-confirm-card.is-achievement-preview::after {
+  content: "5/5";
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid rgba(197, 150, 58, 0.44);
+  border-radius: 50%;
+  background: rgba(255, 250, 240, 0.86);
+  color: #8a5b20;
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
+.stamp-confirm-card.is-achievement-preview small {
+  color: #8a5b20;
+}
+
+.stamp-confirm-card.is-achievement-preview strong,
+.stamp-confirm-card.is-achievement-preview span {
+  padding-right: 48px;
+}
+
+.complete-teacher {
+  width: 100%;
+  min-height: 42px;
+  border: 1px solid rgba(197, 150, 58, 0.42);
+  border-radius: 8px;
+  background:
+    linear-gradient(90deg, rgba(197, 150, 58, 0.2), transparent 52%),
+    rgba(255, 250, 240, 0.88);
+  color: var(--ink);
+  font-size: 0.84rem;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.complete-teacher:hover,
+.complete-teacher:focus-visible {
+  border-color: rgba(63, 118, 82, 0.38);
+  outline: none;
+}
+
+.complete-teacher:disabled {
+  cursor: default;
+  opacity: 0.62;
+}
+
+.teacher-detail[data-record-phase="confirm"] .complete-teacher {
+  border-color: rgba(63, 118, 82, 0.38);
+  background:
+    linear-gradient(90deg, rgba(63, 118, 82, 0.16), transparent 52%),
+    rgba(255, 250, 240, 0.9);
+}
+
+.teacher-detail[data-record-phase="done"] .complete-teacher {
+  border-color: rgba(197, 150, 58, 0.5);
+  background:
+    linear-gradient(90deg, rgba(197, 150, 58, 0.24), rgba(63, 118, 82, 0.1)),
+    rgba(255, 250, 240, 0.92);
+}
+
+.teacher-detail[data-record-phase="achievement"] .complete-teacher {
+  border-color: rgba(197, 150, 58, 0.58);
+  background:
+    linear-gradient(90deg, rgba(197, 150, 58, 0.28), rgba(63, 118, 82, 0.12)),
+    rgba(255, 250, 240, 0.94);
+  box-shadow: 0 8px 18px rgba(197, 150, 58, 0.16);
+}
+
+.detail-actions p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.72rem;
+  line-height: 1.45;
+  font-weight: 800;
+}
+
+.fairy-achievement {
+  position: absolute;
+  left: 18px;
+  right: 18px;
+  top: 150px;
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  overflow: hidden;
+  min-height: 430px;
+  padding: 12px 10px;
+  pointer-events: none;
+  animation: achievement-rise 360ms ease both;
+}
+
+.fairy-achievement[hidden] {
+  display: none;
+}
+
+.achievement-ribbon {
+  position: relative;
+  z-index: 2;
+  margin: 0;
+  padding: 8px 18px;
+  border: 1px solid rgba(197, 150, 58, 0.58);
+  border-radius: 999px;
+  background: rgba(255, 250, 240, 0.9);
+  color: #7a5a20;
+  font-size: clamp(1.04rem, 4vw, 1.42rem);
+  line-height: 1.25;
+  font-weight: 900;
+  text-align: center;
+  box-shadow: 0 8px 18px rgba(197, 150, 58, 0.14);
+}
+
+.achievement-fairy {
+  position: absolute;
+  z-index: 2;
+  right: 8px;
+  top: 142px;
+  width: min(128px, 34vw);
+  filter: drop-shadow(0 10px 14px rgba(48, 38, 26, 0.18));
+  animation: fairy-appear 520ms 120ms ease both, fairy-float 2100ms 700ms ease-in-out infinite;
+}
+
+.achievement-copy {
+  position: absolute;
+  z-index: 2;
+  left: 26px;
+  right: 26px;
+  bottom: 12px;
+  margin: 0;
+  max-width: 29em;
+  color: var(--muted);
+  font-size: 0.78rem;
+  line-height: 1.5;
+  font-weight: 900;
+  text-align: center;
+}
+
+.achievement-petal-field {
+  position: absolute;
+  inset: 0 -8px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.achievement-petal-field span {
+  position: absolute;
+  width: 9px;
+  height: 14px;
+  border-radius: 70% 30% 70% 30%;
+  background: rgba(227, 139, 152, 0.72);
+  box-shadow: 0 0 0 2px rgba(255, 250, 240, 0.28);
+  animation: achievement-petal-fall 2600ms linear infinite;
+}
+
+.achievement-petal-field span:nth-child(1) { left: 10%; top: -8%; animation-delay: 0ms; }
+.achievement-petal-field span:nth-child(2) { left: 20%; top: -12%; animation-delay: 220ms; background: rgba(239, 171, 179, 0.72); }
+.achievement-petal-field span:nth-child(3) { left: 34%; top: -10%; animation-delay: 460ms; width: 7px; height: 11px; }
+.achievement-petal-field span:nth-child(4) { left: 48%; top: -14%; animation-delay: 120ms; background: rgba(211, 226, 241, 0.72); }
+.achievement-petal-field span:nth-child(5) { left: 62%; top: -9%; animation-delay: 620ms; }
+.achievement-petal-field span:nth-child(6) { left: 76%; top: -12%; animation-delay: 340ms; width: 7px; height: 11px; background: rgba(255, 237, 174, 0.76); }
+.achievement-petal-field span:nth-child(7) { left: 86%; top: -10%; animation-delay: 780ms; }
+.achievement-petal-field span:nth-child(8) { left: 15%; top: -18%; animation-delay: 920ms; background: rgba(211, 226, 241, 0.7); }
+.achievement-petal-field span:nth-child(9) { left: 42%; top: -20%; animation-delay: 1040ms; }
+.achievement-petal-field span:nth-child(10) { left: 56%; top: -16%; animation-delay: 1180ms; width: 7px; height: 11px; }
+.achievement-petal-field span:nth-child(11) { left: 70%; top: -22%; animation-delay: 1360ms; background: rgba(239, 171, 179, 0.7); }
+.achievement-petal-field span:nth-child(12) { left: 92%; top: -18%; animation-delay: 1500ms; background: rgba(255, 237, 174, 0.72); }
+
+@keyframes achievement-rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes fairy-appear {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.86) rotate(-4deg);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1) rotate(0);
+  }
+}
+
+@keyframes fairy-float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0);
+  }
+
+  50% {
+    transform: translateY(-7px) rotate(2deg);
+  }
+}
+
+@keyframes achievement-petal-fall {
+  from {
+    opacity: 0;
+    transform: translate3d(0, -12px, 0) rotate(0deg);
+  }
+
+  14% {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+    transform: translate3d(22px, 440px, 0) rotate(250deg);
+  }
+}
+
+.teacher-photo {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border: 1px solid rgba(75, 55, 36, 0.16);
+  border-radius: 8px;
+  background:
+    radial-gradient(circle at 50% 28%, rgba(255, 250, 240, 0.95) 0 13%, transparent 14%),
+    radial-gradient(circle at 50% 38%, rgba(95, 85, 73, 0.22) 0 11%, transparent 12%),
+    linear-gradient(180deg, rgba(143, 184, 190, 0.36), rgba(63, 118, 82, 0.22)),
+    rgba(255, 250, 240, 0.72);
+}
+
+.teacher-photo::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 14%;
+  width: 44%;
+  height: 35%;
+  border-radius: 48% 48% 0 0;
+  background: rgba(63, 118, 82, 0.28);
+  transform: translateX(-50%);
+}
+
+.teacher-photo span {
+  position: relative;
+  z-index: 1;
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(255, 250, 240, 0.82);
+  color: var(--green);
+  font-size: 1.25rem;
+  font-weight: 900;
+}
+
+.teacher-photo[data-teacher-photo="akari"],
+.teacher-photo[data-teacher-photo="yamashiro"],
+.teacher-photo[data-teacher-photo="yuki"],
+.teacher-photo[data-teacher-photo="koike"],
+.teacher-photo[data-teacher-photo="matsumoto"] {
+  background:
+    radial-gradient(circle at 41% 12%, rgba(247, 204, 88, 0.5) 0 1.1%, transparent 1.3%),
+    radial-gradient(circle at 62% 18%, rgba(255, 250, 240, 0.86) 0 1.2%, transparent 1.4%),
+    radial-gradient(circle at 34% 24%, rgba(185, 76, 97, 0.18) 0 2.8%, transparent 3%),
+    radial-gradient(circle at 68% 27%, rgba(185, 76, 97, 0.16) 0 2.4%, transparent 2.7%),
+    radial-gradient(circle at 20% 18%, rgba(185, 76, 97, 0.14) 0 8%, transparent 9%),
+    radial-gradient(circle at 82% 20%, rgba(185, 76, 97, 0.12) 0 8%, transparent 9%),
+    radial-gradient(circle at 30% 31%, rgba(63, 118, 82, 0.12) 0 5%, transparent 6%),
+    radial-gradient(circle at 72% 34%, rgba(63, 118, 82, 0.11) 0 5%, transparent 6%),
+    radial-gradient(circle at 18% 80%, rgba(63, 118, 82, 0.13) 0 12%, transparent 13%),
+    radial-gradient(circle at 86% 78%, rgba(197, 150, 58, 0.12) 0 10%, transparent 11%),
+    linear-gradient(34deg, transparent 0 16%, rgba(63, 118, 82, 0.16) 17% 18%, transparent 19% 100%),
+    linear-gradient(145deg, transparent 0 19%, rgba(63, 118, 82, 0.11) 20% 21%, transparent 22% 100%),
+    linear-gradient(24deg, transparent 0 49%, rgba(63, 118, 82, 0.1) 50% 51%, transparent 52% 100%),
+    linear-gradient(156deg, transparent 0 43%, rgba(63, 118, 82, 0.1) 44% 45%, transparent 46% 100%),
+    radial-gradient(circle at 50% 56%, rgba(63, 118, 82, 0.13) 0 37%, transparent 38%),
+    linear-gradient(180deg, rgba(255, 250, 240, 0.96), rgba(235, 226, 199, 0.78) 53%, rgba(143, 184, 190, 0.26)),
+    rgba(255, 250, 240, 0.82);
+  box-shadow: inset 0 0 0 8px rgba(255, 250, 240, 0.36);
+}
+
+.teacher-photo[data-teacher-photo="akari"]::before,
+.teacher-photo[data-teacher-photo="yamashiro"]::before,
+.teacher-photo[data-teacher-photo="yuki"]::before,
+.teacher-photo[data-teacher-photo="koike"]::before,
+.teacher-photo[data-teacher-photo="matsumoto"]::before {
+  display: block;
+  left: 50%;
+  top: 9%;
+  bottom: auto;
+  width: 77%;
+  height: 63%;
+  border: 2px solid rgba(197, 150, 58, 0.34);
+  border-radius: 49% 49% 43% 43%;
+  background: rgba(255, 250, 240, 0.22);
+  box-shadow: inset 0 0 0 7px rgba(255, 250, 240, 0.28);
+  transform: translateX(-50%);
+}
+
+.teacher-photo[data-teacher-photo="akari"]::after,
+.teacher-photo[data-teacher-photo="yamashiro"]::after,
+.teacher-photo[data-teacher-photo="yuki"]::after,
+.teacher-photo[data-teacher-photo="koike"]::after,
+.teacher-photo[data-teacher-photo="matsumoto"]::after {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  left: 50%;
+  top: 12%;
+  width: 64%;
+  height: 57%;
+  border: 5px solid rgba(255, 250, 240, 0.76);
+  border-radius: 49% 49% 42% 42%;
+  background: url("assets/teacher-photo-1-soft-bg.png") center 40% / 89.5% auto no-repeat, #c5d6c8;
+  box-shadow: 0 8px 20px rgba(48, 38, 26, 0.12), inset 0 0 18px rgba(197, 214, 200, 0.38);
+  transform: translateX(-50%);
+}
+
+.teacher-photo[data-teacher-photo="akari"] span,
+.teacher-photo[data-teacher-photo="yamashiro"] span,
+.teacher-photo[data-teacher-photo="yuki"] span,
+.teacher-photo[data-teacher-photo="koike"] span,
+.teacher-photo[data-teacher-photo="matsumoto"] span {
+  display: none;
+}
+
+.teacher-photo[data-teacher-photo="yamashiro"] {
+  background:
+    radial-gradient(circle at 41% 12%, rgba(151, 178, 218, 0.48) 0 1.1%, transparent 1.3%),
+    radial-gradient(circle at 62% 18%, rgba(255, 250, 240, 0.84) 0 1.2%, transparent 1.4%),
+    radial-gradient(circle at 34% 24%, rgba(109, 139, 190, 0.18) 0 2.8%, transparent 3%),
+    radial-gradient(circle at 68% 27%, rgba(151, 178, 218, 0.18) 0 2.4%, transparent 2.7%),
+    radial-gradient(circle at 20% 18%, rgba(109, 139, 190, 0.14) 0 8%, transparent 9%),
+    radial-gradient(circle at 82% 20%, rgba(151, 178, 218, 0.13) 0 8%, transparent 9%),
+    radial-gradient(circle at 30% 31%, rgba(88, 112, 148, 0.12) 0 5%, transparent 6%),
+    radial-gradient(circle at 72% 34%, rgba(88, 112, 148, 0.11) 0 5%, transparent 6%),
+    radial-gradient(circle at 18% 80%, rgba(88, 112, 148, 0.13) 0 12%, transparent 13%),
+    radial-gradient(circle at 86% 78%, rgba(151, 178, 218, 0.14) 0 10%, transparent 11%),
+    linear-gradient(34deg, transparent 0 16%, rgba(88, 112, 148, 0.14) 17% 18%, transparent 19% 100%),
+    linear-gradient(145deg, transparent 0 19%, rgba(88, 112, 148, 0.1) 20% 21%, transparent 22% 100%),
+    linear-gradient(24deg, transparent 0 49%, rgba(88, 112, 148, 0.1) 50% 51%, transparent 52% 100%),
+    linear-gradient(156deg, transparent 0 43%, rgba(88, 112, 148, 0.1) 44% 45%, transparent 46% 100%),
+    radial-gradient(circle at 50% 56%, rgba(109, 139, 190, 0.12) 0 37%, transparent 38%),
+    linear-gradient(180deg, rgba(255, 250, 240, 0.96), rgba(229, 222, 236, 0.8) 53%, rgba(151, 178, 218, 0.26)),
+    rgba(255, 250, 240, 0.82);
+}
+
+.teacher-photo[data-teacher-photo="yamashiro"]::before {
+  border-color: rgba(109, 139, 190, 0.32);
+}
+
+.teacher-photo[data-teacher-photo="yamashiro"]::after {
+  background: url("assets/teacher-yamashiro-soft-bg.png") center 39% / 91% auto no-repeat, #d2cadc;
+  box-shadow: 0 8px 20px rgba(48, 38, 26, 0.12), inset 0 0 18px rgba(210, 202, 220, 0.4);
+}
+
+.teacher-photo[data-teacher-photo="yuki"] {
+  background:
+    radial-gradient(circle at 41% 12%, rgba(143, 184, 190, 0.5) 0 1.1%, transparent 1.3%),
+    radial-gradient(circle at 62% 18%, rgba(255, 250, 240, 0.84) 0 1.2%, transparent 1.4%),
+    radial-gradient(circle at 34% 24%, rgba(185, 76, 97, 0.16) 0 2.8%, transparent 3%),
+    radial-gradient(circle at 68% 27%, rgba(143, 184, 190, 0.18) 0 2.4%, transparent 2.7%),
+    radial-gradient(circle at 20% 18%, rgba(143, 184, 190, 0.14) 0 8%, transparent 9%),
+    radial-gradient(circle at 82% 20%, rgba(185, 76, 97, 0.1) 0 8%, transparent 9%),
+    radial-gradient(circle at 30% 31%, rgba(63, 118, 118, 0.12) 0 5%, transparent 6%),
+    radial-gradient(circle at 72% 34%, rgba(63, 118, 118, 0.11) 0 5%, transparent 6%),
+    radial-gradient(circle at 18% 80%, rgba(63, 118, 118, 0.13) 0 12%, transparent 13%),
+    radial-gradient(circle at 86% 78%, rgba(143, 184, 190, 0.14) 0 10%, transparent 11%),
+    linear-gradient(34deg, transparent 0 16%, rgba(63, 118, 118, 0.14) 17% 18%, transparent 19% 100%),
+    linear-gradient(145deg, transparent 0 19%, rgba(63, 118, 118, 0.1) 20% 21%, transparent 22% 100%),
+    linear-gradient(24deg, transparent 0 49%, rgba(63, 118, 118, 0.1) 50% 51%, transparent 52% 100%),
+    linear-gradient(156deg, transparent 0 43%, rgba(63, 118, 118, 0.1) 44% 45%, transparent 46% 100%),
+    radial-gradient(circle at 50% 56%, rgba(143, 184, 190, 0.13) 0 37%, transparent 38%),
+    linear-gradient(180deg, rgba(255, 250, 240, 0.96), rgba(223, 235, 231, 0.8) 53%, rgba(143, 184, 190, 0.28)),
+    rgba(255, 250, 240, 0.82);
+}
+
+.teacher-photo[data-teacher-photo="yuki"]::before {
+  border-color: rgba(143, 184, 190, 0.34);
+}
+
+.teacher-photo[data-teacher-photo="yuki"]::after {
+  background: url("assets/teacher-yuki-soft-bg.png") center 40% / 90% auto no-repeat, #c2dad8;
+  box-shadow: 0 8px 20px rgba(48, 38, 26, 0.12), inset 0 0 18px rgba(194, 218, 216, 0.4);
+}
+
+.teacher-photo[data-teacher-photo="koike"] {
+  background:
+    radial-gradient(circle at 41% 12%, rgba(247, 204, 88, 0.52) 0 1.1%, transparent 1.3%),
+    radial-gradient(circle at 62% 18%, rgba(255, 250, 240, 0.84) 0 1.2%, transparent 1.4%),
+    radial-gradient(circle at 34% 24%, rgba(237, 190, 75, 0.18) 0 2.8%, transparent 3%),
+    radial-gradient(circle at 68% 27%, rgba(218, 162, 52, 0.16) 0 2.4%, transparent 2.7%),
+    radial-gradient(circle at 20% 18%, rgba(237, 190, 75, 0.14) 0 8%, transparent 9%),
+    radial-gradient(circle at 82% 20%, rgba(218, 162, 52, 0.12) 0 8%, transparent 9%),
+    radial-gradient(circle at 30% 31%, rgba(111, 132, 83, 0.12) 0 5%, transparent 6%),
+    radial-gradient(circle at 72% 34%, rgba(111, 132, 83, 0.11) 0 5%, transparent 6%),
+    radial-gradient(circle at 18% 80%, rgba(111, 132, 83, 0.13) 0 12%, transparent 13%),
+    radial-gradient(circle at 86% 78%, rgba(237, 190, 75, 0.14) 0 10%, transparent 11%),
+    linear-gradient(34deg, transparent 0 16%, rgba(111, 132, 83, 0.14) 17% 18%, transparent 19% 100%),
+    linear-gradient(145deg, transparent 0 19%, rgba(111, 132, 83, 0.1) 20% 21%, transparent 22% 100%),
+    linear-gradient(24deg, transparent 0 49%, rgba(111, 132, 83, 0.1) 50% 51%, transparent 52% 100%),
+    linear-gradient(156deg, transparent 0 43%, rgba(111, 132, 83, 0.1) 44% 45%, transparent 46% 100%),
+    radial-gradient(circle at 50% 56%, rgba(237, 190, 75, 0.12) 0 37%, transparent 38%),
+    linear-gradient(180deg, rgba(255, 250, 240, 0.96), rgba(239, 231, 194, 0.82) 53%, rgba(194, 209, 157, 0.26)),
+    rgba(255, 250, 240, 0.82);
+}
+
+.teacher-photo[data-teacher-photo="koike"]::before {
+  border-color: rgba(218, 162, 52, 0.34);
+}
+
+.teacher-photo[data-teacher-photo="koike"]::after {
+  background: url("assets/teacher-koike-soft-bg.png") center 42% / 96% auto no-repeat, #dcdab8;
+  box-shadow: 0 8px 20px rgba(48, 38, 26, 0.12), inset 0 0 18px rgba(220, 218, 184, 0.42);
+}
+
+.teacher-photo[data-teacher-photo="matsumoto"] {
+  background:
+    radial-gradient(circle at 41% 12%, rgba(239, 171, 179, 0.48) 0 1.1%, transparent 1.3%),
+    radial-gradient(circle at 62% 18%, rgba(255, 250, 240, 0.84) 0 1.2%, transparent 1.4%),
+    radial-gradient(circle at 34% 24%, rgba(227, 139, 152, 0.18) 0 2.8%, transparent 3%),
+    radial-gradient(circle at 68% 27%, rgba(206, 111, 130, 0.16) 0 2.4%, transparent 2.7%),
+    radial-gradient(circle at 20% 18%, rgba(227, 139, 152, 0.14) 0 8%, transparent 9%),
+    radial-gradient(circle at 82% 20%, rgba(239, 171, 179, 0.12) 0 8%, transparent 9%),
+    radial-gradient(circle at 30% 31%, rgba(135, 105, 86, 0.1) 0 5%, transparent 6%),
+    radial-gradient(circle at 72% 34%, rgba(135, 105, 86, 0.1) 0 5%, transparent 6%),
+    radial-gradient(circle at 18% 80%, rgba(135, 105, 86, 0.12) 0 12%, transparent 13%),
+    radial-gradient(circle at 86% 78%, rgba(239, 171, 179, 0.14) 0 10%, transparent 11%),
+    linear-gradient(34deg, transparent 0 16%, rgba(135, 105, 86, 0.12) 17% 18%, transparent 19% 100%),
+    linear-gradient(145deg, transparent 0 19%, rgba(135, 105, 86, 0.09) 20% 21%, transparent 22% 100%),
+    linear-gradient(24deg, transparent 0 49%, rgba(135, 105, 86, 0.09) 50% 51%, transparent 52% 100%),
+    linear-gradient(156deg, transparent 0 43%, rgba(135, 105, 86, 0.09) 44% 45%, transparent 46% 100%),
+    radial-gradient(circle at 50% 56%, rgba(227, 139, 152, 0.11) 0 37%, transparent 38%),
+    linear-gradient(180deg, rgba(255, 250, 240, 0.96), rgba(239, 225, 214, 0.82) 53%, rgba(226, 207, 194, 0.28)),
+    rgba(255, 250, 240, 0.82);
+}
+
+.teacher-photo[data-teacher-photo="matsumoto"]::before {
+  border-color: rgba(206, 111, 130, 0.28);
+}
+
+.teacher-photo[data-teacher-photo="matsumoto"]::after {
+  background: url("assets/teacher-matsumoto-soft-bg.png") center 42% / 94% auto no-repeat, #e2cfc2;
+  box-shadow: 0 8px 20px rgba(48, 38, 26, 0.12), inset 0 0 18px rgba(226, 207, 194, 0.42);
+}
+
+.bloom-ring {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.bloom {
+  position: absolute;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  opacity: 0;
+  transform: scale(0.74);
+  background:
+    radial-gradient(circle at 50% 50%, rgba(255, 250, 240, 0.96) 0 13%, transparent 14%),
+    radial-gradient(circle at 35% 42%, rgba(185, 76, 97, 0.72) 0 18%, transparent 19%),
+    radial-gradient(circle at 65% 42%, rgba(185, 76, 97, 0.72) 0 18%, transparent 19%),
+    radial-gradient(circle at 50% 25%, rgba(197, 150, 58, 0.72) 0 17%, transparent 18%),
+    rgba(255, 255, 255, 0.62);
+  box-shadow: 0 2px 7px rgba(48, 38, 26, 0.09), 0 0 0 3px rgba(255, 250, 240, 0.74);
+}
+
+.bloom-1 {
+  left: 17%;
+  top: 8%;
+}
+
+.bloom-2 {
+  left: 50%;
+  top: 5%;
+  transform: translateX(-50%) scale(0.74);
+}
+
+.bloom-3 {
+  right: 17%;
+  top: 8%;
+}
+
+.bloom-4 {
+  left: 11%;
+  top: 42%;
+  transform: translateY(-50%) scale(0.74);
+}
+
+.bloom-5 {
+  right: 11%;
+  top: 42%;
+  transform: translateY(-50%) scale(0.74);
+}
+
+.bloom-6 {
+  left: 18%;
+  bottom: 15%;
+}
+
+.bloom-7 {
+  left: 50%;
+  bottom: 12%;
+  transform: translateX(-50%) scale(0.74);
+}
+
+.bloom-8 {
+  right: 18%;
+  bottom: 15%;
+}
+
+.teacher-photo-card[data-bloom-count="1"] .bloom-1,
+.teacher-photo-card[data-bloom-count="2"] .bloom-1,
+.teacher-photo-card[data-bloom-count="2"] .bloom-2,
+.teacher-photo-card[data-bloom-count="3"] .bloom-1,
+.teacher-photo-card[data-bloom-count="3"] .bloom-2,
+.teacher-photo-card[data-bloom-count="3"] .bloom-3,
+.teacher-photo-card[data-bloom-count="4"] .bloom-1,
+.teacher-photo-card[data-bloom-count="4"] .bloom-2,
+.teacher-photo-card[data-bloom-count="4"] .bloom-3,
+.teacher-photo-card[data-bloom-count="4"] .bloom-4,
+.teacher-photo-card[data-bloom-count="5"] .bloom-1,
+.teacher-photo-card[data-bloom-count="5"] .bloom-2,
+.teacher-photo-card[data-bloom-count="5"] .bloom-3,
+.teacher-photo-card[data-bloom-count="5"] .bloom-4,
+.teacher-photo-card[data-bloom-count="5"] .bloom-5,
+.teacher-photo-card[data-bloom-count="6"] .bloom-1,
+.teacher-photo-card[data-bloom-count="6"] .bloom-2,
+.teacher-photo-card[data-bloom-count="6"] .bloom-3,
+.teacher-photo-card[data-bloom-count="6"] .bloom-4,
+.teacher-photo-card[data-bloom-count="6"] .bloom-5,
+.teacher-photo-card[data-bloom-count="6"] .bloom-6,
+.teacher-photo-card[data-bloom-count="7"] .bloom-1,
+.teacher-photo-card[data-bloom-count="7"] .bloom-2,
+.teacher-photo-card[data-bloom-count="7"] .bloom-3,
+.teacher-photo-card[data-bloom-count="7"] .bloom-4,
+.teacher-photo-card[data-bloom-count="7"] .bloom-5,
+.teacher-photo-card[data-bloom-count="7"] .bloom-6,
+.teacher-photo-card[data-bloom-count="7"] .bloom-7,
+.teacher-photo-card[data-bloom-count="8"] .bloom {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.teacher-photo-card[data-bloom-count="2"] .bloom-2,
+.teacher-photo-card[data-bloom-count="3"] .bloom-2,
+.teacher-photo-card[data-bloom-count="4"] .bloom-2,
+.teacher-photo-card[data-bloom-count="5"] .bloom-2,
+.teacher-photo-card[data-bloom-count="6"] .bloom-2,
+.teacher-photo-card[data-bloom-count="7"] .bloom-2,
+.teacher-photo-card[data-bloom-count="8"] .bloom-2,
+.teacher-photo-card[data-bloom-count="7"] .bloom-7,
+.teacher-photo-card[data-bloom-count="8"] .bloom-7 {
+  transform: translateX(-50%) scale(1);
+}
+
+.teacher-photo-card[data-bloom-count="4"] .bloom-4,
+.teacher-photo-card[data-bloom-count="5"] .bloom-4,
+.teacher-photo-card[data-bloom-count="6"] .bloom-4,
+.teacher-photo-card[data-bloom-count="7"] .bloom-4,
+.teacher-photo-card[data-bloom-count="8"] .bloom-4,
+.teacher-photo-card[data-bloom-count="5"] .bloom-5,
+.teacher-photo-card[data-bloom-count="6"] .bloom-5,
+.teacher-photo-card[data-bloom-count="7"] .bloom-5,
+.teacher-photo-card[data-bloom-count="8"] .bloom-5 {
+  transform: translateY(-50%) scale(1);
+}
+
+.teacher-photo-card .bloom {
+  z-index: 2;
+  width: 48px;
+  height: 48px;
+  opacity: 1;
+  transform: none;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(255, 250, 240, 0.86) 0 34%, transparent 35%),
+    radial-gradient(circle at 50% 50%, transparent 0 45%, rgba(139, 138, 96, 0.2) 46% 48%, transparent 49%),
+    repeating-radial-gradient(circle at 50% 50%, rgba(139, 138, 96, 0.2) 0 2px, rgba(255, 250, 240, 0.72) 3px 8px),
+    rgba(255, 250, 240, 0.66);
+  border: 2px solid rgba(139, 138, 96, 0.24);
+  border-radius: 50%;
+  box-shadow: 0 5px 12px rgba(48, 38, 26, 0.1), 0 0 0 3px rgba(255, 250, 240, 0.64);
+}
+
+.teacher-photo-card .bloom::before,
+.teacher-photo-card .bloom::after {
+  content: "";
+  position: absolute;
+  left: 42%;
+  top: 43%;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, rgba(247, 204, 88, 0.74) 0 34%, rgba(255, 250, 240, 0.72) 35% 62%, transparent 63%);
+  opacity: 0.8;
+  transform: translate(-50%, -50%);
+}
+
+.teacher-photo-card .bloom::after {
+  left: 62%;
+  top: 57%;
+  width: 7px;
+  height: 7px;
+  opacity: 0.56;
+}
+
+.teacher-photo-card .bloom-1 {
+  left: 7%;
+  top: 52%;
+}
+
+.teacher-photo-card .bloom-2 {
+  left: 13%;
+  top: 68%;
+  transform: none;
+}
+
+.teacher-photo-card .bloom-3 {
+  left: 33%;
+  right: auto;
+  top: 75%;
+}
+
+.teacher-photo-card .bloom-4 {
+  left: auto;
+  right: 22%;
+  top: 75%;
+  transform: none;
+}
+
+.teacher-photo-card .bloom-5 {
+  left: auto;
+  right: 7%;
+  top: 62%;
+  transform: none;
+}
+
+.teacher-photo-card .bloom-6,
+.teacher-photo-card .bloom-7,
+.teacher-photo-card .bloom-8 {
+  display: none;
+}
+
+.teacher-photo-card[data-bloom-count="1"] .bloom-1,
+.teacher-photo-card[data-bloom-count="2"] .bloom-1,
+.teacher-photo-card[data-bloom-count="2"] .bloom-2,
+.teacher-photo-card[data-bloom-count="3"] .bloom-1,
+.teacher-photo-card[data-bloom-count="3"] .bloom-2,
+.teacher-photo-card[data-bloom-count="3"] .bloom-3,
+.teacher-photo-card[data-bloom-count="4"] .bloom-1,
+.teacher-photo-card[data-bloom-count="4"] .bloom-2,
+.teacher-photo-card[data-bloom-count="4"] .bloom-3,
+.teacher-photo-card[data-bloom-count="4"] .bloom-4,
+.teacher-photo-card[data-bloom-count="5"] .bloom {
+  background:
+    radial-gradient(circle at 50% 52%, rgba(247, 204, 88, 0.96) 0 11%, transparent 12%),
+    radial-gradient(circle at 32% 42%, rgba(221, 119, 132, 0.78) 0 22%, transparent 23%),
+    radial-gradient(circle at 68% 42%, rgba(221, 119, 132, 0.78) 0 22%, transparent 23%),
+    radial-gradient(circle at 50% 24%, rgba(238, 151, 159, 0.82) 0 23%, transparent 24%),
+    radial-gradient(circle at 43% 72%, rgba(204, 91, 111, 0.68) 0 21%, transparent 22%),
+    radial-gradient(circle at 58% 72%, rgba(204, 91, 111, 0.68) 0 21%, transparent 22%),
+    rgba(255, 250, 240, 0.82);
+  border-color: rgba(139, 96, 82, 0.22);
+}
+
+.teacher-photo-card[data-flower="hydrangea"][data-bloom-count="1"] .bloom-1,
+.teacher-photo-card[data-flower="hydrangea"][data-bloom-count="2"] .bloom-1,
+.teacher-photo-card[data-flower="hydrangea"][data-bloom-count="2"] .bloom-2,
+.teacher-photo-card[data-flower="hydrangea"][data-bloom-count="3"] .bloom-1,
+.teacher-photo-card[data-flower="hydrangea"][data-bloom-count="3"] .bloom-2,
+.teacher-photo-card[data-flower="hydrangea"][data-bloom-count="3"] .bloom-3,
+.teacher-photo-card[data-flower="hydrangea"][data-bloom-count="4"] .bloom-1,
+.teacher-photo-card[data-flower="hydrangea"][data-bloom-count="4"] .bloom-2,
+.teacher-photo-card[data-flower="hydrangea"][data-bloom-count="4"] .bloom-3,
+.teacher-photo-card[data-flower="hydrangea"][data-bloom-count="4"] .bloom-4,
+.teacher-photo-card[data-flower="hydrangea"][data-bloom-count="5"] .bloom {
+  background:
+    radial-gradient(circle at 50% 52%, rgba(255, 250, 240, 0.9) 0 10%, transparent 11%),
+    radial-gradient(circle at 34% 36%, rgba(109, 139, 190, 0.76) 0 21%, transparent 22%),
+    radial-gradient(circle at 66% 37%, rgba(151, 178, 218, 0.8) 0 21%, transparent 22%),
+    radial-gradient(circle at 42% 66%, rgba(129, 155, 204, 0.78) 0 21%, transparent 22%),
+    radial-gradient(circle at 66% 68%, rgba(94, 128, 178, 0.7) 0 20%, transparent 21%),
+    rgba(255, 250, 240, 0.82);
+  border-color: rgba(88, 112, 148, 0.22);
+}
+
+.teacher-photo-card[data-flower="camellia"][data-bloom-count="1"] .bloom-1,
+.teacher-photo-card[data-flower="camellia"][data-bloom-count="2"] .bloom-1,
+.teacher-photo-card[data-flower="camellia"][data-bloom-count="2"] .bloom-2,
+.teacher-photo-card[data-flower="camellia"][data-bloom-count="3"] .bloom-1,
+.teacher-photo-card[data-flower="camellia"][data-bloom-count="3"] .bloom-2,
+.teacher-photo-card[data-flower="camellia"][data-bloom-count="3"] .bloom-3,
+.teacher-photo-card[data-flower="camellia"][data-bloom-count="4"] .bloom-1,
+.teacher-photo-card[data-flower="camellia"][data-bloom-count="4"] .bloom-2,
+.teacher-photo-card[data-flower="camellia"][data-bloom-count="4"] .bloom-3,
+.teacher-photo-card[data-flower="camellia"][data-bloom-count="4"] .bloom-4,
+.teacher-photo-card[data-flower="camellia"][data-bloom-count="5"] .bloom {
+  background:
+    radial-gradient(circle at 50% 52%, rgba(236, 198, 92, 0.94) 0 11%, transparent 12%),
+    radial-gradient(circle at 38% 39%, rgba(177, 63, 80, 0.78) 0 24%, transparent 25%),
+    radial-gradient(circle at 62% 40%, rgba(194, 78, 92, 0.76) 0 24%, transparent 25%),
+    radial-gradient(circle at 50% 66%, rgba(151, 47, 65, 0.7) 0 23%, transparent 24%),
+    radial-gradient(circle at 50% 25%, rgba(217, 100, 114, 0.66) 0 20%, transparent 21%),
+    rgba(255, 250, 240, 0.82);
+  border-color: rgba(130, 70, 78, 0.22);
+}
+
+.teacher-photo-card[data-flower="sun"][data-bloom-count="1"] .bloom-1,
+.teacher-photo-card[data-flower="sun"][data-bloom-count="2"] .bloom-1,
+.teacher-photo-card[data-flower="sun"][data-bloom-count="2"] .bloom-2,
+.teacher-photo-card[data-flower="sun"][data-bloom-count="3"] .bloom-1,
+.teacher-photo-card[data-flower="sun"][data-bloom-count="3"] .bloom-2,
+.teacher-photo-card[data-flower="sun"][data-bloom-count="3"] .bloom-3,
+.teacher-photo-card[data-flower="sun"][data-bloom-count="4"] .bloom-1,
+.teacher-photo-card[data-flower="sun"][data-bloom-count="4"] .bloom-2,
+.teacher-photo-card[data-flower="sun"][data-bloom-count="4"] .bloom-3,
+.teacher-photo-card[data-flower="sun"][data-bloom-count="4"] .bloom-4,
+.teacher-photo-card[data-flower="sun"][data-bloom-count="5"] .bloom {
+  background:
+    radial-gradient(circle at 50% 52%, rgba(116, 98, 77, 0.44) 0 10%, transparent 11%),
+    radial-gradient(circle at 34% 42%, rgba(237, 190, 75, 0.84) 0 23%, transparent 24%),
+    radial-gradient(circle at 66% 42%, rgba(237, 190, 75, 0.84) 0 23%, transparent 24%),
+    radial-gradient(circle at 50% 25%, rgba(247, 204, 88, 0.88) 0 23%, transparent 24%),
+    radial-gradient(circle at 43% 72%, rgba(218, 162, 52, 0.72) 0 21%, transparent 22%),
+    radial-gradient(circle at 58% 72%, rgba(218, 162, 52, 0.72) 0 21%, transparent 22%),
+    rgba(255, 250, 240, 0.82);
+  border-color: rgba(137, 110, 56, 0.22);
+}
+
+.teacher-photo-card[data-flower="sakura"][data-bloom-count="1"] .bloom-1,
+.teacher-photo-card[data-flower="sakura"][data-bloom-count="2"] .bloom-1,
+.teacher-photo-card[data-flower="sakura"][data-bloom-count="2"] .bloom-2,
+.teacher-photo-card[data-flower="sakura"][data-bloom-count="3"] .bloom-1,
+.teacher-photo-card[data-flower="sakura"][data-bloom-count="3"] .bloom-2,
+.teacher-photo-card[data-flower="sakura"][data-bloom-count="3"] .bloom-3,
+.teacher-photo-card[data-flower="sakura"][data-bloom-count="4"] .bloom-1,
+.teacher-photo-card[data-flower="sakura"][data-bloom-count="4"] .bloom-2,
+.teacher-photo-card[data-flower="sakura"][data-bloom-count="4"] .bloom-3,
+.teacher-photo-card[data-flower="sakura"][data-bloom-count="4"] .bloom-4,
+.teacher-photo-card[data-flower="sakura"][data-bloom-count="5"] .bloom {
+  background:
+    radial-gradient(circle at 50% 52%, rgba(247, 204, 88, 0.88) 0 10%, transparent 11%),
+    radial-gradient(circle at 34% 42%, rgba(227, 139, 152, 0.78) 0 22%, transparent 23%),
+    radial-gradient(circle at 66% 42%, rgba(227, 139, 152, 0.78) 0 22%, transparent 23%),
+    radial-gradient(circle at 50% 25%, rgba(239, 171, 179, 0.82) 0 23%, transparent 24%),
+    radial-gradient(circle at 43% 72%, rgba(206, 111, 130, 0.68) 0 21%, transparent 22%),
+    radial-gradient(circle at 58% 72%, rgba(206, 111, 130, 0.68) 0 21%, transparent 22%),
+    rgba(255, 250, 240, 0.82);
+  border-color: rgba(143, 83, 95, 0.2);
+}
+
+.teacher-photo-card[data-bloom-count="1"] .bloom-1::before,
+.teacher-photo-card[data-bloom-count="1"] .bloom-1::after,
+.teacher-photo-card[data-bloom-count="2"] .bloom-1::before,
+.teacher-photo-card[data-bloom-count="2"] .bloom-1::after,
+.teacher-photo-card[data-bloom-count="2"] .bloom-2::before,
+.teacher-photo-card[data-bloom-count="2"] .bloom-2::after,
+.teacher-photo-card[data-bloom-count="3"] .bloom-1::before,
+.teacher-photo-card[data-bloom-count="3"] .bloom-1::after,
+.teacher-photo-card[data-bloom-count="3"] .bloom-2::before,
+.teacher-photo-card[data-bloom-count="3"] .bloom-2::after,
+.teacher-photo-card[data-bloom-count="3"] .bloom-3::before,
+.teacher-photo-card[data-bloom-count="3"] .bloom-3::after,
+.teacher-photo-card[data-bloom-count="4"] .bloom-1::before,
+.teacher-photo-card[data-bloom-count="4"] .bloom-1::after,
+.teacher-photo-card[data-bloom-count="4"] .bloom-2::before,
+.teacher-photo-card[data-bloom-count="4"] .bloom-2::after,
+.teacher-photo-card[data-bloom-count="4"] .bloom-3::before,
+.teacher-photo-card[data-bloom-count="4"] .bloom-3::after,
+.teacher-photo-card[data-bloom-count="4"] .bloom-4::before,
+.teacher-photo-card[data-bloom-count="4"] .bloom-4::after,
+.teacher-photo-card[data-bloom-count="5"] .bloom::before,
+.teacher-photo-card[data-bloom-count="5"] .bloom::after {
+  opacity: 0;
+}
+
+.fairy-badge {
+  position: absolute;
+  right: 0;
+  bottom: 2px;
+  width: 54px;
+  height: 54px;
+  border: 2px solid rgba(63, 118, 82, 0.28);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 50% 46%, rgba(255, 250, 240, 0.96) 0 15%, transparent 16%),
+    radial-gradient(circle at 32% 34%, rgba(151, 178, 218, 0.5) 0 17%, transparent 18%),
+    radial-gradient(circle at 68% 34%, rgba(151, 178, 218, 0.5) 0 17%, transparent 18%),
+    radial-gradient(circle at 50% 65%, rgba(197, 150, 58, 0.6) 0 18%, transparent 19%),
+    rgba(255, 255, 255, 0.72);
+  box-shadow: 0 8px 18px rgba(48, 38, 26, 0.14);
+  opacity: 0;
+  transform: scale(0.72) rotate(8deg);
+}
+
+.teacher-photo-card[data-fairy="true"] .fairy-badge {
+  opacity: 1;
+  transform: scale(1) rotate(8deg);
+}
+
+.teacher-photo-card[data-fairy="true"] .fairy-badge::before,
+.teacher-photo-card[data-fairy="true"] .fairy-badge::after {
+  content: "";
+  position: absolute;
+  top: 13px;
+  width: 18px;
+  height: 24px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 50% 28%, rgba(255, 250, 240, 0.86) 0 20%, transparent 21%),
+    rgba(143, 184, 190, 0.5);
+  box-shadow: 0 0 10px rgba(247, 204, 88, 0.36);
+}
+
+.teacher-photo-card[data-fairy="true"] .fairy-badge::before {
+  left: 6px;
+  transform: rotate(-26deg);
+}
+
+.teacher-photo-card[data-fairy="true"] .fairy-badge::after {
+  right: 6px;
+  transform: rotate(26deg);
+}
+
+.teacher-stamp {
+  display: grid;
+  grid-template-columns: 58px 1fr;
+  gap: 12px;
+  align-items: center;
+  margin-top: 14px;
+  padding: 12px;
+  border: 1px dashed rgba(63, 118, 82, 0.42);
+  border-radius: 8px;
+  background:
+    linear-gradient(90deg, rgba(63, 118, 82, 0.11), transparent 42%),
+    rgba(255, 250, 240, 0.58);
+}
+
+.stamp-flower {
+  width: 58px;
+  height: 58px;
+  border: 2px solid rgba(197, 150, 58, 0.34);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(255, 250, 240, 0.95) 0 12%, transparent 13%),
+    radial-gradient(circle at 33% 42%, rgba(185, 76, 97, 0.78) 0 18%, transparent 19%),
+    radial-gradient(circle at 67% 42%, rgba(185, 76, 97, 0.78) 0 18%, transparent 19%),
+    radial-gradient(circle at 50% 25%, rgba(197, 150, 58, 0.72) 0 17%, transparent 18%),
+    radial-gradient(circle at 50% 70%, rgba(63, 118, 82, 0.5) 0 16%, transparent 17%),
+    rgba(255, 255, 255, 0.48);
+  box-shadow: inset 0 0 0 6px rgba(255, 250, 240, 0.54);
+}
+
+.teacher-stamp[data-stamp="hydrangea"] .stamp-flower {
+  background:
+    radial-gradient(circle at 50% 50%, rgba(255, 250, 240, 0.95) 0 12%, transparent 13%),
+    radial-gradient(circle at 34% 38%, rgba(109, 139, 190, 0.72) 0 18%, transparent 19%),
+    radial-gradient(circle at 65% 39%, rgba(129, 155, 204, 0.76) 0 18%, transparent 19%),
+    radial-gradient(circle at 42% 66%, rgba(151, 178, 218, 0.72) 0 17%, transparent 18%),
+    radial-gradient(circle at 66% 67%, rgba(94, 128, 178, 0.66) 0 17%, transparent 18%),
+    rgba(255, 255, 255, 0.48);
+}
+
+.teacher-stamp[data-stamp="camellia"] .stamp-flower {
+  background:
+    radial-gradient(circle at 50% 50%, rgba(255, 250, 240, 0.95) 0 12%, transparent 13%),
+    radial-gradient(circle at 38% 39%, rgba(177, 63, 80, 0.78) 0 21%, transparent 22%),
+    radial-gradient(circle at 62% 40%, rgba(194, 78, 92, 0.75) 0 21%, transparent 22%),
+    radial-gradient(circle at 50% 66%, rgba(151, 47, 65, 0.7) 0 20%, transparent 21%),
+    rgba(255, 255, 255, 0.48);
+}
+
+.fairy-stamp {
+  position: relative;
+  width: 58px;
+  height: 58px;
+  border: 2px solid rgba(63, 118, 82, 0.28);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 50% 46%, rgba(255, 250, 240, 0.96) 0 16%, transparent 17%),
+    radial-gradient(circle at 32% 34%, rgba(151, 178, 218, 0.42) 0 17%, transparent 18%),
+    radial-gradient(circle at 68% 34%, rgba(151, 178, 218, 0.42) 0 17%, transparent 18%),
+    radial-gradient(circle at 50% 65%, rgba(197, 150, 58, 0.56) 0 18%, transparent 19%),
+    rgba(255, 255, 255, 0.48);
+  box-shadow: inset 0 0 0 6px rgba(255, 250, 240, 0.5);
+}
+
+.fairy-stamp::before,
+.fairy-stamp::after {
+  content: "";
+  position: absolute;
+  top: 18px;
+  width: 18px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(143, 184, 190, 0.58);
+}
+
+.fairy-stamp::before {
+  left: 9px;
+  transform: rotate(-28deg);
+}
+
+.fairy-stamp::after {
+  right: 9px;
+  transform: rotate(28deg);
+}
+
+.teacher-stamp small,
+.teacher-stamp strong,
+.teacher-stamp em {
+  display: block;
+}
+
+.teacher-stamp small {
+  color: var(--muted);
+  font-size: 0.74rem;
+  font-weight: 900;
+}
+
+.teacher-stamp strong {
+  margin-top: 3px;
+  font-size: 1rem;
+  line-height: 1.25;
+}
+
+.teacher-stamp em {
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-style: normal;
+  font-weight: 800;
+}
+
+.teacher-detail dl {
+  display: grid;
+  gap: 0;
+  margin: 14px 0 0;
+}
+
+.teacher-detail dl > div {
+  display: grid;
+  grid-template-columns: 70px 1fr;
+  gap: 10px;
+  padding: 8px 0;
+  border-top: 1px solid rgba(75, 55, 36, 0.14);
+}
+
+.teacher-detail dl > div:last-child {
+  border-bottom: 1px solid rgba(75, 55, 36, 0.14);
+}
+
+.teacher-detail dt,
+.teacher-detail dd {
+  font-size: 0.86rem;
+}
+
+.teacher-detail dd {
+  font-weight: 800;
+  line-height: 1.45;
+}
+
+.stamp-progress {
+  margin-top: 18px;
+  padding: 12px;
+  border: 1px solid rgba(75, 55, 36, 0.14);
+  border-radius: 8px;
+  background: rgba(255, 250, 240, 0.58);
+}
+
+.stamp-progress-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.stamp-progress-header h3 {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.stamp-progress-header span {
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-weight: 900;
+}
+
+.stamp-progress-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.progress-card.teacher-photo-card {
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 7px;
+  overflow: hidden;
+}
+
+.progress-count,
+.progress-note {
+  position: relative;
+  z-index: 3;
+  margin: 0;
+  text-align: center;
+  font-weight: 900;
+}
+
+.progress-count {
+  color: var(--green);
+  font-size: 0.82rem;
+}
+
+.progress-note {
+  margin-top: 5px;
+  color: var(--muted);
+  font-size: 0.68rem;
+  line-height: 1.25;
+}
+
+.progress-card .progress-photo {
+  aspect-ratio: 1 / 1.18;
+  margin-top: 5px;
+  border-color: rgba(197, 150, 58, 0.16);
+  background:
+    radial-gradient(circle at 41% 12%, rgba(247, 204, 88, 0.36) 0 1.6%, transparent 1.8%),
+    radial-gradient(circle at 62% 18%, rgba(255, 250, 240, 0.82) 0 1.5%, transparent 1.7%),
+    radial-gradient(circle at 24% 72%, rgba(63, 118, 82, 0.12) 0 13%, transparent 14%),
+    radial-gradient(circle at 78% 76%, rgba(197, 150, 58, 0.12) 0 12%, transparent 13%),
+    linear-gradient(180deg, rgba(255, 250, 240, 0.94), rgba(225, 238, 225, 0.62));
+}
+
+.progress-card .progress-photo::before {
+  left: 50%;
+  top: 18%;
+  bottom: auto;
+  width: 52%;
+  height: 42%;
+  border-radius: 50% 50% 44% 44%;
+  background: rgba(255, 250, 240, 0.42);
+  box-shadow: inset 0 0 0 4px rgba(255, 250, 240, 0.26);
+  transform: translateX(-50%);
+}
+
+.progress-card .progress-photo span {
+  width: 34px;
+  height: 34px;
+  color: rgba(63, 118, 82, 0.88);
+  font-size: 1rem;
+}
+
+.progress-card .bloom {
+  width: 32px;
+  height: 32px;
+  box-shadow: 0 4px 10px rgba(48, 38, 26, 0.09), 0 0 0 2px rgba(255, 250, 240, 0.6);
+}
+
+.progress-card .bloom::before {
+  width: 7px;
+  height: 7px;
+}
+
+.progress-card .bloom::after {
+  width: 5px;
+  height: 5px;
+}
+
+.progress-card .bloom-1 {
+  left: 5%;
+  top: 46%;
+}
+
+.progress-card .bloom-2 {
+  left: 14%;
+  top: 68%;
+}
+
+.progress-card .bloom-3 {
+  left: 38%;
+  top: 75%;
+}
+
+.progress-card .bloom-4 {
+  right: 16%;
+  top: 71%;
+}
+
+.progress-card .bloom-5 {
+  right: 5%;
+  top: 52%;
+}
+
+.progress-card .fairy-badge {
+  right: 5px;
+  bottom: 26px;
+  width: 34px;
+  height: 34px;
+}
+
+.progress-card[data-bloom-count="5"] {
+  border-color: rgba(197, 150, 58, 0.34);
+  background:
+    linear-gradient(180deg, rgba(255, 250, 240, 0.8), rgba(247, 204, 88, 0.12)),
+    rgba(255, 255, 255, 0.34);
+}
+
+.progress-card[data-stage="sky"] {
+  border-color: rgba(86, 147, 179, 0.36);
+  background:
+    radial-gradient(circle at 18% 22%, rgba(255, 250, 240, 0.82) 0 12%, transparent 13%),
+    radial-gradient(circle at 82% 18%, rgba(255, 250, 240, 0.66) 0 10%, transparent 11%),
+    linear-gradient(180deg, rgba(184, 220, 232, 0.9), rgba(226, 242, 238, 0.72) 58%, rgba(255, 250, 240, 0.7)),
+    rgba(184, 220, 232, 0.72);
+}
+
+.progress-card[data-stage="sky"] .progress-photo {
+  background:
+    radial-gradient(circle at 28% 24%, rgba(255, 250, 240, 0.86) 0 11%, transparent 12%),
+    radial-gradient(circle at 74% 30%, rgba(255, 250, 240, 0.68) 0 9%, transparent 10%),
+    radial-gradient(circle at 48% 74%, rgba(63, 118, 82, 0.12) 0 18%, transparent 19%),
+    linear-gradient(180deg, rgba(176, 218, 234, 0.86), rgba(223, 241, 232, 0.72));
+  box-shadow: inset 0 0 24px rgba(255, 250, 240, 0.32), inset 0 -18px 24px rgba(63, 118, 82, 0.08);
+}
+
+.celebration-label {
+  position: absolute;
+  z-index: 4;
+  left: 50%;
+  top: 30px;
+  padding: 3px 8px;
+  border: 1px solid rgba(197, 150, 58, 0.36);
+  border-radius: 999px;
+  background: rgba(255, 250, 240, 0.88);
+  color: #8f5b2c;
+  font-size: 0.66rem;
+  font-weight: 900;
+  white-space: nowrap;
+  box-shadow: 0 4px 10px rgba(48, 38, 26, 0.1);
+  transform: translateX(-50%) rotate(-2deg);
+}
+
+.progress-card[data-stage="sky"] .celebration-label {
+  border-color: rgba(86, 147, 179, 0.34);
+  color: #35667a;
+  box-shadow: 0 5px 12px rgba(42, 92, 116, 0.12);
+}
+
+.petal-shower {
+  position: absolute;
+  inset: 26px 8px 38px;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.petal-shower span {
+  position: absolute;
+  width: 8px;
+  height: 12px;
+  border-radius: 70% 30% 70% 30%;
+  background: rgba(227, 139, 152, 0.72);
+  box-shadow: 0 0 0 2px rgba(255, 250, 240, 0.34);
+}
+
+.petal-shower span:nth-child(1) {
+  left: 16%;
+  top: 10%;
+  transform: rotate(-28deg);
+}
+
+.petal-shower span:nth-child(2) {
+  right: 18%;
+  top: 18%;
+  background: rgba(239, 171, 179, 0.7);
+  transform: rotate(36deg);
+}
+
+.petal-shower span:nth-child(3) {
+  left: 9%;
+  top: 48%;
+  transform: rotate(18deg);
+}
+
+.petal-shower span:nth-child(4) {
+  right: 10%;
+  top: 52%;
+  background: rgba(239, 171, 179, 0.62);
+  transform: rotate(-18deg);
+}
+
+.petal-shower span:nth-child(5) {
+  left: 36%;
+  top: 5%;
+  width: 6px;
+  height: 9px;
+  transform: rotate(52deg);
+}
+
+.petal-shower span:nth-child(6) {
+  right: 36%;
+  bottom: 4%;
+  width: 6px;
+  height: 9px;
+  background: rgba(227, 139, 152, 0.58);
+  transform: rotate(-44deg);
+}
+
+.progress-card[data-bloom-count="5"] .fairy-badge {
+  right: 50%;
+  bottom: 32px;
+  width: 50px;
+  height: 50px;
+  border-color: rgba(197, 150, 58, 0.4);
+  box-shadow: 0 8px 20px rgba(48, 38, 26, 0.16), 0 0 18px rgba(247, 204, 88, 0.42);
+  transform: translateX(50%) rotate(8deg) scale(1.04);
+}
+
+.progress-card[data-stage="sky"] .fairy-badge {
+  border-color: rgba(86, 147, 179, 0.36);
+  box-shadow: 0 8px 20px rgba(42, 92, 116, 0.18), 0 0 20px rgba(255, 250, 240, 0.72);
+}
+
+.progress-card[data-stage="sky"] .fairy-badge::before,
+.progress-card[data-stage="sky"] .fairy-badge::after {
+  background:
+    radial-gradient(circle at 50% 28%, rgba(255, 250, 240, 0.95) 0 20%, transparent 21%),
+    rgba(176, 218, 234, 0.76);
+  box-shadow: 0 0 14px rgba(255, 250, 240, 0.72);
+}
+
+.progress-card[data-bloom-count="5"] .fairy-badge::before,
+.progress-card[data-bloom-count="5"] .fairy-badge::after {
+  top: 12px;
+  width: 18px;
+  height: 24px;
+  background:
+    radial-gradient(circle at 50% 28%, rgba(255, 250, 240, 0.9) 0 20%, transparent 21%),
+    rgba(143, 184, 190, 0.62);
+}
+
+.progress-card[data-bloom-count="5"] .progress-photo {
+  box-shadow: inset 0 0 20px rgba(247, 204, 88, 0.16);
+}
+
+.progress-card[data-bloom-count="5"] .progress-note {
+  color: #8f5b2c;
+}
+
+.progress-card[data-stage="sky"] .progress-note,
+.progress-card[data-stage="sky"] .progress-count {
+  color: #35667a;
+}
+
+.info-dock.is-detail-open .stamp-progress {
+  display: none;
+}
+
+.info-dock.is-detail-open .teacher-detail {
+  padding-top: 10px;
+}
+
+.info-dock.is-detail-open .teacher-photo-card {
+  width: min(100%, 430px);
+  margin-top: 6px;
+  padding: 9px;
+}
+
+.info-dock.is-detail-open .teacher-photo {
+  aspect-ratio: auto;
+  height: min(58svh, 500px);
+  min-height: 390px;
+}
+
+.info-dock.is-detail-open .bloom {
+  width: 34px;
+  height: 34px;
+}
+
+.info-dock.is-detail-open .fairy-badge {
+  width: 58px;
+  height: 58px;
+  right: -1px;
+  bottom: 8px;
+}
+
+.info-dock.is-detail-open .teacher-detail dl {
+  margin-top: 10px;
+}
+
+.rank-list {
+  position: relative;
+  display: grid;
+  gap: 10px;
+  margin: 22px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.rank-list::before {
+  content: "";
+  position: absolute;
+  top: 16px;
+  bottom: 16px;
+  left: 10px;
+  width: 2px;
+  background: rgba(75, 55, 36, 0.14);
+}
+
+.rank-item {
+  position: relative;
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  min-height: 34px;
+  color: rgba(47, 42, 37, 0.56);
+}
+
+.rank-mark {
+  width: 22px;
+  height: 22px;
+  border: 2px solid rgba(75, 55, 36, 0.18);
+  border-radius: 50%;
+  background: var(--paper);
+  z-index: 1;
+}
+
+.rank-title {
+  font-size: 1rem;
+  font-weight: 900;
+}
+
+.rank-note {
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.5);
+  color: var(--muted);
+  font-size: 0.74rem;
+  font-weight: 800;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.rank-item.is-complete,
+.rank-item.is-current {
+  color: var(--ink);
+}
+
+.rank-item.is-complete .rank-mark {
+  border-color: var(--green);
+  background: var(--green);
+}
+
+.rank-item.is-current .rank-mark {
+  border-color: var(--gold);
+  background: var(--gold);
+  box-shadow: 0 0 0 5px rgba(197, 150, 58, 0.18);
+}
+
+.rank-item.is-current .rank-note {
+  color: #6d4f11;
+  background: rgba(197, 150, 58, 0.18);
+}
+
+@media (max-width: 680px) {
+  .record-book {
+    min-height: 100svh;
+    padding: 14px;
+  }
+
+  .map-hero img {
+    object-fit: cover;
+    object-position: 88% 88%;
+    transform: scale(1.04);
+    transform-origin: 88% 88%;
+  }
+
+  .map-hero::before {
+    opacity: 0;
+  }
+
+  .journey-title {
+    max-width: 90vw;
+    padding: 11px 14px 13px;
+  }
+
+  .journey-title p {
+    font-size: clamp(1.24rem, 6.2vw, 1.58rem);
+  }
+
+  .journey-title h1 {
+    margin-top: 7px;
+    font-size: 0.92rem;
+  }
+
+  .guidebook-button {
+    left: 20px;
+    top: 130px;
+    min-height: 31px;
+    padding: 6px 10px;
+    font-size: 0.72rem;
+  }
+
+  .info-dock {
+    justify-self: center;
+    width: min(100%, 520px);
+    margin: 0 0 6px;
+    transform: rotate(-0.5deg);
+  }
+
+  .info-dock.is-collapsed {
+    transform: translateY(calc(100% - 62px)) rotate(-0.5deg);
+  }
+
+  .info-dock.is-detail-open {
+    align-self: stretch;
+    width: min(100%, 520px);
+    margin: 0;
+    transform: none;
+  }
+
+  .info-tabs {
+    grid-template-columns: 1.12fr 1.02fr 0.72fr 0.68fr;
+    gap: 4px;
+    padding: 5px;
+  }
+
+  .info-tab {
+    min-height: 42px;
+    padding: 0 3px;
+    font-size: clamp(0.62rem, 2.65vw, 0.76rem);
+  }
+
+  .info-tab small {
+    font-size: 0.58rem;
+  }
+
+  .info-panel {
+    min-height: 410px;
+    padding: 24px 20px;
+  }
+
+  .info-dock.is-detail-open .info-panel {
+    min-height: calc(100svh - 92px);
+    max-height: calc(100svh - 92px);
+    overflow: auto;
+    padding: 18px 18px 22px;
+  }
+
+  .info-dock.is-detail-open .info-tabs {
+    display: none;
+  }
+
+  .profile-list > div {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+
+  .admin-check-list > div {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+
+  .adventurer-card {
+    padding: 16px 14px 14px;
+  }
+
+  .adventurer-card::before {
+    inset: 9px;
+  }
+
+  .adventurer-name-block {
+    grid-template-columns: 50px 1fr;
+  }
+
+  .adventurer-seal {
+    width: 50px;
+    height: 50px;
+    font-size: 1.16rem;
+  }
+
+  .current-title strong {
+    font-size: 1.08rem;
+  }
+
+  .flower-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
+
+  .teacher-layout {
+    display: block;
+  }
+
+  .participation-stamp {
+    grid-template-columns: 40px 1fr;
+  }
+
+  .participation-stamp .stamp-flower {
+    width: 40px;
+    height: 40px;
+  }
+
+  .stamp-progress-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .teacher-detail dl > div {
+    grid-template-columns: 1fr;
+    gap: 3px;
+  }
+
+  .teacher-detail {
+    min-height: calc(100svh - 132px);
+    padding: 12px 14px 14px;
+  }
+
+  .teacher-photo-card {
+    width: min(100%, 420px);
+    padding: 10px;
+    margin-top: 6px;
+  }
+
+  .teacher-photo {
+    aspect-ratio: 3 / 4.25;
+  }
+
+  .teacher-detail h3 {
+    font-size: clamp(1.45rem, 7vw, 2.2rem);
+  }
+
+  .back-to-list {
+    margin-bottom: 8px;
+  }
+
+  .info-dock.is-detail-open .teacher-detail {
+    min-height: calc(100svh - 124px);
+    padding: 10px 12px 14px;
+  }
+
+  .info-dock.is-detail-open .detail-label {
+    font-size: 0.72rem;
+  }
+
+  .info-dock.is-detail-open .teacher-detail h3 {
+    margin-top: 3px;
+    font-size: clamp(1.42rem, 6.4vw, 2rem);
+  }
+
+  .info-dock.is-detail-open .teacher-photo-card {
+    width: 100%;
+    max-width: 430px;
+    margin-top: 6px;
+    padding: 9px;
+  }
+
+  .info-dock.is-detail-open .teacher-photo {
+    aspect-ratio: auto;
+    height: min(54svh, 470px);
+    min-height: 360px;
+  }
+
+  .info-dock.is-detail-open .bloom {
+    width: 48px;
+    height: 48px;
+  }
+
+  .info-dock.is-detail-open .bloom-1 {
+    left: 7%;
+    top: 52%;
+  }
+
+  .info-dock.is-detail-open .bloom-2 {
+    left: 13%;
+    top: 68%;
+  }
+
+  .info-dock.is-detail-open .bloom-3 {
+    left: 33%;
+    right: auto;
+    top: 75%;
+    bottom: auto;
+  }
+
+  .info-dock.is-detail-open .bloom-4 {
+    left: auto;
+    top: 75%;
+    right: 22%;
+    bottom: auto;
+  }
+
+  .info-dock.is-detail-open .bloom-5 {
+    right: 7%;
+    top: 62%;
+    bottom: auto;
+  }
+
+  .info-dock.is-detail-open .bloom-6 {
+    left: 18%;
+    bottom: 15%;
+  }
+
+  .info-dock.is-detail-open .bloom-7 {
+    left: 50%;
+    bottom: 12%;
+  }
+
+  .info-dock.is-detail-open .bloom-8 {
+    right: 18%;
+    bottom: 15%;
+  }
+
+  .info-dock.is-detail-open .fairy-badge {
+    width: 58px;
+    height: 58px;
+    right: -1px;
+    bottom: 8px;
+  }
+
+  .info-dock.is-detail-open .teacher-detail dl {
+    margin-top: 10px;
+  }
+
+  .rank-item {
+    grid-template-columns: 22px 1fr;
+  }
+
+  .rank-note {
+    grid-column: 2;
+    justify-self: start;
+  }
+}
+
+.teacher-card-heading {
+  display: none;
+}
+
+.info-dock.is-detail-open .teacher-detail > h3,
+.info-dock.is-detail-open .detail-label {
+  display: none;
+}
+
+.info-dock.is-detail-open .teacher-photo-card {
+  width: min(100%, 430px);
+  min-height: 760px;
+  overflow: visible;
+  padding: 18px 18px 232px;
+  border: 2px solid rgba(123, 138, 99, 0.58);
+  border-radius: 20px;
+  background:
+    radial-gradient(ellipse at 12% 72%, rgba(150, 174, 127, 0.18), transparent 28%),
+    radial-gradient(ellipse at 88% 40%, rgba(229, 168, 167, 0.16), transparent 28%),
+    linear-gradient(180deg, rgba(255, 250, 240, 0.92), rgba(248, 240, 217, 0.92));
+  box-shadow:
+    inset 0 0 0 8px rgba(255, 250, 240, 0.4),
+    0 18px 34px rgba(48, 38, 26, 0.14);
+}
+
+.info-dock.is-detail-open .teacher-photo-card::before {
+  content: "";
+  position: absolute;
+  inset: 8px;
+  border: 1px solid rgba(211, 195, 148, 0.82);
+  border-radius: 16px;
+  pointer-events: none;
+}
+
+.info-dock.is-detail-open .teacher-card-heading {
+  position: relative;
+  z-index: 5;
+  display: grid;
+  justify-items: center;
+  gap: 3px;
+  margin: 4px 0 8px;
+  color: var(--ink);
+  text-align: center;
+}
+
+.info-dock.is-detail-open .teacher-card-heading strong {
+  font-family: "Yu Mincho", "Hiragino Mincho ProN", serif;
+  font-size: clamp(2rem, 8vw, 3.1rem);
+  line-height: 1.05;
+  letter-spacing: 0;
+}
+
+.info-dock.is-detail-open .teacher-card-heading span {
+  position: relative;
+  color: var(--ink);
+  font-size: 1.02rem;
+  font-weight: 900;
+}
+
+.info-dock.is-detail-open .teacher-card-heading span::before,
+.info-dock.is-detail-open .teacher-card-heading span::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 42px;
+  height: 2px;
+  background: var(--green);
+}
+
+.info-dock.is-detail-open .teacher-card-heading span::before {
+  right: calc(100% + 12px);
+}
+
+.info-dock.is-detail-open .teacher-card-heading span::after {
+  left: calc(100% + 12px);
+}
+
+.info-dock.is-detail-open .teacher-photo-card .teacher-photo {
+  position: relative;
+  z-index: 1;
+  width: 80%;
+  height: 390px;
+  min-height: 0;
+  margin: 8px auto 0;
+  border: 4px solid rgba(185, 164, 99, 0.72);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 50% 28%, rgba(255, 250, 240, 0.9), transparent 18%),
+    rgba(237, 240, 207, 0.86);
+  box-shadow: inset 0 0 34px rgba(255, 250, 240, 0.46);
+}
+
+.info-dock.is-detail-open .card-stamp-count {
+  position: absolute;
+  z-index: 6;
+  left: 48px;
+  right: 48px;
+  bottom: 112px;
+  display: grid;
+  justify-items: center;
+  gap: 3px;
+  min-height: 76px;
+  padding: 12px 14px 10px;
+  border: 1px solid rgba(216, 202, 160, 0.9);
+  border-radius: 22px;
+  background: rgba(255, 250, 240, 0.92);
+  box-shadow: 0 8px 18px rgba(48, 38, 26, 0.1);
+}
+
+.info-dock.is-detail-open .card-stamp-count small {
+  color: var(--ink);
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
+.info-dock.is-detail-open .card-stamp-count strong {
+  color: var(--ink);
+  font-size: clamp(2.25rem, 10vw, 3.45rem);
+  line-height: 1;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+}
+
+.info-dock.is-detail-open .card-stamp-count strong span {
+  color: #d96a75;
+}
+
+.info-dock.is-detail-open .teacher-photo-card .teacher-photo::before {
+  display: none;
+}
+
+.info-dock.is-detail-open .teacher-photo-card .teacher-photo::after {
+  top: 6%;
+  width: 88%;
+  height: 88%;
+  border: 0;
+  border-radius: 50%;
+  background-size: 112% auto;
+  box-shadow: none;
+}
+
+.info-dock.is-detail-open .teacher-photo-card .bloom {
+  z-index: 4;
+  width: 94px;
+  height: 94px;
+  border: 0;
+  border-radius: 0;
+  opacity: 0.34;
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+  box-shadow: none;
+  filter: saturate(0.72) drop-shadow(5px 8px 7px rgba(48, 38, 26, 0.2));
+}
+
+.info-dock.is-detail-open .teacher-photo-card .bloom::before,
+.info-dock.is-detail-open .teacher-photo-card .bloom::after {
+  display: none;
+}
+
+.info-dock.is-detail-open .teacher-photo-card[data-flower="cosmos"] .bloom {
+  background-image: url("assets/cosmos-stamp-stage-05-v2.png");
+}
+
+.info-dock.is-detail-open .teacher-photo-card[data-flower="camellia"] .bloom {
+  background-image: url("assets/camellia-stamp-stage-05-list.png");
+}
+
+.info-dock.is-detail-open .teacher-photo-card[data-flower="iris"] .bloom {
+  background-image: url("assets/iris-stamp-stage-05-list.png");
+}
+
+.info-dock.is-detail-open .teacher-photo-card[data-flower="sunflower"] .bloom,
+.info-dock.is-detail-open .teacher-photo-card[data-flower="sun"] .bloom {
+  background-image: url("assets/sunflower-stamp-stage-05-list.png");
+}
+
+.info-dock.is-detail-open .teacher-photo-card[data-flower="hydrangea"] .bloom {
+  background-image: url("assets/hydrangea-stamp-stage-05-list.png");
+}
+
+.info-dock.is-detail-open .teacher-photo-card[data-flower="sakura"] .bloom {
+  background-image: url("assets/sakura-stamp-stage-05-list.png");
+}
+
+.info-dock.is-detail-open .teacher-photo-card[data-bloom-count="1"] .bloom-1,
+.info-dock.is-detail-open .teacher-photo-card[data-bloom-count="2"] .bloom-1,
+.info-dock.is-detail-open .teacher-photo-card[data-bloom-count="2"] .bloom-2,
+.info-dock.is-detail-open .teacher-photo-card[data-bloom-count="3"] .bloom-1,
+.info-dock.is-detail-open .teacher-photo-card[data-bloom-count="3"] .bloom-2,
+.info-dock.is-detail-open .teacher-photo-card[data-bloom-count="3"] .bloom-3,
+.info-dock.is-detail-open .teacher-photo-card[data-bloom-count="4"] .bloom-1,
+.info-dock.is-detail-open .teacher-photo-card[data-bloom-count="4"] .bloom-2,
+.info-dock.is-detail-open .teacher-photo-card[data-bloom-count="4"] .bloom-3,
+.info-dock.is-detail-open .teacher-photo-card[data-bloom-count="4"] .bloom-4,
+.info-dock.is-detail-open .teacher-photo-card[data-bloom-count="5"] .bloom-1,
+.info-dock.is-detail-open .teacher-photo-card[data-bloom-count="5"] .bloom-2,
+.info-dock.is-detail-open .teacher-photo-card[data-bloom-count="5"] .bloom-3,
+.info-dock.is-detail-open .teacher-photo-card[data-bloom-count="5"] .bloom-4,
+.info-dock.is-detail-open .teacher-photo-card[data-bloom-count="5"] .bloom-5 {
+  opacity: 1;
+  filter: drop-shadow(6px 10px 8px rgba(48, 38, 26, 0.28));
+}
+
+.info-dock.is-detail-open .teacher-photo-card .bloom-1 {
+  left: 3%;
+  top: 42%;
+}
+
+.info-dock.is-detail-open .teacher-photo-card .bloom-2 {
+  left: 4%;
+  top: 57%;
+}
+
+.info-dock.is-detail-open .teacher-photo-card .bloom-3 {
+  left: 30%;
+  top: 68%;
+}
+
+.info-dock.is-detail-open .teacher-photo-card .bloom-4 {
+  right: 22%;
+  top: 68%;
+  left: auto;
+}
+
+.info-dock.is-detail-open .teacher-photo-card .bloom-5 {
+  right: 2%;
+  top: 56%;
+}
+
+.info-dock.is-detail-open .teacher-photo-card .bloom-6,
+.info-dock.is-detail-open .teacher-photo-card .bloom-7,
+.info-dock.is-detail-open .teacher-photo-card .bloom-8 {
+  display: none;
+}
+
+.info-dock.is-detail-open .teacher-photo-card .fairy-badge {
+  display: none;
+}
+
+.info-dock.is-detail-open .teacher-photo-card .detail-actions {
+  position: absolute;
+  z-index: 6;
+  left: 18px;
+  right: 18px;
+  bottom: 14px;
+  padding: 9px 10px 10px;
+  border: 1px solid rgba(216, 202, 160, 0.86);
+  border-radius: 22px;
+  background: rgba(255, 250, 240, 0.9);
+  box-shadow: 0 8px 18px rgba(48, 38, 26, 0.1);
+}
+
+.info-dock.is-detail-open .teacher-photo-card .stamp-flow-steps {
+  display: none;
+}
+
+.info-dock.is-detail-open .teacher-photo-card .stamp-confirm-card {
+  display: none;
+}
+
+.info-dock.is-detail-open .teacher-photo-card .complete-teacher {
+  min-height: 44px;
+}
+
+.info-dock.is-detail-open .teacher-photo-card .detail-actions p {
+  display: none;
+}
+
+.info-dock.is-detail-open .teacher-detail dl {
+  display: none;
+}
+
+.info-dock.is-detail-open .fairy-achievement {
+  z-index: 12;
+  top: 128px;
+  bottom: 210px;
+  min-height: auto;
+  overflow: visible;
+  width: auto;
+}
+
+.info-dock.is-detail-open .fairy-achievement .achievement-ribbon {
+  z-index: 14;
+  max-width: 92%;
+  margin-top: 0;
+  transform: translateY(-10px);
+}
+
+.info-dock.is-detail-open .fairy-achievement .achievement-fairy {
+  z-index: 15;
+  right: 4px;
+  top: 245px;
+  width: min(150px, 38vw);
+}
+
+.info-dock.is-detail-open .fairy-achievement .achievement-copy {
+  display: none;
+}
+
+.info-dock.is-detail-open .fairy-achievement .achievement-petal-field {
+  z-index: 13;
+  inset: -20px -12px -150px;
+}
+
+/* Achievement card repair: keep the teacher visible and move the celebration away from the face. */
+.info-dock.is-detail-open .teacher-photo-card {
+  display: grid;
+  grid-template-rows: auto auto auto;
+  align-items: start;
+  gap: 10px;
+  min-height: 720px;
+  padding: 16px 16px 168px;
+  overflow: hidden;
+}
+
+.info-dock.is-detail-open .teacher-card-heading {
+  position: relative;
+  z-index: 22;
+  display: grid;
+  margin: 0 0 2px;
+}
+
+.info-dock.is-detail-open .teacher-card-heading strong {
+  font-size: clamp(1.8rem, 6vw, 2.65rem);
+}
+
+.info-dock.is-detail-open .teacher-photo-card .teacher-photo {
+  z-index: 8;
+  width: min(72%, 290px);
+  height: auto;
+  aspect-ratio: 3 / 4;
+  margin: 0 auto;
+  border-radius: 48% 48% 42% 42%;
+}
+
+.info-dock.is-detail-open .teacher-photo-card .teacher-photo::after {
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  background-size: cover;
+  background-position: center top;
+}
+
+.info-dock.is-detail-open .teacher-photo-card .bloom {
+  z-index: 12;
+  width: clamp(62px, 17vw, 86px);
+  height: clamp(62px, 17vw, 86px);
+}
+
+.info-dock.is-detail-open .teacher-photo-card .bloom-1 {
+  left: 2%;
+  top: 46%;
+}
+
+.info-dock.is-detail-open .teacher-photo-card .bloom-2 {
+  left: 6%;
+  top: 59%;
+}
+
+.info-dock.is-detail-open .teacher-photo-card .bloom-3 {
+  left: 29%;
+  top: 66%;
+}
+
+.info-dock.is-detail-open .teacher-photo-card .bloom-4 {
+  right: 28%;
+  top: 66%;
+}
+
+.info-dock.is-detail-open .teacher-photo-card .bloom-5 {
+  right: 4%;
+  top: 56%;
+}
+
+.info-dock.is-detail-open .card-stamp-count {
+  left: 42px;
+  right: 42px;
+  bottom: 76px;
+  z-index: 18;
+}
+
+.info-dock.is-detail-open .teacher-photo-card .detail-actions {
+  bottom: 12px;
+  z-index: 20;
+}
+
+.info-dock.is-detail-open .fairy-achievement {
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.info-dock.is-detail-open .fairy-achievement .achievement-ribbon {
+  position: absolute;
+  left: 50%;
+  top: auto;
+  bottom: 174px;
+  z-index: 34;
+  width: min(86%, 320px);
+  margin: 0;
+  padding: 10px 18px;
+  transform: translateX(-50%);
+  font-size: clamp(1.05rem, 4.5vw, 1.35rem);
+  line-height: 1.25;
+}
+
+.info-dock.is-detail-open .fairy-achievement .achievement-fairy {
+  position: absolute;
+  top: auto;
+  right: 16px;
+  bottom: 210px;
+  z-index: 36;
+  width: min(128px, 34vw);
+  filter: drop-shadow(0 10px 12px rgba(48, 38, 26, 0.26));
+}
+
+.info-dock.is-detail-open .fairy-achievement .achievement-petal-field {
+  z-index: 31;
+  inset: 70px -14px 150px;
+}
+
+.info-dock.is-detail-open .fairy-achievement .achievement-petal-field span {
+  opacity: 0.76;
+}
+
+@media (max-width: 460px) {
+  .info-dock.is-detail-open .teacher-photo-card {
+    min-height: 680px;
+    padding-bottom: 158px;
+  }
+
+  .info-dock.is-detail-open .teacher-photo-card .teacher-photo {
+    width: min(70%, 248px);
+  }
+
+  .info-dock.is-detail-open .card-stamp-count {
+    left: 28px;
+    right: 28px;
+  }
+
+  .info-dock.is-detail-open .fairy-achievement .achievement-ribbon {
+    bottom: 166px;
+  }
+
+  .info-dock.is-detail-open .fairy-achievement .achievement-fairy {
+    right: 8px;
+    bottom: 204px;
+    width: min(108px, 31vw);
+  }
+}
+
+/* Final modal version: keep the teacher card plain and move the 5/5 celebration outside it. */
+.info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) {
+  display: grid;
+  gap: 12px;
+  width: min(100%, 360px);
+  min-height: 0;
+  padding: 16px;
+  overflow: hidden;
+}
+
+.info-dock.is-detail-open .teacher-detail .teacher-card-heading {
+  display: grid;
+  justify-items: center;
+  margin: 0;
+}
+
+.info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) .teacher-photo {
+  position: relative;
+  z-index: 1;
+  width: min(72%, 230px);
+  height: auto;
+  aspect-ratio: 3 / 4;
+  margin: 0 auto;
+  border-radius: 16px;
+}
+
+.info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) .teacher-photo::after {
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  background-size: cover;
+  background-position: center top;
+}
+
+.info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) .bloom-ring,
+.info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) .fairy-badge,
+.info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) .fairy-achievement {
+  display: none !important;
+}
+
+.info-dock.is-detail-open .teacher-detail .card-stamp-count {
+  position: static;
+  z-index: 1;
+  margin: 0;
+}
+
+.info-dock.is-detail-open .teacher-detail .teacher-photo-card .detail-actions {
+  position: static;
+  z-index: 1;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.achievement-modal[hidden] {
+  display: none;
+}
+
+.achievement-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+}
+
+.achievement-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(43, 35, 24, 0.48);
+  backdrop-filter: blur(3px);
+}
+
+.achievement-modal-card {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  width: min(100%, 390px);
+  min-height: 540px;
+  overflow: hidden;
+  padding: 28px 24px 24px;
+  border: 2px solid rgba(184, 151, 73, 0.72);
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at 18% 18%, rgba(255, 220, 160, 0.34), transparent 26%),
+    radial-gradient(circle at 82% 30%, rgba(249, 175, 189, 0.26), transparent 28%),
+    linear-gradient(180deg, rgba(255, 253, 243, 0.98), rgba(249, 235, 202, 0.98));
+  box-shadow: 0 28px 60px rgba(35, 27, 18, 0.32);
+  text-align: center;
+}
+
+.achievement-modal-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 4;
+  width: 34px;
+  height: 34px;
+  border: 1px solid rgba(126, 100, 48, 0.46);
+  border-radius: 50%;
+  background: rgba(255, 250, 240, 0.86);
+  color: var(--ink);
+  font-size: 1.35rem;
+  line-height: 1;
+}
+
+.achievement-modal-kicker {
+  position: relative;
+  z-index: 2;
+  margin: 0;
+  padding: 7px 18px;
+  border: 1px solid rgba(214, 165, 61, 0.82);
+  border-radius: 999px;
+  background: rgba(255, 248, 229, 0.9);
+  color: #b07a1d;
+  font-weight: 900;
+}
+
+.achievement-modal h2 {
+  position: relative;
+  z-index: 2;
+  margin: 0;
+  color: var(--ink);
+  font-family: "Yu Mincho", "Hiragino Mincho ProN", serif;
+  font-size: clamp(1.65rem, 7vw, 2.35rem);
+  line-height: 1.18;
+}
+
+.achievement-modal-teacher {
+  position: relative;
+  z-index: 2;
+  margin: 0;
+  color: var(--green);
+  font-weight: 900;
+}
+
+.achievement-modal-fairy {
+  position: relative;
+  z-index: 2;
+  width: min(58vw, 210px);
+  max-height: 250px;
+  object-fit: contain;
+  filter: drop-shadow(0 16px 16px rgba(48, 38, 26, 0.26));
+}
+
+.achievement-modal-copy {
+  position: relative;
+  z-index: 2;
+  max-width: 18em;
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+  line-height: 1.7;
+}
+
+.achievement-modal-profile {
+  position: relative;
+  z-index: 2;
+  width: min(100%, 280px);
+  min-height: 48px;
+  border: 1px solid rgba(184, 126, 34, 0.82);
+  border-radius: 14px;
+  background: linear-gradient(180deg, #fff8e6, #f3dfb5);
+  color: var(--ink);
+  font-weight: 900;
+  box-shadow: 0 10px 20px rgba(48, 38, 26, 0.14);
+}
+
+.achievement-modal-petals {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.achievement-modal-petals span {
+  position: absolute;
+  top: -34px;
+  width: 16px;
+  height: 24px;
+  border-radius: 60% 40% 62% 38%;
+  background: linear-gradient(135deg, #ffd3df, #fff4b6);
+  box-shadow: 0 0 0 1px rgba(221, 116, 137, 0.28);
+  animation: modalPetalFall 4.6s linear infinite;
+}
+
+.achievement-modal-petals span:nth-child(1) { left: 8%; animation-delay: -0.2s; }
+.achievement-modal-petals span:nth-child(2) { left: 18%; animation-delay: -2.1s; }
+.achievement-modal-petals span:nth-child(3) { left: 27%; animation-delay: -1.2s; }
+.achievement-modal-petals span:nth-child(4) { left: 36%; animation-delay: -3.4s; }
+.achievement-modal-petals span:nth-child(5) { left: 46%; animation-delay: -0.8s; }
+.achievement-modal-petals span:nth-child(6) { left: 56%; animation-delay: -2.8s; }
+.achievement-modal-petals span:nth-child(7) { left: 66%; animation-delay: -1.7s; }
+.achievement-modal-petals span:nth-child(8) { left: 76%; animation-delay: -3.8s; }
+.achievement-modal-petals span:nth-child(9) { left: 86%; animation-delay: -0.5s; }
+.achievement-modal-petals span:nth-child(10) { left: 14%; animation-delay: -4.1s; }
+.achievement-modal-petals span:nth-child(11) { left: 52%; animation-delay: -3.1s; }
+.achievement-modal-petals span:nth-child(12) { left: 91%; animation-delay: -2.4s; }
+
+@keyframes modalPetalFall {
+  0% {
+    transform: translate3d(0, -30px, 0) rotate(0deg);
+    opacity: 0;
+  }
+
+  12% {
+    opacity: 0.95;
+  }
+
+  100% {
+    transform: translate3d(26px, 600px, 0) rotate(260deg);
+    opacity: 0;
+  }
+}
+/* Teacher card restore final override: achievement effects stay outside the card. */
+.info-dock.is-detail-open .teacher-detail > h3,
+.info-dock.is-detail-open .detail-label {
+  display: block;
+}
+
+.info-dock.is-detail-open .teacher-detail > h3 {
+  margin: 0 0 8px;
+}
+
+.info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) {
+  position: relative;
+  display: grid;
+  gap: 14px;
+  width: min(100%, 350px);
+  min-height: 0;
+  margin: 0 auto;
+  padding: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(214, 185, 132, 0.78);
+  border-radius: 8px;
+  background: rgba(255, 250, 240, 0.82);
+  box-shadow: 0 10px 24px rgba(50, 42, 30, 0.08);
+}
+
+.info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card)::before {
+  display: none;
+}
+
+.info-dock.is-detail-open .teacher-detail .teacher-card-heading {
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  margin: 0;
+  color: var(--ink);
+  text-align: center;
+}
+
+.info-dock.is-detail-open .teacher-detail .teacher-card-heading strong {
+  font-family: inherit;
+  font-size: clamp(1.25rem, 5vw, 1.7rem);
+  line-height: 1.35;
+  font-weight: 800;
+}
+
+.info-dock.is-detail-open .teacher-detail .teacher-card-heading span {
+  color: var(--green);
+  font-size: 0.88rem;
+  font-weight: 800;
+}
+
+.info-dock.is-detail-open .teacher-detail .teacher-card-heading span::before,
+.info-dock.is-detail-open .teacher-detail .teacher-card-heading span::after {
+  display: none;
+}
+
+.info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) .teacher-photo {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 240px);
+  height: auto;
+  aspect-ratio: 1 / 1;
+  min-height: 0;
+  margin: 0 auto;
+  overflow: hidden;
+  border: 1px solid rgba(214, 185, 132, 0.7);
+  border-radius: 8px;
+  background: rgba(245, 238, 225, 0.9);
+  box-shadow: none;
+}
+
+.info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) .teacher-photo::before {
+  display: none;
+}
+
+.info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) .teacher-photo::after {
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  border-radius: 0;
+  background-size: contain;
+  background-position: center center;
+  background-repeat: no-repeat;
+  box-shadow: none;
+}
+
+.info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) .bloom-ring,
+.info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) .fairy-badge,
+.info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) .fairy-achievement {
+  display: none !important;
+}
+
+.info-dock.is-detail-open .teacher-detail .card-stamp-count {
+  position: static;
+  display: grid;
+  justify-items: center;
+  gap: 3px;
+  min-height: 0;
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px solid rgba(214, 185, 132, 0.72);
+  border-radius: 8px;
+  background: rgba(255, 253, 246, 0.9);
+  box-shadow: none;
+}
+
+.info-dock.is-detail-open .teacher-detail .card-stamp-count small {
+  font-size: 0.78rem;
+}
+
+.info-dock.is-detail-open .teacher-detail .card-stamp-count strong {
+  font-size: clamp(1.4rem, 7vw, 2.2rem);
+}
+
+.info-dock.is-detail-open .teacher-detail .teacher-photo-card .detail-actions {
+  position: static;
+  display: grid;
+  gap: 10px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.info-dock.is-detail-open .teacher-detail .teacher-photo-card .stamp-flow-steps,
+.info-dock.is-detail-open .teacher-detail .teacher-photo-card .stamp-confirm-card,
+.info-dock.is-detail-open .teacher-detail .teacher-photo-card .detail-actions p {
+  display: revert;
+}
+
+.info-dock.is-detail-open .teacher-detail dl {
+  display: grid;
+}
+
+/* Photo contain fix final override: keep faces centered and uncropped. */
+.info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) .teacher-photo {
+  display: grid !important;
+  place-items: center !important;
+  width: min(100%, 250px) !important;
+  height: auto !important;
+  aspect-ratio: 1 / 1 !important;
+  overflow: hidden !important;
+}
+
+.info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) .teacher-photo::before {
+  display: none !important;
+}
+
+.info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) .teacher-photo::after {
+  top: 0 !important;
+  left: 0 !important;
+  right: auto !important;
+  bottom: auto !important;
+  width: 100% !important;
+  height: 100% !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background-position: center center !important;
+  background-size: contain !important;
+  background-repeat: no-repeat !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+.info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) .teacher-photo[data-teacher-photo="akari"]::after {
+  background: url("assets/teacher-photo-1-soft-bg.png") center center / contain no-repeat, #c5d6c8 !important;
+}
+
+.info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) .teacher-photo[data-teacher-photo="yamashiro"]::after {
+  background: url("assets/teacher-yamashiro-soft-bg.png") center center / contain no-repeat, #d2cadc !important;
+}
+
+.info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) .teacher-photo[data-teacher-photo="yuki"]::after {
+  background: url("assets/teacher-yuki-soft-bg.png") center center / contain no-repeat, #d6c8bc !important;
+}
+
+.info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) .teacher-photo[data-teacher-photo="koike"]::after {
+  background: url("assets/teacher-koike-soft-bg.png") center center / contain no-repeat, #d7d7c7 !important;
+}
+
+.info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) .teacher-photo[data-teacher-photo="matsumoto"]::after {
+  background: url("assets/teacher-matsumoto-soft-bg.png") center center / contain no-repeat, #d9cfc6 !important;
+}
+
+/* Photo size balance final override: larger, still uncropped. */
+.info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) {
+  width: min(100%, 390px) !important;
+}
+
+.info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) .teacher-photo {
+  width: min(100%, 300px) !important;
+  aspect-ratio: 4 / 5 !important;
+}
+
+.info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) .teacher-photo::after {
+  background-size: contain !important;
+  background-position: center center !important;
+  background-repeat: no-repeat !important;
+}

@@ -1,0 +1,16 @@
+# Windows and editor files
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Local scratch/generated working folders
+work-generated-raw/
+work-generated-raw-fairy-companions/
+work-generated-raw-fairy-companions-v2/
+work-generated-raw-fairy-evolution/
+work-generated-raw-medal-mock/
+work-generated-raw-teacher-circle-medals/
+
+# Temporary files
+*.tmp
+*.bak

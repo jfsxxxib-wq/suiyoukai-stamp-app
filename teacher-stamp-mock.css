@@ -1,0 +1,301 @@
+:root {
+  --paper: #fbf5e8;
+  --paper-deep: #f1e3c8;
+  --ink: #3f3024;
+  --muted: #756958;
+  --line: #d8bd83;
+  --gold: #cb9330;
+  --green: #3f7652;
+  --sakura: #d9798b;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  display: grid;
+  place-items: start center;
+  padding: 18px;
+  background:
+    linear-gradient(rgba(205, 177, 123, 0.16) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(205, 177, 123, 0.16) 1px, transparent 1px),
+    #eee3cf;
+  background-size: 28px 28px;
+  color: var(--ink);
+  font-family: "Yu Gothic", "Hiragino Sans", "Meiryo", sans-serif;
+}
+
+.phone-mock {
+  width: min(100%, 390px);
+  min-height: 844px;
+  overflow: hidden;
+  padding: 18px 16px 20px;
+  border: 1px solid rgba(130, 111, 75, 0.34);
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at 10% 3%, rgba(245, 206, 148, 0.34), transparent 24%),
+    radial-gradient(circle at 88% 14%, rgba(246, 183, 196, 0.22), transparent 24%),
+    linear-gradient(180deg, #fffaf0, var(--paper));
+  box-shadow: 0 24px 54px rgba(50, 40, 28, 0.18);
+}
+
+.screen-header {
+  display: grid;
+  grid-template-columns: 42px 1fr auto;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.back-button {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border: 2px solid rgba(63, 118, 82, 0.4);
+  border-radius: 50%;
+  background: #58734c;
+  color: #fff8e9;
+  font-size: 2rem;
+  line-height: 1;
+  text-decoration: none;
+  box-shadow: inset 0 0 0 3px rgba(255, 255, 255, 0.16);
+}
+
+.screen-header p,
+.progress-card p,
+.featured-copy p,
+.fairy-card p {
+  margin: 0;
+  color: var(--green);
+  font-size: 0.72rem;
+  font-weight: 900;
+}
+
+.screen-header h1 {
+  margin: 2px 0 0;
+  font-family: "Yu Mincho", "Hiragino Mincho ProN", serif;
+  font-size: 1.55rem;
+  line-height: 1.1;
+  letter-spacing: 0;
+}
+
+.header-badge {
+  padding: 6px 9px;
+  border: 1px solid rgba(63, 118, 82, 0.24);
+  border-radius: 999px;
+  background: rgba(238, 247, 233, 0.82);
+  color: var(--green);
+  font-size: 0.7rem;
+  font-weight: 900;
+}
+
+.progress-card,
+.featured-teacher,
+.teacher-row,
+.fairy-card {
+  border: 1px solid rgba(206, 164, 87, 0.48);
+  border-radius: 8px;
+  background: rgba(255, 252, 244, 0.9);
+  box-shadow: 0 10px 22px rgba(74, 55, 32, 0.08);
+}
+
+.progress-card {
+  display: grid;
+  gap: 8px;
+  padding: 12px;
+  margin-bottom: 12px;
+}
+
+.progress-card > div:first-child {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.progress-card strong {
+  color: var(--gold);
+  font-size: 1.3rem;
+  line-height: 1;
+}
+
+.progress-card small,
+.fairy-card small {
+  color: var(--muted);
+  font-size: 0.72rem;
+  line-height: 1.5;
+}
+
+.progress-track {
+  height: 10px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #eadbbd;
+}
+
+.progress-track span {
+  display: block;
+  width: 80%;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--green), #86a663);
+}
+
+.featured-teacher {
+  position: relative;
+  display: grid;
+  grid-template-columns: 132px 1fr;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  margin-bottom: 12px;
+}
+
+.teacher-photo-wrap {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 142px;
+}
+
+.teacher-photo-wrap > img:first-child {
+  width: 124px;
+  height: 124px;
+  object-fit: contain;
+  border: 1px solid rgba(213, 188, 139, 0.64);
+  border-radius: 8px;
+  background: #efe7d4;
+}
+
+.featured-flower {
+  position: absolute;
+  right: -2px;
+  bottom: -2px;
+  width: 62px;
+  height: 62px;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 8px rgba(52, 40, 25, 0.18));
+}
+
+.featured-copy h2,
+.fairy-card h2 {
+  margin: 3px 0 10px;
+  font-family: "Yu Mincho", "Hiragino Mincho ProN", serif;
+  font-size: 1.35rem;
+  line-height: 1.2;
+}
+
+.stamp-dots,
+.mini-stamps {
+  display: flex;
+  gap: 8px;
+}
+
+.stamp-dots span {
+  width: 24px;
+  height: 24px;
+  border: 1px solid #c99745;
+  border-radius: 50%;
+  background: #eadbc0;
+}
+
+.stamp-dots .is-filled,
+.mini-stamps .is-filled {
+  background: var(--gold);
+}
+
+.teacher-list {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.teacher-row {
+  display: grid;
+  grid-template-columns: 50px 1fr auto;
+  align-items: center;
+  gap: 10px;
+  min-height: 78px;
+  padding: 8px 10px;
+}
+
+.teacher-row.is-current {
+  border-color: rgba(203, 147, 48, 0.82);
+  background: linear-gradient(90deg, rgba(255, 244, 214, 0.96), rgba(255, 252, 244, 0.92));
+}
+
+.row-flower {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  filter: drop-shadow(0 6px 6px rgba(55, 42, 26, 0.14));
+}
+
+.teacher-row h3 {
+  margin: 0;
+  font-size: 0.94rem;
+  line-height: 1.25;
+}
+
+.teacher-row p {
+  margin: 2px 0 6px;
+  color: var(--muted);
+  font-size: 0.68rem;
+  font-weight: 800;
+}
+
+.teacher-row strong {
+  color: var(--gold);
+  font-size: 0.9rem;
+}
+
+.mini-stamps {
+  gap: 5px;
+}
+
+.mini-stamps span {
+  width: 10px;
+  height: 10px;
+  border: 1px solid rgba(190, 145, 70, 0.68);
+  border-radius: 50%;
+  background: #efe1c9;
+}
+
+.fairy-card {
+  display: grid;
+  grid-template-columns: 1fr 98px;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 12px 10px;
+}
+
+.fairy-card img {
+  width: 96px;
+  height: 118px;
+  object-fit: contain;
+  filter: drop-shadow(0 10px 12px rgba(45, 34, 23, 0.22));
+}
+
+@media (max-width: 370px) {
+  body {
+    padding: 8px;
+  }
+
+  .phone-mock {
+    border-radius: 18px;
+    padding-inline: 12px;
+  }
+
+  .featured-teacher {
+    grid-template-columns: 116px 1fr;
+  }
+
+  .teacher-photo-wrap > img:first-child {
+    width: 112px;
+    height: 112px;
+  }
+}

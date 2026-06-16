@@ -1,0 +1,472 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>冒険記録帳</title>
+    <link rel="stylesheet" href="styles.css?v=20260615-rules-step1">
+  </head>
+  <body>
+    <main class="record-book" aria-label="冒険記録帳">
+      <section class="map-hero" aria-label="水曜会探索マップ">
+        <img src="assets/shonan-watercolor-map.png" alt="" aria-hidden="true">
+        <div class="map-veil"></div>
+        <div class="journey-title">
+          <p>水曜会探索マップ</p>
+          <h1>花を見つける小さな旅</h1>
+        </div>
+        <button type="button" class="guidebook-button" aria-label="冒険の書">
+          <span aria-hidden="true">□</span>
+          冒険の書
+        </button>
+      </section>
+
+      <section class="info-dock is-collapsed" aria-label="冒険情報">
+        <nav class="info-tabs" aria-label="表示する情報">
+          <button type="button" class="info-tab" data-panel="profile" aria-pressed="false">冒険者カード</button>
+          <button type="button" class="info-tab start-tab" data-panel="field-guide" aria-pressed="false">
+            <span>花図鑑</span>
+            <small>まずここ</small>
+          </button>
+          <button type="button" class="info-tab" data-panel="titles" aria-pressed="false">称号</button>
+          <button type="button" class="info-tab admin-tab" data-panel="admin" aria-pressed="false">運営</button>
+        </nav>
+
+        <section class="info-panel" aria-live="polite" hidden>
+          <button type="button" class="close-panel">地図に戻る</button>
+
+          <div class="panel-view" data-view="profile" hidden>
+            <article class="adventurer-card" aria-label="冒険者カード">
+              <div class="card-header">
+                <p class="card-label">冒険者カード</p>
+                <p class="stamp-count" data-total-stamps>スタンプ 7</p>
+              </div>
+
+              <div class="adventurer-name-block">
+                <span class="adventurer-seal" aria-hidden="true">水</span>
+                <div>
+                  <small>冒険者名</small>
+                  <h1>みずの しずく</h1>
+                </div>
+              </div>
+
+              <section class="current-title" aria-label="現在の称号">
+                <small>現在の称号</small>
+                <strong data-profile-title>コスモスの友</strong>
+              </section>
+
+              <dl class="profile-list">
+                <div>
+                  <dt>冒険者ランク</dt>
+                  <dd data-profile-rank>初級冒険者</dd>
+                </div>
+                <div>
+                  <dt>勲章</dt>
+                  <dd>
+                    <span class="medal-row">
+                      <span class="profile-medal bronze" aria-hidden="true" data-profile-medal-icon>🎖️</span>
+                      <span data-profile-medal>コスモスの友</span>
+                    </span>
+                  </dd>
+                </div>
+                <div>
+                  <dt>花図鑑達成率</dt>
+                  <dd>
+                    <span class="guide-progress-number">8/24</span>
+                    <span class="guide-progress-track" aria-hidden="true">
+                      <span style="width: 33.333%"></span>
+                    </span>
+                  </dd>
+                </div>
+              </dl>
+
+              <section class="profile-badges" aria-label="獲得した勲章">
+                <span class="badge-chip is-locked" data-circle-badge>🥉 一巡目の輪</span>
+                <span class="badge-chip">🎖️ コスモスの友</span>
+                <span class="badge-chip is-locked">🥈 二巡目の輪</span>
+              </section>
+              <section class="profile-fairies" aria-label="達成した妖精" data-profile-fairies>
+                <p>達成した妖精</p>
+                <div class="profile-fairy-list" data-profile-fairy-list>
+                  <span class="profile-empty">まだ妖精達成はありません</span>
+                </div>
+                <small>仮反映中です。ページを再読み込みすると元に戻ります。</small>
+              </section>
+            </article>
+          </div>
+
+          <div class="panel-view" data-view="field-guide" hidden>
+            <p class="panel-kicker">花図鑑</p>
+            <h2>先生図鑑</h2>
+            <p class="first-step-note">初参加の方は、先生を選んで指導後スタンプを記録します。</p>
+            <section class="participation-stamp" aria-label="参加スタンプ">
+              <span class="stamp-flower" aria-hidden="true"></span>
+              <span>
+                <small>参加スタンプ</small>
+                <strong>コスモス</strong>
+                <em>イベント参加でも押せる共通スタンプ</em>
+              </span>
+            </section>
+            <div class="teacher-layout" data-teacher-mode="list">
+              <section class="teacher-list teacher-screen is-active" aria-label="先生一覧">
+                <div class="teacher-list-header">
+                  <h3>1. 先生を選ぶ</h3>
+                  <span data-round-summary>あと1人で勲章</span>
+                </div>
+                <button type="button" class="teacher-card" data-teacher="tsuneishi" aria-pressed="false">
+                  <span class="teacher-flower" aria-hidden="true"></span>
+                  <span>
+                    <strong>常石 隆志 六段</strong>
+                    <small>記録済み・花を育てる案内人</small>
+                  </span>
+                </button>
+                <button type="button" class="teacher-card" data-teacher="yuki" aria-pressed="false">
+                  <span class="teacher-flower teacher-flower-camellia" aria-hidden="true"></span>
+                  <span>
+                    <strong>結城 聡 九段</strong>
+                    <small>記録済み・読みをほどく案内人</small>
+                  </span>
+                </button>
+                <button type="button" class="teacher-card" data-teacher="koike" aria-pressed="false">
+                  <span class="teacher-flower teacher-flower-sun" aria-hidden="true"></span>
+                  <span>
+                    <strong>小池 芳弘 七段</strong>
+                    <small>記録済み・一手を照らす案内人</small>
+                  </span>
+                </button>
+                <button type="button" class="teacher-card" data-teacher="yamashiro" aria-pressed="false">
+                  <span class="teacher-flower teacher-flower-hydrangea" aria-hidden="true"></span>
+                  <span>
+                    <strong>山城 宏 九段</strong>
+                    <small>記録済み・読みを導く庭師</small>
+                  </span>
+                </button>
+                <button type="button" class="teacher-card next-teacher" data-teacher="matsumoto" aria-pressed="false">
+                  <span class="teacher-flower teacher-flower-sakura" aria-hidden="true"></span>
+                  <span>
+                    <strong>松本 武久 八段</strong>
+                    <small>未記録・ここをタップして一巡目を達成</small>
+                  </span>
+                </button>
+                <section class="circle-stamps" aria-label="全員の先生と1回対局スタンプ">
+                  <div class="circle-stamps-header">
+                    <h4>全員の先生と1回対局スタンプ</h4>
+                    <span data-round-remaining>あと1人</span>
+                  </div>
+                  <div class="circle-stamp-grid">
+                    <article class="circle-stamp circle-stamp-feature is-next" data-circle-stamp="first">
+                      <span class="circle-medal" aria-hidden="true">
+                        <i></i><i></i><i></i><i></i><i></i>
+                      </span>
+                      <span class="circle-stamp-copy">
+                        <strong>一巡目の輪</strong>
+                        <small>5人の先生と1回ずつ対局すると開く特別スタンプ</small>
+                      </span>
+                      <span class="circle-stamp-status" data-circle-status>4/5人 達成中</span>
+                    </article>
+                    <div class="circle-stamp-nexts" aria-label="次に開くスタンプ">
+                      <article class="circle-stamp is-next">
+                        <span class="circle-medal" aria-hidden="true">
+                          <i></i><i></i><i></i><i></i><i></i>
+                        </span>
+                        <strong>二巡目の輪</strong>
+                      </article>
+                      <article class="circle-stamp is-new">
+                        <span class="circle-medal" aria-hidden="true">
+                          <i></i><i></i><i></i><i></i><i></i>
+                        </span>
+                        <strong>新しい先生</strong>
+                      </article>
+                    </div>
+                  </div>
+                </section>
+              </section>
+
+              <section class="teacher-detail teacher-screen" aria-label="先生詳細" hidden>
+                <button type="button" class="back-to-list">先生一覧に戻る</button>
+                <p class="detail-label">先生詳細</p>
+                <h3 data-teacher-name>常石 隆志 六段</h3>
+                <div class="teacher-photo-card" data-bloom-count="3" data-fairy="false" data-flower="cosmos">
+                  <div class="teacher-card-heading">
+                    <strong data-teacher-card-name>常石 隆志 六段</strong>
+                    <span>囲碁指導者</span>
+                  </div>
+                  <div class="teacher-photo" data-teacher-photo="akari" aria-label="先生写真">
+                    <span data-photo-initial>常</span>
+                  </div>
+                  <div class="bloom-ring" aria-hidden="true">
+                    <span class="bloom bloom-1"></span>
+                    <span class="bloom bloom-2"></span>
+                    <span class="bloom bloom-3"></span>
+                    <span class="bloom bloom-4"></span>
+                    <span class="bloom bloom-5"></span>
+                    <span class="bloom bloom-6"></span>
+                    <span class="bloom bloom-7"></span>
+                    <span class="bloom bloom-8"></span>
+                  </div>
+                  <span class="fairy-badge" aria-hidden="true"></span>
+                  <section class="card-stamp-count" aria-label="指導囲碁を受けた回数">
+                    <small>指導囲碁を受けた回数</small>
+                    <strong><span data-card-stamp-current>3</span> / <span data-card-stamp-goal>5</span> 回</strong>
+                  </section>
+                  <section class="fairy-achievement" data-fairy-achievement hidden aria-label="妖精スタンプ達成">
+                    <div class="achievement-petal-field" aria-hidden="true">
+                      <span></span>
+                      <span></span>
+                      <span></span>
+                      <span></span>
+                      <span></span>
+                      <span></span>
+                      <span></span>
+                      <span></span>
+                      <span></span>
+                      <span></span>
+                      <span></span>
+                      <span></span>
+                    </div>
+                    <p class="achievement-ribbon" data-achievement-title>妖精スタンプ達成</p>
+                    <img class="achievement-fairy" data-achievement-fairy src="assets/fairy-companion-iris-v2.png" alt="">
+                    <p class="achievement-copy" data-achievement-copy>5回目の指導スタンプで妖精があらわれました。</p>
+                  </section>
+                  <div class="detail-actions">
+                    <ol class="stamp-flow-steps" aria-label="スタンプ記録の流れ">
+                      <li class="is-complete">先生選択</li>
+                      <li data-flow-step="confirm">内容確認</li>
+                      <li data-flow-step="done">反映完了</li>
+                    </ol>
+                    <section class="stamp-confirm-card" data-confirm-card aria-label="記録内容の確認">
+                      <small data-confirm-label>これから記録する内容</small>
+                      <strong data-confirm-teacher>常石 隆志 六段</strong>
+                      <span data-confirm-effect>指導後スタンプを1つ追加します。</span>
+                    </section>
+                    <button type="button" class="complete-teacher">2. 指導後スタンプを記録</button>
+                    <p data-flow-message>全先生と1回対局すると、一巡目の輪が冒険者カードに反映されます。</p>
+                  </div>
+                </div>
+                <dl>
+                  <div>
+                    <dt>指導後</dt>
+                    <dd><strong data-teacher-stamp>妖精まで 3/5</strong><br>5回で妖精スタンプが出現</dd>
+                  </div>
+                  <div>
+                    <dt>棋風</dt>
+                    <dd data-teacher-style>読みの筋道をやさしく整える</dd>
+                  </div>
+                  <div>
+                    <dt>レッスン</dt>
+                    <dd data-teacher-lesson>一手の意味をたどりながら、花を育てるように進む指導</dd>
+                  </div>
+                  <div>
+                    <dt>おすすめ</dt>
+                    <dd data-teacher-note>落ち着いて考えたい冒険者へ</dd>
+                  </div>
+                </dl>
+              </section>
+            </div>
+
+            <section class="stamp-progress" aria-label="スタンプ進行見本">
+              <div class="stamp-progress-header">
+                <h3>スタンプ進行見本</h3>
+                <span>0〜5回</span>
+              </div>
+              <div class="stamp-progress-grid">
+                <article class="teacher-photo-card progress-card" data-bloom-count="0" data-fairy="false" data-flower="cosmos">
+                  <p class="progress-count">0回</p>
+                  <div class="teacher-photo progress-photo" aria-label="0回の見本">
+                    <span>芽</span>
+                  </div>
+                  <div class="bloom-ring" aria-hidden="true">
+                    <span class="bloom bloom-1"></span>
+                    <span class="bloom bloom-2"></span>
+                    <span class="bloom bloom-3"></span>
+                    <span class="bloom bloom-4"></span>
+                    <span class="bloom bloom-5"></span>
+                  </div>
+                  <span class="fairy-badge" aria-hidden="true"></span>
+                  <p class="progress-note">つぼみ</p>
+                </article>
+                <article class="teacher-photo-card progress-card" data-bloom-count="1" data-fairy="false" data-flower="cosmos">
+                  <p class="progress-count">1回</p>
+                  <div class="teacher-photo progress-photo" aria-label="1回の見本">
+                    <span>芽</span>
+                  </div>
+                  <div class="bloom-ring" aria-hidden="true">
+                    <span class="bloom bloom-1"></span>
+                    <span class="bloom bloom-2"></span>
+                    <span class="bloom bloom-3"></span>
+                    <span class="bloom bloom-4"></span>
+                    <span class="bloom bloom-5"></span>
+                  </div>
+                  <span class="fairy-badge" aria-hidden="true"></span>
+                  <p class="progress-note">ひとつ咲く</p>
+                </article>
+                <article class="teacher-photo-card progress-card" data-bloom-count="2" data-fairy="false" data-flower="cosmos">
+                  <p class="progress-count">2回</p>
+                  <div class="teacher-photo progress-photo" aria-label="2回の見本">
+                    <span>芽</span>
+                  </div>
+                  <div class="bloom-ring" aria-hidden="true">
+                    <span class="bloom bloom-1"></span>
+                    <span class="bloom bloom-2"></span>
+                    <span class="bloom bloom-3"></span>
+                    <span class="bloom bloom-4"></span>
+                    <span class="bloom bloom-5"></span>
+                  </div>
+                  <span class="fairy-badge" aria-hidden="true"></span>
+                  <p class="progress-note">色づく</p>
+                </article>
+                <article class="teacher-photo-card progress-card" data-bloom-count="3" data-fairy="false" data-flower="cosmos">
+                  <p class="progress-count">3回</p>
+                  <div class="teacher-photo progress-photo" aria-label="3回の見本">
+                    <span>芽</span>
+                  </div>
+                  <div class="bloom-ring" aria-hidden="true">
+                    <span class="bloom bloom-1"></span>
+                    <span class="bloom bloom-2"></span>
+                    <span class="bloom bloom-3"></span>
+                    <span class="bloom bloom-4"></span>
+                    <span class="bloom bloom-5"></span>
+                  </div>
+                  <span class="fairy-badge" aria-hidden="true"></span>
+                  <p class="progress-note">花ひらく</p>
+                </article>
+                <article class="teacher-photo-card progress-card" data-bloom-count="4" data-fairy="false" data-flower="cosmos">
+                  <p class="progress-count">4回</p>
+                  <div class="teacher-photo progress-photo" aria-label="4回の見本">
+                    <span>芽</span>
+                  </div>
+                  <div class="bloom-ring" aria-hidden="true">
+                    <span class="bloom bloom-1"></span>
+                    <span class="bloom bloom-2"></span>
+                    <span class="bloom bloom-3"></span>
+                    <span class="bloom bloom-4"></span>
+                    <span class="bloom bloom-5"></span>
+                  </div>
+                  <span class="fairy-badge" aria-hidden="true"></span>
+                  <p class="progress-note">満開手前</p>
+                </article>
+                <article class="teacher-photo-card progress-card" data-bloom-count="5" data-fairy="true" data-flower="cosmos" data-stage="sky">
+                  <span class="celebration-label">満開達成</span>
+                  <p class="progress-count">5回</p>
+                  <div class="teacher-photo progress-photo" aria-label="5回の見本">
+                    <span>祝</span>
+                  </div>
+                  <div class="bloom-ring" aria-hidden="true">
+                    <span class="bloom bloom-1"></span>
+                    <span class="bloom bloom-2"></span>
+                    <span class="bloom bloom-3"></span>
+                    <span class="bloom bloom-4"></span>
+                    <span class="bloom bloom-5"></span>
+                  </div>
+                  <span class="fairy-badge" aria-hidden="true"></span>
+                  <div class="petal-shower" aria-hidden="true">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                  </div>
+                  <p class="progress-note">妖精出現</p>
+                </article>
+              </div>
+            </section>
+          </div>
+
+          <div class="panel-view" data-view="titles" hidden>
+            <p class="panel-kicker">称号</p>
+            <h2>称号の記録</h2>
+            <ol class="rank-list">
+              <li class="rank-item is-complete">
+                <span class="rank-mark" aria-hidden="true"></span>
+                <span class="rank-title">はじめの一手</span>
+                <time class="rank-note" datetime="2026-08-15">2026/08/15</time>
+              </li>
+              <li class="rank-item is-current">
+                <span class="rank-mark" aria-hidden="true"></span>
+                <span class="rank-title">コスモスの友</span>
+                <time class="rank-note" datetime="2026-08-15">2026/08/15</time>
+              </li>
+              <li class="rank-item">
+                <span class="rank-mark" aria-hidden="true"></span>
+                <span class="rank-title">花集めの旅人</span>
+                <span class="rank-note">次の称号</span>
+              </li>
+              <li class="rank-item">
+                <span class="rank-mark" aria-hidden="true"></span>
+                <span class="rank-title">湘南の探索者</span>
+                <span class="rank-note">未達成</span>
+              </li>
+              <li class="rank-item">
+                <span class="rank-mark" aria-hidden="true"></span>
+                <span class="rank-title">水曜会の仲間</span>
+                <span class="rank-note">未達成</span>
+              </li>
+            </ol>
+          </div>
+
+          <div class="panel-view" data-view="admin" hidden>
+            <p class="panel-kicker">運営画面</p>
+            <h2>スタンプ管理</h2>
+            <section class="admin-card" aria-label="運営画面モック">
+              <div class="admin-status">
+                <span data-admin-state>確認中</span>
+                <strong data-admin-summary>一巡目の輪まであと1人</strong>
+              </div>
+
+              <dl class="admin-check-list">
+                <div>
+                  <dt>参加者</dt>
+                  <dd>みずの しずく</dd>
+                </div>
+                <div>
+                  <dt>操作</dt>
+                  <dd>指導後スタンプを押す</dd>
+                </div>
+                <div>
+                  <dt>先生</dt>
+                  <dd data-admin-teacher>松本 武久 八段</dd>
+                </div>
+                <div>
+                  <dt>結果</dt>
+                  <dd data-admin-result>一巡目の輪を達成 → 冒険者カード更新</dd>
+                </div>
+              </dl>
+
+              <button type="button" class="admin-stamp-button">運営としてスタンプを押す</button>
+              <p class="admin-note" data-admin-note>押すと利用者側の冒険者カードに勲章が反映されます。</p>
+            </section>
+          </div>
+        </section>
+      </section>
+      <section class="achievement-modal" data-achievement-modal hidden aria-label="5回達成">
+        <div class="achievement-modal-backdrop" data-achievement-close></div>
+        <article class="achievement-modal-card">
+          <div class="achievement-modal-petals" aria-hidden="true">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+          <button type="button" class="achievement-modal-close" data-achievement-close aria-label="閉じる">×</button>
+          <p class="achievement-modal-kicker">5回達成</p>
+          <h2 data-achievement-title>妖精スタンプ達成</h2>
+          <p class="achievement-modal-teacher" data-achievement-teacher>先生名</p>
+          <img class="achievement-modal-fairy" data-achievement-fairy src="assets/fairy-companion-iris-v2.png" alt="">
+          <p class="achievement-modal-copy" data-achievement-copy>5回目の指導後スタンプで妖精があらわれました。</p>
+          <button type="button" class="achievement-modal-profile" data-achievement-profile>冒険者カードを見る</button>
+        </article>
+      </section>
+    </main>
+    <script src="stamp-rules.js?v=20260616-iris-fairy-default"></script>
+    <script src="script.js?v=20260616-iris-fairy-default"></script>
+  </body>
+</html>
