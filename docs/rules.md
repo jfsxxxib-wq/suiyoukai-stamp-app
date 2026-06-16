@@ -57,3 +57,17 @@
 - `evaluateAllAchievements(progress)`
 
 `script.js` 側では、現在の画面上の仮スタンプ数から `evaluateAllAchievements()` を呼んで、冒険者カードに結果を表示しています。
+
+## `userProgress` の形
+
+保存する進捗データは以下の形に整理しています。
+
+- `schemaVersion`
+- `stamps.participationCount`
+- `stamps.teacherLessonCounts`
+- `stamps.teacherCircleRounds`
+- `earned.fairies`
+- `earned.medals`
+- `earned.titles`
+
+古い保存形式が `localStorage` に残っていても、読み込み時にこの形へ寄せます。

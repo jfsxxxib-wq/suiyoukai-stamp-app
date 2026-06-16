@@ -241,26 +241,41 @@ const reserveFlowers = [
 ];
 
 const userProgressTemplate = {
-  participationCount: 0,
+  schemaVersion: 2,
 
-  teacherLessonCounts: {
-    tsuneishi: 0,
-    yuki: 0,
-    koike: 0,
-    yamashiro: 0,
-    matsumoto: 0,
+  stamps: {
+    participationCount: 0,
+
+    teacherLessonCounts: {
+      tsuneishi: 0,
+      yuki: 0,
+      koike: 0,
+      yamashiro: 0,
+      matsumoto: 0,
+    },
+
+    teacherCircleRounds: 0,
   },
 
-  teacherCircleRounds: 0,
-
-  earnedFairies: [],
-  earnedMedals: [],
-  earnedTitles: [],
+  earned: {
+    fairies: [],
+    medals: [],
+    titles: [],
+  },
 };
 
 const normalizeCount = (count) => Math.max(0, Number(count) || 0);
 
 const copyReward = (reward) => (reward ? { ...reward } : null);
+
+const getProgressParticipationCount = (progress = userProgressTemplate) =>
+  progress.stamps?.participationCount ?? progress.participationCount ?? 0;
+
+const getProgressTeacherLessonCounts = (progress = userProgressTemplate) =>
+  progress.stamps?.teacherLessonCounts ?? progress.teacherLessonCounts ?? {};
+
+const getProgressTeacherCircleRounds = (progress = userProgressTemplate) =>
+  progress.stamps?.teacherCircleRounds ?? progress.teacherCircleRounds ?? 0;
 
 const uniqueById = (items) => {
   const seen = new Set();
@@ -362,9 +377,9 @@ const evaluateTeacherCircleAchievements = (teacherCircleRounds = 0) => {
 };
 
 const evaluateAllAchievements = (progress = userProgressTemplate) => {
-  const participation = evaluateParticipationAchievement(progress.participationCount);
-  const teacherFairy = evaluateTeacherFairyAchievements(progress.teacherLessonCounts);
-  const teacherCircle = evaluateTeacherCircleAchievements(progress.teacherCircleRounds);
+  const participation = evaluateParticipationAchievement(getProgressParticipationCount(progress));
+  const teacherFairy = evaluateTeacherFairyAchievements(getProgressTeacherLessonCounts(progress));
+  const teacherCircle = evaluateTeacherCircleAchievements(getProgressTeacherCircleRounds(progress));
 
   return {
     participation,

@@ -52,6 +52,7 @@ const adminResult = document.querySelector("[data-admin-result]");
 let activeTeacherKey = "tsuneishi";
 let recordPhase = "ready";
 
+const progressStorageKey = "suiyoukai-stamp-progress-v1";
 const ruleTargets = window.teacherStampTargets ?? [];
 const teacherLessonRule = window.stampRules?.teacherLesson ?? {};
 const teacherCircleRule = window.stampRules?.teacherCircle ?? {};
@@ -174,6 +175,145 @@ for (const [teacherKey, teacher] of Object.entries(teacherDetails)) {
   teacher.stampGoal = target.stampGoal ?? teacherLessonRule.maxCountPerTeacher;
 }
 
+const cloneProgressTemplate = () => JSON.parse(JSON.stringify(window.userProgressTemplate ?? {
+  schemaVersion: 2,
+  stamps: {
+    participationCount: 0,
+    teacherLessonCounts: {},
+    teacherCircleRounds: 0,
+  },
+  earned: {
+    fairies: [],
+    medals: [],
+    titles: [],
+  },
+}));
+
+const normalizeProgressCount = (count) => Math.max(0, Number(count) || 0);
+
+const getStoredParticipationCount = (progress = {}) =>
+  progress.stamps?.participationCount ?? progress.participationCount ?? 0;
+
+const getStoredTeacherLessonCounts = (progress = {}) =>
+  progress.stamps?.teacherLessonCounts ?? progress.teacherLessonCounts ?? {};
+
+const getStoredEarnedFairies = (progress = {}) =>
+  progress.earned?.fairies ?? progress.earnedFairies ?? [];
+
+const getStoredEarnedMedals = (progress = {}) =>
+  progress.earned?.medals ?? progress.earnedMedals ?? [];
+
+const getStoredEarnedTitles = (progress = {}) =>
+  progress.earned?.titles ?? progress.earnedTitles ?? [];
+
+const getTeacherCircleRoundsFromCounts = (teacherLessonCounts = {}) => {
+  const teacherIds = ruleTargets.length > 0
+    ? ruleTargets.map((target) => target.teacherId)
+    : Object.keys(teacherDetails);
+
+  if (teacherIds.length === 0) {
+    return 0;
+  }
+
+  return Math.min(...teacherIds.map((teacherId) => normalizeProgressCount(teacherLessonCounts[teacherId])));
+};
+
+const createInitialProgressFromTeacherDetails = () => {
+  const progress = cloneProgressTemplate();
+
+  progress.stamps.teacherLessonCounts = {
+    ...progress.stamps.teacherLessonCounts,
+    ...Object.fromEntries(
+      Object.entries(teacherDetails).map(([teacherId, teacher]) => [teacherId, normalizeProgressCount(teacher.stampCount)])
+    ),
+  };
+  progress.stamps.teacherCircleRounds = getTeacherCircleRoundsFromCounts(progress.stamps.teacherLessonCounts);
+
+  return progress;
+};
+
+const sanitizeProgress = (progress = {}) => {
+  const template = createInitialProgressFromTeacherDetails();
+  const teacherLessonCounts = { ...template.stamps.teacherLessonCounts };
+  const storedTeacherLessonCounts = getStoredTeacherLessonCounts(progress);
+
+  for (const teacherId of Object.keys(teacherLessonCounts)) {
+    teacherLessonCounts[teacherId] = normalizeProgressCount(storedTeacherLessonCounts[teacherId] ?? teacherLessonCounts[teacherId]);
+  }
+
+  return {
+    schemaVersion: template.schemaVersion,
+    stamps: {
+      participationCount: normalizeProgressCount(getStoredParticipationCount(progress) ?? template.stamps.participationCount),
+      teacherLessonCounts,
+      teacherCircleRounds: getTeacherCircleRoundsFromCounts(teacherLessonCounts),
+    },
+    earned: {
+      fairies: Array.isArray(getStoredEarnedFairies(progress)) ? getStoredEarnedFairies(progress) : template.earned.fairies,
+      medals: Array.isArray(getStoredEarnedMedals(progress)) ? getStoredEarnedMedals(progress) : template.earned.medals,
+      titles: Array.isArray(getStoredEarnedTitles(progress)) ? getStoredEarnedTitles(progress) : template.earned.titles,
+    },
+  };
+};
+
+const loadUserProgress = () => {
+  try {
+    const storedProgress = localStorage.getItem(progressStorageKey);
+
+    if (!storedProgress) {
+      return sanitizeProgress();
+    }
+
+    return sanitizeProgress(JSON.parse(storedProgress));
+  } catch {
+    return sanitizeProgress();
+  }
+};
+
+let userProgress = loadUserProgress();
+
+const syncTeacherDetailsFromProgress = () => {
+  for (const [teacherId, teacher] of Object.entries(teacherDetails)) {
+    const stampCount = normalizeProgressCount(userProgress.stamps.teacherLessonCounts[teacherId]);
+
+    teacher.stampCount = Math.min(stampCount, getTeacherGoal(teacher));
+    teacher.completedFirstRound = stampCount > 0;
+    teacher.fairy = stampCount >= getTeacherGoal(teacher);
+  }
+};
+
+const syncProgressRewards = () => {
+  const achievementResult = window.achievementEvaluators.evaluateAllAchievements(userProgress);
+
+  userProgress.earned.fairies = achievementResult.earnedFairies;
+  userProgress.earned.medals = achievementResult.earnedMedals;
+  userProgress.earned.titles = achievementResult.earnedTitles;
+};
+
+const saveUserProgress = () => {
+  try {
+    localStorage.setItem(progressStorageKey, JSON.stringify(userProgress));
+  } catch {
+    // The app can still be used as an in-memory stamp card when storage is unavailable.
+  }
+};
+
+const updateProgressFromTeacherDetails = () => {
+  userProgress.stamps.teacherLessonCounts = {
+    ...userProgress.stamps.teacherLessonCounts,
+    ...Object.fromEntries(
+      Object.entries(teacherDetails).map(([teacherId, teacher]) => [teacherId, normalizeProgressCount(teacher.stampCount)])
+    ),
+  };
+  userProgress.stamps.teacherCircleRounds = getTeacherCircleRoundsFromCounts(userProgress.stamps.teacherLessonCounts);
+  syncProgressRewards();
+  saveUserProgress();
+};
+
+syncTeacherDetailsFromProgress();
+syncProgressRewards();
+saveUserProgress();
+
 const showPanel = (target) => {
   dock.classList.remove("is-collapsed");
   infoPanel.hidden = false;
@@ -253,21 +393,12 @@ const getAchievementFairy = (teacher) => {
 const getTotalTeacherStampCount = () =>
   Object.values(teacherDetails).reduce((total, teacher) => total + teacher.stampCount, 0);
 
+const getTotalStampCount = () => userProgress.stamps.participationCount + getTotalTeacherStampCount();
+
 const getEarnedFairyTeachers = () =>
   Object.values(teacherDetails).filter((teacher) => teacher.fairy || teacher.stampCount >= getTeacherGoal(teacher));
 
-const getCurrentProgressForEvaluation = () => {
-  const requiredTeachers = getTeacherCircleRequiredCount();
-  const teacherLessonCounts = Object.fromEntries(
-    Object.entries(teacherDetails).map(([teacherId, teacher]) => [teacherId, teacher.stampCount])
-  );
-
-  return {
-    participationCount: window.userProgressTemplate?.participationCount ?? 0,
-    teacherLessonCounts,
-    teacherCircleRounds: getCompletedFirstRoundCount() >= requiredTeachers ? 1 : 0,
-  };
-};
+const getCurrentProgressForEvaluation = () => userProgress;
 
 const getCurrentAchievementResult = () =>
   window.achievementEvaluators.evaluateAllAchievements(getCurrentProgressForEvaluation());
@@ -511,70 +642,14 @@ updateTeacherCards = () => {
   }
 };
 
-let updateProfileCard = () => {
-  if (!hasFirstRoundMedal()) {
-    return;
-  }
-
-  profileTitle.textContent = "先生の輪をひらいた旅人";
-  profileRank.textContent = "探訪冒険者";
-  profileMedal.textContent = "一巡目の輪";
-  profileMedalIcon.textContent = "🥉";
-  totalStamps.textContent = "スタンプ 8";
-  circleBadge.classList.remove("is-locked");
-  circleBadge.classList.add("is-active");
-  circleStamp.classList.remove("is-next");
-  circleStamp.classList.add("is-complete");
-};
-
-let updateAdminPanel = () => {
-  const remainingCount = Object.keys(teacherDetails).length - getCompletedFirstRoundCount();
-  const nextTeacher = Object.values(teacherDetails).find((teacher) => !teacher.completedFirstRound);
-
-  adminTeacher.textContent = nextTeacher?.name ?? "全員記録済み";
-  adminState.textContent = remainingCount === 0 ? "反映済み" : "確認中";
-  adminSummary.textContent = remainingCount === 0 ? "一巡目の輪を達成済み" : `一巡目の輪まであと${remainingCount}人`;
-  adminResult.textContent = remainingCount === 0
-    ? "一巡目の輪を達成済み → 冒険者カード更新済み"
-    : "一巡目の輪を達成 → 冒険者カード更新";
-  adminNote.textContent = remainingCount === 0
-    ? "利用者画面の冒険者カードに、称号・ランク・勲章が反映されました。"
-    : "押すと利用者側の冒険者カードに勲章が反映されます。";
-  adminStampButton.textContent = remainingCount === 0 ? "スタンプ反映済み" : "運営としてスタンプを押す";
-  adminStampButton.disabled = remainingCount === 0;
-};
-
-updateProfileCard = () => {
-  const hasCircle = hasFirstRoundMedal();
-  const earnedFairies = getEarnedFairyTeachers();
-
-  totalStamps.textContent = `スタンプ ${getTotalTeacherStampCount()}`;
-  profileTitle.textContent = hasCircle ? "先生の輪をひらいた旅人" : "花を集める旅人";
-  profileRank.textContent = hasCircle ? "探訪冒険者" : "初級冒険者";
-  profileMedal.textContent = hasCircle ? "一巡目の輪（仮）" : "コスモスの友";
-  profileMedalIcon.textContent = hasCircle ? "🥉" : "🎖️";
-
-  circleBadge.textContent = hasCircle ? "🥉 一巡目の輪（仮）" : "🥉 一巡目の輪";
-  circleBadge.classList.toggle("is-locked", !hasCircle);
-  circleBadge.classList.toggle("is-active", hasCircle);
-  circleStamp.classList.toggle("is-next", !hasCircle);
-  circleStamp.classList.toggle("is-complete", hasCircle);
-
-  if (earnedFairies.length > 0) {
-    profileTitle.textContent = hasCircle ? "先生の輪と妖精を集める旅人" : "妖精と出会った旅人";
-  }
-
-  renderProfileFairies();
-};
-
-updateProfileCard = () => {
+const updateProfileCard = () => {
   const achievementResult = getCurrentAchievementResult();
   const hasCircle = achievementResult.teacherCircle.currentRounds > 0;
   const earnedFairies = achievementResult.earnedFairies;
   const latestTitle = achievementResult.earnedTitles.at(-1);
   const latestMedal = achievementResult.earnedMedals.at(-1);
 
-  totalStamps.textContent = `スタンプ ${getTotalTeacherStampCount()}`;
+  totalStamps.textContent = `スタンプ ${getTotalStampCount()}`;
   profileTitle.textContent = latestTitle?.name ?? (earnedFairies.length > 0 ? "妖精と出会った旅人" : "花を集める旅人");
   profileRank.textContent = hasCircle ? "探訪冒険者" : "初級冒険者";
   profileMedal.textContent = latestMedal?.name ?? "コスモスの友";
@@ -591,26 +666,7 @@ updateProfileCard = () => {
   renderProfileAchievementResults(achievementResult);
 };
 
-updateAdminPanel = () => {
-  const completedCount = getCompletedFirstRoundCount();
-  const totalCount = getTeacherCircleRequiredCount();
-  const remainingCount = Math.max(0, totalCount - completedCount);
-  const nextTeacher = Object.values(teacherDetails).find((teacher) => !teacher.completedFirstRound);
-
-  adminTeacher.textContent = nextTeacher?.name ?? "全員一巡済み";
-  adminState.textContent = "表示確認";
-  adminSummary.textContent = remainingCount === 0
-    ? "先生の輪 一巡判定: 達成"
-    : `先生の輪 一巡判定: あと${remainingCount}人`;
-  adminResult.textContent = remainingCount === 0
-    ? "表示上は一巡達成。保存や勲章付与はまだ行いません。"
-    : "先生ごとの5回達成とは別に、一巡判定だけを確認します。";
-  adminNote.textContent = "今回は表示確認のみです。保存処理・勲章付与はまだ未実装です。";
-  adminStampButton.textContent = "表示確認中";
-  adminStampButton.disabled = true;
-};
-
-updateAdminPanel = () => {
+const updateAdminPanel = () => {
   const completedCount = getCompletedFirstRoundCount();
   const totalCount = getTeacherCircleRequiredCount();
   const remainingCount = Math.max(0, totalCount - completedCount);
@@ -622,10 +678,10 @@ updateAdminPanel = () => {
     ? "先生の輪 一巡判定: 達成"
     : `先生の輪 一巡判定: あと${remainingCount}人`;
   adminResult.textContent = remainingCount === 0
-    ? "画面上は一巡達成です。保存と勲章付与はまだ行いません。"
-    : "押すと次の先生を画面上だけで1回分反映します。";
-  adminNote.textContent = "仮反映のみです。ページを再読み込みすると元に戻ります。";
-  adminStampButton.textContent = remainingCount === 0 ? "一巡達成を確認済み" : "仮スタンプを押す";
+    ? "一巡達成です。冒険者カードに保存済みの称号・勲章を反映します。"
+    : "押すと次の先生を1回分記録して保存します。";
+  adminNote.textContent = "記録はこの端末のブラウザに保存されます。再読み込みしても残ります。";
+  adminStampButton.textContent = remainingCount === 0 ? "一巡達成を確認済み" : "スタンプを保存する";
   adminStampButton.disabled = remainingCount === 0;
 };
 
@@ -685,11 +741,11 @@ const setRecordPhase = (phase, teacher) => {
     achievementFairy.alt = achievementFairyData.label;
     achievementTitle.textContent = achievementFairyData.label;
     achievementTeacher.textContent = teacher.name;
-    achievementCopy.textContent = `${teacher.name}の指導碁スタンプが${getTeacherGoal(teacher)}/${getTeacherGoal(teacher)}になりました。先生カードとは別の画面で、妖精と花びらの達成演出を表示しています。`;
+    achievementCopy.textContent = `${teacher.name}の指導碁スタンプが${getTeacherGoal(teacher)}/${getTeacherGoal(teacher)}になりました。妖精達成を冒険者カードへ保存しました。`;
     achievementProfileButton.textContent = "冒険者カードを見る";
-    confirmEffect.textContent = `${getTeacherGoal(teacher)}回目の指導碁スタンプを仮反映しました。`;
+    confirmEffect.textContent = `${getTeacherGoal(teacher)}回目の指導碁スタンプを保存しました。`;
     completeTeacherButton.textContent = "冒険者カードを見る";
-    flowMessage.textContent = "妖精達成モーダルを表示しました。保存処理と勲章付与はまだ行いません。";
+    flowMessage.textContent = "妖精達成を保存しました。冒険者カードで確認できます。";
     return;
 
     const fairy = fairyAssets[teacher.flower] ?? fairyAssets.cosmos;
@@ -743,6 +799,7 @@ const completeTeacherStamp = (teacherKey) => {
   teacher.completedFirstRound = true;
   teacher.stampCount = Math.min(getTeacherGoal(teacher), teacher.stampCount + 1);
   teacher.fairy = teacher.stampCount >= getTeacherGoal(teacher);
+  updateProgressFromTeacherDetails();
 
   renderTeacherDetail(teacherKey);
   updateTeacherCards();
