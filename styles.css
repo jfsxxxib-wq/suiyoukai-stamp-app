@@ -626,7 +626,7 @@ button {
 
 .info-tabs {
   display: grid;
-  grid-template-columns: 1.16fr 1.08fr 0.76fr 0.7fr;
+  grid-template-columns: 1.12fr 1.08fr 0.74fr 52px;
   gap: 6px;
   padding: 7px;
   border: 1px solid var(--line);
@@ -695,6 +695,28 @@ button {
   box-shadow:
     inset 0 -3px 0 rgba(197, 150, 58, 0.34),
     0 8px 18px rgba(48, 38, 26, 0.1);
+}
+
+.admin-tab {
+  min-width: 0;
+  padding: 0 4px;
+  color: rgba(116, 104, 94, 0.72);
+  font-size: 0.72rem;
+}
+
+.admin-tab::before {
+  content: "";
+  display: block;
+  width: 16px;
+  height: 16px;
+  margin: 0 auto 2px;
+  border: 2px solid currentColor;
+  border-radius: 4px;
+  box-shadow: inset 0 5px 0 rgba(197, 150, 58, 0.18);
+}
+
+.admin-tab.is-active {
+  color: var(--ink);
 }
 
 .info-panel {
@@ -1152,6 +1174,68 @@ dd {
     rgba(255, 250, 240, 0.68);
 }
 
+.admin-card[hidden] {
+  display: none;
+}
+
+.admin-lock-card {
+  display: grid;
+  gap: 12px;
+  margin-top: 18px;
+  padding: 16px;
+  border: 1px solid rgba(75, 55, 36, 0.15);
+  border-radius: 8px;
+  background:
+    linear-gradient(90deg, rgba(63, 118, 82, 0.08), transparent 38%),
+    rgba(255, 250, 240, 0.78);
+}
+
+.admin-lock-card[hidden] {
+  display: none;
+}
+
+.admin-lock-card p {
+  margin: 0;
+  color: var(--ink);
+  font-weight: 900;
+}
+
+.admin-passcode-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+}
+
+.admin-passcode-row input {
+  min-width: 0;
+  min-height: 42px;
+  border: 1px solid rgba(75, 55, 36, 0.18);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.82);
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.92rem;
+  font-weight: 900;
+  padding: 0 12px;
+}
+
+.admin-passcode-row button {
+  min-height: 42px;
+  border: 1px solid rgba(197, 150, 58, 0.44);
+  border-radius: 8px;
+  background: rgba(255, 250, 240, 0.9);
+  color: var(--ink);
+  font-weight: 900;
+  padding: 0 16px;
+  cursor: pointer;
+}
+
+.admin-lock-card small {
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-weight: 800;
+}
+
 .admin-status {
   display: grid;
   gap: 4px;
@@ -1195,6 +1279,116 @@ dd {
   font-size: clamp(0.98rem, 3vw, 1.22rem);
 }
 
+.admin-actions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+.admin-adjustments {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid rgba(75, 55, 36, 0.12);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.38);
+}
+
+.admin-adjustments-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.admin-adjustments-header strong {
+  font-size: 0.9rem;
+}
+
+.admin-adjustments-header span {
+  border: 1px solid rgba(197, 150, 58, 0.34);
+  border-radius: 999px;
+  padding: 4px 9px;
+  color: var(--green);
+  font-size: 0.7rem;
+  font-weight: 900;
+}
+
+.admin-adjustment-list {
+  display: grid;
+  gap: 9px;
+}
+
+.admin-adjustment-row {
+  display: grid;
+  gap: 9px;
+  padding: 10px;
+  border: 1px solid rgba(75, 55, 36, 0.12);
+  border-radius: 8px;
+  background: rgba(255, 250, 240, 0.58);
+}
+
+.admin-adjustment-copy {
+  display: grid;
+  gap: 2px;
+}
+
+.admin-adjustment-copy strong {
+  font-size: 0.9rem;
+  line-height: 1.35;
+}
+
+.admin-adjustment-copy span {
+  color: var(--muted);
+  font-size: 0.74rem;
+  font-weight: 800;
+}
+
+.admin-adjustment-controls {
+  display: grid;
+  grid-template-columns: 40px minmax(54px, 1fr) 40px minmax(78px, auto);
+  gap: 7px;
+  align-items: center;
+}
+
+.admin-count-button,
+.admin-item-reset-button {
+  min-height: 38px;
+  border: 1px solid rgba(75, 55, 36, 0.14);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.68);
+  color: var(--ink);
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.admin-count-button {
+  font-size: 1.08rem;
+}
+
+.admin-item-reset-button {
+  color: #7d3340;
+  font-size: 0.74rem;
+}
+
+.admin-count-button:disabled,
+.admin-item-reset-button:disabled {
+  cursor: default;
+  opacity: 0.45;
+}
+
+.admin-adjustment-count {
+  min-height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px dashed rgba(197, 150, 58, 0.36);
+  border-radius: 8px;
+  color: var(--green);
+  font-size: 0.9rem;
+  font-weight: 900;
+}
+
 .admin-stamp-button {
   min-height: 46px;
   border: 1px solid rgba(197, 150, 58, 0.46);
@@ -1217,6 +1411,89 @@ dd {
 .admin-stamp-button:disabled {
   cursor: default;
   opacity: 0.62;
+}
+
+.admin-reset-button {
+  min-height: 42px;
+  border: 1px solid rgba(185, 76, 97, 0.34);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.54);
+  color: #7d3340;
+  font-size: 0.84rem;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.admin-reset-button:hover,
+.admin-reset-button:focus-visible {
+  border-color: rgba(185, 76, 97, 0.56);
+  outline: none;
+}
+
+.admin-reset-confirm {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid rgba(185, 76, 97, 0.28);
+  border-radius: 8px;
+  background: rgba(255, 246, 246, 0.62);
+}
+
+.admin-reset-confirm[hidden] {
+  display: none;
+}
+
+.admin-reset-confirm p {
+  margin: 0;
+  color: #7d3340;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  font-weight: 900;
+}
+
+.admin-reset-confirm input {
+  width: 100%;
+  min-height: 42px;
+  border: 1px solid rgba(75, 55, 36, 0.18);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.82);
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.92rem;
+  font-weight: 900;
+  padding: 0 12px;
+}
+
+.admin-reset-confirm input:focus {
+  border-color: rgba(185, 76, 97, 0.58);
+  outline: none;
+}
+
+.admin-reset-confirm-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.admin-reset-confirm-actions button {
+  min-height: 40px;
+  border: 1px solid rgba(75, 55, 36, 0.16);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.68);
+  color: var(--ink);
+  font-size: 0.82rem;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.admin-reset-confirm-actions button:last-child {
+  border-color: rgba(185, 76, 97, 0.42);
+  color: #7d3340;
+}
+
+.admin-reset-confirm-actions button:disabled {
+  cursor: default;
+  opacity: 0.48;
 }
 
 .admin-note {
@@ -1288,9 +1565,16 @@ dd {
     rgba(255, 250, 240, 0.6);
 }
 
+.participation-stamp-copy {
+  min-width: 0;
+}
+
 .participation-stamp .stamp-flower {
   width: 46px;
   height: 46px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
 }
 
 .participation-stamp small,
@@ -1317,6 +1601,44 @@ dd {
   font-size: 0.72rem;
   font-style: normal;
   font-weight: 800;
+}
+
+.participation-stamp-count,
+.participation-stamp-status {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 7px;
+  font-size: 0.74rem;
+  font-weight: 900;
+}
+
+.participation-stamp-count {
+  margin-right: 7px;
+  color: var(--green);
+}
+
+.participation-stamp-status {
+  color: #7f6b3f;
+}
+
+.participation-stamp-button {
+  grid-column: 1 / -1;
+  min-height: 42px;
+  border: 1px solid rgba(197, 150, 58, 0.44);
+  border-radius: 8px;
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.76), transparent 56%),
+    rgba(247, 223, 155, 0.36);
+  color: var(--ink);
+  font-size: 0.84rem;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.participation-stamp-button:hover,
+.participation-stamp-button:focus-visible {
+  border-color: rgba(63, 118, 82, 0.38);
+  outline: none;
 }
 
 .teacher-layout {
@@ -1440,6 +1762,9 @@ dd {
   height: 34px;
   border: 1px solid rgba(75, 55, 36, 0.14);
   border-radius: 50%;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
   background:
     radial-gradient(circle at 50% 50%, rgba(255, 250, 240, 0.95) 0 16%, transparent 17%),
     radial-gradient(circle at 35% 42%, rgba(185, 76, 97, 0.72) 0 18%, transparent 19%),
@@ -1486,6 +1811,12 @@ dd {
     radial-gradient(circle at 50% 25%, rgba(239, 171, 179, 0.82) 0 20%, transparent 21%),
     radial-gradient(circle at 50% 70%, rgba(206, 111, 130, 0.68) 0 18%, transparent 19%),
     rgba(255, 255, 255, 0.5);
+}
+
+.teacher-card .teacher-flower {
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
 }
 
 .teacher-card strong,
@@ -3850,6 +4181,14 @@ dd {
 
 .info-dock.is-detail-open .teacher-photo-card[data-flower="sakura"] .bloom {
   background-image: url("assets/sakura-stamp-stage-05-list.png");
+}
+
+.info-dock.is-detail-open .teacher-photo-card[data-flower="dahlia"] .bloom {
+  background-image: url("assets/dahlia-stamp-stage-05-list.png");
+}
+
+.info-dock.is-detail-open .teacher-photo-card[data-flower="ume"] .bloom {
+  background-image: url("assets/ume-stamp-reserve.png");
 }
 
 .info-dock.is-detail-open .teacher-photo-card[data-bloom-count="1"] .bloom-1,

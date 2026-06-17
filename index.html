@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>冒険記録帳</title>
-    <link rel="stylesheet" href="styles.css?v=20260615-rules-step1">
+    <link rel="stylesheet" href="styles.css?v=20260617-flower-cycles">
   </head>
   <body>
     <main class="record-book" aria-label="冒険記録帳">
@@ -29,7 +29,7 @@
             <small>まずここ</small>
           </button>
           <button type="button" class="info-tab" data-panel="titles" aria-pressed="false">称号</button>
-          <button type="button" class="info-tab admin-tab" data-panel="admin" aria-pressed="false">運営</button>
+          <button type="button" class="info-tab admin-tab" data-panel="admin" aria-pressed="false" aria-label="運営画面">管理</button>
         </nav>
 
         <section class="info-panel" aria-live="polite" hidden>
@@ -90,7 +90,7 @@
                 <div class="profile-fairy-list" data-profile-fairy-list>
                   <span class="profile-empty">まだ妖精達成はありません</span>
                 </div>
-                <small>仮反映中です。ページを再読み込みすると元に戻ります。</small>
+                <small>この端末のブラウザに保存されています。</small>
               </section>
             </article>
           </div>
@@ -101,11 +101,14 @@
             <p class="first-step-note">初参加の方は、先生を選んで指導後スタンプを記録します。</p>
             <section class="participation-stamp" aria-label="参加スタンプ">
               <span class="stamp-flower" aria-hidden="true"></span>
-              <span>
+              <span class="participation-stamp-copy">
                 <small>参加スタンプ</small>
-                <strong>コスモス</strong>
+                <strong data-participation-flower-name>コスモス</strong>
                 <em>イベント参加でも押せる共通スタンプ</em>
+                <span class="participation-stamp-count" data-participation-count>0/10回</span>
+                <span class="participation-stamp-status" data-participation-status>まだ未達成</span>
               </span>
+              <button type="button" class="participation-stamp-button" data-participation-stamp-button>参加スタンプを押す</button>
             </section>
             <div class="teacher-layout" data-teacher-mode="list">
               <section class="teacher-list teacher-screen is-active" aria-label="先生一覧">
@@ -408,6 +411,14 @@
           <div class="panel-view" data-view="admin" hidden>
             <p class="panel-kicker">運営画面</p>
             <h2>スタンプ管理</h2>
+            <section class="admin-lock-card" data-admin-lock-card aria-label="運営画面ロック">
+              <p>運営用パスコードを入力してください。</p>
+              <div class="admin-passcode-row">
+                <input type="password" data-admin-passcode-input aria-label="運営用パスコード" autocomplete="off">
+                <button type="button" data-admin-passcode-button>解除</button>
+              </div>
+              <small data-admin-passcode-message>運営用の調整画面はロックされています。</small>
+            </section>
             <section class="admin-card" aria-label="運営画面モック">
               <div class="admin-status">
                 <span data-admin-state>確認中</span>
@@ -421,7 +432,11 @@
                 </div>
                 <div>
                   <dt>操作</dt>
-                  <dd>指導後スタンプを押す</dd>
+                  <dd>下書きを調整して確定保存</dd>
+                </div>
+                <div>
+                  <dt>参加</dt>
+                  <dd data-admin-participation>参加スタンプ 0回</dd>
                 </div>
                 <div>
                   <dt>先生</dt>
@@ -433,7 +448,26 @@
                 </div>
               </dl>
 
-              <button type="button" class="admin-stamp-button">運営としてスタンプを押す</button>
+              <section class="admin-adjustments" aria-label="スタンプ数の調整">
+                <div class="admin-adjustments-header">
+                  <strong>スタンプ数を調整</strong>
+                  <span data-admin-draft-state>保存済み</span>
+                </div>
+                <div class="admin-adjustment-list" data-admin-adjustment-list></div>
+              </section>
+
+              <div class="admin-actions">
+                <button type="button" class="admin-stamp-button" data-admin-save-button>確定して保存</button>
+                <button type="button" class="admin-reset-button" data-admin-reset-button>記録をリセット</button>
+              </div>
+              <section class="admin-reset-confirm" data-admin-reset-confirm hidden aria-label="記録リセット確認">
+                <p>実行するには「リセット」と入力してください。</p>
+                <input type="text" data-admin-reset-input aria-label="リセット確認入力" autocomplete="off">
+                <div class="admin-reset-confirm-actions">
+                  <button type="button" data-admin-reset-cancel>やめる</button>
+                  <button type="button" data-admin-reset-confirm-button disabled>リセットを実行</button>
+                </div>
+              </section>
               <p class="admin-note" data-admin-note>押すと利用者側の冒険者カードに勲章が反映されます。</p>
             </section>
           </div>
@@ -466,7 +500,7 @@
         </article>
       </section>
     </main>
-    <script src="stamp-rules.js?v=20260616-iris-fairy-default"></script>
-    <script src="script.js?v=20260616-iris-fairy-default"></script>
+    <script src="stamp-rules.js?v=20260617-flower-cycles"></script>
+    <script src="script.js?v=20260617-flower-cycles"></script>
   </body>
 </html>
