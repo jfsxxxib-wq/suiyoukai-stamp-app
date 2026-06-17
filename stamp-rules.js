@@ -227,6 +227,200 @@ const teacherStampTargets = achievementRules.teacherFairy.targets.map((target) =
   rewards: target.rewards,
 }));
 
+const flowerCatalog = {
+  cosmos: {
+    flower: "cosmos",
+    flowerName: "コスモス",
+    flowerAsset: "cosmos-stamp-stage-05-v2.png",
+    fairyId: "fairy_cosmos",
+    fairyName: "コスモスの妖精",
+    fairyAsset: "fairy-apollon-flower-style.png",
+  },
+  fuji: {
+    flower: "fuji",
+    flowerName: "藤",
+    flowerAsset: "fuji-stamp-stage-05-list.png",
+    fairyId: "fairy_fuji",
+    fairyName: "藤の妖精",
+    fairyAsset: "fairy-evolution-stage-01.png",
+  },
+  kinmokusei: {
+    flower: "kinmokusei",
+    flowerName: "金木犀",
+    flowerAsset: "kinmokusei-stamp-stage-05-list.png",
+    fairyId: "fairy_kinmokusei",
+    fairyName: "金木犀の妖精",
+    fairyAsset: "fairy-evolution-stage-02.png",
+  },
+  lotus: {
+    flower: "lotus",
+    flowerName: "蓮",
+    flowerAsset: "lotus-stamp-stage-05-list.png",
+    fairyId: "fairy_lotus",
+    fairyName: "蓮の妖精",
+    fairyAsset: "fairy-evolution-stage-03.png",
+  },
+  sumire: {
+    flower: "sumire",
+    flowerName: "菫",
+    flowerAsset: "sumire-stamp-stage-05-list.png",
+    fairyId: "fairy_sumire",
+    fairyName: "菫の妖精",
+    fairyAsset: "fairy-evolution-stage-04.png",
+  },
+  botan: {
+    flower: "botan",
+    flowerName: "牡丹",
+    flowerAsset: "botan-stamp-stage-05-list.png",
+    fairyId: "fairy_botan",
+    fairyName: "牡丹の妖精",
+    fairyAsset: "fairy-evolution-stage-01.png",
+  },
+  lily: {
+    flower: "lily",
+    flowerName: "百合",
+    flowerAsset: "lily-stamp-stage-05-list.png",
+    fairyId: "fairy_lily",
+    fairyName: "百合の妖精",
+    fairyAsset: "fairy-evolution-stage-02.png",
+  },
+  asagao: {
+    flower: "asagao",
+    flowerName: "朝顔",
+    flowerAsset: "asagao-stamp-stage-05-list.png",
+    fairyId: "fairy_asagao",
+    fairyName: "朝顔の妖精",
+    fairyAsset: "fairy-evolution-stage-03.png",
+  },
+  kikyo: {
+    flower: "kikyo",
+    flowerName: "桔梗",
+    flowerAsset: "kikyo-stamp-stage-05-list.png",
+    fairyId: "fairy_kikyo",
+    fairyName: "桔梗の妖精",
+    fairyAsset: "fairy-evolution-stage-04.png",
+  },
+  nadeshiko: {
+    flower: "nadeshiko",
+    flowerName: "撫子",
+    flowerAsset: "nadeshiko-stamp-stage-05-list.png",
+    fairyId: "fairy_nadeshiko",
+    fairyName: "撫子の妖精",
+    fairyAsset: "fairy-evolution-stage-01.png",
+  },
+  suisen: {
+    flower: "suisen",
+    flowerName: "水仙",
+    flowerAsset: "suisen-stamp-stage-05-list.png",
+    fairyId: "fairy_suisen",
+    fairyName: "水仙の妖精",
+    fairyAsset: "fairy-evolution-stage-02.png",
+  },
+  hagi: {
+    flower: "hagi",
+    flowerName: "萩",
+    flowerAsset: "hagi-stamp-stage-05-list.png",
+    fairyId: "fairy_hagi",
+    fairyName: "萩の妖精",
+    fairyAsset: "fairy-evolution-stage-03.png",
+  },
+  shakuyaku: {
+    flower: "shakuyaku",
+    flowerName: "芍薬",
+    flowerAsset: "shakuyaku-stamp-stage-05-list.png",
+    fairyId: "fairy_shakuyaku",
+    fairyName: "芍薬の妖精",
+    fairyAsset: "fairy-evolution-stage-04.png",
+  },
+};
+
+const createCycleFlower = (cycleNumber, flowerKey) => ({
+  cycleNumber,
+  cycleName: `${cycleNumber}巡目`,
+  ...flowerCatalog[flowerKey],
+});
+
+const teacherCycleFlowerAssignments = {
+  tsuneishi: ["iris", "lotus", "sumire"],
+  yuki: ["camellia", "botan", "lily"],
+  koike: ["sunflower", "asagao", "kikyo"],
+  yamashiro: ["hydrangea", "nadeshiko", "suisen"],
+  matsumoto: ["sakura", "hagi", "shakuyaku"],
+};
+
+const participationStampCycles = [
+  {
+    ...createCycleFlower(1, "cosmos"),
+    requiredCount: achievementRules.participation.requiredCount,
+    rewards: achievementRules.participation.rewards,
+  },
+  {
+    ...createCycleFlower(2, "fuji"),
+    requiredCount: achievementRules.participation.requiredCount * 2,
+    rewards: {
+      medal: {
+        id: "medal_participation_fuji_full_bloom",
+        name: "藤満開勲章",
+      },
+      title: {
+        id: "title_fuji_full_bloom_friend",
+        name: "藤満開の友",
+      },
+    },
+  },
+  {
+    ...createCycleFlower(3, "kinmokusei"),
+    requiredCount: achievementRules.participation.requiredCount * 3,
+    rewards: {
+      medal: {
+        id: "medal_participation_kinmokusei_full_bloom",
+        name: "金木犀満開勲章",
+      },
+      title: {
+        id: "title_kinmokusei_full_bloom_friend",
+        name: "金木犀満開の友",
+      },
+    },
+  },
+];
+
+const getTeacherFairyCycles = (target) =>
+  (teacherCycleFlowerAssignments[target.teacherId] ?? [target.flower]).map((flowerKey, index) => {
+    const cycle = index === 0
+      ? {
+          cycleNumber: 1,
+          cycleName: "1巡目",
+          flower: target.flower,
+          flowerName: target.flowerName,
+          flowerAsset: `${target.flower}-stamp-stage-05-list.png`,
+          fairyId: target.fairyId,
+          fairyName: target.fairyName,
+          fairyAsset: `fairy-companion-${target.flower}-v2.png`,
+        }
+      : createCycleFlower(index + 1, flowerKey);
+
+    return {
+      cycleNumber: cycle.cycleNumber,
+      cycleName: cycle.cycleName,
+      requiredCount: achievementRules.teacherFairy.requiredCountPerTeacher * cycle.cycleNumber,
+      flower: cycle.flower,
+      flowerName: cycle.flowerName,
+      flowerAsset: cycle.flowerAsset,
+      fairyId: `${cycle.fairyId}_${cycle.cycleNumber}`,
+      fairyName: cycle.cycleNumber === 1 ? cycle.fairyName : `${cycle.cycleName} ${cycle.fairyName}`,
+      fairyAsset: cycle.fairyAsset,
+      rewards: cycle.cycleNumber === 1
+        ? target.rewards
+        : {
+            medal: null,
+            title: {
+              id: `title_${target.teacherId}_${cycle.flower}_fairy_cycle_${cycle.cycleNumber}`,
+              name: `${target.teacherName} ${cycle.cycleName} ${cycle.flowerName}の妖精と出会った人`,
+            },
+          },
+    };
+  });
+
 const reserveFlowers = [
   {
     flower: "dahlia",
@@ -293,7 +487,8 @@ const uniqueById = (items) => {
 const evaluateParticipationAchievement = (participationCount = 0) => {
   const rule = achievementRules.participation;
   const currentCount = normalizeCount(participationCount);
-  const isAchieved = currentCount >= rule.requiredCount;
+  const achievedCycles = participationStampCycles.filter((cycle) => currentCount >= cycle.requiredCount);
+  const isAchieved = achievedCycles.length > 0;
 
   return {
     ruleId: rule.id,
@@ -301,9 +496,27 @@ const evaluateParticipationAchievement = (participationCount = 0) => {
     label: rule.label,
     currentCount,
     requiredCount: rule.requiredCount,
+    maxCount: participationStampCycles.at(-1).requiredCount,
+    cycleCount: participationStampCycles.length,
     isAchieved,
-    earnedMedals: isAchieved ? [copyReward(rule.rewards.medal)] : [],
-    earnedTitles: isAchieved ? [copyReward(rule.rewards.title)] : [],
+    achievedCycles: achievedCycles.map((cycle) => ({
+      ...cycle,
+      isAchieved: true,
+    })),
+    earnedFairies: achievedCycles.map((cycle) => ({
+      id: cycle.fairyId,
+      name: cycle.fairyName,
+      teacherId: null,
+      teacherName: "参加スタンプ",
+      cycleNumber: cycle.cycleNumber,
+      cycleName: cycle.cycleName,
+      requiredCount: cycle.requiredCount,
+      flower: cycle.flower,
+      flowerName: cycle.flowerName,
+      fairyAsset: cycle.fairyAsset,
+    })),
+    earnedMedals: uniqueById(achievedCycles.map((cycle) => copyReward(cycle.rewards.medal))),
+    earnedTitles: uniqueById(achievedCycles.map((cycle) => copyReward(cycle.rewards.title))),
   };
 };
 
@@ -311,7 +524,10 @@ const evaluateTeacherFairyAchievements = (teacherLessonCounts = {}) => {
   const rule = achievementRules.teacherFairy;
   const teacherResults = rule.targets.map((target) => {
     const currentCount = normalizeCount(teacherLessonCounts[target.teacherId]);
-    const isAchieved = currentCount >= rule.requiredCountPerTeacher;
+    const cycles = getTeacherFairyCycles(target);
+    const achievedCycles = cycles.filter((cycle) => currentCount >= cycle.requiredCount);
+    const firstCycle = cycles[0];
+    const isAchieved = currentCount >= firstCycle.requiredCount;
 
     return {
       ruleId: rule.id,
@@ -324,19 +540,42 @@ const evaluateTeacherFairyAchievements = (teacherLessonCounts = {}) => {
       fairyName: target.fairyName,
       currentCount,
       requiredCount: rule.requiredCountPerTeacher,
+      maxCount: cycles.at(-1).requiredCount,
+      cycleCount: cycles.length,
       isAchieved,
+      cycles: cycles.map((cycle) => ({
+        ...cycle,
+        isAchieved: currentCount >= cycle.requiredCount,
+      })),
+      achievedCycles,
       earnedFairy: isAchieved
         ? {
-            id: target.fairyId,
-            name: target.fairyName,
+            id: firstCycle.fairyId,
+            name: firstCycle.fairyName,
             teacherId: target.teacherId,
             teacherName: target.teacherName,
-            flower: target.flower,
-            flowerName: target.flowerName,
+            cycleNumber: firstCycle.cycleNumber,
+            cycleName: firstCycle.cycleName,
+            requiredCount: firstCycle.requiredCount,
+            flower: firstCycle.flower,
+            flowerName: firstCycle.flowerName,
+            fairyAsset: firstCycle.fairyAsset,
           }
         : null,
-      earnedMedals: isAchieved && target.rewards.medal ? [copyReward(target.rewards.medal)] : [],
-      earnedTitles: isAchieved && target.rewards.title ? [copyReward(target.rewards.title)] : [],
+      earnedFairies: achievedCycles.map((cycle) => ({
+        id: cycle.fairyId,
+        name: cycle.fairyName,
+        teacherId: target.teacherId,
+        teacherName: target.teacherName,
+        cycleNumber: cycle.cycleNumber,
+        cycleName: cycle.cycleName,
+        requiredCount: cycle.requiredCount,
+        flower: cycle.flower,
+        flowerName: cycle.flowerName,
+        fairyAsset: cycle.fairyAsset,
+      })),
+      earnedMedals: uniqueById(achievedCycles.flatMap((cycle) => cycle.rewards.medal ? [copyReward(cycle.rewards.medal)] : [])),
+      earnedTitles: uniqueById(achievedCycles.flatMap((cycle) => cycle.rewards.title ? [copyReward(cycle.rewards.title)] : [])),
     };
   });
 
@@ -347,7 +586,7 @@ const evaluateTeacherFairyAchievements = (teacherLessonCounts = {}) => {
     requiredCountPerTeacher: rule.requiredCountPerTeacher,
     teachers: teacherResults,
     achievedTeachers: teacherResults.filter((result) => result.isAchieved),
-    earnedFairies: teacherResults.map((result) => result.earnedFairy).filter(Boolean),
+    earnedFairies: teacherResults.flatMap((result) => result.earnedFairies),
     earnedMedals: uniqueById(teacherResults.flatMap((result) => result.earnedMedals)),
     earnedTitles: uniqueById(teacherResults.flatMap((result) => result.earnedTitles)),
   };
@@ -385,7 +624,10 @@ const evaluateAllAchievements = (progress = userProgressTemplate) => {
     participation,
     teacherFairy,
     teacherCircle,
-    earnedFairies: teacherFairy.earnedFairies,
+    earnedFairies: [
+      ...participation.earnedFairies,
+      ...teacherFairy.earnedFairies,
+    ],
     earnedMedals: uniqueById([
       ...participation.earnedMedals,
       ...teacherFairy.earnedMedals,
@@ -402,6 +644,9 @@ const evaluateAllAchievements = (progress = userProgressTemplate) => {
 window.achievementRules = achievementRules;
 window.stampRules = stampRules;
 window.teacherStampTargets = teacherStampTargets;
+window.flowerCatalog = flowerCatalog;
+window.teacherCycleFlowerAssignments = teacherCycleFlowerAssignments;
+window.participationStampCycles = participationStampCycles;
 window.reserveFlowers = reserveFlowers;
 window.userProgressTemplate = userProgressTemplate;
 window.achievementEvaluators = {

@@ -1,3 +1,5 @@
+(() => {
+try {
 const tabs = document.querySelectorAll(".info-tab");
 const panels = document.querySelectorAll(".panel-view");
 const dock = document.querySelector(".info-dock");
@@ -92,27 +94,158 @@ const getTeacherCircleRequiredCount = () =>
 const clampProgressCount = (count, maxCount) =>
   Math.min(Math.max(0, Number(count) || 0), maxCount);
 
-const extraFlowerCycles = [
-  {
-    flower: "dahlia",
-    flowerName: "ダリア",
-    flowerAsset: "dahlia-stamp-stage-05-list.png",
-  },
-  {
-    flower: "ume",
-    flowerName: "梅",
-    flowerAsset: "ume-stamp-reserve.png",
-  },
-];
-
-const participationFlowerCycles = [
-  {
+const flowerCatalog = {
+  cosmos: {
     flower: "cosmos",
     flowerName: "コスモス",
     flowerAsset: "cosmos-stamp-stage-05-v2.png",
+    fairyId: "fairy_cosmos",
+    fairyName: "コスモスの妖精",
+    fairyAsset: "fairy-apollon-flower-style.png",
+    flowerColor: "#d86a83",
+    accentColor: "#f4c06a",
   },
-  ...extraFlowerCycles,
+  fuji: {
+    flower: "fuji",
+    flowerName: "藤",
+    flowerAsset: "fuji-stamp-stage-05-list.png",
+    fairyId: "fairy_fuji",
+    fairyName: "藤の妖精",
+    fairyAsset: "fairy-evolution-stage-01.png",
+    flowerColor: "#8c78c8",
+    accentColor: "#d8c9f5",
+  },
+  kinmokusei: {
+    flower: "kinmokusei",
+    flowerName: "金木犀",
+    flowerAsset: "kinmokusei-stamp-stage-05-list.png",
+    fairyId: "fairy_kinmokusei",
+    fairyName: "金木犀の妖精",
+    fairyAsset: "fairy-evolution-stage-02.png",
+    flowerColor: "#e2a12f",
+    accentColor: "#f7d46f",
+  },
+  lotus: {
+    flower: "lotus",
+    flowerName: "蓮",
+    flowerAsset: "lotus-stamp-stage-05-list.png",
+    fairyId: "fairy_lotus",
+    fairyName: "蓮の妖精",
+    fairyAsset: "fairy-evolution-stage-03.png",
+    flowerColor: "#d77fa8",
+    accentColor: "#f1cad7",
+  },
+  sumire: {
+    flower: "sumire",
+    flowerName: "菫",
+    flowerAsset: "sumire-stamp-stage-05-list.png",
+    fairyId: "fairy_sumire",
+    fairyName: "菫の妖精",
+    fairyAsset: "fairy-evolution-stage-04.png",
+    flowerColor: "#6e62ad",
+    accentColor: "#b9aadf",
+  },
+  botan: {
+    flower: "botan",
+    flowerName: "牡丹",
+    flowerAsset: "botan-stamp-stage-05-list.png",
+    fairyId: "fairy_botan",
+    fairyName: "牡丹の妖精",
+    fairyAsset: "fairy-evolution-stage-01.png",
+    flowerColor: "#c84f76",
+    accentColor: "#f0a1b6",
+  },
+  lily: {
+    flower: "lily",
+    flowerName: "百合",
+    flowerAsset: "lily-stamp-stage-05-list.png",
+    fairyId: "fairy_lily",
+    fairyName: "百合の妖精",
+    fairyAsset: "fairy-evolution-stage-02.png",
+    flowerColor: "#f3e6bd",
+    accentColor: "#c78a49",
+  },
+  asagao: {
+    flower: "asagao",
+    flowerName: "朝顔",
+    flowerAsset: "asagao-stamp-stage-05-list.png",
+    fairyId: "fairy_asagao",
+    fairyName: "朝顔の妖精",
+    fairyAsset: "fairy-evolution-stage-03.png",
+    flowerColor: "#5f8bd5",
+    accentColor: "#b6d2f3",
+  },
+  kikyo: {
+    flower: "kikyo",
+    flowerName: "桔梗",
+    flowerAsset: "kikyo-stamp-stage-05-list.png",
+    fairyId: "fairy_kikyo",
+    fairyName: "桔梗の妖精",
+    fairyAsset: "fairy-evolution-stage-04.png",
+    flowerColor: "#5860b5",
+    accentColor: "#9aa3df",
+  },
+  nadeshiko: {
+    flower: "nadeshiko",
+    flowerName: "撫子",
+    flowerAsset: "nadeshiko-stamp-stage-05-list.png",
+    fairyId: "fairy_nadeshiko",
+    fairyName: "撫子の妖精",
+    fairyAsset: "fairy-evolution-stage-01.png",
+    flowerColor: "#e57d98",
+    accentColor: "#f6c1d0",
+  },
+  suisen: {
+    flower: "suisen",
+    flowerName: "水仙",
+    flowerAsset: "suisen-stamp-stage-05-list.png",
+    fairyId: "fairy_suisen",
+    fairyName: "水仙の妖精",
+    fairyAsset: "fairy-evolution-stage-02.png",
+    flowerColor: "#fff2b6",
+    accentColor: "#e6b53e",
+  },
+  hagi: {
+    flower: "hagi",
+    flowerName: "萩",
+    flowerAsset: "hagi-stamp-stage-05-list.png",
+    fairyId: "fairy_hagi",
+    fairyName: "萩の妖精",
+    fairyAsset: "fairy-evolution-stage-03.png",
+    flowerColor: "#b45f99",
+    accentColor: "#dca8ce",
+  },
+  shakuyaku: {
+    flower: "shakuyaku",
+    flowerName: "芍薬",
+    flowerAsset: "shakuyaku-stamp-stage-05-list.png",
+    fairyId: "fairy_shakuyaku",
+    fairyName: "芍薬の妖精",
+    fairyAsset: "fairy-evolution-stage-04.png",
+    flowerColor: "#d85f86",
+    accentColor: "#f2b4ca",
+  },
+};
+
+const createCycleFlower = (cycleNumber, flowerKey) => ({
+  cycleNumber,
+  cycleName: `${cycleNumber}巡目`,
+  ...flowerCatalog[flowerKey],
+});
+
+const participationFlowerCycles = [
+  createCycleFlower(1, "cosmos"),
+  createCycleFlower(2, "fuji"),
+  createCycleFlower(3, "kinmokusei"),
 ];
+
+const teacherCycleFlowerAssignments = {
+  tsuneishi: ["iris", "lotus", "sumire"],
+  yuki: ["camellia", "botan", "lily"],
+  koike: ["sunflower", "asagao", "kikyo"],
+  yamashiro: ["hydrangea", "nadeshiko", "suisen"],
+  matsumoto: ["sakura", "hagi", "shakuyaku"],
+};
 
 const getCycleProgress = (count, perCycleGoal, cycles) => {
   const maxCount = perCycleGoal * cycles.length;
@@ -137,6 +270,44 @@ const getCycleProgress = (count, perCycleGoal, cycles) => {
     maxCount,
     cycle: cycles[cycleIndex],
   };
+};
+
+const getFlowerVisualBackground = (flower = {}) => {
+  const main = flower.flowerColor ?? "#d86a83";
+  const accent = flower.accentColor ?? "#f4c06a";
+
+  return `
+    radial-gradient(circle at 50% 52%, rgba(255, 250, 240, 0.94) 0 11%, transparent 12%),
+    radial-gradient(circle at 32% 42%, ${main} 0 22%, transparent 23%),
+    radial-gradient(circle at 68% 42%, ${main} 0 22%, transparent 23%),
+    radial-gradient(circle at 50% 24%, ${accent} 0 22%, transparent 23%),
+    radial-gradient(circle at 43% 72%, ${main} 0 19%, transparent 20%),
+    radial-gradient(circle at 58% 72%, ${accent} 0 19%, transparent 20%),
+    rgba(255, 250, 240, 0.82)
+  `;
+};
+
+const applyFlowerVisual = (element, flower = {}) => {
+  if (!element) {
+    return;
+  }
+
+  if (flower.flowerAsset) {
+    element.style.background = "";
+    element.style.backgroundImage = `url("assets/${flower.flowerAsset}")`;
+  } else {
+    element.style.backgroundImage = "";
+    element.style.background = getFlowerVisualBackground(flower);
+  }
+};
+
+const applyFlowerVariables = (element, flower = {}) => {
+  if (!element) {
+    return;
+  }
+
+  element.style.setProperty("--flower-main", flower.flowerColor ?? "#d86a83");
+  element.style.setProperty("--flower-accent", flower.accentColor ?? "#f4c06a");
 };
 
 const fairyAssets = {
@@ -165,6 +336,16 @@ const fairyAssets = {
 fairyAssets.iris = {
   src: "assets/fairy-companion-iris-v2.png",
   label: "菖蒲の妖精達成",
+};
+
+fairyAssets.dahlia = {
+  src: "assets/fairy-companion-dahlia-v2.png",
+  label: "ダリアの妖精達成",
+};
+
+fairyAssets.ume = {
+  src: "assets/fairy-evolution-stage-03.png",
+  label: "梅の妖精達成",
 };
 
 const teacherDetails = {
@@ -249,14 +430,22 @@ for (const [teacherKey, teacher] of Object.entries(teacherDetails)) {
   teacher.fairyId = target.fairyId;
   teacher.fairyAsset = target.fairyAsset;
   teacher.stampGoal = target.stampGoal ?? teacherLessonRule.maxCountPerTeacher;
-  teacher.flowerCycles = [
-    {
-      flower: teacher.flower,
-      flowerName: teacher.flowerName,
-      flowerAsset: teacher.flowerAsset,
-    },
-    ...extraFlowerCycles,
-  ];
+  teacher.flowerCycles = (teacherCycleFlowerAssignments[teacherKey] ?? [teacher.flower]).map((flowerKey, index) => {
+    if (index === 0) {
+      return {
+        cycleNumber: 1,
+        cycleName: "1巡目",
+        flower: teacher.flower,
+        flowerName: teacher.flowerName,
+        flowerAsset: teacher.flowerAsset,
+        fairyId: teacher.fairyId,
+        fairyName: target.fairyName,
+        fairyAsset: teacher.fairyAsset,
+      };
+    }
+
+    return createCycleFlower(index + 1, flowerKey);
+  });
 }
 
 const cloneProgressTemplate = () => JSON.parse(JSON.stringify(window.userProgressTemplate ?? {
@@ -609,13 +798,43 @@ const updateTeacherStampRuleNote = (teacher) => {
   teacherStampRule.append(note);
 };
 
-const getAchievementFairy = (teacher) => {
-  const src = teacher.fairyAsset ? `assets/${teacher.fairyAsset}` : (fairyAssets[teacher.flower]?.src ?? fairyAssets.cosmos.src);
-  const flowerName = teacher.flowerName ?? "花";
-  const label = `${flowerName}の妖精達成`;
+const getFairyDisplayData = (fairyData = {}, teacher = null) => {
+  const flower = fairyData.flower ?? teacher?.flower ?? "cosmos";
+  const flowerName = fairyData.flowerName ?? teacher?.flowerName ?? "花";
+  const fairyAsset = fairyData.fairyAsset ?? teacher?.fairyAsset;
+  const fallbackFairy = fairyAssets[flower] ?? fairyAssets.cosmos;
+  const src = fairyAsset ? `assets/${fairyAsset}` : fallbackFairy.src;
+  const label = fairyData.name ?? fairyData.fairyName ?? fallbackFairy.label ?? `${flowerName}の妖精達成`;
 
-  return { src, label };
+  return { src, label, flower, flowerName };
 };
+
+const getCompletedTeacherCycleProgress = (teacher) => {
+  const goal = getTeacherGoal(teacher);
+  const maxCount = getTeacherMaxCount(teacher);
+  const currentCount = clampProgressCount(teacher.stampCount, maxCount);
+  const completedCycleIndex = currentCount > 0 && currentCount % goal === 0
+    ? Math.min(Math.floor(currentCount / goal) - 1, teacher.flowerCycles.length - 1)
+    : getCycleProgress(currentCount, goal, teacher.flowerCycles).cycleIndex;
+  const cycle = teacher.flowerCycles[completedCycleIndex];
+
+  return {
+    cycleIndex: completedCycleIndex,
+    cycleNumber: completedCycleIndex + 1,
+    cycleName: cycle.cycleName ?? `${completedCycleIndex + 1}巡目`,
+    requiredCount: goal * (completedCycleIndex + 1),
+    countInCycle: currentCount % goal === 0 ? goal : currentCount % goal,
+    cycle,
+  };
+};
+
+const getAchievementFairy = (teacher, cycleProgress = getCompletedTeacherCycleProgress(teacher)) =>
+  getFairyDisplayData({
+    name: cycleProgress.cycle.fairyName ?? `${cycleProgress.cycle.flowerName ?? "花"}の妖精達成`,
+    flower: cycleProgress.cycle.flower,
+    flowerName: cycleProgress.cycle.flowerName,
+    fairyAsset: cycleProgress.cycle.fairyAsset,
+  }, teacher);
 
 const getCurrentTeacherCycleProgress = (teacher) =>
   getCycleProgress(teacher.stampCount, getTeacherGoal(teacher), teacher.flowerCycles);
@@ -647,9 +866,7 @@ const updateParticipationStampCard = () => {
     participationFlowerName.textContent = cycleProgress.cycle.flowerName;
   }
 
-  if (participationFlower && cycleProgress.cycle.flowerAsset) {
-    participationFlower.style.backgroundImage = `url("assets/${cycleProgress.cycle.flowerAsset}")`;
-  }
+  applyFlowerVisual(participationFlower, cycleProgress.cycle);
 
   participationCount.textContent = `${cycleProgress.countInCycle}/${goal}回`;
   participationStatus.textContent = isFirstAchievementAchieved
@@ -713,8 +930,8 @@ const renderProfileFairiesFromResult = (achievementResult) => {
   }
 
   for (const earnedFairy of achievementResult.earnedFairies) {
-    const teacher = teacherDetails[earnedFairy.teacherId];
-    const fairy = getAchievementFairy(teacher);
+    const teacher = earnedFairy.teacherId ? teacherDetails[earnedFairy.teacherId] : null;
+    const fairy = getFairyDisplayData(earnedFairy, teacher);
     const item = document.createElement("article");
     item.className = "profile-fairy-item";
 
@@ -727,7 +944,7 @@ const renderProfileFairiesFromResult = (achievementResult) => {
     const status = document.createElement("span");
 
     name.textContent = earnedFairy.name;
-    status.textContent = `${earnedFairy.teacherName} 達成済み`;
+    status.textContent = `${earnedFairy.teacherName} ${earnedFairy.cycleName ?? ""} 達成済み`;
 
     copy.append(name, status);
     item.append(image, copy);
@@ -794,20 +1011,26 @@ const renderProfileAchievementResults = (achievementResult) => {
   }
 
   const list = section.querySelector("[data-profile-achievement-list]");
-  const teacherFairyCount = achievementResult.teacherFairy.achievedTeachers.length;
+  const teacherFairyCount = achievementResult.teacherFairy.earnedFairies.length;
   const teacherTotal = achievementResult.teacherFairy.teachers.length;
+  const teacherCycleTotal = achievementResult.teacherFairy.teachers.reduce(
+    (total, teacher) => total + (teacher.cycleCount ?? 1),
+    0
+  );
+  const participationCycleCount = achievementResult.participation.achievedCycles?.length ?? 0;
+  const participationCycleTotal = achievementResult.participation.cycleCount ?? 1;
   const circleRounds = achievementResult.teacherCircle.currentRounds;
 
   const rows = [
     {
       label: "参加スタンプ",
-      status: achievementResult.participation.isAchieved ? "達成済み" : "未達成",
-      count: `${achievementResult.participation.currentCount}/${achievementResult.participation.requiredCount}回`,
+      status: `${participationCycleCount}/${participationCycleTotal}巡 達成`,
+      count: `${achievementResult.participation.currentCount}/${achievementResult.participation.maxCount ?? achievementResult.participation.requiredCount}回`,
     },
     {
       label: "先生ごとの妖精達成",
-      status: `${teacherFairyCount}/${teacherTotal}人 達成`,
-      count: "各先生 5回",
+      status: `${teacherFairyCount}/${teacherCycleTotal}妖精 達成`,
+      count: `先生${teacherTotal}人 × 3巡`,
     },
     {
       label: "先生の輪",
@@ -889,9 +1112,7 @@ updateTeacherCards = () => {
     card.classList.toggle("is-recorded", teacher.completedFirstRound);
     card.classList.toggle("next-teacher", !teacher.completedFirstRound);
 
-    if (flower && cycleProgress.cycle.flowerAsset) {
-      flower.style.backgroundImage = `url("assets/${cycleProgress.cycle.flowerAsset}")`;
-    }
+    applyFlowerVisual(flower, cycleProgress.cycle);
 
     label.textContent = teacher.completedFirstRound
       ? `先生の輪 済・${getTeacherStampText(teacher)}`
@@ -1044,6 +1265,14 @@ const updateAdminPanel = () => {
   renderAdminAdjustments();
 };
 
+const isTeacherCycleAchievementCount = (count, teacher) => {
+  const goal = getTeacherGoal(teacher);
+  const maxCount = getTeacherMaxCount(teacher);
+  const currentCount = clampProgressCount(count, maxCount);
+
+  return currentCount > 0 && currentCount % goal === 0;
+};
+
 const setRecordPhase = (phase, teacher) => {
   recordPhase = phase;
   teacherDetail.dataset.recordPhase = phase;
@@ -1054,7 +1283,7 @@ const setRecordPhase = (phase, teacher) => {
   inlineFairyAchievement.hidden = true;
   fairyAchievement.hidden = phase !== "achievement";
   confirmCard.hidden = teacher.stampCount >= getTeacherMaxCount(teacher) && phase !== "done";
-  confirmCard.classList.toggle("is-achievement-preview", phase === "confirm" && teacher.stampCount === getTeacherGoal(teacher) - 1);
+  confirmCard.classList.toggle("is-achievement-preview", phase === "confirm" && isTeacherCycleAchievementCount(teacher.stampCount + 1, teacher));
 
   if (teacher.stampCount >= getTeacherMaxCount(teacher) && phase !== "done" && phase !== "achievement") {
     completeTeacherButton.textContent = "全ての花スタンプ達成済み";
@@ -1066,11 +1295,14 @@ const setRecordPhase = (phase, teacher) => {
   completeTeacherButton.disabled = false;
 
   if (phase === "confirm") {
-    if (teacher.stampCount === getTeacherGoal(teacher) - 1) {
-      confirmLabel.textContent = "5回目の達成確認";
-      confirmEffect.textContent = "この内容で記録すると、妖精スタンプ達成画面が開きます。";
+    if (isTeacherCycleAchievementCount(teacher.stampCount + 1, teacher)) {
+      const nextCount = teacher.stampCount + 1;
+      const nextCycleNumber = Math.ceil(nextCount / getTeacherGoal(teacher));
+
+      confirmLabel.textContent = `${nextCycleNumber}巡目の達成確認`;
+      confirmEffect.textContent = "この内容で記録すると、この巡の妖精達成画面が開きます。";
       completeTeacherButton.textContent = "3. 妖精スタンプを開く";
-      flowMessage.textContent = "5回目の反映後だけ、妖精・達成文字・花びら演出が表示されます。";
+      flowMessage.textContent = "巡の最後の1回です。反映後に妖精・達成文字・花びら演出が表示されます。";
       return;
     }
 
@@ -1090,19 +1322,20 @@ const setRecordPhase = (phase, teacher) => {
   }
 
   if (phase === "achievement") {
-    const achievementFairyData = getAchievementFairy(teacher);
+    const completedCycle = getCompletedTeacherCycleProgress(teacher);
+    const achievementFairyData = getAchievementFairy(teacher, completedCycle);
 
-    fairyAchievement.dataset.flower = teacher.flower;
-    achievementKicker.textContent = `${getTeacherGoal(teacher)}回達成`;
+    fairyAchievement.dataset.flower = completedCycle.cycle.flower;
+    achievementKicker.textContent = `${completedCycle.cycleNumber}巡目 達成`;
     achievementModalClose.textContent = "×";
     achievementModalClose.setAttribute("aria-label", "閉じる");
     achievementFairy.src = achievementFairyData.src;
     achievementFairy.alt = achievementFairyData.label;
     achievementTitle.textContent = achievementFairyData.label;
     achievementTeacher.textContent = teacher.name;
-    achievementCopy.textContent = `${teacher.name}の指導碁スタンプが${getTeacherGoal(teacher)}/${getTeacherGoal(teacher)}になりました。妖精達成を冒険者カードへ保存しました。`;
+    achievementCopy.textContent = `${teacher.name}の${completedCycle.cycleName ?? `${completedCycle.cycleNumber}巡目`}が達成になりました。妖精達成を冒険者カードへ保存しました。`;
     achievementProfileButton.textContent = "冒険者カードを見る";
-    confirmEffect.textContent = `${getTeacherGoal(teacher)}回目の指導碁スタンプを保存しました。`;
+    confirmEffect.textContent = `${completedCycle.cycleNumber}巡目の指導碁スタンプを保存しました。`;
     completeTeacherButton.textContent = "冒険者カードを見る";
     flowMessage.textContent = "妖精達成を保存しました。冒険者カードで確認できます。";
     return;
@@ -1135,19 +1368,22 @@ const renderTeacherDetail = (teacherKey) => {
   updateTeacherStampRuleNote(teacher);
   cardStampCurrent.textContent = String(cycleProgress.countInCycle);
   cardStampGoal.textContent = String(getTeacherGoal(teacher));
-  document.querySelector(".teacher-photo-card").dataset.bloomCount = String(cycleProgress.countInCycle);
-  document.querySelector(".teacher-photo-card").dataset.fairy = String(teacher.fairy);
-  document.querySelector(".teacher-photo-card").dataset.flower = cycleProgress.cycle.flower;
+  const photoCard = document.querySelector(".teacher-photo-card");
+  photoCard.dataset.bloomCount = String(cycleProgress.countInCycle);
+  photoCard.dataset.fairy = String(teacher.fairy);
+  photoCard.dataset.flower = cycleProgress.cycle.flower;
+  applyFlowerVariables(photoCard, cycleProgress.cycle);
   document.querySelector("[data-teacher-photo]").dataset.teacherPhoto = teacher.photo;
   document.querySelector("[data-photo-initial]").textContent = teacher.initial;
   document.querySelector("[data-teacher-style]").textContent = teacher.style;
   document.querySelector("[data-teacher-lesson]").textContent = teacher.lesson;
   document.querySelector("[data-teacher-note]").textContent = teacher.note;
-  const isFirstFairyPreview = teacher.stampCount === getTeacherGoal(teacher) - 1;
-  confirmLabel.textContent = isFirstFairyPreview ? `${getTeacherGoal(teacher)}回目の達成確認` : "これから記録する内容";
+  const isCycleAchievementPreview = isTeacherCycleAchievementCount(teacher.stampCount + 1, teacher);
+  const nextCycleNumber = Math.ceil((teacher.stampCount + 1) / getTeacherGoal(teacher));
+  confirmLabel.textContent = isCycleAchievementPreview ? `${nextCycleNumber}巡目の達成確認` : "これから記録する内容";
   confirmTeacher.textContent = teacher.name;
-  confirmEffect.textContent = isFirstFairyPreview
-    ? "指導後スタンプを1つ追加すると、妖精スタンプが開きます。"
+  confirmEffect.textContent = isCycleAchievementPreview
+    ? "指導後スタンプを1つ追加すると、この巡の妖精スタンプが開きます。"
     : `${cycleProgress.cycle.flowerName}のスタンプを1つ追加します。`;
 
   setRecordPhase("ready", teacher);
@@ -1169,7 +1405,12 @@ const completeTeacherStamp = (teacherKey) => {
   updateRoundProgress();
   updateProfileCard();
   updateAdminPanel();
-  setRecordPhase(previousStampCount < getTeacherGoal(teacher) && teacher.stampCount === getTeacherGoal(teacher) ? "achievement" : "done", teacher);
+  setRecordPhase(
+    !isTeacherCycleAchievementCount(previousStampCount, teacher) && isTeacherCycleAchievementCount(teacher.stampCount, teacher)
+      ? "achievement"
+      : "done",
+    teacher
+  );
 };
 
 const showTeacherList = () => {
@@ -1357,3 +1598,20 @@ updateRoundProgress();
 updateProfileCard();
 updateAdminPanel();
 updateAdminLockState();
+
+const appLoadStatus = document.querySelector("[data-app-load-status]");
+if (appLoadStatus) {
+  appLoadStatus.textContent = "画面の操作を読み込みました。";
+  window.setTimeout(() => {
+    appLoadStatus.hidden = true;
+  }, 700);
+}
+} catch (error) {
+  const appLoadStatus = document.querySelector("[data-app-load-status]");
+  if (appLoadStatus) {
+    appLoadStatus.hidden = false;
+    appLoadStatus.textContent = `画面の操作が止まりました。Codexにこの表示を見せてください: ${error.message}`;
+  }
+  throw error;
+}
+})();

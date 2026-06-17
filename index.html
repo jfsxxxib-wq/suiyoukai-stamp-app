@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>冒険記録帳</title>
-    <link rel="stylesheet" href="styles.css?v=20260617-flower-cycles">
+    <link rel="stylesheet" href="styles.css?v=20260618-flower-stamps">
   </head>
   <body>
     <main class="record-book" aria-label="冒険記録帳">
@@ -419,7 +419,7 @@
               </div>
               <small data-admin-passcode-message>運営用の調整画面はロックされています。</small>
             </section>
-            <section class="admin-card" aria-label="運営画面モック">
+            <section class="admin-card" aria-label="運営画面モック" hidden>
               <div class="admin-status">
                 <span data-admin-state>確認中</span>
                 <strong data-admin-summary>一巡目の輪まであと1人</strong>
@@ -500,7 +500,18 @@
         </article>
       </section>
     </main>
-    <script src="stamp-rules.js?v=20260617-flower-cycles"></script>
-    <script src="script.js?v=20260617-flower-cycles"></script>
+    <div class="app-load-status" data-app-load-status>画面の操作を読み込み中です。</div>
+    <script>
+      window.addEventListener("error", function (event) {
+        var status = document.querySelector("[data-app-load-status]");
+        if (!status) {
+          return;
+        }
+        status.hidden = false;
+        status.textContent = "画面の操作が止まりました。Codexにこの表示を見せてください: " + event.message;
+      });
+    </script>
+    <script src="stamp-rules.js?v=20260618-flower-stamps"></script>
+    <script src="script.js?v=20260618-flower-stamps"></script>
   </body>
 </html>
