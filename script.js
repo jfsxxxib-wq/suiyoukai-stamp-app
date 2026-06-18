@@ -18,6 +18,11 @@ const confirmCard = document.querySelector("[data-confirm-card]");
 const confirmLabel = document.querySelector("[data-confirm-label]");
 const confirmTeacher = document.querySelector("[data-confirm-teacher]");
 const confirmEffect = document.querySelector("[data-confirm-effect]");
+const gameRecordForm = document.querySelector("[data-game-record-form]");
+const gameRecordDate = document.querySelector("[data-game-record-date]");
+const gameRecordHandicap = document.querySelector("[data-game-record-handicap]");
+const gameRecordResult = document.querySelector("[data-game-record-result]");
+const teacherGameRecordList = document.querySelector("[data-teacher-game-record-list]");
 const inlineFairyAchievement = document.querySelector("[data-fairy-achievement]");
 const fairyAchievement = document.querySelector("[data-achievement-modal]");
 const achievementKicker = fairyAchievement.querySelector(".achievement-modal-kicker");
@@ -36,10 +41,23 @@ const profileRank = document.querySelector("[data-profile-rank]");
 const profileMedal = document.querySelector("[data-profile-medal]");
 const profileMedalIcon = document.querySelector("[data-profile-medal-icon]");
 const totalStamps = document.querySelector("[data-total-stamps]");
+const profileGuideProgress = document.querySelector("[data-profile-guide-progress]");
+const profileGuideProgressTrack = document.querySelector("[data-profile-guide-progress-track]");
 const circleBadge = document.querySelector("[data-circle-badge]");
 const profileBadges = document.querySelector(".profile-badges");
 const profileFairyList = document.querySelector("[data-profile-fairy-list]");
 const profileFairies = document.querySelector("[data-profile-fairies]");
+const profileSpecialCompanionList = document.querySelector("[data-profile-special-companion-list]");
+const libraryOwl = document.querySelector("[data-library-owl]");
+const libraryGuide = document.querySelector("[data-library-guide]");
+const librarySpeech = document.querySelector("[data-library-speech]");
+const libraryCurrentTitle = document.querySelector("[data-library-current-title]");
+const librarySummary = document.querySelector("[data-library-summary]");
+const libraryTitleCount = document.querySelector("[data-library-title-count]");
+const libraryTitleList = document.querySelector("[data-library-title-list]");
+const libraryMedalCount = document.querySelector("[data-library-medal-count]");
+const libraryMedalList = document.querySelector("[data-library-medal-list]");
+const libraryAchievementList = document.querySelector("[data-library-achievement-list]");
 const participationFlower = document.querySelector(".participation-stamp .stamp-flower");
 const participationFlowerName = document.querySelector("[data-participation-flower-name]");
 const participationCount = document.querySelector("[data-participation-count]");
@@ -72,11 +90,13 @@ const adminResult = document.querySelector("[data-admin-result]");
 
 let activeTeacherKey = "tsuneishi";
 let recordPhase = "ready";
+let confirmSaveReadyAt = 0;
 let adminDraft = null;
 let isAdminDraftDirty = false;
 let isAdminUnlocked = false;
 
 const progressStorageKey = "suiyoukai-stamp-progress-v1";
+const gameRecordsStorageKey = "suiyoukai-game-records-v1";
 const adminPasscode = "suiyoukai2026";
 const ruleTargets = window.teacherStampTargets ?? [];
 const participationRule = window.stampRules?.participation ?? {};
@@ -573,6 +593,111 @@ const loadUserProgress = () => {
 
 let userProgress = loadUserProgress();
 
+const sanitizeGameRecord = (record = {}) => {
+  const teacherId = typeof record.teacherId === "string" ? record.teacherId : "";
+  const date = typeof record.date === "string" ? record.date : "";
+
+  if (!teacherDetails[teacherId] || !/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+    return null;
+  }
+
+  return {
+    id: typeof record.id === "string" ? record.id : `game-${teacherId}-${date}`,
+    teacherId,
+    date,
+    handicap: typeof record.handicap === "string" && record.handicap ? record.handicap : "互先",
+    result: typeof record.result === "string" && record.result ? record.result : "記録なし",
+    recordedAt: typeof record.recordedAt === "string" ? record.recordedAt : "",
+  };
+};
+
+const loadGameRecords = () => {
+  try {
+    const storedRecords = JSON.parse(localStorage.getItem(gameRecordsStorageKey) ?? "[]");
+    return Array.isArray(storedRecords) ? storedRecords.map(sanitizeGameRecord).filter(Boolean) : [];
+  } catch {
+    return [];
+  }
+};
+
+let gameRecords = loadGameRecords();
+
+const saveGameRecords = () => {
+  try {
+    localStorage.setItem(gameRecordsStorageKey, JSON.stringify(gameRecords));
+  } catch {
+    // 対局記録は保存できない環境でも、この画面を開いている間は保持します。
+  }
+};
+
+const getTodayForInput = () => {
+  const now = new Date();
+  const localDate = new Date(now.getTime() - now.getTimezoneOffset() * 60000);
+  return localDate.toISOString().slice(0, 10);
+};
+
+const getGameRecordDraft = () => ({
+  date: gameRecordDate?.value || getTodayForInput(),
+  handicap: gameRecordHandicap?.value || "互先",
+  result: gameRecordResult?.value || "記録なし",
+});
+
+const updateGameRecordConfirmation = () => {
+  if (!confirmEffect || recordPhase !== "confirm") {
+    return;
+  }
+
+  const draft = getGameRecordDraft();
+  confirmEffect.textContent = `${draft.date}・${draft.handicap}・${draft.result}`;
+};
+
+const addGameRecord = (teacherId) => {
+  const draft = getGameRecordDraft();
+  const record = {
+    id: `game-${Date.now()}-${teacherId}`,
+    teacherId,
+    date: draft.date,
+    handicap: draft.handicap,
+    result: draft.result,
+    recordedAt: new Date().toISOString(),
+  };
+
+  gameRecords.push(record);
+  saveGameRecords();
+  return record;
+};
+
+const renderTeacherGameRecords = (teacherId) => {
+  if (!teacherGameRecordList) {
+    return;
+  }
+
+  const records = gameRecords
+    .filter((record) => record.teacherId === teacherId)
+    .sort((a, b) => `${b.date}${b.recordedAt}`.localeCompare(`${a.date}${a.recordedAt}`));
+
+  teacherGameRecordList.textContent = "";
+  if (records.length === 0) {
+    const empty = document.createElement("p");
+    empty.className = "game-record-empty";
+    empty.textContent = "まだ対局記録はありません";
+    teacherGameRecordList.append(empty);
+    return;
+  }
+
+  for (const record of records) {
+    const item = document.createElement("article");
+    item.className = "teacher-game-record-item";
+    const date = document.createElement("time");
+    const details = document.createElement("span");
+    date.dateTime = record.date;
+    date.textContent = record.date.replaceAll("-", "/");
+    details.textContent = `${record.handicap}・${record.result}`;
+    item.append(date, details);
+    teacherGameRecordList.append(item);
+  }
+};
+
 const syncTeacherDetailsFromProgress = () => {
   for (const [teacherId, teacher] of Object.entries(teacherDetails)) {
     const stampCount = clampProgressCount(userProgress.stamps.teacherLessonCounts[teacherId], getTeacherMaxCount(teacher));
@@ -671,6 +796,12 @@ const updateAdminLockState = () => {
   }
 };
 
+const lockAdminPanel = () => {
+  isAdminUnlocked = false;
+  adminPasscodeMessage.textContent = "運営用の調整画面はロックされています。";
+  updateAdminLockState();
+};
+
 const unlockAdminPanel = () => {
   if (adminPasscodeInput.value !== adminPasscode) {
     adminPasscodeMessage.textContent = "パスコードが違います。";
@@ -741,6 +872,10 @@ saveUserProgress();
 syncAdminDraftFromProgress();
 
 const showPanel = (target) => {
+  if (target !== "admin" && isAdminUnlocked) {
+    lockAdminPanel();
+  }
+
   dock.classList.remove("is-collapsed");
   infoPanel.hidden = false;
 
@@ -952,6 +1087,138 @@ const renderProfileFairiesFromResult = (achievementResult) => {
   }
 };
 
+const renderProfileSpecialCompanions = (achievementResult) => {
+  if (!profileSpecialCompanionList) {
+    return;
+  }
+
+  const earnedCompanions = achievementResult.earnedCompanions ?? [];
+  profileSpecialCompanionList.textContent = "";
+
+  if (earnedCompanions.length === 0) {
+    const empty = document.createElement("span");
+    empty.className = "profile-empty";
+    empty.textContent = "まだ特別な仲間はいません";
+    profileSpecialCompanionList.append(empty);
+    return;
+  }
+
+  for (const companion of earnedCompanions) {
+    const item = document.createElement("article");
+    item.className = "profile-special-companion-item";
+
+    const image = document.createElement("img");
+    image.src = `assets/${companion.asset}`;
+    image.alt = companion.name;
+
+    const copy = document.createElement("div");
+    const name = document.createElement("strong");
+    const character = document.createElement("span");
+    const status = document.createElement("small");
+
+    name.textContent = companion.name;
+    character.textContent = companion.character;
+    status.textContent = companion.description;
+
+    copy.append(name, character, status);
+    item.append(image, copy);
+    profileSpecialCompanionList.append(item);
+  }
+};
+
+const renderLibraryCollection = (list, items, emptyMessage, kind) => {
+  if (!list) {
+    return;
+  }
+
+  list.textContent = "";
+  if (items.length === 0) {
+    const empty = document.createElement("p");
+    empty.className = "library-empty";
+    empty.textContent = emptyMessage;
+    list.append(empty);
+    return;
+  }
+
+  for (const item of items) {
+    const entry = document.createElement("article");
+    entry.className = `library-collection-item is-${kind}`;
+    const mark = document.createElement("span");
+    const copy = document.createElement("div");
+    const name = document.createElement("strong");
+    const status = document.createElement("small");
+    mark.setAttribute("aria-hidden", "true");
+    mark.textContent = kind === "medal" ? "勲" : "称";
+    name.textContent = item.name;
+    status.textContent = kind === "medal" ? "勲章棚に収蔵" : "称号の書架に収蔵";
+    copy.append(name, status);
+    entry.append(mark, copy);
+    list.append(entry);
+  }
+};
+
+const renderOwlLibrary = (achievementResult) => {
+  if (!libraryCurrentTitle) {
+    return;
+  }
+
+  const titles = achievementResult.earnedTitles ?? [];
+  const medals = achievementResult.earnedMedals ?? [];
+  const companions = achievementResult.earnedCompanions ?? [];
+  const latestTitle = titles.at(-1);
+  const hasWiseOwl = companions.some((companion) => companion.id === "special_companion_owl_b");
+  const teacherFairyCount = achievementResult.teacherFairy.earnedFairies.length;
+  const participationCount = achievementResult.participation.achievedCycles?.length ?? 0;
+  const totalFlowerAchievements = teacherFairyCount + participationCount;
+  const totalStampCount = getTotalStampCount();
+
+  libraryCurrentTitle.textContent = latestTitle?.name ?? "まだ称号はありません";
+  librarySummary.textContent = `称号 ${titles.length}冊・勲章 ${medals.length}点`;
+  libraryTitleCount.textContent = `${titles.length}冊`;
+  libraryMedalCount.textContent = `${medals.length}点`;
+
+  libraryOwl.src = hasWiseOwl
+    ? "assets/special-companion-owl-b.png"
+    : "assets/special-companion-owl-a.png";
+  libraryOwl.alt = hasWiseOwl ? "達成を知る賢者" : "知恵の見守り役";
+  libraryGuide.textContent = hasWiseOwl
+    ? "達成を知る賢者が、積み重ねた旅の証を見守っています。"
+    : "知恵の見守り役が、旅の記録を大切に収めています。";
+
+  librarySpeech.textContent = totalFlowerAchievements >= 18
+    ? "「立派な冒険記録になりました。」"
+    : achievementResult.teacherCircle.currentRounds >= 1
+      ? "「よく学び、よく歩みましたね。」"
+      : medals.length >= 3
+        ? "「旅の証を大切に収めました。」"
+        : totalFlowerAchievements >= 2
+          ? "「花の記録が集まっています。」"
+          : titles.length >= 1
+            ? "「新しい書が加わりました。」"
+            : totalStampCount >= 1
+              ? "「旅の最初の一頁ですね。」"
+              : "「ようこそ書庫へ。」";
+
+  renderLibraryCollection(libraryTitleList, titles, "まだ収められた称号はありません", "title");
+  renderLibraryCollection(libraryMedalList, medals, "まだ収められた勲章はありません", "medal");
+
+  libraryAchievementList.textContent = "";
+  for (const record of [
+    { label: "花と妖精", value: `${totalFlowerAchievements}/18` },
+    { label: "先生の輪", value: `${achievementResult.teacherCircle.currentRounds}巡` },
+    { label: "特別な仲間", value: `${companions.length}/4` },
+    { label: "対局記録", value: `${gameRecords.length}局` },
+  ]) {
+    const row = document.createElement("article");
+    const label = document.createElement("span");
+    const value = document.createElement("strong");
+    label.textContent = record.label;
+    value.textContent = record.value;
+    row.append(label, value);
+    libraryAchievementList.append(row);
+  }
+};
+
 const renderProfileRewardBadges = (achievementResult) => {
   if (!profileBadges) {
     return;
@@ -1020,6 +1287,7 @@ const renderProfileAchievementResults = (achievementResult) => {
   const participationCycleCount = achievementResult.participation.achievedCycles?.length ?? 0;
   const participationCycleTotal = achievementResult.participation.cycleCount ?? 1;
   const circleRounds = achievementResult.teacherCircle.currentRounds;
+  const specialCompanionCount = achievementResult.earnedCompanions?.length ?? 0;
 
   const rows = [
     {
@@ -1036,6 +1304,11 @@ const renderProfileAchievementResults = (achievementResult) => {
       label: "先生の輪",
       status: circleRounds > 0 ? `${circleRounds}巡 達成済み` : "未達成",
       count: "先生5人を各1回",
+    },
+    {
+      label: "特別な仲間",
+      status: `${specialCompanionCount}/4仲間 達成`,
+      count: "現在の保存記録から判定",
     },
   ];
 
@@ -1124,10 +1397,19 @@ const updateProfileCard = () => {
   const achievementResult = getCurrentAchievementResult();
   const hasCircle = achievementResult.teacherCircle.currentRounds > 0;
   const earnedFairies = achievementResult.earnedFairies;
+  const flowerTotal = participationFlowerCycles.length
+    + Object.values(teacherDetails).reduce((total, teacher) => total + (teacher.flowerCycles?.length ?? 1), 0);
+  const achievedFlowerCount = Math.min(earnedFairies.length, flowerTotal);
   const latestTitle = achievementResult.earnedTitles.at(-1);
   const latestMedal = achievementResult.earnedMedals.at(-1);
 
   totalStamps.textContent = `スタンプ ${getTotalStampCount()}`;
+  if (profileGuideProgress) {
+    profileGuideProgress.textContent = `${achievedFlowerCount}/${flowerTotal}`;
+  }
+  if (profileGuideProgressTrack) {
+    profileGuideProgressTrack.style.width = `${flowerTotal > 0 ? (achievedFlowerCount / flowerTotal) * 100 : 0}%`;
+  }
   profileTitle.textContent = latestTitle?.name ?? (earnedFairies.length > 0 ? "妖精と出会った旅人" : "花を集める旅人");
   profileRank.textContent = hasCircle ? "探訪冒険者" : "初級冒険者";
   profileMedal.textContent = latestMedal?.name ?? "コスモスの友";
@@ -1141,7 +1423,9 @@ const updateProfileCard = () => {
 
   renderProfileRewardBadges(achievementResult);
   renderProfileFairiesFromResult(achievementResult);
+  renderProfileSpecialCompanions(achievementResult);
   renderProfileAchievementResults(achievementResult);
+  renderOwlLibrary(achievementResult);
 };
 
 const createAdminAdjustmentRow = ({ type, id, label, subLabel, value, maxCount }) => {
@@ -1282,6 +1566,7 @@ const setRecordPhase = (phase, teacher) => {
   flowDoneStep.classList.toggle("is-complete", phase === "done" || phase === "achievement");
   inlineFairyAchievement.hidden = true;
   fairyAchievement.hidden = phase !== "achievement";
+  gameRecordForm.hidden = phase !== "confirm";
   confirmCard.hidden = teacher.stampCount >= getTeacherMaxCount(teacher) && phase !== "done";
   confirmCard.classList.toggle("is-achievement-preview", phase === "confirm" && isTeacherCycleAchievementCount(teacher.stampCount + 1, teacher));
 
@@ -1295,20 +1580,32 @@ const setRecordPhase = (phase, teacher) => {
   completeTeacherButton.disabled = false;
 
   if (phase === "confirm") {
+    if (!gameRecordDate.value) {
+      gameRecordDate.value = getTodayForInput();
+    }
+    confirmSaveReadyAt = Date.now() + 700;
+    completeTeacherButton.disabled = true;
+    window.setTimeout(() => {
+      if (recordPhase === "confirm") {
+        completeTeacherButton.disabled = false;
+      }
+    }, 700);
+
     if (isTeacherCycleAchievementCount(teacher.stampCount + 1, teacher)) {
       const nextCount = teacher.stampCount + 1;
       const nextCycleNumber = Math.ceil(nextCount / getTeacherGoal(teacher));
 
       confirmLabel.textContent = `${nextCycleNumber}巡目の達成確認`;
-      confirmEffect.textContent = "この内容で記録すると、この巡の妖精達成画面が開きます。";
-      completeTeacherButton.textContent = "3. 妖精スタンプを開く";
+      updateGameRecordConfirmation();
+      completeTeacherButton.textContent = "3. 対局記録を保存して妖精スタンプを開く";
       flowMessage.textContent = "巡の最後の1回です。反映後に妖精・達成文字・花びら演出が表示されます。";
       return;
     }
 
-    confirmLabel.textContent = "これから記録する内容";
-    completeTeacherButton.textContent = "3. この内容で記録する";
-    flowMessage.textContent = "内容を確認してから反映します。反映後は先生一覧と冒険者カードが更新されます。";
+    confirmLabel.textContent = "保存する対局記録";
+    updateGameRecordConfirmation();
+    completeTeacherButton.textContent = "3. 対局記録を保存してスタンプを押す";
+    flowMessage.textContent = "対局記録を確認してください。このボタンを押した時だけ記録保存とスタンプ反映を行います。";
     return;
   }
 
@@ -1353,13 +1650,14 @@ const setRecordPhase = (phase, teacher) => {
     return;
   }
 
-  completeTeacherButton.textContent = "2. 記録内容を確認";
-  flowMessage.textContent = "誤って押さないように、次の画面で記録内容を確認してから反映します。";
+  completeTeacherButton.textContent = "2. 対局記録を入力";
+  flowMessage.textContent = "対局日・ハンデ・勝敗を入力してから、別の確定ボタンで保存します。";
 };
 
 const renderTeacherDetail = (teacherKey) => {
   const teacher = teacherDetails[teacherKey];
   const cycleProgress = getCurrentTeacherCycleProgress(teacher);
+  const isAllCyclesComplete = teacher.stampCount >= getTeacherMaxCount(teacher);
 
   activeTeacherKey = teacherKey;
   document.querySelector("[data-teacher-name]").textContent = teacher.name;
@@ -1378,13 +1676,20 @@ const renderTeacherDetail = (teacherKey) => {
   document.querySelector("[data-teacher-style]").textContent = teacher.style;
   document.querySelector("[data-teacher-lesson]").textContent = teacher.lesson;
   document.querySelector("[data-teacher-note]").textContent = teacher.note;
-  const isCycleAchievementPreview = isTeacherCycleAchievementCount(teacher.stampCount + 1, teacher);
+  renderTeacherGameRecords(teacherKey);
+  const isCycleAchievementPreview = !isAllCyclesComplete && isTeacherCycleAchievementCount(teacher.stampCount + 1, teacher);
   const nextCycleNumber = Math.ceil((teacher.stampCount + 1) / getTeacherGoal(teacher));
-  confirmLabel.textContent = isCycleAchievementPreview ? `${nextCycleNumber}巡目の達成確認` : "これから記録する内容";
+  confirmLabel.textContent = isAllCyclesComplete
+    ? `全${teacher.flowerCycles.length}巡達成`
+    : isCycleAchievementPreview
+      ? `${nextCycleNumber}巡目の達成確認`
+      : "これから記録する内容";
   confirmTeacher.textContent = teacher.name;
-  confirmEffect.textContent = isCycleAchievementPreview
-    ? "指導後スタンプを1つ追加すると、この巡の妖精スタンプが開きます。"
-    : `${cycleProgress.cycle.flowerName}のスタンプを1つ追加します。`;
+  confirmEffect.textContent = isAllCyclesComplete
+    ? "この先生の花スタンプはすべて達成済みです。"
+    : isCycleAchievementPreview
+      ? "指導後スタンプを1つ追加すると、この巡の妖精スタンプが開きます。"
+      : `${cycleProgress.cycle.flowerName}のスタンプを1つ追加します。`;
 
   setRecordPhase("ready", teacher);
 };
@@ -1392,6 +1697,7 @@ const renderTeacherDetail = (teacherKey) => {
 const completeTeacherStamp = (teacherKey) => {
   const teacher = teacherDetails[teacherKey];
   const previousStampCount = teacher.stampCount;
+  const savedGameRecord = addGameRecord(teacherKey);
 
   teacher.completedFirstRound = true;
   teacher.stampCount = Math.min(getTeacherMaxCount(teacher), teacher.stampCount + 1);
@@ -1405,6 +1711,8 @@ const completeTeacherStamp = (teacherKey) => {
   updateRoundProgress();
   updateProfileCard();
   updateAdminPanel();
+  renderTeacherGameRecords(teacherKey);
+  confirmEffect.textContent = `${savedGameRecord.date}・${savedGameRecord.handicap}・${savedGameRecord.result}を保存しました。`;
   setRecordPhase(
     !isTeacherCycleAchievementCount(previousStampCount, teacher) && isTeacherCycleAchievementCount(teacher.stampCount, teacher)
       ? "achievement"
@@ -1439,6 +1747,10 @@ for (const tab of tabs) {
 }
 
 closeButton.addEventListener("click", () => {
+  if (isAdminUnlocked) {
+    lockAdminPanel();
+  }
+
   dock.classList.add("is-collapsed");
   dock.classList.remove("is-detail-open");
   infoPanel.hidden = true;
@@ -1495,6 +1807,11 @@ adminPasscodeInput.addEventListener("keydown", (event) => {
   }
 });
 
+for (const input of [gameRecordDate, gameRecordHandicap, gameRecordResult]) {
+  input.addEventListener("input", updateGameRecordConfirmation);
+  input.addEventListener("change", updateGameRecordConfirmation);
+}
+
 participationStampButton.addEventListener("click", () => {
   addParticipationStamp();
   syncAdminDraftFromProgress();
@@ -1513,6 +1830,9 @@ completeTeacherButton.addEventListener("click", () => {
   }
 
   if (recordPhase === "confirm") {
+    if (Date.now() < confirmSaveReadyAt) {
+      return;
+    }
     completeTeacherStamp(activeTeacherKey);
     return;
   }

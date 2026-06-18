@@ -176,6 +176,41 @@ const achievementRules = {
   },
 };
 
+const specialCompanionRules = [
+  {
+    id: "special_companion_french_bulldog_a",
+    character: "フレンチブルドッグA",
+    name: "はじめの一歩",
+    description: "初スタンプ獲得",
+    asset: "special-companion-french-bulldog-a.png",
+    condition: "first_stamp",
+  },
+  {
+    id: "special_companion_french_bulldog_b",
+    character: "フレンチブルドッグB",
+    name: "挑戦する冒険者",
+    description: "参加スタンプ1回＋指導碁スタンプ1回",
+    asset: "special-companion-french-bulldog-b.png",
+    condition: "participation_and_lesson",
+  },
+  {
+    id: "special_companion_owl_a",
+    character: "フクロウA",
+    name: "知恵の見守り役",
+    description: "初めて称号または勲章を獲得",
+    asset: "special-companion-owl-a.png",
+    condition: "first_reward",
+  },
+  {
+    id: "special_companion_owl_b",
+    character: "フクロウB",
+    name: "達成を知る賢者",
+    description: "先生の輪 一巡達成",
+    asset: "special-companion-owl-b.png",
+    condition: "teacher_circle_round_one",
+  },
+];
+
 const stampRules = {
   participation: {
     id: achievementRules.participation.id,
@@ -242,7 +277,7 @@ const flowerCatalog = {
     flowerAsset: "fuji-stamp-stage-05-list.png",
     fairyId: "fairy_fuji",
     fairyName: "藤の妖精",
-    fairyAsset: "fairy-evolution-stage-01.png",
+    fairyAsset: "fairy-companion-fuji-lion.png",
   },
   kinmokusei: {
     flower: "kinmokusei",
@@ -250,7 +285,7 @@ const flowerCatalog = {
     flowerAsset: "kinmokusei-stamp-stage-05-list.png",
     fairyId: "fairy_kinmokusei",
     fairyName: "金木犀の妖精",
-    fairyAsset: "fairy-evolution-stage-02.png",
+    fairyAsset: "fairy-companion-kinmokusei-elephant.png",
   },
   lotus: {
     flower: "lotus",
@@ -266,7 +301,7 @@ const flowerCatalog = {
     flowerAsset: "sumire-stamp-stage-05-list.png",
     fairyId: "fairy_sumire",
     fairyName: "菫の妖精",
-    fairyAsset: "fairy-evolution-stage-04.png",
+    fairyAsset: "fairy-companion-sumire-rabbit.png",
   },
   botan: {
     flower: "botan",
@@ -282,7 +317,7 @@ const flowerCatalog = {
     flowerAsset: "lily-stamp-stage-05-list.png",
     fairyId: "fairy_lily",
     fairyName: "百合の妖精",
-    fairyAsset: "fairy-evolution-stage-02.png",
+    fairyAsset: "fairy-companion-lily-white-fox.png",
   },
   asagao: {
     flower: "asagao",
@@ -298,7 +333,7 @@ const flowerCatalog = {
     flowerAsset: "kikyo-stamp-stage-05-list.png",
     fairyId: "fairy_kikyo",
     fairyName: "桔梗の妖精",
-    fairyAsset: "fairy-evolution-stage-04.png",
+    fairyAsset: "fairy-companion-kikyo-red-squirrel.png",
   },
   nadeshiko: {
     flower: "nadeshiko",
@@ -314,7 +349,7 @@ const flowerCatalog = {
     flowerAsset: "suisen-stamp-stage-05-list.png",
     fairyId: "fairy_suisen",
     fairyName: "水仙の妖精",
-    fairyAsset: "fairy-evolution-stage-02.png",
+    fairyAsset: "fairy-companion-suisen-red-panda.png",
   },
   hagi: {
     flower: "hagi",
@@ -330,7 +365,7 @@ const flowerCatalog = {
     flowerAsset: "shakuyaku-stamp-stage-05-list.png",
     fairyId: "fairy_shakuyaku",
     fairyName: "芍薬の妖精",
-    fairyAsset: "fairy-evolution-stage-04.png",
+    fairyAsset: "fairy-companion-shakuyaku-java-sparrow.png",
   },
 };
 
@@ -615,33 +650,77 @@ const evaluateTeacherCircleAchievements = (teacherCircleRounds = 0) => {
   };
 };
 
+const evaluateSpecialCompanionAchievements = (progress = userProgressTemplate, achievementState = {}) => {
+  const participationCount = normalizeCount(getProgressParticipationCount(progress));
+  const teacherLessonCounts = getProgressTeacherLessonCounts(progress);
+  const totalTeacherStamps = Object.values(teacherLessonCounts).reduce(
+    (total, count) => total + normalizeCount(count),
+    0
+  );
+  const hasReward = (achievementState.earnedMedals?.length ?? 0) > 0
+    || (achievementState.earnedTitles?.length ?? 0) > 0;
+  const teacherCircleRounds = normalizeCount(achievementState.teacherCircle?.currentRounds);
+
+  const companions = specialCompanionRules.map((companion) => {
+    const isAchieved = companion.condition === "first_stamp"
+      ? participationCount + totalTeacherStamps >= 1
+      : companion.condition === "participation_and_lesson"
+        ? participationCount >= 1 && totalTeacherStamps >= 1
+        : companion.condition === "first_reward"
+          ? hasReward
+          : companion.condition === "teacher_circle_round_one"
+            ? teacherCircleRounds >= 1
+            : false;
+
+    return { ...companion, isAchieved };
+  });
+
+  return {
+    ruleId: "special_companions",
+    type: "special_companion",
+    label: "特別な仲間スタンプ",
+    companions,
+    earnedCompanions: companions.filter((companion) => companion.isAchieved),
+  };
+};
+
 const evaluateAllAchievements = (progress = userProgressTemplate) => {
   const participation = evaluateParticipationAchievement(getProgressParticipationCount(progress));
   const teacherFairy = evaluateTeacherFairyAchievements(getProgressTeacherLessonCounts(progress));
   const teacherCircle = evaluateTeacherCircleAchievements(getProgressTeacherCircleRounds(progress));
+  const earnedMedals = uniqueById([
+    ...participation.earnedMedals,
+    ...teacherFairy.earnedMedals,
+    ...teacherCircle.earnedMedals,
+  ]);
+  const earnedTitles = uniqueById([
+    ...participation.earnedTitles,
+    ...teacherFairy.earnedTitles,
+    ...teacherCircle.earnedTitles,
+  ]);
+  const specialCompanions = evaluateSpecialCompanionAchievements(progress, {
+    earnedMedals,
+    earnedTitles,
+    teacherCircle,
+  });
 
   return {
     participation,
     teacherFairy,
     teacherCircle,
+    specialCompanions,
     earnedFairies: [
       ...participation.earnedFairies,
       ...teacherFairy.earnedFairies,
     ],
-    earnedMedals: uniqueById([
-      ...participation.earnedMedals,
-      ...teacherFairy.earnedMedals,
-      ...teacherCircle.earnedMedals,
-    ]),
-    earnedTitles: uniqueById([
-      ...participation.earnedTitles,
-      ...teacherFairy.earnedTitles,
-      ...teacherCircle.earnedTitles,
-    ]),
+    earnedMedals,
+    earnedTitles,
+    earnedCompanions: specialCompanions.earnedCompanions,
   };
 };
 
 window.achievementRules = achievementRules;
+window.specialCompanionRules = specialCompanionRules;
 window.stampRules = stampRules;
 window.teacherStampTargets = teacherStampTargets;
 window.flowerCatalog = flowerCatalog;
@@ -653,5 +732,6 @@ window.achievementEvaluators = {
   evaluateParticipationAchievement,
   evaluateTeacherFairyAchievements,
   evaluateTeacherCircleAchievements,
+  evaluateSpecialCompanionAchievements,
   evaluateAllAchievements,
 };
