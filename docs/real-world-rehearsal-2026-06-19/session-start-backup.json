@@ -1,0 +1,45 @@
+{
+  "appId": "suiyoukai-stamp-adventure",
+  "formatVersion": 1,
+  "savedAt": "2026-06-19T11:18:29.016Z",
+  "progress": {
+    "schemaVersion": 2,
+    "stamps": {
+      "participationCount": 9,
+      "teacherLessonCounts": {
+        "tsuneishi": 4,
+        "yuki": 0,
+        "koike": 0,
+        "yamashiro": 0,
+        "matsumoto": 0
+      },
+      "teacherCircleRounds": 0
+    },
+    "earned": {
+      "fairies": [],
+      "medals": [],
+      "titles": [],
+      "companions": [
+        {
+          "id": "special_companion_french_bulldog_a",
+          "character": "フレンチブルドッグA",
+          "name": "はじめの一歩",
+          "description": "初スタンプ獲得",
+          "asset": "special-companion-french-bulldog-a.png",
+          "condition": "first_stamp",
+          "isAchieved": true
+        },
+        {
+          "id": "special_companion_french_bulldog_b",
+          "character": "フレンチブルドッグB",
+          "name": "挑戦する冒険者",
+          "description": "参加スタンプ1回＋指導碁スタンプ1回",
+          "asset": "special-companion-french-bulldog-b.png",
+          "condition": "participation_and_lesson",
+          "isAchieved": true
+        }
+      ]
+    }
+  },
+  "operationHistory": []
+}

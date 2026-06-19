@@ -1091,14 +1091,16 @@ dd {
 .medal-row {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
+  gap: 9px;
+  min-height: 44px;
 }
 
 .profile-medal {
   display: inline-block;
-  width: 34px;
-  height: 34px;
+  width: 42px;
+  height: 42px;
   object-fit: contain;
+  filter: drop-shadow(0 4px 5px rgba(88, 65, 25, 0.16));
 }
 
 .profile-medal[hidden] {
@@ -1162,10 +1164,11 @@ dd {
 }
 
 .badge-reward-icon {
-  width: 22px;
-  height: 22px;
-  margin-right: 5px;
+  width: 28px;
+  height: 28px;
+  margin-right: 6px;
   object-fit: contain;
+  filter: drop-shadow(0 3px 4px rgba(88, 65, 25, 0.13));
 }
 
 .profile-fairies {
@@ -4486,7 +4489,7 @@ dd {
 
 .library-collection-item {
   display: grid;
-  grid-template-columns: 30px minmax(0, 1fr);
+  grid-template-columns: 42px minmax(0, 1fr);
   align-items: center;
   gap: 8px;
   min-width: 0;
@@ -4510,9 +4513,17 @@ dd {
 }
 
 .library-collection-item > .library-medal-image {
-  width: 36px;
-  height: 42px;
+  width: 42px;
+  height: 48px;
   object-fit: contain;
+  filter: drop-shadow(0 4px 5px rgba(88, 65, 25, 0.14));
+}
+
+.library-collection-item.is-medal {
+  border-color: rgba(197, 150, 58, 0.24);
+  background:
+    linear-gradient(105deg, rgba(255, 246, 218, 0.54), rgba(255, 255, 255, 0.4)),
+    rgba(255, 255, 255, 0.46);
 }
 
 .library-collection-item.is-medal > span {

@@ -219,6 +219,9 @@ def make_medal_sheet():
         draw.text((left + (350 - (milestone_box[2] - milestone_box[0])) // 2, top + 820), milestone, fill=(62, 83, 66), font=font(21))
         name_box = draw.textbbox((0, 0), name, font=font(18))
         draw.text((left + (350 - (name_box[2] - name_box[0])) // 2, top + 870), name, fill=(85, 74, 58), font=font(18))
+        status = "完成版・アプリ使用中"
+        status_box = draw.textbbox((0, 0), status, font=font(16))
+        draw.text((left + (350 - (status_box[2] - status_box[0])) // 2, top + 920), status, fill=(139, 101, 30), font=font(16))
     output = DOCS / "stamp-catalog-medals-2026-06-19.png"
     sheet.save(output)
     return output
@@ -250,7 +253,7 @@ def additional_fairies_html():
 
 def medals_html():
     return "".join(
-        f'<article><img src="{escape(path)}" alt="{escape(name)}"><h3>{escape(milestone)}</h3><p>{escape(name)}</p></article>'
+        f'<article><img src="{escape(path)}" alt="{escape(name)}"><h3>{escape(milestone)}</h3><p>{escape(name)}<br><small>完成版・アプリ使用中</small></p></article>'
         for milestone, name, path in MEDALS
     )
 
@@ -283,6 +286,7 @@ article {{ border:1px solid var(--line); background:var(--card); padding:14px; b
 article img {{ display:block; width:100%; aspect-ratio:1; object-fit:contain; }}
 article h3 {{ margin:10px 0 4px; color:var(--ink); font-size:17px; letter-spacing:0; }}
 article p {{ margin:0; font-size:14px; }}
+article small {{ color:#8b651e; font-weight:800; }}
 @media (max-width:850px) {{ .specials {{ grid-template-columns:repeat(2,minmax(0,1fr)); }} }}
 </style>
 </head>
