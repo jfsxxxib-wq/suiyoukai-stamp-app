@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>冒険記録帳</title>
-    <link rel="stylesheet" href="styles.css?v=20260618-flower-stamps">
+    <link rel="stylesheet" href="styles.css?v=20260619-fairy-guide-bubble">
   </head>
   <body>
     <main class="record-book" aria-label="冒険記録帳">
@@ -15,6 +15,17 @@
           <p>水曜会探索マップ</p>
           <h1>花を見つける小さな旅</h1>
         </div>
+        <button type="button" class="next-adventure-card" data-next-adventure-button>
+          <span class="next-adventure-text">
+            <small>次の冒険</small>
+            <strong data-next-adventure-title>最初の花を見つけよう</strong>
+            <span class="next-adventure-copy" data-next-adventure-copy>参加または先生との指導碁を記録すると、冒険が始まります。</span>
+          </span>
+          <span class="next-adventure-guide" data-next-adventure-guide aria-hidden="true">
+            <span class="next-adventure-guide-speech" data-next-adventure-guide-speech>次の花へ行こう</span>
+            <img src="assets/fairy-apollon-guide.png" alt="" data-next-adventure-guide-image>
+          </span>
+        </button>
         <button type="button" class="guidebook-button" aria-label="冒険の書">
           <span aria-hidden="true">□</span>
           冒険の書
@@ -64,8 +75,8 @@
                   <dt>勲章</dt>
                   <dd>
                     <span class="medal-row">
-                      <span class="profile-medal bronze" aria-hidden="true" data-profile-medal-icon>🎖️</span>
-                      <span data-profile-medal>コスモスの友</span>
+                      <img class="profile-medal" src="assets/medal-stage-02.png" alt="" data-profile-medal-icon hidden>
+                      <span data-profile-medal>まだ勲章なし</span>
                     </span>
                   </dd>
                 </div>
@@ -531,6 +542,44 @@
                 <div class="admin-adjustment-list" data-admin-adjustment-list></div>
               </section>
 
+              <section class="admin-history" aria-label="直近の操作履歴">
+                <div class="admin-adjustments-header">
+                  <strong>直近の操作履歴</strong>
+                  <span>最新10件</span>
+                </div>
+                <div class="admin-history-list" data-admin-history-list>
+                  <p>まだ押印履歴はありません。</p>
+                </div>
+              </section>
+
+              <section class="admin-backup" aria-label="バックアップと復元">
+                <div class="admin-adjustments-header">
+                  <strong>バックアップ・復元</strong>
+                  <span>端末ファイル</span>
+                </div>
+                <p>スタンプ、獲得済み報酬、操作履歴を小さなファイルに保存します。</p>
+                <div class="admin-backup-actions">
+                  <button type="button" data-admin-backup-save>バックアップを保存</button>
+                  <button type="button" data-admin-backup-select>バックアップから復元</button>
+                  <input type="file" accept="application/json,.json" data-admin-backup-file hidden>
+                </div>
+                <small data-admin-backup-message>パスコードや個人情報は保存しません。</small>
+              </section>
+
+              <section class="admin-restore-confirm" data-admin-restore-confirm hidden aria-label="バックアップ復元確認">
+                <h3>復元する内容を確認</h3>
+                <dl data-admin-restore-summary></dl>
+                <p>現在の記録は、復元前バックアップとして先に保存されます。</p>
+                <label>
+                  <span>実行するには「復元」と入力してください。</span>
+                  <input type="text" data-admin-restore-input aria-label="復元確認入力" autocomplete="off">
+                </label>
+                <div class="admin-reset-confirm-actions">
+                  <button type="button" data-admin-restore-cancel>やめる</button>
+                  <button type="button" data-admin-restore-confirm-button disabled>復元を実行</button>
+                </div>
+              </section>
+
               <div class="admin-actions">
                 <button type="button" class="admin-stamp-button" data-admin-save-button>確定して保存</button>
                 <button type="button" class="admin-reset-button" data-admin-reset-button>記録をリセット</button>
@@ -547,6 +596,23 @@
             </section>
           </div>
         </section>
+      </section>
+      <section class="operator-auth-modal" data-operator-auth hidden aria-label="運営確認">
+        <div class="operator-auth-backdrop" data-operator-auth-cancel></div>
+        <article class="operator-auth-card" role="dialog" aria-modal="true" aria-labelledby="operator-auth-title">
+          <p class="panel-kicker">運営専用押印</p>
+          <h2 id="operator-auth-title" data-operator-auth-title>押印を確認</h2>
+          <p data-operator-auth-summary>保存内容を確認し、運営用パスコードを入力してください。</p>
+          <label>
+            <span>運営用パスコード</span>
+            <input type="password" data-operator-auth-input autocomplete="off">
+          </label>
+          <small data-operator-auth-message>認証後、この1件だけを保存して自動で再ロックします。</small>
+          <div class="operator-auth-actions">
+            <button type="button" data-operator-auth-cancel>やめる</button>
+            <button type="button" data-operator-auth-confirm>認証して押印</button>
+          </div>
+        </article>
       </section>
       <section class="achievement-modal" data-achievement-modal hidden aria-label="5回達成">
         <div class="achievement-modal-backdrop" data-achievement-close></div>
@@ -586,7 +652,7 @@
         status.textContent = "画面の操作が止まりました。Codexにこの表示を見せてください: " + event.message;
       });
     </script>
-    <script src="stamp-rules.js?v=20260618-flower-stamps"></script>
-    <script src="script.js?v=20260618-flower-stamps"></script>
+    <script src="stamp-rules.js?v=20260619-fairy-guide"></script>
+    <script src="script.js?v=20260619-fairy-guide"></script>
   </body>
 </html>

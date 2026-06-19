@@ -503,7 +503,7 @@ button {
   opacity: 0;
 }
 
-.map-hero img {
+.map-hero > img {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -597,6 +597,114 @@ button {
 .guidebook-button:focus-visible {
   border-color: rgba(63, 118, 82, 0.28);
   background: rgba(255, 250, 240, 0.74);
+  outline: none;
+}
+
+.next-adventure-card {
+  position: absolute;
+  left: clamp(22px, 5vw, 78px);
+  top: clamp(202px, 26vw, 286px);
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 72px;
+  align-items: center;
+  gap: 3px;
+  width: min(380px, calc(100vw - 44px));
+  padding: 13px 15px;
+  border: 1px solid rgba(197, 150, 58, 0.48);
+  border-radius: 12px;
+  background:
+    linear-gradient(110deg, rgba(255, 253, 245, 0.9), rgba(255, 250, 240, 0.58)),
+    rgba(255, 250, 240, 0.76);
+  color: var(--ink);
+  box-shadow: 0 12px 26px rgba(48, 38, 26, 0.12);
+  text-align: left;
+  cursor: pointer;
+  backdrop-filter: blur(5px);
+}
+
+.next-adventure-text {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.next-adventure-card small {
+  color: #8a5b20;
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+}
+
+.next-adventure-card strong {
+  color: #386b4b;
+  font-family: "Yu Mincho", "Hiragino Mincho ProN", serif;
+  font-size: clamp(0.98rem, 2.8vw, 1.25rem);
+  line-height: 1.35;
+}
+
+.next-adventure-copy {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 800;
+  line-height: 1.5;
+}
+
+.next-adventure-guide {
+  position: relative;
+  align-self: stretch;
+  display: grid;
+  place-items: end center;
+  min-height: 102px;
+  pointer-events: none;
+}
+
+.next-adventure-guide img {
+  width: 72px;
+  height: 72px;
+  object-fit: contain;
+  filter: drop-shadow(0 7px 7px rgba(48, 38, 26, 0.18));
+  animation: next-adventure-fairy-float 2600ms ease-in-out infinite;
+}
+
+.next-adventure-guide-speech {
+  position: absolute;
+  top: -2px;
+  right: 10px;
+  z-index: 1;
+  width: 84px;
+  padding: 3px 6px;
+  border: 1px solid rgba(197, 150, 58, 0.34);
+  border-radius: 12px 12px 5px 12px;
+  background: rgba(255, 253, 246, 0.92);
+  color: #7a5a20;
+  font-size: 0.56rem;
+  line-height: 1.25;
+  font-weight: 900;
+  text-align: center;
+}
+
+@keyframes next-adventure-fairy-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .next-adventure-guide img {
+    animation: none;
+  }
+}
+
+.next-adventure-card:hover,
+.next-adventure-card:focus-visible {
+  border-color: rgba(63, 118, 82, 0.46);
+  transform: translateY(-1px);
   outline: none;
 }
 
@@ -987,14 +1095,14 @@ dd {
 }
 
 .profile-medal {
-  display: inline-grid;
-  place-items: center;
+  display: inline-block;
   width: 34px;
   height: 34px;
-  border-radius: 50%;
-  background: rgba(255, 250, 240, 0.72);
-  box-shadow: inset 0 0 0 1px rgba(75, 55, 36, 0.12);
-  font-size: 1.1rem;
+  object-fit: contain;
+}
+
+.profile-medal[hidden] {
+  display: none;
 }
 
 .guide-progress-number {
@@ -1051,6 +1159,13 @@ dd {
 
 .badge-chip.is-locked {
   opacity: 0.5;
+}
+
+.badge-reward-icon {
+  width: 22px;
+  height: 22px;
+  margin-right: 5px;
+  object-fit: contain;
 }
 
 .profile-fairies {
@@ -1416,6 +1531,184 @@ dd {
   gap: 9px;
 }
 
+.admin-history {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid rgba(75, 55, 36, 0.12);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.38);
+}
+
+.admin-history-list {
+  display: grid;
+  gap: 7px;
+}
+
+.admin-history-list p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.74rem;
+  font-weight: 800;
+}
+
+.admin-history-list article {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 5px 8px;
+  align-items: center;
+  padding: 9px;
+  border: 1px solid rgba(75, 55, 36, 0.1);
+  border-radius: 7px;
+  background: rgba(255, 250, 240, 0.58);
+}
+
+.admin-history-list .admin-history-type,
+.admin-history-list .admin-history-target,
+.admin-history-list .admin-history-change,
+.admin-history-list time {
+  font-size: 0.7rem;
+}
+
+.admin-history-type {
+  border: 1px solid rgba(63, 118, 82, 0.24);
+  border-radius: 999px;
+  padding: 3px 7px;
+  background: rgba(63, 118, 82, 0.08);
+  color: var(--green);
+  font-weight: 900;
+}
+
+.admin-history-target {
+  overflow-wrap: anywhere;
+  color: var(--ink);
+}
+
+.admin-history-change {
+  color: var(--green);
+  white-space: nowrap;
+}
+
+.admin-history-list time {
+  grid-column: 1 / -1;
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.admin-history-list article[data-operation-type="decrement"] .admin-history-type,
+.admin-history-list article[data-operation-type="reset"] .admin-history-type {
+  border-color: rgba(185, 76, 97, 0.28);
+  background: rgba(185, 76, 97, 0.07);
+  color: #7d3340;
+}
+
+.admin-history-list article[data-operation-type="restore"] .admin-history-type {
+  border-color: rgba(197, 150, 58, 0.38);
+  background: rgba(197, 150, 58, 0.1);
+  color: #7a5a20;
+}
+
+.operator-auth-modal[hidden] {
+  display: none;
+}
+
+.operator-auth-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+}
+
+.operator-auth-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(43, 35, 24, 0.54);
+  backdrop-filter: blur(4px);
+}
+
+.operator-auth-card {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 13px;
+  width: min(100%, 390px);
+  padding: 24px;
+  border: 2px solid rgba(184, 151, 73, 0.72);
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at 12% 10%, rgba(244, 190, 105, 0.2), transparent 28%),
+    rgba(255, 253, 245, 0.98);
+  box-shadow: 0 28px 60px rgba(35, 27, 18, 0.34);
+}
+
+.operator-auth-card p,
+.operator-auth-card h2,
+.operator-auth-card small {
+  margin: 0;
+}
+
+.operator-auth-card h2 {
+  color: var(--ink);
+  font-family: "Yu Mincho", "Hiragino Mincho ProN", serif;
+  font-size: 1.35rem;
+}
+
+.operator-auth-card > p:not(.panel-kicker) {
+  color: var(--muted);
+  font-size: 0.84rem;
+  font-weight: 800;
+  line-height: 1.65;
+}
+
+.operator-auth-card label {
+  display: grid;
+  gap: 6px;
+  color: var(--green);
+  font-size: 0.76rem;
+  font-weight: 900;
+}
+
+.operator-auth-card input {
+  min-height: 44px;
+  border: 1px solid rgba(75, 55, 36, 0.2);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--ink);
+  padding: 0 12px;
+  font: inherit;
+}
+
+.operator-auth-card small {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 800;
+  line-height: 1.5;
+}
+
+.operator-auth-actions {
+  display: grid;
+  grid-template-columns: 0.8fr 1.2fr;
+  gap: 8px;
+}
+
+.operator-auth-actions button {
+  min-height: 42px;
+  border: 1px solid rgba(75, 55, 36, 0.16);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.7);
+  color: var(--ink);
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.operator-auth-actions button:last-child {
+  border-color: rgba(63, 118, 82, 0.4);
+  background: rgba(63, 118, 82, 0.14);
+  color: #315f42;
+}
+
 .admin-adjustment-row {
   display: grid;
   gap: 9px;
@@ -1525,6 +1818,103 @@ dd {
 .admin-reset-button:focus-visible {
   border-color: rgba(185, 76, 97, 0.56);
   outline: none;
+}
+
+.admin-backup,
+.admin-restore-confirm {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid rgba(63, 118, 82, 0.2);
+  border-radius: 8px;
+  background: rgba(246, 252, 247, 0.62);
+}
+
+.admin-backup p,
+.admin-backup small,
+.admin-restore-confirm p,
+.admin-restore-confirm h3,
+.admin-restore-confirm dl {
+  margin: 0;
+}
+
+.admin-backup p,
+.admin-backup small,
+.admin-restore-confirm p,
+.admin-restore-confirm label {
+  color: var(--muted);
+  font-size: 0.76rem;
+  line-height: 1.5;
+  font-weight: 800;
+}
+
+.admin-backup-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.admin-backup-actions button {
+  min-height: 42px;
+  border: 1px solid rgba(63, 118, 82, 0.28);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.72);
+  color: #315f42;
+  font-size: 0.8rem;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.admin-restore-confirm[hidden] {
+  display: none;
+}
+
+.admin-restore-confirm h3 {
+  color: var(--green);
+  font-size: 0.92rem;
+}
+
+.admin-restore-confirm dl {
+  display: grid;
+  gap: 6px;
+}
+
+.admin-restore-confirm dl div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 5px;
+  border-bottom: 1px dashed rgba(75, 55, 36, 0.12);
+  font-size: 0.76rem;
+}
+
+.admin-restore-confirm dt {
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.admin-restore-confirm dd {
+  margin: 0;
+  color: var(--ink);
+  font-weight: 900;
+  text-align: right;
+}
+
+.admin-restore-confirm label {
+  display: grid;
+  gap: 6px;
+}
+
+.admin-restore-confirm input {
+  width: 100%;
+  min-height: 42px;
+  border: 1px solid rgba(63, 118, 82, 0.3);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.82);
+  color: var(--ink);
+  font: inherit;
+  font-weight: 900;
+  padding: 0 12px;
 }
 
 .admin-reset-confirm {
@@ -4119,6 +4509,12 @@ dd {
   font-weight: 900;
 }
 
+.library-collection-item > .library-medal-image {
+  width: 36px;
+  height: 42px;
+  object-fit: contain;
+}
+
 .library-collection-item.is-medal > span {
   border-radius: 50%;
   background: rgba(209, 221, 225, 0.78);
@@ -4249,7 +4645,7 @@ dd {
     padding: 14px;
   }
 
-  .map-hero img {
+  .map-hero > img {
     object-fit: cover;
     object-position: 88% 88%;
     transform: scale(1.04);
@@ -4280,6 +4676,12 @@ dd {
     min-height: 31px;
     padding: 6px 10px;
     font-size: 0.72rem;
+  }
+
+  .next-adventure-card {
+    top: 170px;
+    width: min(330px, calc(100vw - 40px));
+    padding: 11px 13px;
   }
 
   .info-dock {

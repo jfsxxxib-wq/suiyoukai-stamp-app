@@ -87,16 +87,54 @@ const adminTeacher = document.querySelector("[data-admin-teacher]");
 const adminParticipation = document.querySelector("[data-admin-participation]");
 const adminNote = document.querySelector("[data-admin-note]");
 const adminResult = document.querySelector("[data-admin-result]");
+const adminHistoryList = document.querySelector("[data-admin-history-list]");
+const adminBackupSaveButton = document.querySelector("[data-admin-backup-save]");
+const adminBackupSelectButton = document.querySelector("[data-admin-backup-select]");
+const adminBackupFileInput = document.querySelector("[data-admin-backup-file]");
+const adminBackupMessage = document.querySelector("[data-admin-backup-message]");
+const adminRestoreConfirm = document.querySelector("[data-admin-restore-confirm]");
+const adminRestoreSummary = document.querySelector("[data-admin-restore-summary]");
+const adminRestoreInput = document.querySelector("[data-admin-restore-input]");
+const adminRestoreCancel = document.querySelector("[data-admin-restore-cancel]");
+const adminRestoreConfirmButton = document.querySelector("[data-admin-restore-confirm-button]");
+const nextAdventureButton = document.querySelector("[data-next-adventure-button]");
+const nextAdventureTitle = document.querySelector("[data-next-adventure-title]");
+const nextAdventureCopy = document.querySelector("[data-next-adventure-copy]");
+const nextAdventureGuide = document.querySelector("[data-next-adventure-guide]");
+const nextAdventureGuideImage = document.querySelector("[data-next-adventure-guide-image]");
+const nextAdventureGuideSpeech = document.querySelector("[data-next-adventure-guide-speech]");
+const operatorAuthModal = document.querySelector("[data-operator-auth]");
+const operatorAuthTitle = document.querySelector("[data-operator-auth-title]");
+const operatorAuthSummary = document.querySelector("[data-operator-auth-summary]");
+const operatorAuthInput = document.querySelector("[data-operator-auth-input]");
+const operatorAuthMessage = document.querySelector("[data-operator-auth-message]");
+const operatorAuthConfirm = document.querySelector("[data-operator-auth-confirm]");
+const operatorAuthCancelButtons = document.querySelectorAll("[data-operator-auth-cancel]");
 
 let activeTeacherKey = "tsuneishi";
 let recordPhase = "ready";
 let confirmSaveReadyAt = 0;
 let adminDraft = null;
+let pendingOperatorAction = null;
+let pendingRestoreBackup = null;
+
+const medalAssets = {
+  medal_participation_cosmos_full_bloom: "assets/medal-stage-02.png",
+  medal_teacher_circle_round_1: "assets/teacher-circle-medal-once.png",
+  medal_teacher_circle_round_2: "assets/teacher-circle-medal-twice.png",
+  medal_teacher_circle_round_3: "assets/medal-stage-03.png",
+  medal_teacher_circle_round_5: "assets/medal-stage-04.png",
+};
+
+const getMedalAsset = (medalId) => medalAssets[medalId] ?? null;
 let isAdminDraftDirty = false;
 let isAdminUnlocked = false;
 
 const progressStorageKey = "suiyoukai-stamp-progress-v1";
 const gameRecordsStorageKey = "suiyoukai-game-records-v1";
+const operationHistoryStorageKey = "suiyoukai-operation-history-v1";
+const backupAppId = "suiyoukai-stamp-adventure";
+const backupFormatVersion = 1;
 const adminPasscode = "suiyoukai2026";
 const ruleTargets = window.teacherStampTargets ?? [];
 const participationRule = window.stampRules?.participation ?? {};
@@ -479,6 +517,7 @@ const cloneProgressTemplate = () => JSON.parse(JSON.stringify(window.userProgres
     fairies: [],
     medals: [],
     titles: [],
+    companions: [],
   },
 }));
 
@@ -498,6 +537,9 @@ const getStoredEarnedMedals = (progress = {}) =>
 
 const getStoredEarnedTitles = (progress = {}) =>
   progress.earned?.titles ?? progress.earnedTitles ?? [];
+
+const getStoredEarnedCompanions = (progress = {}) =>
+  progress.earned?.companions ?? progress.earnedCompanions ?? [];
 
 const getTeacherCircleRoundsFromCounts = (teacherLessonCounts = {}) => {
   const teacherIds = ruleTargets.length > 0
@@ -552,6 +594,7 @@ const sanitizeProgress = (progress = {}) => {
       fairies: Array.isArray(getStoredEarnedFairies(progress)) ? getStoredEarnedFairies(progress) : template.earned.fairies,
       medals: Array.isArray(getStoredEarnedMedals(progress)) ? getStoredEarnedMedals(progress) : template.earned.medals,
       titles: Array.isArray(getStoredEarnedTitles(progress)) ? getStoredEarnedTitles(progress) : template.earned.titles,
+      companions: Array.isArray(getStoredEarnedCompanions(progress)) ? getStoredEarnedCompanions(progress) : template.earned.companions,
     },
   };
 };
@@ -573,6 +616,7 @@ const createResetProgress = () => {
       fairies: [],
       medals: [],
       titles: [],
+      companions: [],
     },
   };
 };
@@ -628,6 +672,195 @@ const saveGameRecords = () => {
   } catch {
     // 対局記録は保存できない環境でも、この画面を開いている間は保持します。
   }
+};
+
+const sanitizeOperationHistory = (entry = {}) => {
+  const target = typeof entry.target === "string" && entry.target
+    ? entry.target
+    : typeof entry.label === "string" && entry.label
+      ? entry.label
+      : "";
+
+  if (!target || typeof entry.recordedAt !== "string") {
+    return null;
+  }
+
+  return {
+    id: typeof entry.id === "string" ? entry.id : `operation-${entry.recordedAt}`,
+    type: typeof entry.type === "string" ? entry.type : "stamp",
+    target,
+    before: normalizeProgressCount(entry.before),
+    after: normalizeProgressCount(entry.after),
+    recordedAt: entry.recordedAt,
+  };
+};
+
+const loadOperationHistory = () => {
+  try {
+    const storedHistory = JSON.parse(localStorage.getItem(operationHistoryStorageKey) ?? "[]");
+    return Array.isArray(storedHistory) ? storedHistory.map(sanitizeOperationHistory).filter(Boolean).slice(-50) : [];
+  } catch {
+    return [];
+  }
+};
+
+let operationHistory = loadOperationHistory();
+
+const saveOperationHistory = () => {
+  try {
+    localStorage.setItem(operationHistoryStorageKey, JSON.stringify(operationHistory));
+  } catch {
+    // 履歴を保存できない環境でも、押印そのものは継続します。
+  }
+};
+
+const appendOperationHistory = ({ type, target, before, after }) => {
+  operationHistory.push({
+    id: `operation-${Date.now()}-${operationHistory.length}-${type}`,
+    type,
+    target,
+    before: normalizeProgressCount(before),
+    after: normalizeProgressCount(after),
+    recordedAt: new Date().toISOString(),
+  });
+  operationHistory = operationHistory.slice(-50);
+  saveOperationHistory();
+};
+
+const cloneJsonData = (value) => JSON.parse(JSON.stringify(value));
+
+const createBackupData = () => ({
+  appId: backupAppId,
+  formatVersion: backupFormatVersion,
+  savedAt: new Date().toISOString(),
+  progress: cloneJsonData(userProgress),
+  operationHistory: cloneJsonData(operationHistory),
+});
+
+const getBackupFilename = (kind = "backup") => {
+  const now = new Date();
+  const local = new Date(now.getTime() - now.getTimezoneOffset() * 60000);
+  const stamp = local.toISOString().slice(0, 19).replace(/[-:T]/g, "");
+  return `suiyoukai-${kind}-${stamp}.json`;
+};
+
+const downloadBackupData = (backup, kind = "backup") => {
+  const blob = new Blob([JSON.stringify(backup, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = getBackupFilename(kind);
+  document.body.append(link);
+  link.click();
+  link.remove();
+  window.setTimeout(() => URL.revokeObjectURL(url), 0);
+};
+
+const isValidIsoDate = (value) => typeof value === "string"
+  && /^\d{4}-\d{2}-\d{2}T/.test(value)
+  && !Number.isNaN(new Date(value).getTime());
+
+const isValidBackupCount = (value) => Number.isFinite(value) && value >= 0;
+
+const validateBackupData = (backup) => {
+  if (!backup || typeof backup !== "object" || Array.isArray(backup)) {
+    throw new Error("バックアップの内容を読み取れません。");
+  }
+
+  if (backup.appId !== backupAppId || backup.formatVersion !== backupFormatVersion) {
+    throw new Error("このアプリで作成した対応形式のバックアップではありません。");
+  }
+
+  if (!isValidIsoDate(backup.savedAt)) {
+    throw new Error("バックアップの保存日時が正しくありません。");
+  }
+
+  const progress = backup.progress;
+  const stamps = progress?.stamps;
+  const earned = progress?.earned;
+  const teacherCounts = stamps?.teacherLessonCounts;
+
+  if (!progress || typeof progress !== "object"
+    || progress.schemaVersion !== cloneProgressTemplate().schemaVersion
+    || !stamps || typeof stamps !== "object"
+    || !isValidBackupCount(stamps.participationCount)
+    || stamps.participationCount > getParticipationMaxCount()
+    || !teacherCounts || typeof teacherCounts !== "object"
+    || !isValidBackupCount(stamps.teacherCircleRounds)
+    || !earned || typeof earned !== "object") {
+    throw new Error("スタンプ記録の形式が壊れています。");
+  }
+
+  for (const teacherId of Object.keys(teacherDetails)) {
+    if (!isValidBackupCount(teacherCounts[teacherId])
+      || teacherCounts[teacherId] > getTeacherMaxCount(teacherDetails[teacherId])) {
+      throw new Error("先生ごとのスタンプ記録が正しくありません。");
+    }
+  }
+
+  if (stamps.teacherCircleRounds !== getTeacherCircleRoundsFromCounts(teacherCounts)) {
+    throw new Error("先生の輪の記録が一致しません。");
+  }
+
+  for (const rewardType of ["fairies", "medals", "titles", "companions"]) {
+    if (!Array.isArray(earned[rewardType])
+      || earned[rewardType].some((reward) => !reward || typeof reward.id !== "string" || !reward.id)) {
+      throw new Error("獲得済み報酬の形式が壊れています。");
+    }
+  }
+
+  if (!Array.isArray(backup.operationHistory)
+    || backup.operationHistory.some((entry) => !sanitizeOperationHistory(entry) || !isValidIsoDate(entry.recordedAt))) {
+    throw new Error("操作履歴の形式が壊れています。");
+  }
+
+  return {
+    appId: backupAppId,
+    formatVersion: backupFormatVersion,
+    savedAt: backup.savedAt,
+    progress: sanitizeProgress(progress),
+    operationHistory: backup.operationHistory.map(sanitizeOperationHistory).slice(-50),
+  };
+};
+
+const addRestoreSummaryRow = (label, value) => {
+  const row = document.createElement("div");
+  const term = document.createElement("dt");
+  const description = document.createElement("dd");
+  term.textContent = label;
+  description.textContent = value;
+  row.append(term, description);
+  adminRestoreSummary.append(row);
+};
+
+const showRestoreSummary = (backup) => {
+  adminRestoreSummary.textContent = "";
+  const savedAt = new Date(backup.savedAt);
+  const teacherTotal = Object.values(backup.progress.stamps.teacherLessonCounts)
+    .reduce((total, count) => total + normalizeProgressCount(count), 0);
+  const earned = backup.progress.earned;
+
+  addRestoreSummaryRow("保存日時", savedAt.toLocaleString("ja-JP"));
+  addRestoreSummaryRow("参加スタンプ", `${backup.progress.stamps.participationCount}回`);
+  addRestoreSummaryRow("先生の記録", `${teacherTotal}回（5人分）`);
+  addRestoreSummaryRow(
+    "獲得済み",
+    `妖精${earned.fairies.length}・勲章${earned.medals.length}・称号${earned.titles.length}・仲間${earned.companions.length}`
+  );
+  addRestoreSummaryRow("操作履歴", `${backup.operationHistory.length}件`);
+  adminRestoreInput.value = "";
+  adminRestoreConfirmButton.disabled = true;
+  adminRestoreConfirm.hidden = false;
+  adminRestoreInput.focus();
+};
+
+const closeRestoreConfirmation = () => {
+  pendingRestoreBackup = null;
+  adminRestoreConfirm.hidden = true;
+  adminRestoreSummary.textContent = "";
+  adminRestoreInput.value = "";
+  adminRestoreConfirmButton.disabled = true;
+  adminBackupFileInput.value = "";
 };
 
 const getTodayForInput = () => {
@@ -704,7 +937,8 @@ const syncTeacherDetailsFromProgress = () => {
 
     teacher.stampCount = stampCount;
     teacher.completedFirstRound = stampCount > 0;
-    teacher.fairy = stampCount >= getTeacherGoal(teacher);
+    teacher.fairy = stampCount >= getTeacherGoal(teacher)
+      || userProgress.earned.fairies.some((fairy) => fairy.teacherId === teacherId);
   }
 };
 
@@ -714,6 +948,7 @@ const syncProgressRewards = () => {
   userProgress.earned.fairies = achievementResult.earnedFairies;
   userProgress.earned.medals = achievementResult.earnedMedals;
   userProgress.earned.titles = achievementResult.earnedTitles;
+  userProgress.earned.companions = achievementResult.earnedCompanions;
 };
 
 const saveUserProgress = () => {
@@ -783,6 +1018,92 @@ const setAdminDraftDirty = (isDirty = true) => {
   }
 };
 
+const renderAdminHistory = () => {
+  if (!adminHistoryList) {
+    return;
+  }
+
+  adminHistoryList.textContent = "";
+  const recentHistory = operationHistory.slice(-10).reverse();
+
+  if (recentHistory.length === 0) {
+    const empty = document.createElement("p");
+    empty.textContent = "まだ押印履歴はありません。";
+    adminHistoryList.append(empty);
+    return;
+  }
+
+  for (const entry of recentHistory) {
+    const row = document.createElement("article");
+    const type = document.createElement("span");
+    const target = document.createElement("strong");
+    const count = document.createElement("strong");
+    const time = document.createElement("time");
+    const recordedAt = new Date(entry.recordedAt);
+    const typeLabels = {
+      participation_stamp: "押印",
+      teacher_stamp: "押印",
+      stamp: "押印",
+      decrement: "減算",
+      admin_adjustment: "管理調整",
+      restore: "復元",
+      reset: "全リセット",
+    };
+
+    type.className = "admin-history-type";
+    target.className = "admin-history-target";
+    count.className = "admin-history-change";
+    row.dataset.operationType = entry.type;
+    type.textContent = typeLabels[entry.type] ?? "操作";
+    target.textContent = entry.target;
+    count.textContent = `${entry.before} → ${entry.after}`;
+    time.dateTime = entry.recordedAt;
+    time.textContent = Number.isNaN(recordedAt.getTime())
+      ? "日時不明"
+      : recordedAt.toLocaleString("ja-JP", { month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" });
+    row.append(type, target, count, time);
+    adminHistoryList.append(row);
+  }
+};
+
+const closeOperatorAuth = () => {
+  operatorAuthModal.hidden = true;
+  operatorAuthInput.value = "";
+  operatorAuthMessage.textContent = "認証後、この1件だけを保存して自動で再ロックします。";
+  operatorAuthConfirm.disabled = false;
+  pendingOperatorAction = null;
+};
+
+const openOperatorAuth = ({ title, summary, action }) => {
+  pendingOperatorAction = action;
+  operatorAuthTitle.textContent = title;
+  operatorAuthSummary.textContent = summary;
+  operatorAuthInput.value = "";
+  operatorAuthMessage.textContent = "認証後、この1件だけを保存して自動で再ロックします。";
+  operatorAuthConfirm.disabled = false;
+  operatorAuthModal.hidden = false;
+  window.setTimeout(() => operatorAuthInput.focus(), 0);
+};
+
+const confirmOperatorAction = () => {
+  if (operatorAuthInput.value !== adminPasscode) {
+    operatorAuthMessage.textContent = "パスコードが違います。押印は保存されていません。";
+    operatorAuthInput.select();
+    return;
+  }
+
+  const action = pendingOperatorAction;
+
+  if (typeof action !== "function") {
+    closeOperatorAuth();
+    return;
+  }
+
+  operatorAuthConfirm.disabled = true;
+  closeOperatorAuth();
+  action();
+};
+
 const updateAdminLockState = () => {
   if (!adminLockCard || !adminCard) {
     return;
@@ -798,6 +1119,7 @@ const updateAdminLockState = () => {
 
 const lockAdminPanel = () => {
   isAdminUnlocked = false;
+  closeRestoreConfirmation();
   adminPasscodeMessage.textContent = "運営用の調整画面はロックされています。";
   updateAdminLockState();
 };
@@ -838,6 +1160,31 @@ const addParticipationStamp = () => {
   );
   syncProgressRewards();
   saveUserProgress();
+};
+
+const getAdminDraftChanges = () => {
+  if (!adminDraft) {
+    return [];
+  }
+
+  const changes = [];
+  const participationBefore = normalizeProgressCount(userProgress.stamps.participationCount);
+  const participationAfter = normalizeProgressCount(adminDraft.participationCount);
+
+  if (participationBefore !== participationAfter) {
+    changes.push({ target: "参加スタンプ", before: participationBefore, after: participationAfter });
+  }
+
+  for (const [teacherId, teacher] of Object.entries(teacherDetails)) {
+    const before = normalizeProgressCount(userProgress.stamps.teacherLessonCounts[teacherId]);
+    const after = normalizeProgressCount(adminDraft.teacherLessonCounts[teacherId]);
+
+    if (before !== after) {
+      changes.push({ target: `${teacher.name} 指導碁スタンプ`, before, after });
+    }
+  }
+
+  return changes;
 };
 
 const applyAdminDraftToProgress = () => {
@@ -1007,7 +1354,7 @@ const updateParticipationStampCard = () => {
   participationStatus.textContent = isFirstAchievementAchieved
     ? `${cycleProgress.cycleNumber}巡目 ${cycleProgress.cycle.flowerName}`
     : `あと${Math.max(0, goal - cycleProgress.countInCycle)}回`;
-  participationStampButton.textContent = currentCount >= cycleProgress.maxCount ? "参加スタンプ達成済み" : "参加スタンプを押す";
+  participationStampButton.textContent = currentCount >= cycleProgress.maxCount ? "参加スタンプ達成済み" : "運営確認して参加スタンプを押す";
   participationStampButton.disabled = currentCount >= cycleProgress.maxCount;
 };
 
@@ -1143,12 +1490,19 @@ const renderLibraryCollection = (list, items, emptyMessage, kind) => {
   for (const item of items) {
     const entry = document.createElement("article");
     entry.className = `library-collection-item is-${kind}`;
-    const mark = document.createElement("span");
+    const medalAsset = kind === "medal" ? getMedalAsset(item.id) : null;
+    const mark = document.createElement(medalAsset ? "img" : "span");
     const copy = document.createElement("div");
     const name = document.createElement("strong");
     const status = document.createElement("small");
-    mark.setAttribute("aria-hidden", "true");
-    mark.textContent = kind === "medal" ? "勲" : "称";
+    if (medalAsset) {
+      mark.className = "library-medal-image";
+      mark.src = medalAsset;
+      mark.alt = "";
+    } else {
+      mark.setAttribute("aria-hidden", "true");
+      mark.textContent = kind === "medal" ? "勲" : "称";
+    }
     name.textContent = item.name;
     status.textContent = kind === "medal" ? "勲章棚に収蔵" : "称号の書架に収蔵";
     copy.append(name, status);
@@ -1167,9 +1521,7 @@ const renderOwlLibrary = (achievementResult) => {
   const companions = achievementResult.earnedCompanions ?? [];
   const latestTitle = titles.at(-1);
   const hasWiseOwl = companions.some((companion) => companion.id === "special_companion_owl_b");
-  const teacherFairyCount = achievementResult.teacherFairy.earnedFairies.length;
-  const participationCount = achievementResult.participation.achievedCycles?.length ?? 0;
-  const totalFlowerAchievements = teacherFairyCount + participationCount;
+  const totalFlowerAchievements = achievementResult.earnedFairies.length;
   const totalStampCount = getTotalStampCount();
 
   libraryCurrentTitle.textContent = latestTitle?.name ?? "まだ称号はありません";
@@ -1241,8 +1593,16 @@ const renderProfileRewardBadges = (achievementResult) => {
 
   for (const reward of rewards) {
     const badge = document.createElement("span");
+    const medalAsset = reward.mark === "勲章" ? getMedalAsset(reward.id) : null;
     badge.className = "badge-chip is-active";
-    badge.textContent = `${reward.mark}: ${reward.name}`;
+    if (medalAsset) {
+      const image = document.createElement("img");
+      image.className = "badge-reward-icon";
+      image.src = medalAsset;
+      image.alt = "";
+      badge.append(image);
+    }
+    badge.append(`${reward.mark}: ${reward.name}`);
     profileBadges.append(badge);
   }
 };
@@ -1393,6 +1753,113 @@ updateTeacherCards = () => {
   }
 };
 
+const getNextAdventure = () => {
+  const candidates = [];
+  const participationCurrent = normalizeProgressCount(userProgress.stamps.participationCount);
+  const participationGoal = getParticipationGoal();
+
+  if (participationCurrent < getParticipationMaxCount()) {
+    const cycleIndex = Math.floor(participationCurrent / participationGoal);
+    const cycle = participationFlowerCycles[cycleIndex];
+    const targetCount = (cycleIndex + 1) * participationGoal;
+    const remaining = targetCount - participationCurrent;
+
+    candidates.push({
+      type: "participation",
+      priority: 2,
+      remaining,
+      title: `あと${remaining}回で${cycle.flowerName}満開`,
+      copy: `参加${targetCount}回で${cycle.fairyName}と出会えます。`,
+    });
+  }
+
+  for (const [teacherId, teacher] of Object.entries(teacherDetails)) {
+    if (teacher.stampCount >= getTeacherMaxCount(teacher)) {
+      continue;
+    }
+
+    const cycleProgress = getCurrentTeacherCycleProgress(teacher);
+    const remaining = getTeacherGoal(teacher) - cycleProgress.countInCycle;
+
+    candidates.push({
+      type: "teacher",
+      teacherId,
+      priority: 1,
+      remaining,
+      title: `あと${remaining}回で${cycleProgress.cycle.fairyName}`,
+      copy: `${teacher.name}との指導碁で${cycleProgress.cycle.cycleName}を達成できます。`,
+    });
+  }
+
+  const currentCircleRounds = getTeacherCircleRoundsFromCounts(userProgress.stamps.teacherLessonCounts);
+  const nextCircleMilestone = (teacherCircleRule.medalMilestones ?? [])
+    .map((milestone) => milestone.rounds)
+    .find((rounds) => rounds > currentCircleRounds);
+
+  if (nextCircleMilestone) {
+    const remaining = Object.keys(teacherDetails).reduce(
+      (total, teacherId) => total + Math.max(0, nextCircleMilestone - normalizeProgressCount(userProgress.stamps.teacherLessonCounts[teacherId])),
+      0
+    );
+
+    candidates.push({
+      type: "circle",
+      priority: 0,
+      remaining,
+      title: `あと${remaining}局で先生の輪 ${nextCircleMilestone}巡`,
+      copy: `先生5人との記録をそろえると、新しい勲章と称号が開きます。`,
+    });
+  }
+
+  return candidates.sort((a, b) => a.remaining - b.remaining || a.priority - b.priority)[0] ?? null;
+};
+
+const updateNextAdventureGuide = (nextAdventure) => {
+  if (!nextAdventureGuide || !nextAdventureGuideImage || !nextAdventureGuideSpeech) {
+    return;
+  }
+
+  const latestFairy = userProgress.earned.fairies.at(-1) ?? null;
+  const guideAsset = latestFairy?.fairyAsset ?? "fairy-apollon-guide.png";
+  const speeches = {
+    participation: "次の花へ行こう",
+    teacher: "先生に会いに行こう",
+    circle: "輪をつなぎに行こう",
+    complete: "旅を振り返ろう",
+  };
+
+  nextAdventureGuide.dataset.guideFairyId = latestFairy?.id ?? "first-guide";
+  nextAdventureGuideImage.src = `assets/${guideAsset}`;
+  nextAdventureGuideSpeech.textContent = speeches[nextAdventure?.type ?? "complete"];
+};
+
+const updateNextAdventure = () => {
+  if (!nextAdventureButton || !nextAdventureTitle || !nextAdventureCopy) {
+    return;
+  }
+
+  const nextAdventure = getNextAdventure();
+
+  if (!nextAdventure) {
+    nextAdventureButton.dataset.adventureType = "complete";
+    delete nextAdventureButton.dataset.nextAdventureTeacher;
+    nextAdventureTitle.textContent = "すべての冒険目標を達成";
+    nextAdventureCopy.textContent = "花図鑑とフクロウの書庫で、旅の記録を振り返れます。";
+    updateNextAdventureGuide(null);
+    return;
+  }
+
+  nextAdventureButton.dataset.adventureType = nextAdventure.type;
+  if (nextAdventure.teacherId) {
+    nextAdventureButton.dataset.nextAdventureTeacher = nextAdventure.teacherId;
+  } else {
+    delete nextAdventureButton.dataset.nextAdventureTeacher;
+  }
+  nextAdventureTitle.textContent = nextAdventure.title;
+  nextAdventureCopy.textContent = nextAdventure.copy;
+  updateNextAdventureGuide(nextAdventure);
+};
+
 const updateProfileCard = () => {
   const achievementResult = getCurrentAchievementResult();
   const hasCircle = achievementResult.teacherCircle.currentRounds > 0;
@@ -1412,8 +1879,13 @@ const updateProfileCard = () => {
   }
   profileTitle.textContent = latestTitle?.name ?? (earnedFairies.length > 0 ? "妖精と出会った旅人" : "花を集める旅人");
   profileRank.textContent = hasCircle ? "探訪冒険者" : "初級冒険者";
-  profileMedal.textContent = latestMedal?.name ?? "コスモスの友";
-  profileMedalIcon.textContent = hasCircle ? "🥉" : "🎖️";
+  const latestMedalAsset = getMedalAsset(latestMedal?.id);
+  profileMedal.textContent = latestMedal?.name ?? "まだ勲章なし";
+  profileMedalIcon.hidden = !latestMedalAsset;
+  if (latestMedalAsset) {
+    profileMedalIcon.src = latestMedalAsset;
+    profileMedalIcon.alt = latestMedal.name;
+  }
 
   circleBadge.textContent = hasCircle ? "🥉 一巡目の輪（仮）" : "🥉 一巡目の輪";
   circleBadge.classList.toggle("is-locked", !hasCircle);
@@ -1426,6 +1898,7 @@ const updateProfileCard = () => {
   renderProfileSpecialCompanions(achievementResult);
   renderProfileAchievementResults(achievementResult);
   renderOwlLibrary(achievementResult);
+  updateNextAdventure();
 };
 
 const createAdminAdjustmentRow = ({ type, id, label, subLabel, value, maxCount }) => {
@@ -1547,6 +2020,7 @@ const updateAdminPanel = () => {
   adminStampButton.textContent = "確定して保存";
   adminStampButton.disabled = !isAdminDraftDirty;
   renderAdminAdjustments();
+  renderAdminHistory();
 };
 
 const isTeacherCycleAchievementCount = (count, teacher) => {
@@ -1597,15 +2071,15 @@ const setRecordPhase = (phase, teacher) => {
 
       confirmLabel.textContent = `${nextCycleNumber}巡目の達成確認`;
       updateGameRecordConfirmation();
-      completeTeacherButton.textContent = "3. 対局記録を保存して妖精スタンプを開く";
-      flowMessage.textContent = "巡の最後の1回です。反映後に妖精・達成文字・花びら演出が表示されます。";
+      completeTeacherButton.textContent = "3. 運営確認へ進み妖精スタンプを開く";
+      flowMessage.textContent = "巡の最後の1回です。運営認証後、この1件だけを保存して妖精を表示します。";
       return;
     }
 
     confirmLabel.textContent = "保存する対局記録";
     updateGameRecordConfirmation();
-    completeTeacherButton.textContent = "3. 対局記録を保存してスタンプを押す";
-    flowMessage.textContent = "対局記録を確認してください。このボタンを押した時だけ記録保存とスタンプ反映を行います。";
+    completeTeacherButton.textContent = "3. 運営確認へ進みスタンプを押す";
+    flowMessage.textContent = "対局記録を確認してください。次の運営認証が通った時だけ保存します。";
     return;
   }
 
@@ -1704,6 +2178,12 @@ const completeTeacherStamp = (teacherKey) => {
   teacher.fairy = teacher.stampCount >= getTeacherGoal(teacher);
   updateProgressFromTeacherDetails();
   syncAdminDraftFromProgress();
+  appendOperationHistory({
+    type: "teacher_stamp",
+    target: `${teacher.name} 指導碁スタンプ`,
+    before: previousStampCount,
+    after: teacher.stampCount,
+  });
 
   renderTeacherDetail(teacherKey);
   updateParticipationStampCard();
@@ -1799,6 +2279,20 @@ achievementProfileButton.addEventListener("click", () => {
   showPanel("profile");
 });
 
+nextAdventureButton.addEventListener("click", () => {
+  if (nextAdventureButton.dataset.adventureType === "complete") {
+    showPanel("titles");
+    return;
+  }
+
+  showPanel("field-guide");
+  showTeacherList();
+
+  if (nextAdventureButton.dataset.nextAdventureTeacher) {
+    document.querySelector(`.teacher-card[data-teacher="${nextAdventureButton.dataset.nextAdventureTeacher}"]`)?.click();
+  }
+});
+
 adminPasscodeButton.addEventListener("click", unlockAdminPanel);
 
 adminPasscodeInput.addEventListener("keydown", (event) => {
@@ -1807,17 +2301,39 @@ adminPasscodeInput.addEventListener("keydown", (event) => {
   }
 });
 
+operatorAuthConfirm.addEventListener("click", confirmOperatorAction);
+
+operatorAuthInput.addEventListener("keydown", (event) => {
+  if (event.key === "Enter") {
+    confirmOperatorAction();
+  }
+});
+
+for (const cancelButton of operatorAuthCancelButtons) {
+  cancelButton.addEventListener("click", closeOperatorAuth);
+}
+
 for (const input of [gameRecordDate, gameRecordHandicap, gameRecordResult]) {
   input.addEventListener("input", updateGameRecordConfirmation);
   input.addEventListener("change", updateGameRecordConfirmation);
 }
 
 participationStampButton.addEventListener("click", () => {
-  addParticipationStamp();
-  syncAdminDraftFromProgress();
-  updateParticipationStampCard();
-  updateProfileCard();
-  updateAdminPanel();
+  const before = normalizeProgressCount(userProgress.stamps.participationCount);
+  const after = Math.min(getParticipationMaxCount(), before + 1);
+
+  openOperatorAuth({
+    title: "参加スタンプを押印",
+    summary: `参加スタンプを ${before}回 → ${after}回 にします。`,
+    action: () => {
+      addParticipationStamp();
+      appendOperationHistory({ type: "participation_stamp", target: "参加スタンプ", before, after });
+      syncAdminDraftFromProgress();
+      updateParticipationStampCard();
+      updateProfileCard();
+      updateAdminPanel();
+    },
+  });
 });
 
 completeTeacherButton.addEventListener("click", () => {
@@ -1833,7 +2349,14 @@ completeTeacherButton.addEventListener("click", () => {
     if (Date.now() < confirmSaveReadyAt) {
       return;
     }
-    completeTeacherStamp(activeTeacherKey);
+    const teacherKey = activeTeacherKey;
+    const draft = getGameRecordDraft();
+    const nextCount = Math.min(getTeacherMaxCount(teacher), teacher.stampCount + 1);
+    openOperatorAuth({
+      title: `${teacher.name}の指導碁を押印`,
+      summary: `${draft.date}・${draft.handicap}・${draft.result}／スタンプ ${teacher.stampCount}回 → ${nextCount}回`,
+      action: () => completeTeacherStamp(teacherKey),
+    });
     return;
   }
 
@@ -1863,7 +2386,14 @@ adminAdjustmentList.addEventListener("click", (event) => {
 });
 
 adminStampButton.addEventListener("click", () => {
+  const changes = getAdminDraftChanges();
   applyAdminDraftToProgress();
+  for (const change of changes) {
+    appendOperationHistory({
+      type: change.after < change.before ? "decrement" : "admin_adjustment",
+      ...change,
+    });
+  }
   updateParticipationStampCard();
   renderTeacherDetail(activeTeacherKey);
   updateTeacherCards();
@@ -1871,6 +2401,95 @@ adminStampButton.addEventListener("click", () => {
   updateProfileCard();
   updateAdminPanel();
   adminNote.textContent = "変更を保存しました。冒険者カード、花図鑑、妖精、勲章、称号を再計算しました。";
+  lockAdminPanel();
+  adminPasscodeMessage.textContent = "変更を保存し、自動で再ロックしました。";
+});
+
+adminBackupSaveButton.addEventListener("click", () => {
+  downloadBackupData(createBackupData());
+  adminBackupMessage.textContent = isAdminDraftDirty
+    ? "保存済みの記録をバックアップしました。未確定の調整は含まれません。"
+    : "バックアップを端末へ保存しました。";
+});
+
+adminBackupSelectButton.addEventListener("click", () => {
+  adminBackupFileInput.value = "";
+  adminBackupFileInput.click();
+});
+
+adminBackupFileInput.addEventListener("change", async () => {
+  const file = adminBackupFileInput.files?.[0];
+
+  if (!file) {
+    return;
+  }
+
+  pendingRestoreBackup = null;
+  adminRestoreConfirm.hidden = true;
+
+  if (file.size > 1024 * 1024) {
+    adminBackupMessage.textContent = "ファイルが大きすぎます。水曜会のバックアップを選んでください。";
+    adminBackupFileInput.value = "";
+    return;
+  }
+
+  try {
+    const parsed = JSON.parse(await file.text());
+    pendingRestoreBackup = validateBackupData(parsed);
+    showRestoreSummary(pendingRestoreBackup);
+    adminBackupMessage.textContent = "内容を確認し、「復元」と入力してください。まだ上書きされていません。";
+  } catch (error) {
+    adminBackupMessage.textContent = error instanceof Error
+      ? error.message
+      : "バックアップを読み取れませんでした。";
+    adminBackupFileInput.value = "";
+  }
+});
+
+adminRestoreInput.addEventListener("input", () => {
+  adminRestoreConfirmButton.disabled = adminRestoreInput.value !== "復元";
+});
+
+adminRestoreCancel.addEventListener("click", () => {
+  closeRestoreConfirmation();
+  adminBackupMessage.textContent = "復元は実行されませんでした。";
+});
+
+adminRestoreConfirmButton.addEventListener("click", () => {
+  if (adminRestoreInput.value !== "復元" || !pendingRestoreBackup) {
+    adminRestoreConfirmButton.disabled = true;
+    return;
+  }
+
+  const restoreBackup = pendingRestoreBackup;
+  const beforeRestoreTotal = getTotalStampCount();
+
+  try {
+    downloadBackupData(createBackupData(), "before-restore");
+    userProgress = sanitizeProgress(restoreBackup.progress);
+    operationHistory = restoreBackup.operationHistory.map(sanitizeOperationHistory).filter(Boolean).slice(-50);
+    syncTeacherDetailsFromProgress();
+    syncProgressRewards();
+    saveUserProgress();
+    appendOperationHistory({
+      type: "restore",
+      target: "バックアップ記録",
+      before: beforeRestoreTotal,
+      after: getTotalStampCount(),
+    });
+    syncAdminDraftFromProgress();
+    updateParticipationStampCard();
+    renderTeacherDetail(activeTeacherKey);
+    updateTeacherCards();
+    updateRoundProgress();
+    updateProfileCard();
+    updateAdminPanel();
+    closeRestoreConfirmation();
+    lockAdminPanel();
+    adminPasscodeMessage.textContent = "バックアップを復元し、自動で再ロックしました。";
+  } catch {
+    adminBackupMessage.textContent = "復元前バックアップを保存できなかったため、復元を中止しました。";
+  }
 });
 
 adminResetButton.addEventListener("click", () => {
@@ -1898,10 +2517,12 @@ adminResetConfirmButton.addEventListener("click", () => {
     return;
   }
 
+  const before = getTotalStampCount();
   adminResetConfirm.hidden = true;
   adminResetInput.value = "";
   adminResetConfirmButton.disabled = true;
   resetUserProgress();
+  appendOperationHistory({ type: "reset", target: "すべてのスタンプ", before, after: 0 });
   syncAdminDraftFromProgress();
   updateParticipationStampCard();
   renderTeacherDetail(activeTeacherKey);
@@ -1910,6 +2531,8 @@ adminResetConfirmButton.addEventListener("click", () => {
   updateProfileCard();
   updateAdminPanel();
   showPanel("admin");
+  lockAdminPanel();
+  adminPasscodeMessage.textContent = "記録をリセットし、自動で再ロックしました。";
 });
 
 updateParticipationStampCard();

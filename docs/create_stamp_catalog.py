@@ -84,6 +84,22 @@ SPECIALS = [
     ("ハリネズミ B", "地図とランタンの探検家", "special-character-stamps-2026-06-18/curious-hedgehog-b-transparent.png"),
 ]
 
+ADDITIONAL_FAIRIES = [
+    (
+        "梅の妖精",
+        "予備・追加完成品（薄背景版）",
+        "ume-fairy-approved-2026-06-19/ume-fairy-light-background.png",
+    ),
+]
+
+MEDALS = [
+    ("参加10回", "コスモス満開勲章", "../assets/medal-stage-02.png"),
+    ("先生の輪 一巡", "五つ星の輪", "../assets/teacher-circle-medal-once.png"),
+    ("先生の輪 二巡", "五人の輪", "../assets/teacher-circle-medal-twice.png"),
+    ("先生の輪 三巡", "知恵の書", "../assets/medal-stage-03.png"),
+    ("先生の輪 五巡", "五つの花の輪", "../assets/medal-stage-04.png"),
+]
+
 
 def font(size):
     for path in (Path(r"C:\Windows\Fonts\YuGothM.ttc"), Path(r"C:\Windows\Fonts\meiryo.ttc")):
@@ -163,7 +179,47 @@ def make_special_sheet():
         desc_box = draw.textbbox((0, 0), description, font=font(17))
         desc_width = desc_box[2] - desc_box[0]
         draw.text((left + (430 - desc_width) // 2, top + 468), description, fill=(85, 74, 58), font=font(17))
-    output = DOCS / "stamp-catalog-special-2026-06-18.png"
+    output = DOCS / "stamp-catalog-special-2026-06-19.png"
+    sheet.save(output)
+    return output
+
+
+def make_additional_fairy_sheet():
+    width, height = 980, 760
+    sheet = Image.new("RGB", (width, height), (251, 247, 238))
+    draw = ImageDraw.Draw(sheet)
+    draw.text((55, 28), "追加完成品　妖精スタンプ", fill=(58, 81, 64), font=font(38))
+    name, description, relative_path = ADDITIONAL_FAIRIES[0]
+    draw.rounded_rectangle((180, 105, 800, 700), radius=12, fill=(255, 253, 247), outline=(218, 184, 105), width=3)
+    preview = checkerboard((560, 460))
+    paste_contained(preview, absolute_image(relative_path), (18, 18, 524, 424))
+    sheet.paste(preview.convert("RGB"), (210, 130))
+    name_box = draw.textbbox((0, 0), name, font=font(28))
+    draw.text((490 - (name_box[2] - name_box[0]) // 2, 610), name, fill=(62, 83, 66), font=font(28))
+    desc_box = draw.textbbox((0, 0), description, font=font(19))
+    draw.text((490 - (desc_box[2] - desc_box[0]) // 2, 657), description, fill=(85, 74, 58), font=font(19))
+    output = DOCS / "stamp-catalog-additional-fairies-2026-06-19.png"
+    sheet.save(output)
+    return output
+
+
+def make_medal_sheet():
+    width, height = 1900, 1260
+    sheet = Image.new("RGB", (width, height), (251, 247, 238))
+    draw = ImageDraw.Draw(sheet)
+    draw.text((55, 28), "勲章　完成品5種類", fill=(58, 81, 64), font=font(38))
+    for index, (milestone, name, relative_path) in enumerate(MEDALS):
+        left = 40 + index * 368
+        top = 100
+        draw.rounded_rectangle((left, top, left + 350, top + 1080), radius=12, fill=(255, 253, 247), outline=(218, 184, 105), width=2)
+        preview = checkerboard((310, 750))
+        paste_contained(preview, absolute_image(relative_path), (15, 20, 280, 710))
+        sheet.paste(preview.convert("RGB"), (left + 20, top + 25))
+        milestone_box = draw.textbbox((0, 0), milestone, font=font(21))
+        draw.text((left + (350 - (milestone_box[2] - milestone_box[0])) // 2, top + 820), milestone, fill=(62, 83, 66), font=font(21))
+        name_box = draw.textbbox((0, 0), name, font=font(18))
+        draw.text((left + (350 - (name_box[2] - name_box[0])) // 2, top + 870), name, fill=(85, 74, 58), font=font(18))
+    output = DOCS / "stamp-catalog-medals-2026-06-19.png"
     sheet.save(output)
     return output
 
@@ -182,6 +238,20 @@ def special_html():
     return "".join(
         f'<article><img src="{escape(path)}" alt="{escape(name)}"><h3>{escape(name)}</h3><p>{escape(description)}</p></article>'
         for name, description, path in SPECIALS
+    )
+
+
+def additional_fairies_html():
+    return "".join(
+        f'<article><img src="{escape(path)}" alt="{escape(name)}"><h3>{escape(name)}</h3><p>{escape(description)}</p></article>'
+        for name, description, path in ADDITIONAL_FAIRIES
+    )
+
+
+def medals_html():
+    return "".join(
+        f'<article><img src="{escape(path)}" alt="{escape(name)}"><h3>{escape(milestone)}</h3><p>{escape(name)}</p></article>'
+        for milestone, name, path in MEDALS
     )
 
 
@@ -217,21 +287,25 @@ article p {{ margin:0; font-size:14px; }}
 </style>
 </head>
 <body>
-<header><h1>水曜会スタンプ 完成品一覧</h1><p>花18種・妖精18体・特別な仲間8体</p></header>
+<header><h1>水曜会スタンプ 完成品一覧</h1><p>花18種・妖精19体（使用中18体＋追加1体）・勲章5種・特別な仲間8体</p></header>
 <main>
 <section><h2>花スタンプ</h2><div class="scroll"><table><thead><tr><th>区分</th><th>1巡目</th><th>2巡目</th><th>3巡目</th></tr></thead><tbody>{table_html(FLOWERS)}</tbody></table></div></section>
 <section><h2>妖精スタンプ</h2><div class="scroll"><table><thead><tr><th>区分</th><th>1巡目</th><th>2巡目</th><th>3巡目</th></tr></thead><tbody>{table_html(FAIRIES)}</tbody></table></div></section>
+<section><h2>追加完成品</h2><div class="specials">{additional_fairies_html()}</div></section>
+<section><h2>勲章</h2><div class="specials">{medals_html()}</div></section>
 <section><h2>特別な仲間スタンプ</h2><div class="specials">{special_html()}</div></section>
 </main>
 </body>
 </html>'''
 
-html_path = DOCS / "stamp-catalog-2026-06-18.html"
+html_path = DOCS / "stamp-catalog-2026-06-19.html"
 html_path.write_text(html, encoding="utf-8")
 
 outputs = [
-    make_cycle_sheet("花スタンプ　18種類", FLOWERS, "stamp-catalog-flowers-2026-06-18.png"),
-    make_cycle_sheet("妖精スタンプ　18種類", FAIRIES, "stamp-catalog-fairies-2026-06-18.png"),
+    make_cycle_sheet("花スタンプ　18種類", FLOWERS, "stamp-catalog-flowers-2026-06-19.png"),
+    make_cycle_sheet("妖精スタンプ　使用中18種類", FAIRIES, "stamp-catalog-fairies-2026-06-19.png"),
+    make_additional_fairy_sheet(),
+    make_medal_sheet(),
     make_special_sheet(),
     html_path,
 ]

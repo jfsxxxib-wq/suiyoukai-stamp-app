@@ -1,0 +1,61 @@
+{
+  "appId": "suiyoukai-stamp-adventure",
+  "formatVersion": 1,
+  "savedAt": "2026-06-19T10:04:33.797Z",
+  "progress": {
+    "schemaVersion": 2,
+    "stamps": {
+      "participationCount": 0,
+      "teacherLessonCounts": {
+        "tsuneishi": 1,
+        "yuki": 0,
+        "koike": 0,
+        "yamashiro": 0,
+        "matsumoto": 0
+      },
+      "teacherCircleRounds": 0
+    },
+    "earned": {
+      "fairies": [],
+      "medals": [],
+      "titles": [],
+      "companions": [
+        {
+          "id": "special_companion_french_bulldog_a",
+          "character": "フレンチブルドッグA",
+          "name": "はじめの一歩",
+          "description": "初スタンプ獲得",
+          "asset": "special-companion-french-bulldog-a.png",
+          "condition": "first_stamp",
+          "isAchieved": true
+        }
+      ]
+    }
+  },
+  "operationHistory": [
+    {
+      "id": "operation-1781863473146-0-participation_stamp",
+      "type": "participation_stamp",
+      "target": "参加スタンプ",
+      "before": 0,
+      "after": 1,
+      "recordedAt": "2026-06-19T10:04:33.146Z"
+    },
+    {
+      "id": "operation-1781863473580-1-decrement",
+      "type": "decrement",
+      "target": "参加スタンプ",
+      "before": 1,
+      "after": 0,
+      "recordedAt": "2026-06-19T10:04:33.580Z"
+    },
+    {
+      "id": "operation-1781863473580-2-admin_adjustment",
+      "type": "admin_adjustment",
+      "target": "常石 隆志 六段 指導碁スタンプ",
+      "before": 0,
+      "after": 1,
+      "recordedAt": "2026-06-19T10:04:33.580Z"
+    }
+  ]
+}

@@ -35,6 +35,12 @@ const seed = async (page, value) => {
   await page.waitForTimeout(850);
 };
 
+const authenticateOperator = async (page) => {
+  await page.locator("[data-operator-auth]").waitFor({ state: "visible" });
+  await page.locator("[data-operator-auth-input]").fill("suiyoukai2026");
+  await page.locator("[data-operator-auth-confirm]").click();
+};
+
 const openProfile = async (page) => {
   await page.locator('[data-panel="profile"]').evaluate((button) => button.click());
   await page.waitForTimeout(120);
@@ -142,6 +148,7 @@ try {
     await page.locator('[data-teacher="tsuneishi"]').click();
     await page.locator(".complete-teacher").click();
     await page.locator(".complete-teacher").click();
+    await authenticateOperator(page);
     await page.locator("[data-achievement-modal]").waitFor({ state: "visible" });
 
     const modal = await text(page, "[data-achievement-modal] .achievement-modal-card");
@@ -171,6 +178,14 @@ try {
   await page.locator(".teacher-detail").screenshot({ path: path.join(outputDir, "game-record-input.png") });
   await page.waitForTimeout(750);
   await recordButton.click();
+  await page.locator("[data-operator-auth]").waitFor({ state: "visible" });
+  await page.locator("[data-operator-auth-input]").fill("wrong-code");
+  await page.locator("[data-operator-auth-confirm]").click();
+  const storedAfterWrongPasscode = await page.evaluate((key) => JSON.parse(localStorage.getItem(key)), storageKey);
+  if (storedAfterWrongPasscode.stamps.teacherLessonCounts.tsuneishi !== 0) {
+    throw new Error("誤った運営パスコードで指導碁スタンプが保存されました。");
+  }
+  await authenticateOperator(page);
 
   const countAfterSaving = await text(page, "[data-card-stamp-current]");
   const savedRecords = await page.evaluate((key) => JSON.parse(localStorage.getItem(key)), gameRecordsStorageKey);
@@ -188,6 +203,11 @@ try {
   assertIncludes(historyAfterReload, "2子・勝ち", "再読み込み後の対局記録");
   await page.locator(".teacher-detail").screenshot({ path: path.join(outputDir, "game-record-saved.png") });
   checks.push({ kind: "対局記録", countAfterOpening, countAfterSaving, savedRecords, result: "OK" });
+
+  await seed(page, progress(9, 0));
+  const nextAdventure = await text(page, "[data-next-adventure-button]");
+  assertIncludes(nextAdventure, "あと1回でコスモス満開", "次の冒険");
+  checks.push({ kind: "次の冒険", nextAdventure, result: "OK" });
 
   for (const scenario of [
     { label: "記録なし", data: progress(0, 0), expected: [] },

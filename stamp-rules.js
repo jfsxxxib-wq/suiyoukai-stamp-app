@@ -490,6 +490,7 @@ const userProgressTemplate = {
     fairies: [],
     medals: [],
     titles: [],
+    companions: [],
   },
 };
 
@@ -505,6 +506,11 @@ const getProgressTeacherLessonCounts = (progress = userProgressTemplate) =>
 
 const getProgressTeacherCircleRounds = (progress = userProgressTemplate) =>
   progress.stamps?.teacherCircleRounds ?? progress.teacherCircleRounds ?? 0;
+
+const getProgressEarnedRewards = (progress = userProgressTemplate, rewardType) => {
+  const storedRewards = progress.earned?.[rewardType] ?? progress[`earned${rewardType[0].toUpperCase()}${rewardType.slice(1)}`];
+  return Array.isArray(storedRewards) ? storedRewards : [];
+};
 
 const uniqueById = (items) => {
   const seen = new Set();
@@ -689,33 +695,45 @@ const evaluateAllAchievements = (progress = userProgressTemplate) => {
   const teacherFairy = evaluateTeacherFairyAchievements(getProgressTeacherLessonCounts(progress));
   const teacherCircle = evaluateTeacherCircleAchievements(getProgressTeacherCircleRounds(progress));
   const earnedMedals = uniqueById([
+    ...getProgressEarnedRewards(progress, "medals"),
     ...participation.earnedMedals,
     ...teacherFairy.earnedMedals,
     ...teacherCircle.earnedMedals,
   ]);
   const earnedTitles = uniqueById([
+    ...getProgressEarnedRewards(progress, "titles"),
     ...participation.earnedTitles,
     ...teacherFairy.earnedTitles,
     ...teacherCircle.earnedTitles,
   ]);
-  const specialCompanions = evaluateSpecialCompanionAchievements(progress, {
+  const currentSpecialCompanions = evaluateSpecialCompanionAchievements(progress, {
     earnedMedals,
     earnedTitles,
     teacherCircle,
   });
+  const earnedCompanions = uniqueById([
+    ...getProgressEarnedRewards(progress, "companions"),
+    ...currentSpecialCompanions.earnedCompanions,
+  ]);
+  const specialCompanions = {
+    ...currentSpecialCompanions,
+    earnedCompanions,
+  };
+  const earnedFairies = uniqueById([
+    ...getProgressEarnedRewards(progress, "fairies"),
+    ...participation.earnedFairies,
+    ...teacherFairy.earnedFairies,
+  ]);
 
   return {
     participation,
     teacherFairy,
     teacherCircle,
     specialCompanions,
-    earnedFairies: [
-      ...participation.earnedFairies,
-      ...teacherFairy.earnedFairies,
-    ],
+    earnedFairies,
     earnedMedals,
     earnedTitles,
-    earnedCompanions: specialCompanions.earnedCompanions,
+    earnedCompanions,
   };
 };
 

@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-06-18T12:46:59.165Z",
+  "checkedAt": "2026-06-19T10:05:47.729Z",
   "app": "file:///C:/Users/akane/Documents/Codex/2026-06-14/new-chat/suiyoukai-stamp-app/index.html",
   "viewport": "430x932",
   "checks": [
@@ -219,14 +219,19 @@
       "countAfterSaving": "1",
       "savedRecords": [
         {
-          "id": "game-1781786801440-tsuneishi",
+          "id": "game-1781863525084-tsuneishi",
           "teacherId": "tsuneishi",
           "date": "2026-06-18",
           "handicap": "2子",
           "result": "勝ち",
-          "recordedAt": "2026-06-18T12:46:41.440Z"
+          "recordedAt": "2026-06-19T10:05:25.084Z"
         }
       ],
+      "result": "OK"
+    },
+    {
+      "kind": "次の冒険",
+      "nextAdventure": "次の冒険 あと1回でコスモス満開 参加10回でコスモスの妖精と出会えます。 次の花へ行こう",
       "result": "OK"
     },
     {

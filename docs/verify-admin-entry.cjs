@@ -70,8 +70,9 @@ const assert = (condition, label) => {
     await page.locator("[data-admin-save-button]").click();
     const storedAfterSave = await page.evaluate((key) => JSON.parse(localStorage.getItem(key)), storageKey);
     assert(storedAfterSave.stamps.participationCount === 1, "確定後の参加スタンプが保存されません。");
-    assert((await page.locator("[data-admin-draft-state]").textContent()).includes("保存済み"), "保存済み表示に戻りません。");
-    checks.push("確定時だけ保存して再計算");
+    assert(await page.locator("[data-admin-lock-card]").isVisible(), "確定保存後に自動再ロックされません。");
+    assert(await page.locator(".admin-card").isHidden(), "確定保存後も管理UIが開いたままです。");
+    checks.push("確定時だけ保存して自動再ロック");
 
     await page.locator('[data-panel="profile"]').click();
     await adminTab.click();
