@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>冒険記録帳</title>
-    <link rel="stylesheet" href="styles.css?v=20260619-medal-tuning">
+    <link rel="stylesheet" href="styles.css?v=20260622-accessibility-02">
   </head>
   <body>
     <main class="record-book" aria-label="冒険記録帳">
@@ -20,6 +20,7 @@
             <small>次の冒険</small>
             <strong data-next-adventure-title>最初の花を見つけよう</strong>
             <span class="next-adventure-copy" data-next-adventure-copy>参加または先生との指導碁を記録すると、冒険が始まります。</span>
+            <span class="next-adventure-action">次の冒険へ&nbsp;›</span>
           </span>
           <span class="next-adventure-guide" data-next-adventure-guide aria-hidden="true">
             <span class="next-adventure-guide-speech" data-next-adventure-guide-speech>次の花へ行こう</span>
@@ -115,7 +116,7 @@
           <div class="panel-view" data-view="field-guide" hidden>
             <p class="panel-kicker">花図鑑</p>
             <h2>先生図鑑</h2>
-            <p class="first-step-note">初参加の方は、先生を選んで指導後スタンプを記録します。</p>
+            <p class="first-step-note">初参加の方は、先生を選んで指導碁スタンプを記録します。</p>
             <section class="participation-stamp" aria-label="参加スタンプ">
               <span class="stamp-flower" aria-hidden="true"></span>
               <span class="participation-stamp-copy">
@@ -139,6 +140,7 @@
                     <strong>常石 隆志 六段</strong>
                     <small>記録済み・花を育てる案内人</small>
                   </span>
+                  <span class="teacher-card-action">見る&nbsp;›</span>
                 </button>
                 <button type="button" class="teacher-card" data-teacher="yuki" aria-pressed="false">
                   <span class="teacher-flower teacher-flower-camellia" aria-hidden="true"></span>
@@ -146,6 +148,7 @@
                     <strong>結城 聡 九段</strong>
                     <small>記録済み・読みをほどく案内人</small>
                   </span>
+                  <span class="teacher-card-action">見る&nbsp;›</span>
                 </button>
                 <button type="button" class="teacher-card" data-teacher="koike" aria-pressed="false">
                   <span class="teacher-flower teacher-flower-sun" aria-hidden="true"></span>
@@ -153,6 +156,7 @@
                     <strong>小池 芳弘 七段</strong>
                     <small>記録済み・一手を照らす案内人</small>
                   </span>
+                  <span class="teacher-card-action">見る&nbsp;›</span>
                 </button>
                 <button type="button" class="teacher-card" data-teacher="yamashiro" aria-pressed="false">
                   <span class="teacher-flower teacher-flower-hydrangea" aria-hidden="true"></span>
@@ -160,6 +164,7 @@
                     <strong>山城 宏 九段</strong>
                     <small>記録済み・読みを導く庭師</small>
                   </span>
+                  <span class="teacher-card-action">見る&nbsp;›</span>
                 </button>
                 <button type="button" class="teacher-card next-teacher" data-teacher="matsumoto" aria-pressed="false">
                   <span class="teacher-flower teacher-flower-sakura" aria-hidden="true"></span>
@@ -167,6 +172,7 @@
                     <strong>松本 武久 八段</strong>
                     <small>未記録・ここをタップして一巡目を達成</small>
                   </span>
+                  <span class="teacher-card-action">見る&nbsp;›</span>
                 </button>
                 <section class="circle-stamps" aria-label="全員の先生と1回対局スタンプ">
                   <div class="circle-stamps-header">

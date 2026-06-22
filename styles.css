@@ -5811,3 +5811,90 @@ dd {
   background-position: center center !important;
   background-repeat: no-repeat !important;
 }
+
+/* Accessibility trial final cascade. */
+body {
+  font-size: 18px;
+  line-height: 1.6;
+}
+
+.next-adventure-card {
+  min-height: 134px;
+  border-width: 2px;
+  border-color: rgba(63, 118, 82, 0.52);
+  background: rgba(255, 252, 242, 0.96);
+}
+
+.next-adventure-card small { font-size: 0.9rem; }
+.next-adventure-card strong { font-size: clamp(1.12rem, 3.5vw, 1.38rem); }
+.next-adventure-copy { color: #4b4640; font-size: 1rem; }
+
+.info-tabs {
+  gap: 7px;
+  padding: 8px;
+  border-width: 2px;
+  background: rgba(255, 252, 244, 0.96);
+}
+
+.info-tab {
+  min-height: 54px;
+  border-color: rgba(75, 55, 36, 0.22);
+  background: rgba(255, 255, 255, 0.62);
+  color: #47413b;
+  font-size: 1.05rem;
+}
+
+.info-tab small { color: #76531d; font-size: 0.82rem; }
+.admin-tab { color: #5f5750; font-size: 0.9rem; }
+.first-step-note { color: #49433d; font-size: 1.12rem; }
+.teacher-list-header h3 { font-size: 1.2rem; }
+.teacher-list-header span { color: #514a43; font-size: 1rem; }
+
+.teacher-card {
+  grid-template-columns: 42px minmax(0, 1fr) auto;
+  gap: 12px;
+  min-height: 72px;
+  padding: 12px;
+  border-width: 2px;
+  border-color: rgba(75, 55, 36, 0.25);
+  background: rgba(255, 252, 245, 0.9);
+}
+
+.teacher-card .teacher-flower { width: 42px; height: 42px; }
+.teacher-card strong { font-size: 1.12rem; }
+.teacher-card small { color: #514a43; font-size: 1rem; }
+.teacher-card.next-teacher::after,
+.teacher-card.is-recorded::after { grid-column: 2 / -1; font-size: 0.76rem; }
+
+.owl-library-heading > p:last-child,
+.library-current-title small,
+.library-current-title span,
+.library-section-heading small,
+.library-journal small,
+.library-section-heading > span { color: #514a43; font-size: 1rem; }
+.owl-library-speech { color: #2f4c62; font-size: 1rem; }
+
+@media (max-width: 600px) {
+  .info-tabs {
+    grid-template-columns: 1.08fr 1fr 0.72fr 0.66fr;
+    gap: 4px;
+    padding: 5px;
+  }
+
+  .info-tab {
+    min-height: 52px;
+    padding-inline: 3px;
+    font-size: clamp(0.86rem, 3.5vw, 1rem);
+  }
+
+  .info-tab small { font-size: 0.76rem; }
+  .info-panel { padding: 24px 18px; }
+
+  .teacher-card {
+    grid-template-columns: 40px minmax(0, 1fr) auto;
+    gap: 9px;
+    padding: 11px 9px;
+  }
+
+  .teacher-card .teacher-flower { width: 40px; height: 40px; }
+}
