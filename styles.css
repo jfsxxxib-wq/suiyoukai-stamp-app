@@ -5979,3 +5979,24 @@ body {
 
   .teacher-card .teacher-flower { width: 40px; height: 40px; }
 }
+
+/* Teacher photo trial: use the originals without the baked-in lower-face fade. */
+.info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) .teacher-photo[data-teacher-photo="akari"]::after {
+  background: url("assets/teacher-photo-1.jpg") center center / contain no-repeat, #f3efe8 !important;
+}
+
+.info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) .teacher-photo[data-teacher-photo="yuki"]::after {
+  background: url("assets/teacher-yuki.jpg") center center / contain no-repeat, #f3efe8 !important;
+}
+
+.info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) .teacher-photo[data-teacher-photo="koike"]::after {
+  background: url("assets/teacher-koike.jpg") center center / contain no-repeat, #f3efe8 !important;
+}
+
+.info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) .teacher-photo[data-teacher-photo="yamashiro"]::after {
+  background: url("assets/teacher-yamashiro.jpg") center center / contain no-repeat, #f3efe8 !important;
+}
+
+.info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) .teacher-photo[data-teacher-photo="matsumoto"]::after {
+  background: url("assets/teacher-matsumoto.jpg") center center / contain no-repeat, #f3efe8 !important;
+}
