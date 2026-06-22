@@ -6000,3 +6000,69 @@ body {
 .info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) .teacher-photo[data-teacher-photo="matsumoto"]::after {
   background: url("assets/teacher-matsumoto.jpg") center center / contain no-repeat, #f3efe8 !important;
 }
+
+/* Fairy visibility trial: enlarge the art and keep the shadow crisp. */
+.next-adventure-card {
+  grid-template-columns: minmax(0, 1fr) 92px;
+}
+
+.next-adventure-guide {
+  min-height: 122px;
+}
+
+.next-adventure-guide img {
+  width: 92px;
+  height: 92px;
+  filter: drop-shadow(0 5px 3px rgba(48, 38, 26, 0.22));
+}
+
+.next-adventure-guide-speech {
+  right: 4px;
+  width: 94px;
+  padding: 5px 7px;
+  color: #674715;
+  font-size: 0.75rem;
+}
+
+.profile-fairy-list {
+  grid-template-columns: 1fr;
+}
+
+.profile-fairy-item {
+  grid-template-columns: 60px minmax(0, 1fr);
+  min-height: 82px;
+  gap: 12px;
+  padding: 8px 12px;
+}
+
+.profile-fairy-item img {
+  width: 60px;
+  height: 70px;
+  filter: drop-shadow(0 4px 3px rgba(45, 34, 23, 0.2));
+}
+
+.profile-fairy-item strong {
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+.profile-fairy-item span {
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+
+@media (max-width: 380px) {
+  .next-adventure-card {
+    grid-template-columns: minmax(0, 1fr) 82px;
+  }
+
+  .next-adventure-guide img {
+    width: 84px;
+    height: 84px;
+  }
+
+  .next-adventure-guide-speech {
+    width: 86px;
+    font-size: 0.7rem;
+  }
+}
