@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>冒険記録帳</title>
-    <link rel="stylesheet" href="styles.css?v=20260622-accessibility-02">
+    <link rel="stylesheet" href="styles.css?v=20260622-flower-guide-01">
   </head>
   <body>
     <main class="record-book" aria-label="冒険記録帳">
@@ -115,7 +115,40 @@
 
           <div class="panel-view" data-view="field-guide" hidden>
             <p class="panel-kicker">花図鑑</p>
-            <h2>先生図鑑</h2>
+            <h2>花を育てよう</h2>
+            <section class="flower-guide-intro" aria-label="花を育てる案内">
+              <div class="flower-guide-copy">
+                <strong>参加や指導碁で花が咲きます</strong>
+                <p>花が満開になると、妖精や称号に出会えます。次に育てる花は「次の冒険」が案内します。</p>
+              </div>
+              <div class="flower-guide-showcase" aria-label="水曜会で育つ花">
+                <figure>
+                  <img src="assets/cosmos-stamp-stage-05-v2.png" alt="コスモス" loading="lazy" decoding="async">
+                  <figcaption>コスモス</figcaption>
+                </figure>
+                <figure>
+                  <img src="assets/iris-stamp-stage-05-list.png" alt="菖蒲" loading="lazy" decoding="async">
+                  <figcaption>菖蒲</figcaption>
+                </figure>
+                <figure>
+                  <img src="assets/camellia-stamp-stage-05-list.png" alt="椿" loading="lazy" decoding="async">
+                  <figcaption>椿</figcaption>
+                </figure>
+                <figure>
+                  <img src="assets/sunflower-stamp-stage-05-list.png" alt="ひまわり" loading="lazy" decoding="async">
+                  <figcaption>ひまわり</figcaption>
+                </figure>
+                <figure>
+                  <img src="assets/hydrangea-stamp-stage-05-list.png" alt="紫陽花" loading="lazy" decoding="async">
+                  <figcaption>紫陽花</figcaption>
+                </figure>
+                <figure>
+                  <img src="assets/sakura-stamp-stage-05-list.png" alt="桜" loading="lazy" decoding="async">
+                  <figcaption>桜</figcaption>
+                </figure>
+              </div>
+            </section>
+            <h3 class="teacher-guide-heading">先生を選んで花を育てる</h3>
             <p class="first-step-note">初参加の方は、先生を選んで指導碁スタンプを記録します。</p>
             <section class="participation-stamp" aria-label="参加スタンプ">
               <span class="stamp-flower" aria-hidden="true"></span>
@@ -326,113 +359,6 @@
               </section>
             </div>
 
-            <section class="stamp-progress" aria-label="スタンプ進行見本">
-              <div class="stamp-progress-header">
-                <h3>スタンプ進行見本</h3>
-                <span>0〜5回</span>
-              </div>
-              <div class="stamp-progress-grid">
-                <article class="teacher-photo-card progress-card" data-bloom-count="0" data-fairy="false" data-flower="cosmos">
-                  <p class="progress-count">0回</p>
-                  <div class="teacher-photo progress-photo" aria-label="0回の見本">
-                    <span>芽</span>
-                  </div>
-                  <div class="bloom-ring" aria-hidden="true">
-                    <span class="bloom bloom-1"></span>
-                    <span class="bloom bloom-2"></span>
-                    <span class="bloom bloom-3"></span>
-                    <span class="bloom bloom-4"></span>
-                    <span class="bloom bloom-5"></span>
-                  </div>
-                  <span class="fairy-badge" aria-hidden="true"></span>
-                  <p class="progress-note">つぼみ</p>
-                </article>
-                <article class="teacher-photo-card progress-card" data-bloom-count="1" data-fairy="false" data-flower="cosmos">
-                  <p class="progress-count">1回</p>
-                  <div class="teacher-photo progress-photo" aria-label="1回の見本">
-                    <span>芽</span>
-                  </div>
-                  <div class="bloom-ring" aria-hidden="true">
-                    <span class="bloom bloom-1"></span>
-                    <span class="bloom bloom-2"></span>
-                    <span class="bloom bloom-3"></span>
-                    <span class="bloom bloom-4"></span>
-                    <span class="bloom bloom-5"></span>
-                  </div>
-                  <span class="fairy-badge" aria-hidden="true"></span>
-                  <p class="progress-note">ひとつ咲く</p>
-                </article>
-                <article class="teacher-photo-card progress-card" data-bloom-count="2" data-fairy="false" data-flower="cosmos">
-                  <p class="progress-count">2回</p>
-                  <div class="teacher-photo progress-photo" aria-label="2回の見本">
-                    <span>芽</span>
-                  </div>
-                  <div class="bloom-ring" aria-hidden="true">
-                    <span class="bloom bloom-1"></span>
-                    <span class="bloom bloom-2"></span>
-                    <span class="bloom bloom-3"></span>
-                    <span class="bloom bloom-4"></span>
-                    <span class="bloom bloom-5"></span>
-                  </div>
-                  <span class="fairy-badge" aria-hidden="true"></span>
-                  <p class="progress-note">色づく</p>
-                </article>
-                <article class="teacher-photo-card progress-card" data-bloom-count="3" data-fairy="false" data-flower="cosmos">
-                  <p class="progress-count">3回</p>
-                  <div class="teacher-photo progress-photo" aria-label="3回の見本">
-                    <span>芽</span>
-                  </div>
-                  <div class="bloom-ring" aria-hidden="true">
-                    <span class="bloom bloom-1"></span>
-                    <span class="bloom bloom-2"></span>
-                    <span class="bloom bloom-3"></span>
-                    <span class="bloom bloom-4"></span>
-                    <span class="bloom bloom-5"></span>
-                  </div>
-                  <span class="fairy-badge" aria-hidden="true"></span>
-                  <p class="progress-note">花ひらく</p>
-                </article>
-                <article class="teacher-photo-card progress-card" data-bloom-count="4" data-fairy="false" data-flower="cosmos">
-                  <p class="progress-count">4回</p>
-                  <div class="teacher-photo progress-photo" aria-label="4回の見本">
-                    <span>芽</span>
-                  </div>
-                  <div class="bloom-ring" aria-hidden="true">
-                    <span class="bloom bloom-1"></span>
-                    <span class="bloom bloom-2"></span>
-                    <span class="bloom bloom-3"></span>
-                    <span class="bloom bloom-4"></span>
-                    <span class="bloom bloom-5"></span>
-                  </div>
-                  <span class="fairy-badge" aria-hidden="true"></span>
-                  <p class="progress-note">満開手前</p>
-                </article>
-                <article class="teacher-photo-card progress-card" data-bloom-count="5" data-fairy="true" data-flower="cosmos" data-stage="sky">
-                  <span class="celebration-label">満開達成</span>
-                  <p class="progress-count">5回</p>
-                  <div class="teacher-photo progress-photo" aria-label="5回の見本">
-                    <span>祝</span>
-                  </div>
-                  <div class="bloom-ring" aria-hidden="true">
-                    <span class="bloom bloom-1"></span>
-                    <span class="bloom bloom-2"></span>
-                    <span class="bloom bloom-3"></span>
-                    <span class="bloom bloom-4"></span>
-                    <span class="bloom bloom-5"></span>
-                  </div>
-                  <span class="fairy-badge" aria-hidden="true"></span>
-                  <div class="petal-shower" aria-hidden="true">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                  </div>
-                  <p class="progress-note">妖精出現</p>
-                </article>
-              </div>
-            </section>
           </div>
 
           <div class="panel-view owl-library" data-view="titles" hidden>
