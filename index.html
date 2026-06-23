@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>冒険記録帳</title>
-    <link rel="stylesheet" href="styles.css?v=20260622-fairy-visibility-01">
+    <link rel="stylesheet" href="styles.css?v=20260623-current-flower-03">
   </head>
   <body>
     <main class="record-book" aria-label="冒険記録帳">
@@ -122,30 +122,42 @@
                 <p>花が満開になると、妖精や称号に出会えます。次に育てる花は「次の冒険」が案内します。</p>
               </div>
               <div class="flower-guide-showcase" aria-label="水曜会で育つ花">
-                <figure>
-                  <img src="assets/cosmos-stamp-stage-05-v2.png" alt="コスモス" loading="lazy" decoding="async">
-                  <figcaption>コスモス</figcaption>
-                </figure>
-                <figure>
-                  <img src="assets/iris-stamp-stage-05-list.png" alt="菖蒲" loading="lazy" decoding="async">
-                  <figcaption>菖蒲</figcaption>
-                </figure>
-                <figure>
-                  <img src="assets/camellia-stamp-stage-05-list.png" alt="椿" loading="lazy" decoding="async">
-                  <figcaption>椿</figcaption>
-                </figure>
-                <figure>
-                  <img src="assets/sunflower-stamp-stage-05-list.png" alt="ひまわり" loading="lazy" decoding="async">
-                  <figcaption>ひまわり</figcaption>
-                </figure>
-                <figure>
-                  <img src="assets/hydrangea-stamp-stage-05-list.png" alt="紫陽花" loading="lazy" decoding="async">
-                  <figcaption>紫陽花</figcaption>
-                </figure>
-                <figure>
-                  <img src="assets/sakura-stamp-stage-05-list.png" alt="桜" loading="lazy" decoding="async">
-                  <figcaption>桜</figcaption>
-                </figure>
+                <button type="button" class="flower-guide-card" data-flower-guide-target="participation" aria-label="コスモスの参加スタンプへ移動">
+                  <img src="assets/cosmos-stamp-stage-05-v2.png" alt="コスモス" loading="eager" decoding="async">
+                  <span class="flower-guide-name">コスモス</span>
+                  <span class="flower-guide-meta">参加スタンプ</span>
+                  <span class="flower-guide-action">1巡目を見る</span>
+                </button>
+                <button type="button" class="flower-guide-card" data-flower-guide-target="tsuneishi" aria-label="菖蒲の常石先生スタンプへ移動">
+                  <img src="assets/iris-stamp-stage-05-list.png" alt="菖蒲" loading="eager" decoding="async">
+                  <span class="flower-guide-name">菖蒲</span>
+                  <span class="flower-guide-meta">常石先生</span>
+                  <span class="flower-guide-action">1巡目を見る</span>
+                </button>
+                <button type="button" class="flower-guide-card" data-flower-guide-target="yuki" aria-label="椿の結城先生スタンプへ移動">
+                  <img src="assets/camellia-stamp-stage-05-list.png" alt="椿" loading="eager" decoding="async">
+                  <span class="flower-guide-name">椿</span>
+                  <span class="flower-guide-meta">結城先生</span>
+                  <span class="flower-guide-action">1巡目を見る</span>
+                </button>
+                <button type="button" class="flower-guide-card" data-flower-guide-target="koike" aria-label="ひまわりの小池先生スタンプへ移動">
+                  <img src="assets/sunflower-stamp-stage-05-list.png" alt="ひまわり" loading="eager" decoding="async">
+                  <span class="flower-guide-name">ひまわり</span>
+                  <span class="flower-guide-meta">小池先生</span>
+                  <span class="flower-guide-action">1巡目を見る</span>
+                </button>
+                <button type="button" class="flower-guide-card" data-flower-guide-target="yamashiro" aria-label="紫陽花の山城先生スタンプへ移動">
+                  <img src="assets/hydrangea-stamp-stage-05-list.png" alt="紫陽花" loading="eager" decoding="async">
+                  <span class="flower-guide-name">紫陽花</span>
+                  <span class="flower-guide-meta">山城先生</span>
+                  <span class="flower-guide-action">1巡目を見る</span>
+                </button>
+                <button type="button" class="flower-guide-card" data-flower-guide-target="matsumoto" aria-label="桜の松本先生スタンプへ移動">
+                  <img src="assets/sakura-stamp-stage-05-list.png" alt="桜" loading="eager" decoding="async">
+                  <span class="flower-guide-name">桜</span>
+                  <span class="flower-guide-meta">松本先生</span>
+                  <span class="flower-guide-action">1巡目を見る</span>
+                </button>
               </div>
             </section>
             <h3 class="teacher-guide-heading">先生を選んで花を育てる</h3>
@@ -245,6 +257,15 @@
                 <button type="button" class="back-to-list">先生一覧に戻る</button>
                 <p class="detail-label">先生詳細</p>
                 <h3 data-teacher-name>常石 隆志 六段</h3>
+                <section class="current-flower-card" aria-label="いま育てている花">
+                  <img src="assets/iris-stamp-stage-05-list.png" alt="菖蒲" data-current-flower-image>
+                  <span>
+                    <small>いま育てている花</small>
+                    <strong data-current-flower-name>菖蒲の花 1巡目</strong>
+                    <em data-current-flower-progress>3/5回 あと2回で満開</em>
+                    <span class="current-flower-stamps" data-current-flower-stamps aria-label="押したスタンプ数"></span>
+                  </span>
+                </section>
                 <div class="teacher-photo-card" data-bloom-count="3" data-fairy="false" data-flower="cosmos">
                   <div class="teacher-card-heading">
                     <strong data-teacher-card-name>常石 隆志 六段</strong>
@@ -572,6 +593,15 @@
           <button type="button" class="achievement-modal-profile" data-achievement-profile>冒険者カードを見る</button>
         </article>
       </section>
+      <section class="fairy-viewer" data-fairy-viewer hidden aria-label="妖精を大きく見る">
+        <button type="button" class="fairy-viewer-backdrop" data-fairy-viewer-close aria-label="戻る"></button>
+        <article class="fairy-viewer-card">
+          <button type="button" class="fairy-viewer-close" data-fairy-viewer-close aria-label="戻る">×</button>
+          <img class="fairy-viewer-image" data-fairy-viewer-image src="assets/fairy-apollon-flower-style.png" alt="">
+          <h2 data-fairy-viewer-name>妖精</h2>
+          <p data-fairy-viewer-status>達成済み</p>
+        </article>
+      </section>
     </main>
     <div class="app-load-status" data-app-load-status>画面の操作を読み込み中です。</div>
     <script>
@@ -585,6 +615,6 @@
       });
     </script>
     <script src="stamp-rules.js?v=20260619-fairy-guide"></script>
-    <script src="script.js?v=20260619-fairy-guide"></script>
+    <script src="script.js?v=20260623-current-flower-03"></script>
   </body>
 </html>

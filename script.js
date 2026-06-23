@@ -35,6 +35,10 @@ const achievementCloseButtons = document.querySelectorAll("[data-achievement-clo
 const achievementProfileButton = document.querySelector("[data-achievement-profile]");
 const cardStampCurrent = document.querySelector("[data-card-stamp-current]");
 const cardStampGoal = document.querySelector("[data-card-stamp-goal]");
+const currentFlowerImage = document.querySelector("[data-current-flower-image]");
+const currentFlowerName = document.querySelector("[data-current-flower-name]");
+const currentFlowerProgress = document.querySelector("[data-current-flower-progress]");
+const currentFlowerStamps = document.querySelector("[data-current-flower-stamps]");
 const teacherStampRule = document.querySelector("[data-teacher-stamp]")?.parentElement;
 const profileTitle = document.querySelector("[data-profile-title]");
 const profileRank = document.querySelector("[data-profile-rank]");
@@ -47,6 +51,12 @@ const circleBadge = document.querySelector("[data-circle-badge]");
 const profileBadges = document.querySelector(".profile-badges");
 const profileFairyList = document.querySelector("[data-profile-fairy-list]");
 const profileFairies = document.querySelector("[data-profile-fairies]");
+const fairyViewer = document.querySelector("[data-fairy-viewer]");
+const fairyViewerImage = document.querySelector("[data-fairy-viewer-image]");
+const fairyViewerName = document.querySelector("[data-fairy-viewer-name]");
+const fairyViewerStatus = document.querySelector("[data-fairy-viewer-status]");
+const fairyViewerCard = document.querySelector(".fairy-viewer-card");
+const fairyViewerCloseButtons = document.querySelectorAll("[data-fairy-viewer-close]");
 const profileSpecialCompanionList = document.querySelector("[data-profile-special-companion-list]");
 const libraryOwl = document.querySelector("[data-library-owl]");
 const libraryGuide = document.querySelector("[data-library-guide]");
@@ -58,11 +68,13 @@ const libraryTitleList = document.querySelector("[data-library-title-list]");
 const libraryMedalCount = document.querySelector("[data-library-medal-count]");
 const libraryMedalList = document.querySelector("[data-library-medal-list]");
 const libraryAchievementList = document.querySelector("[data-library-achievement-list]");
+const participationStamp = document.querySelector(".participation-stamp");
 const participationFlower = document.querySelector(".participation-stamp .stamp-flower");
 const participationFlowerName = document.querySelector("[data-participation-flower-name]");
 const participationCount = document.querySelector("[data-participation-count]");
 const participationStatus = document.querySelector("[data-participation-status]");
 const participationStampButton = document.querySelector("[data-participation-stamp-button]");
+const flowerGuideCards = document.querySelectorAll("[data-flower-guide-target]");
 const circleStamp = document.querySelector("[data-circle-stamp='first']");
 const circleStatus = document.querySelector("[data-circle-status]");
 const roundSummary = document.querySelector("[data-round-summary]");
@@ -1321,6 +1333,37 @@ const getAchievementFairy = (teacher, cycleProgress = getCompletedTeacherCyclePr
 const getCurrentTeacherCycleProgress = (teacher) =>
   getCycleProgress(teacher.stampCount, getTeacherGoal(teacher), teacher.flowerCycles);
 
+const updateCurrentFlowerCard = (teacher, cycleProgress) => {
+  if (!currentFlowerImage || !currentFlowerName || !currentFlowerProgress) {
+    return;
+  }
+
+  const goal = getTeacherGoal(teacher);
+  const flowerName = cycleProgress.cycle.flowerName ?? "花";
+  const cycleName = cycleProgress.cycle.cycleName ?? `${cycleProgress.cycleNumber}巡目`;
+  const remaining = Math.max(0, goal - cycleProgress.countInCycle);
+  const flowerAsset = cycleProgress.cycle.flowerAsset;
+
+  currentFlowerImage.src = flowerAsset ? `assets/${flowerAsset}` : "assets/cosmos-stamp-stage-05-v2.png";
+  currentFlowerImage.alt = flowerName;
+  currentFlowerImage.closest(".current-flower-card")?.style.setProperty("--current-flower-stamp-image", `url("${currentFlowerImage.src}")`);
+  currentFlowerName.textContent = `${flowerName}の花 ${cycleName}`;
+  currentFlowerProgress.textContent = remaining === 0
+    ? `${goal}/${goal}回 満開です`
+    : `${cycleProgress.countInCycle}/${goal}回 あと${remaining}回で満開`;
+
+  if (currentFlowerStamps) {
+    currentFlowerStamps.textContent = "";
+
+    for (let index = 1; index <= goal; index += 1) {
+      const stamp = document.createElement("i");
+      stamp.className = index <= cycleProgress.countInCycle ? "is-filled" : "";
+      stamp.setAttribute("aria-hidden", "true");
+      currentFlowerStamps.append(stamp);
+    }
+  }
+};
+
 const getTotalTeacherStampCount = () =>
   Object.values(teacherDetails).reduce((total, teacher) => total + teacher.stampCount, 0);
 
@@ -1358,6 +1401,122 @@ const updateParticipationStampCard = () => {
   participationStampButton.disabled = currentCount >= cycleProgress.maxCount;
 };
 
+const openFairyViewer = ({ src, alt, name, status, type = "fairy" }) => {
+  if (!fairyViewer || !fairyViewerImage || !fairyViewerName || !fairyViewerStatus) {
+    return;
+  }
+
+  fairyViewerImage.src = src;
+  fairyViewerImage.alt = alt;
+  fairyViewerName.textContent = name;
+  fairyViewerStatus.textContent = status;
+  fairyViewer.dataset.viewerType = type;
+  fairyViewerCard?.classList.toggle("is-special-companion", type === "special");
+  fairyViewer.hidden = false;
+  document.body.classList.add("is-fairy-viewer-open");
+};
+
+const closeFairyViewer = () => {
+  if (!fairyViewer) {
+    return;
+  }
+
+  fairyViewer.hidden = true;
+  fairyViewer.dataset.viewerType = "";
+  fairyViewerCard?.classList.remove("is-special-companion");
+  document.body.classList.remove("is-fairy-viewer-open");
+};
+
+const createProfileFairyItem = ({ src, alt, nameText, statusText, categoryText, cycleNames = [], cycleFairies = [] }) => {
+  const item = document.createElement("button");
+  item.type = "button";
+  item.className = "profile-fairy-item";
+  item.setAttribute("aria-label", `${nameText}を大きく見る`);
+
+  const image = document.createElement("img");
+  image.src = src;
+  image.alt = alt;
+
+  const copy = document.createElement("div");
+  copy.className = "profile-fairy-copy";
+
+  const name = document.createElement("strong");
+  name.textContent = nameText;
+  copy.append(name);
+
+  if (categoryText) {
+    const category = document.createElement("span");
+    category.className = "profile-fairy-meta";
+    category.textContent = categoryText;
+    copy.append(category);
+  }
+
+  if (cycleNames.length > 0) {
+    const cycles = document.createElement("div");
+    cycles.className = "profile-fairy-cycles";
+
+    const cyclesLabel = document.createElement("span");
+    cyclesLabel.className = "profile-fairy-cycles-label";
+    cyclesLabel.textContent = "咲いた花";
+    cycles.append(cyclesLabel);
+
+    for (const cycleName of cycleNames) {
+      const cycle = document.createElement("span");
+      cycle.className = "profile-fairy-cycle";
+      cycle.textContent = `🌸 ${cycleName}`;
+      cycles.append(cycle);
+    }
+
+    copy.append(cycles);
+  }
+
+  if (cycleFairies.length > 1) {
+    const fairyLine = document.createElement("div");
+    fairyLine.className = "profile-fairy-cycle-images";
+
+    for (const cycleFairy of cycleFairies) {
+      const thumb = document.createElement("img");
+      thumb.src = cycleFairy.src;
+      thumb.alt = cycleFairy.alt;
+      thumb.title = `${cycleFairy.cycleName}の妖精を見る`;
+      thumb.dataset.fairyCycleThumb = "";
+      thumb.dataset.viewerSrc = cycleFairy.src;
+      thumb.dataset.viewerAlt = cycleFairy.alt;
+      thumb.dataset.viewerName = cycleFairy.alt;
+      thumb.dataset.viewerStatus = `${categoryText ? `${categoryText} / ` : ""}${cycleFairy.cycleName} 達成済み`;
+      fairyLine.append(thumb);
+    }
+
+    copy.append(fairyLine);
+  }
+
+  if (cycleNames.length === 0) {
+    const status = document.createElement("span");
+    status.className = "profile-fairy-meta";
+    status.textContent = statusText;
+    copy.append(status);
+  }
+
+  item.append(image, copy);
+  item.addEventListener("click", (event) => {
+    const thumb = event.target.closest("[data-fairy-cycle-thumb]");
+
+    if (thumb) {
+      openFairyViewer({
+        src: thumb.dataset.viewerSrc,
+        alt: thumb.dataset.viewerAlt,
+        name: thumb.dataset.viewerName,
+        status: thumb.dataset.viewerStatus,
+      });
+      return;
+    }
+
+    openFairyViewer({ src, alt, name: nameText, status: statusText });
+  });
+
+  return item;
+};
+
 const renderProfileFairies = () => {
   if (!profileFairyList) {
     return;
@@ -1375,25 +1534,91 @@ const renderProfileFairies = () => {
   }
 
   for (const teacher of earnedFairies) {
-    const fairy = getAchievementFairy(teacher);
-    const item = document.createElement("article");
-    item.className = "profile-fairy-item";
+    const cycleProgress = getCompletedTeacherCycleProgress(teacher);
+    const fairy = getAchievementFairy(teacher, cycleProgress);
+    const cycleName = cycleProgress.cycleName ?? `${cycleProgress.cycleNumber}巡目`;
+    const statusText = `${teacher.name} 指導碁スタンプ / 咲いた花: ${cycleName}`;
 
-    const image = document.createElement("img");
-    image.src = fairy.src;
-    image.alt = fairy.label;
-
-    const copy = document.createElement("div");
-    const name = document.createElement("strong");
-    const status = document.createElement("span");
-
-    name.textContent = fairy.label;
-    status.textContent = `${teacher.name} ${getTeacherGoal(teacher)}/${getTeacherGoal(teacher)}`;
-
-    copy.append(name, status);
-    item.append(image, copy);
-    profileFairyList.append(item);
+    profileFairyList.append(createProfileFairyItem({
+      src: fairy.src,
+      alt: fairy.label,
+      nameText: fairy.label,
+      statusText,
+      categoryText: `${teacher.name} / 指導碁スタンプ`,
+      cycleNames: [cycleName],
+      cycleFairies: [{ src: fairy.src, alt: fairy.label, cycleName }],
+    }));
   }
+};
+
+const getFairyProfileGroupKey = (earnedFairy) => {
+  if (earnedFairy.teacherId) {
+    return `teacher:${earnedFairy.teacherId}`;
+  }
+
+  if (earnedFairy.teacherName === "参加スタンプ" || earnedFairy.teacherId === null) {
+    return "participation";
+  }
+
+  return earnedFairy.id ?? earnedFairy.name;
+};
+
+const getFairyProfileCycleName = (earnedFairy) =>
+  earnedFairy.cycleName ?? (earnedFairy.cycleNumber ? `${earnedFairy.cycleNumber}巡目` : "1巡目");
+
+const getFairyProfileCategoryText = (earnedFairy) => {
+  if (earnedFairy.teacherId) {
+    return `${earnedFairy.teacherName} / 指導碁スタンプ`;
+  }
+
+  if (earnedFairy.teacherName === "参加スタンプ" || earnedFairy.teacherId === null) {
+    return "参加スタンプ";
+  }
+
+  return earnedFairy.teacherName ?? "獲得記録";
+};
+
+const groupEarnedFairiesForProfile = (earnedFairies) => {
+  const groups = new Map();
+
+  for (const earnedFairy of earnedFairies) {
+    const key = getFairyProfileGroupKey(earnedFairy);
+    const cycleNumber = earnedFairy.cycleNumber ?? 1;
+    const cycleName = getFairyProfileCycleName(earnedFairy);
+    const group = groups.get(key) ?? {
+      representative: earnedFairy,
+      categoryText: getFairyProfileCategoryText(earnedFairy),
+      cycles: new Map(),
+    };
+
+    if ((group.representative.cycleNumber ?? 1) > cycleNumber) {
+      group.representative = earnedFairy;
+    }
+
+    if (!group.cycles.has(cycleNumber)) {
+      const teacher = earnedFairy.teacherId ? teacherDetails[earnedFairy.teacherId] : null;
+      const fairy = getFairyDisplayData(earnedFairy, teacher);
+      group.cycles.set(cycleNumber, {
+        cycleName,
+        src: fairy.src,
+        alt: fairy.label,
+      });
+    }
+
+    groups.set(key, group);
+  }
+
+  return [...groups.values()].map((group) => {
+    const cycleFairies = [...group.cycles.entries()]
+      .sort(([a], [b]) => a - b)
+      .map(([, cycle]) => cycle);
+
+    return {
+      ...group,
+      cycleFairies,
+      cycleNames: cycleFairies.map((cycle) => cycle.cycleName),
+    };
+  });
 };
 
 const renderProfileFairiesFromResult = (achievementResult) => {
@@ -1411,26 +1636,24 @@ const renderProfileFairiesFromResult = (achievementResult) => {
     return;
   }
 
-  for (const earnedFairy of achievementResult.earnedFairies) {
+  const fairyGroups = groupEarnedFairiesForProfile(achievementResult.earnedFairies);
+
+  for (const group of fairyGroups) {
+    const earnedFairy = group.representative;
     const teacher = earnedFairy.teacherId ? teacherDetails[earnedFairy.teacherId] : null;
     const fairy = getFairyDisplayData(earnedFairy, teacher);
-    const item = document.createElement("article");
-    item.className = "profile-fairy-item";
+    const cycleText = group.cycleNames.join(" / ");
+    const statusText = `${group.categoryText} / 咲いた花: ${cycleText}`;
 
-    const image = document.createElement("img");
-    image.src = fairy.src;
-    image.alt = earnedFairy.name;
-
-    const copy = document.createElement("div");
-    const name = document.createElement("strong");
-    const status = document.createElement("span");
-
-    name.textContent = earnedFairy.name;
-    status.textContent = `${earnedFairy.teacherName} ${earnedFairy.cycleName ?? ""} 達成済み`;
-
-    copy.append(name, status);
-    item.append(image, copy);
-    profileFairyList.append(item);
+    profileFairyList.append(createProfileFairyItem({
+      src: fairy.src,
+      alt: fairy.label,
+      nameText: fairy.label,
+      statusText,
+      categoryText: group.categoryText,
+      cycleNames: group.cycleNames,
+      cycleFairies: group.cycleFairies,
+    }));
   }
 };
 
@@ -1451,8 +1674,10 @@ const renderProfileSpecialCompanions = (achievementResult) => {
   }
 
   for (const companion of earnedCompanions) {
-    const item = document.createElement("article");
+    const item = document.createElement("button");
+    item.type = "button";
     item.className = "profile-special-companion-item";
+    item.setAttribute("aria-label", `${companion.name}を大きく見る`);
 
     const image = document.createElement("img");
     image.src = `assets/${companion.asset}`;
@@ -1469,6 +1694,15 @@ const renderProfileSpecialCompanions = (achievementResult) => {
 
     copy.append(name, character, status);
     item.append(image, copy);
+    item.addEventListener("click", () => {
+      openFairyViewer({
+        src: `assets/${companion.asset}`,
+        alt: companion.name,
+        name: companion.name,
+        status: `${companion.character}・${companion.description}`,
+        type: "special",
+      });
+    });
     profileSpecialCompanionList.append(item);
   }
 };
@@ -2140,6 +2374,7 @@ const renderTeacherDetail = (teacherKey) => {
   updateTeacherStampRuleNote(teacher);
   cardStampCurrent.textContent = String(cycleProgress.countInCycle);
   cardStampGoal.textContent = String(getTeacherGoal(teacher));
+  updateCurrentFlowerCard(teacher, cycleProgress);
   const photoCard = document.querySelector(".teacher-photo-card");
   photoCard.dataset.bloomCount = String(cycleProgress.countInCycle);
   photoCard.dataset.fairy = String(teacher.fairy);
@@ -2246,22 +2481,64 @@ closeButton.addEventListener("click", () => {
   }
 });
 
+const openTeacherDetailFromCard = (card) => {
+  if (!card) {
+    return;
+  }
+
+  for (const item of teacherCards) {
+    const isSelected = item === card;
+    item.classList.toggle("is-selected", isSelected);
+    item.setAttribute("aria-pressed", String(isSelected));
+  }
+
+  renderTeacherDetail(card.dataset.teacher);
+
+  teacherLayout.dataset.teacherMode = "detail";
+  dock.classList.add("is-detail-open");
+  teacherList.classList.remove("is-active");
+  teacherList.hidden = true;
+  teacherDetail.classList.add("is-active");
+  teacherDetail.hidden = false;
+  teacherDetail.scrollIntoView({ behavior: "smooth", block: "start" });
+};
+
+const showFlowerGuideArrival = (targetElement, message) => {
+  if (!targetElement) {
+    return;
+  }
+
+  targetElement.dataset.flowerGuideArrival = message;
+  targetElement.classList.remove("is-flower-guide-arrival");
+  targetElement.offsetHeight;
+  targetElement.classList.add("is-flower-guide-arrival");
+  window.setTimeout(() => {
+    targetElement.classList.remove("is-flower-guide-arrival");
+    delete targetElement.dataset.flowerGuideArrival;
+  }, 2600);
+};
+
 for (const card of teacherCards) {
   card.addEventListener("click", () => {
-    for (const item of teacherCards) {
-      const isSelected = item === card;
-      item.classList.toggle("is-selected", isSelected);
-      item.setAttribute("aria-pressed", String(isSelected));
+    openTeacherDetailFromCard(card);
+  });
+}
+
+for (const flowerCard of flowerGuideCards) {
+  flowerCard.addEventListener("click", () => {
+    const target = flowerCard.dataset.flowerGuideTarget;
+    const flowerName = flowerCard.querySelector(".flower-guide-name")?.textContent ?? "花";
+    const flowerMeta = flowerCard.querySelector(".flower-guide-meta")?.textContent ?? "";
+
+    if (target === "participation") {
+      participationStamp?.scrollIntoView({ behavior: "smooth", block: "center" });
+      participationStampButton?.focus({ preventScroll: true });
+      showFlowerGuideArrival(participationStamp, `${flowerName}の参加スタンプです`);
+      return;
     }
 
-    renderTeacherDetail(card.dataset.teacher);
-
-    teacherLayout.dataset.teacherMode = "detail";
-    dock.classList.add("is-detail-open");
-    teacherList.classList.remove("is-active");
-    teacherList.hidden = true;
-    teacherDetail.classList.add("is-active");
-    teacherDetail.hidden = false;
+    openTeacherDetailFromCard(document.querySelector(`.teacher-card[data-teacher="${target}"]`));
+    showFlowerGuideArrival(teacherDetail, `${flowerName}は${flowerMeta}の1巡目の花です`);
   });
 }
 
@@ -2272,6 +2549,16 @@ for (const closeButton of achievementCloseButtons) {
     fairyAchievement.hidden = true;
   });
 }
+
+for (const closeButton of fairyViewerCloseButtons) {
+  closeButton.addEventListener("click", closeFairyViewer);
+}
+
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && fairyViewer && !fairyViewer.hidden) {
+    closeFairyViewer();
+  }
+});
 
 achievementProfileButton.addEventListener("click", () => {
   fairyAchievement.hidden = true;

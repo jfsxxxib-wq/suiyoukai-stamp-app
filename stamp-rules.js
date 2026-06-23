@@ -512,15 +512,37 @@ const getProgressEarnedRewards = (progress = userProgressTemplate, rewardType) =
   return Array.isArray(storedRewards) ? storedRewards : [];
 };
 
+const getRewardUniqueKey = (item) => {
+  if (!item) {
+    return "";
+  }
+
+  if (item.type === "special_companion" || item.condition || item.asset) {
+    return item.id;
+  }
+
+  if (item.teacherId) {
+    return `teacher:${item.teacherId}:cycle:${item.cycleNumber ?? 1}`;
+  }
+
+  if (item.teacherName === "参加スタンプ" || item.teacherId === null) {
+    return `participation:cycle:${item.cycleNumber ?? 1}`;
+  }
+
+  return item.id;
+};
+
 const uniqueById = (items) => {
   const seen = new Set();
 
   return items.filter((item) => {
-    if (!item || seen.has(item.id)) {
+    const key = getRewardUniqueKey(item);
+
+    if (!item || seen.has(key)) {
       return false;
     }
 
-    seen.add(item.id);
+    seen.add(key);
     return true;
   });
 };

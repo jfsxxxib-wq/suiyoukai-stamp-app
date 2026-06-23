@@ -52,6 +52,7 @@
 .info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) .fairy-badge,
 .info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) .fairy-achievement {
   display: none !important;
+  pointer-events: none;
 }
 
 .info-dock.is-detail-open .teacher-detail .card-stamp-count {
@@ -191,6 +192,7 @@
   inset: 0;
   z-index: 1;
   pointer-events: none;
+
 }
 
 .achievement-modal-petals span {
@@ -325,6 +327,7 @@
 .info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) .fairy-badge,
 .info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) .fairy-achievement {
   display: none !important;
+  pointer-events: none;
 }
 
 .info-dock.is-detail-open .teacher-detail .card-stamp-count {
@@ -519,6 +522,7 @@ button {
     linear-gradient(180deg, rgba(255, 250, 240, 0.02), rgba(255, 250, 240, 0.2)),
     linear-gradient(90deg, rgba(255, 250, 240, 0.12), transparent 46%);
   pointer-events: none;
+
 }
 
 .journey-title {
@@ -657,6 +661,7 @@ button {
   place-items: end center;
   min-height: 102px;
   pointer-events: none;
+
 }
 
 .next-adventure-guide img {
@@ -931,6 +936,7 @@ button {
   border: 1px solid rgba(197, 150, 58, 0.22);
   border-radius: 7px;
   pointer-events: none;
+
 }
 
 .card-header {
@@ -1234,6 +1240,10 @@ dd {
 
 .profile-special-companion-item {
   min-width: 0;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
   padding: 8px;
   border: 1px solid rgba(197, 150, 58, 0.32);
   border-radius: 8px;
@@ -1242,6 +1252,7 @@ dd {
 
 .profile-special-companion-item img {
   display: block;
+
   width: 100%;
   height: 104px;
   object-fit: contain;
@@ -1276,8 +1287,21 @@ dd {
   line-height: 1.4;
 }
 
+.profile-special-companion-item:hover,
+.profile-special-companion-item:focus-visible {
+  border-color: rgba(197, 150, 58, 0.56);
+  background: rgba(255, 252, 242, 0.9);
+  outline: none;
+  transform: translateY(-1px);
+}
+
 .profile-fairy-item {
   display: grid;
+  width: 100%;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
   grid-template-columns: 42px 1fr;
   align-items: center;
   gap: 8px;
@@ -1291,6 +1315,10 @@ dd {
   filter: drop-shadow(0 6px 6px rgba(45, 34, 23, 0.16));
 }
 
+.profile-fairy-copy {
+  min-width: 0;
+}
+
 .profile-fairy-item strong {
   display: block;
   color: var(--ink);
@@ -1298,12 +1326,59 @@ dd {
   line-height: 1.25;
 }
 
-.profile-fairy-item span {
+.profile-fairy-meta {
   display: block;
   margin-top: 2px;
   color: var(--muted);
   font-size: 0.68rem;
   font-weight: 800;
+}
+
+.profile-fairy-cycles {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 6px;
+  margin-top: 5px;
+}
+
+.profile-fairy-cycles-label {
+  color: var(--muted);
+  font-size: 0.68rem;
+  font-weight: 800;
+}
+
+.profile-fairy-cycle {
+  display: inline-flex;
+  align-items: center;
+  min-height: 22px;
+  padding: 2px 8px;
+  border: 1px solid rgba(77, 133, 93, 0.22);
+  border-radius: 999px;
+  background: rgba(255, 252, 242, 0.78);
+  color: #496a3b;
+  font-size: 0.68rem;
+  font-weight: 900;
+  line-height: 1.2;
+}
+
+.profile-fairy-cycle-images {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.profile-fairy-cycle-images img {
+  width: 34px;
+  height: 40px;
+  padding: 2px;
+  border: 1px solid rgba(197, 150, 58, 0.24);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.72);
+  object-fit: contain;
+  filter: drop-shadow(0 3px 3px rgba(45, 34, 23, 0.14));
 }
 
 .profile-empty {
@@ -2042,6 +2117,7 @@ dd {
 }
 
 .participation-stamp {
+  position: relative;
   display: grid;
   grid-template-columns: 46px 1fr;
   gap: 10px;
@@ -2714,6 +2790,51 @@ dd {
   padding: 12px 14px 14px;
 }
 
+.participation-stamp.is-flower-guide-arrival,
+.teacher-detail.is-flower-guide-arrival {
+  border-color: rgba(197, 150, 58, 0.74);
+  background:
+    radial-gradient(circle at 12% 12%, rgba(255, 232, 150, 0.26), transparent 34%),
+    linear-gradient(180deg, rgba(255, 253, 242, 0.96), rgba(247, 235, 199, 0.68));
+  box-shadow:
+    0 0 0 4px rgba(247, 223, 155, 0.42),
+    0 14px 28px rgba(78, 61, 28, 0.12);
+  animation: flower-guide-arrival-pulse 900ms ease 2;
+}
+
+.participation-stamp.is-flower-guide-arrival::after,
+.teacher-detail.is-flower-guide-arrival::after {
+  content: attr(data-flower-guide-arrival);
+  position: absolute;
+  right: 12px;
+  top: 10px;
+  z-index: 5;
+  max-width: min(78%, 300px);
+  padding: 4px 10px;
+  border: 1px solid rgba(197, 150, 58, 0.38);
+  border-radius: 999px;
+  background: rgba(255, 250, 232, 0.96);
+  color: #3f7652;
+  font-size: 0.76rem;
+  font-weight: 900;
+  line-height: 1.35;
+  box-shadow: 0 8px 16px rgba(48, 38, 26, 0.12);
+}
+
+@keyframes flower-guide-arrival-pulse {
+  0% {
+    transform: translateY(0);
+  }
+
+  45% {
+    transform: translateY(-2px);
+  }
+
+  100% {
+    transform: translateY(0);
+  }
+}
+
 .back-to-list {
   min-height: 34px;
   margin: 0 0 8px;
@@ -2746,6 +2867,105 @@ dd {
   line-height: 1.18;
 }
 
+.current-flower-card {
+  display: grid;
+  grid-template-columns: 76px minmax(0, 1fr);
+  gap: 12px 14px;
+  align-items: start;
+  margin: 10px 0 12px;
+  padding: 12px 14px;
+  border: 1px solid rgba(77, 133, 93, 0.24);
+  border-radius: 12px;
+  background:
+    linear-gradient(90deg, rgba(240, 248, 230, 0.8), rgba(255, 250, 240, 0.72)),
+    rgba(255, 255, 255, 0.46);
+  box-shadow: 0 8px 18px rgba(48, 38, 26, 0.08);
+}
+
+.current-flower-card img {
+  width: 76px;
+  height: 76px;
+  border: 1px solid rgba(197, 150, 58, 0.26);
+  border-radius: 50%;
+  background: rgba(255, 252, 244, 0.9);
+  object-fit: contain;
+}
+
+.current-flower-card small,
+.current-flower-card strong,
+.current-flower-card em {
+  display: block;
+}
+
+.current-flower-card small {
+  color: var(--green);
+  font-size: 0.76rem;
+  font-weight: 900;
+}
+
+.current-flower-card strong {
+  margin-top: 2px;
+  color: var(--ink);
+  font-size: 1.12rem;
+  line-height: 1.3;
+}
+
+.current-flower-card em {
+  margin-top: 3px;
+  color: #6b5d38;
+  font-size: 0.84rem;
+  font-style: normal;
+  font-weight: 900;
+  line-height: 1.35;
+}
+
+.current-flower-stamps {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.current-flower-stamps i {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-width: 0;
+  aspect-ratio: 1;
+  border: 1px solid rgba(197, 150, 58, 0.3);
+  border-radius: 50%;
+  background: rgba(255, 252, 244, 0.62);
+  box-shadow: inset 0 0 0 4px rgba(255, 250, 240, 0.54);
+  overflow: hidden;
+}
+
+.current-flower-stamps i::before {
+  content: "";
+  width: 82%;
+  height: 82%;
+  background-image: var(--current-flower-stamp-image);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  opacity: 0.18;
+  filter: grayscale(35%);
+}
+
+.current-flower-stamps i.is-filled {
+  border-color: rgba(77, 133, 93, 0.42);
+  background: rgba(255, 252, 244, 0.9);
+  box-shadow:
+    inset 0 0 0 4px rgba(240, 248, 230, 0.58),
+    0 5px 10px rgba(48, 38, 26, 0.1);
+}
+
+.current-flower-stamps i.is-filled::before {
+  opacity: 1;
+  filter: none;
+}
+
 .teacher-photo-card {
   position: relative;
   width: min(430px, 100%);
@@ -2756,6 +2976,11 @@ dd {
   background:
     linear-gradient(180deg, rgba(255, 250, 240, 0.62), rgba(255, 250, 240, 0.24)),
     rgba(255, 255, 255, 0.24);
+}
+
+.info-dock.is-detail-open .teacher-detail .teacher-card-heading,
+.info-dock.is-detail-open .teacher-detail .card-stamp-count {
+  display: none !important;
 }
 
 .detail-actions {
@@ -3027,8 +3252,9 @@ dd {
   overflow: hidden;
   min-height: 430px;
   padding: 12px 10px;
-  pointer-events: none;
+
   animation: achievement-rise 360ms ease both;
+  pointer-events: none;
 }
 
 .fairy-achievement[hidden] {
@@ -3079,8 +3305,9 @@ dd {
 .achievement-petal-field {
   position: absolute;
   inset: 0 -8px;
-  pointer-events: none;
+
   z-index: 1;
+  pointer-events: none;
 }
 
 .achievement-petal-field span {
@@ -3394,6 +3621,7 @@ dd {
   position: absolute;
   inset: 0;
   pointer-events: none;
+
 }
 
 .bloom {
@@ -4106,6 +4334,7 @@ dd {
   inset: 26px 8px 38px;
   z-index: 3;
   pointer-events: none;
+
 }
 
 .petal-shower span {
@@ -4345,6 +4574,7 @@ dd {
   inset: 9px;
   border: 1px solid rgba(197, 150, 58, 0.2);
   pointer-events: none;
+
 }
 
 .owl-library-heading {
@@ -4761,6 +4991,7 @@ dd {
 
   .adventurer-card::before {
     inset: 9px;
+  pointer-events: none;
   }
 
   .adventurer-name-block {
@@ -4957,6 +5188,7 @@ dd {
   border: 1px solid rgba(211, 195, 148, 0.82);
   border-radius: 16px;
   pointer-events: none;
+
 }
 
 .info-dock.is-detail-open .teacher-card-heading {
@@ -5213,6 +5445,7 @@ dd {
   min-height: auto;
   overflow: visible;
   width: auto;
+  pointer-events: none;
 }
 
 .info-dock.is-detail-open .fairy-achievement .achievement-ribbon {
@@ -5236,6 +5469,7 @@ dd {
 .info-dock.is-detail-open .fairy-achievement .achievement-petal-field {
   z-index: 13;
   inset: -20px -12px -150px;
+  pointer-events: none;
 }
 
 /* Achievement card repair: keep the teacher visible and move the celebration away from the face. */
@@ -5328,6 +5562,7 @@ dd {
   z-index: 30;
   overflow: visible;
   pointer-events: none;
+
 }
 
 .info-dock.is-detail-open .fairy-achievement .achievement-ribbon {
@@ -5357,6 +5592,7 @@ dd {
 .info-dock.is-detail-open .fairy-achievement .achievement-petal-field {
   z-index: 31;
   inset: 70px -14px 150px;
+  pointer-events: none;
 }
 
 .info-dock.is-detail-open .fairy-achievement .achievement-petal-field span {
@@ -5429,6 +5665,7 @@ dd {
 .info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) .fairy-badge,
 .info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) .fairy-achievement {
   display: none !important;
+  pointer-events: none;
 }
 
 .info-dock.is-detail-open .teacher-detail .card-stamp-count {
@@ -5568,6 +5805,7 @@ dd {
   inset: 0;
   z-index: 1;
   pointer-events: none;
+
 }
 
 .achievement-modal-petals span {
@@ -5701,6 +5939,7 @@ dd {
 .info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) .fairy-badge,
 .info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) .fairy-achievement {
   display: none !important;
+  pointer-events: none;
 }
 
 .info-dock.is-detail-open .teacher-detail .card-stamp-count {
@@ -5850,10 +6089,27 @@ body {
   gap: 8px;
 }
 
-.flower-guide-showcase figure {
+.flower-guide-card {
+  display: grid;
   min-width: 0;
   margin: 0;
+  padding: 8px 6px 9px;
+  border: 1px solid rgba(126, 100, 48, 0.28);
+  border-radius: 12px;
+  background: rgba(255, 252, 244, 0.82);
+  color: inherit;
+  font: inherit;
   text-align: center;
+  cursor: pointer;
+  transition: border-color 160ms ease, background 160ms ease, transform 160ms ease;
+}
+
+.flower-guide-card:hover,
+.flower-guide-card:focus-visible {
+  border-color: rgba(197, 150, 58, 0.58);
+  background: rgba(255, 248, 226, 0.95);
+  outline: none;
+  transform: translateY(-1px);
 }
 
 .flower-guide-showcase img {
@@ -5864,15 +6120,36 @@ body {
   border: 1px solid rgba(126, 100, 48, 0.24);
   border-radius: 50%;
   background: rgba(255, 252, 244, 0.9);
-  pointer-events: none;
+
 }
 
-.flower-guide-showcase figcaption {
-  margin-top: 4px;
-  color: #514a43;
-  font-size: 0.74rem;
+.flower-guide-name {
+  margin-top: 5px;
+  color: #2f2a25;
+  font-size: 0.78rem;
   font-weight: 900;
-  line-height: 1.3;
+  line-height: 1.25;
+}
+
+.flower-guide-meta {
+  margin-top: 1px;
+  color: #5f584c;
+  font-size: 0.68rem;
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+.flower-guide-action {
+  justify-self: center;
+  margin-top: 5px;
+  padding: 1px 7px;
+  border: 1px solid rgba(77, 133, 93, 0.22);
+  border-radius: 999px;
+  background: rgba(240, 248, 230, 0.78);
+  color: #3f7652;
+  font-size: 0.62rem;
+  font-weight: 900;
+  line-height: 1.35;
 }
 
 .teacher-guide-heading {
@@ -5952,8 +6229,16 @@ body {
     margin-inline: auto;
   }
 
-  .flower-guide-showcase figcaption {
+  .flower-guide-name {
     font-size: 0.84rem;
+  }
+
+  .flower-guide-meta {
+    font-size: 0.76rem;
+  }
+
+  .flower-guide-action {
+    font-size: 0.7rem;
   }
 
   .info-tabs {
@@ -6008,6 +6293,7 @@ body {
 
 .next-adventure-guide {
   min-height: 122px;
+  pointer-events: none;
 }
 
 .next-adventure-guide img {
@@ -6046,9 +6332,19 @@ body {
   line-height: 1.4;
 }
 
-.profile-fairy-item span {
+.profile-fairy-meta {
   font-size: 0.88rem;
   line-height: 1.45;
+}
+
+.profile-fairy-cycles-label,
+.profile-fairy-cycle {
+  font-size: 0.78rem;
+}
+
+.profile-fairy-cycle-images img {
+  width: 38px;
+  height: 44px;
 }
 
 @media (max-width: 380px) {
@@ -6065,4 +6361,102 @@ body {
     width: 86px;
     font-size: 0.7rem;
   }
+}
+
+/* Earned fairy viewer: tap an earned fairy to see it larger. */
+.profile-fairy-item:hover,
+.profile-fairy-item:focus-visible {
+  border-color: rgba(197, 150, 58, 0.52);
+  background: rgba(255, 252, 242, 0.82);
+  outline: none;
+  transform: translateY(-1px);
+}
+
+.fairy-viewer {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: grid;
+  place-items: center;
+  padding: 22px;
+}
+
+.fairy-viewer[hidden] {
+  display: none;
+}
+
+.fairy-viewer-backdrop {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: rgba(35, 29, 22, 0.42);
+  backdrop-filter: blur(3px);
+  cursor: pointer;
+}
+
+.fairy-viewer-card {
+  position: relative;
+  z-index: 1;
+  width: min(92vw, 360px);
+  padding: 22px 18px 20px;
+  border: 1px solid rgba(197, 150, 58, 0.48);
+  border-radius: 8px;
+  background: linear-gradient(180deg, rgba(255, 252, 242, 0.98), rgba(244, 250, 239, 0.96));
+  box-shadow: 0 22px 54px rgba(35, 29, 22, 0.28);
+  text-align: center;
+}
+
+.fairy-viewer-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border: 1px solid rgba(75, 55, 36, 0.18);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.76);
+  color: var(--ink);
+  font-size: 1.35rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.fairy-viewer-image {
+  display: block;
+  width: min(70vw, 260px);
+  height: min(48vh, 320px);
+  margin: 8px auto 12px;
+  object-fit: contain;
+  filter: drop-shadow(0 12px 10px rgba(45, 34, 23, 0.22));
+}
+
+.fairy-viewer-card h2,
+.fairy-viewer-card p {
+  margin: 0;
+}
+
+.fairy-viewer-card h2 {
+  color: var(--ink);
+  font-size: clamp(1.25rem, 5vw, 1.72rem);
+  line-height: 1.35;
+}
+
+.fairy-viewer-card p {
+  margin-top: 6px;
+  color: var(--green);
+  font-size: 0.95rem;
+  font-weight: 900;
+  line-height: 1.45;
+}
+
+.fairy-viewer-card.is-special-companion .fairy-viewer-image {
+  height: min(46vh, 300px);
+}
+
+body.is-fairy-viewer-open {
+  overflow: hidden;
 }
