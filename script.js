@@ -51,22 +51,30 @@ const circleBadge = document.querySelector("[data-circle-badge]");
 const profileBadges = document.querySelector(".profile-badges");
 const profileFairyList = document.querySelector("[data-profile-fairy-list]");
 const profileFairies = document.querySelector("[data-profile-fairies]");
+const profileToggleButtons = document.querySelectorAll("[data-profile-toggle]");
+const profileSpecialCompanions = document.querySelector("[data-profile-special-companions]");
 const fairyViewer = document.querySelector("[data-fairy-viewer]");
 const fairyViewerImage = document.querySelector("[data-fairy-viewer-image]");
 const fairyViewerName = document.querySelector("[data-fairy-viewer-name]");
 const fairyViewerStatus = document.querySelector("[data-fairy-viewer-status]");
+const fairyViewerQuote = document.querySelector("[data-fairy-viewer-quote]");
 const fairyViewerCard = document.querySelector(".fairy-viewer-card");
 const fairyViewerCloseButtons = document.querySelectorAll("[data-fairy-viewer-close]");
 const profileSpecialCompanionList = document.querySelector("[data-profile-special-companion-list]");
 const libraryOwl = document.querySelector("[data-library-owl]");
+const libraryOwlViewerButton = document.querySelector("[data-library-owl-viewer]");
 const libraryGuide = document.querySelector("[data-library-guide]");
 const librarySpeech = document.querySelector("[data-library-speech]");
 const libraryCurrentTitle = document.querySelector("[data-library-current-title]");
 const librarySummary = document.querySelector("[data-library-summary]");
 const libraryTitleCount = document.querySelector("[data-library-title-count]");
 const libraryTitleList = document.querySelector("[data-library-title-list]");
+const libraryTitleToggle = document.querySelector("[data-library-title-toggle]");
+const libraryTitleArtToggle = document.querySelector("[data-library-title-art-toggle]");
 const libraryMedalCount = document.querySelector("[data-library-medal-count]");
 const libraryMedalList = document.querySelector("[data-library-medal-list]");
+const libraryMedalToggle = document.querySelector("[data-library-medal-toggle]");
+const libraryMedalArtToggle = document.querySelector("[data-library-medal-art-toggle]");
 const libraryAchievementList = document.querySelector("[data-library-achievement-list]");
 const participationStamp = document.querySelector(".participation-stamp");
 const participationFlower = document.querySelector(".participation-stamp .stamp-flower");
@@ -1292,6 +1300,29 @@ const updateTeacherStampRuleNote = (teacher) => {
   teacherStampRule.append(note);
 };
 
+const fairyQuoteByFlower = {
+  cosmos: "はじめての花が咲いたね！",
+  fuji: "ゆっくり伸びた時間も、ちゃんと花になるよ。",
+  kinmokusei: "小さな香りみたいに、記録はあとから届くよ。",
+  lotus: "静かな一手が、水面に輪を広げているよ。",
+  sumire: "小さく咲いても、ちゃんと見つけてもらえるよ。",
+  botan: "大きく咲く日は、少しずつ近づいているよ。",
+  lily: "まっすぐな気持ちが、今日の花を支えているよ。",
+  asagao: "朝のひかりみたいに、新しい一局が始まるよ。",
+  kikyo: "落ち着いて進めば、次の道しるべが見えてくるよ。",
+  nadeshiko: "やさしい強さで、また一歩進めたね。",
+  suisen: "足もとの春を、ちゃんと見つけたね。",
+  hagi: "風にゆれる日も、旅はちゃんと続いているよ。",
+  shakuyaku: "ていねいに重ねた時間が、きれいに咲いたね。",
+};
+
+const companionQuoteById = {
+  special_companion_french_bulldog_a: "はじめの一歩\nちゃんと見ていたよ。",
+  special_companion_french_bulldog_b: "次の冒険も、いっしょに歩こう。",
+  special_companion_owl_a: "記録は未来への宝物だよ。",
+  special_companion_owl_b: "先生の輪をめぐった旅\nしっかり刻まれているよ。",
+};
+
 const getFairyDisplayData = (fairyData = {}, teacher = null) => {
   const flower = fairyData.flower ?? teacher?.flower ?? "cosmos";
   const flowerName = fairyData.flowerName ?? teacher?.flowerName ?? "花";
@@ -1300,7 +1331,9 @@ const getFairyDisplayData = (fairyData = {}, teacher = null) => {
   const src = fairyAsset ? `assets/${fairyAsset}` : fallbackFairy.src;
   const label = fairyData.name ?? fairyData.fairyName ?? fallbackFairy.label ?? `${flowerName}の妖精達成`;
 
-  return { src, label, flower, flowerName };
+  const quote = fairyData.quote ?? fairyQuoteByFlower[flower] ?? `${flowerName}の花、きれいに咲いたね。`;
+
+  return { src, label, flower, flowerName, quote };
 };
 
 const getCompletedTeacherCycleProgress = (teacher) => {
@@ -1401,7 +1434,40 @@ const updateParticipationStampCard = () => {
   participationStampButton.disabled = currentCount >= cycleProgress.maxCount;
 };
 
-const openFairyViewer = ({ src, alt, name, status, type = "fairy" }) => {
+const getAssetPath = (asset) => {
+  if (!asset) {
+    return "";
+  }
+
+  return asset.startsWith("assets/") ? asset : `assets/${asset}`;
+};
+
+const fairyBookBackgrounds = {
+  cosmos: "assets/fairy-bg-cosmos.png",
+  fuji: "assets/fairy-bg-hydrangea.png",
+  kinmokusei: "assets/fairy-bg-meadow.png",
+  iris: "assets/fairy-bg-iris.png",
+  lotus: "assets/fairy-bg-iris.png",
+  sumire: "assets/fairy-bg-hydrangea.png",
+  camellia: "assets/fairy-bg-camellia.png",
+  botan: "assets/fairy-bg-camellia.png",
+  lily: "assets/fairy-bg-meadow.png",
+  sunflower: "assets/fairy-bg-meadow.png",
+  asagao: "assets/fairy-bg-hydrangea.png",
+  kikyo: "assets/fairy-bg-hydrangea.png",
+  hydrangea: "assets/fairy-bg-hydrangea.png",
+  nadeshiko: "assets/fairy-bg-camellia.png",
+  suisen: "assets/fairy-bg-meadow.png",
+  sakura: "assets/fairy-bg-camellia.png",
+  hagi: "assets/fairy-bg-hydrangea.png",
+  shakuyaku: "assets/fairy-bg-camellia.png",
+  dahlia: "assets/fairy-bg-camellia.png",
+  ume: "assets/fairy-bg-camellia.png",
+};
+
+const getFairyBookBackground = (flower) => fairyBookBackgrounds[flower] ?? fairyBookBackgrounds.cosmos;
+
+const openFairyViewer = ({ src, alt, name, status, quote = "", type = "fairy", flower = "", background = "" }) => {
   if (!fairyViewer || !fairyViewerImage || !fairyViewerName || !fairyViewerStatus) {
     return;
   }
@@ -1409,9 +1475,30 @@ const openFairyViewer = ({ src, alt, name, status, type = "fairy" }) => {
   fairyViewerImage.src = src;
   fairyViewerImage.alt = alt;
   fairyViewerName.textContent = name;
+  if (fairyViewerQuote) {
+    fairyViewerQuote.textContent = quote;
+    fairyViewerQuote.hidden = !quote;
+  }
   fairyViewerStatus.textContent = status;
   fairyViewer.dataset.viewerType = type;
+  fairyViewer.dataset.viewerFlower = flower;
+  const flowerDetail = flowerCatalog[flower];
+  if (flowerDetail) {
+    fairyViewerCard?.style.setProperty("--viewer-flower-color", flowerDetail.flowerColor);
+    fairyViewerCard?.style.setProperty("--viewer-flower-accent", flowerDetail.accentColor);
+  } else {
+    fairyViewerCard?.style.removeProperty("--viewer-flower-color");
+    fairyViewerCard?.style.removeProperty("--viewer-flower-accent");
+  }
+  const bookBackground = background || (type === "title-book" ? getFairyBookBackground(flower) : "");
+  if (bookBackground) {
+    fairyViewerCard?.style.setProperty("--viewer-book-bg", `url("${bookBackground}")`);
+  } else {
+    fairyViewerCard?.style.removeProperty("--viewer-book-bg");
+  }
   fairyViewerCard?.classList.toggle("is-special-companion", type === "special");
+  fairyViewerCard?.classList.toggle("is-medal-viewer", type === "medal");
+  fairyViewerCard?.classList.toggle("is-title-book-viewer", type === "title-book");
   fairyViewer.hidden = false;
   document.body.classList.add("is-fairy-viewer-open");
 };
@@ -1423,11 +1510,182 @@ const closeFairyViewer = () => {
 
   fairyViewer.hidden = true;
   fairyViewer.dataset.viewerType = "";
-  fairyViewerCard?.classList.remove("is-special-companion");
+  fairyViewer.dataset.viewerFlower = "";
+  fairyViewerCard?.classList.remove("is-special-companion", "is-medal-viewer", "is-title-book-viewer");
+  fairyViewerCard?.style.removeProperty("--viewer-flower-color");
+  fairyViewerCard?.style.removeProperty("--viewer-flower-accent");
+  fairyViewerCard?.style.removeProperty("--viewer-book-bg");
   document.body.classList.remove("is-fairy-viewer-open");
 };
 
-const createProfileFairyItem = ({ src, alt, nameText, statusText, categoryText, cycleNames = [], cycleFairies = [] }) => {
+const getTitleBookDetail = (title, achievementResult) => {
+  const participationCycle = achievementResult.participation?.achievedCycles
+    ?.find((cycle) => cycle.rewards?.title?.id === title.id);
+
+  if (participationCycle) {
+    return {
+      flower: participationCycle.flower,
+      flowerName: participationCycle.flowerName,
+      fairyName: participationCycle.fairyName,
+      fairyAsset: participationCycle.fairyAsset,
+      condition: `参加スタンプ ${participationCycle.requiredCount}回`,
+      message: `${participationCycle.flowerName}の花畑で出会いました。`,
+    };
+  }
+
+  for (const teacher of achievementResult.teacherFairy?.teachers ?? []) {
+    const cycle = teacher.cycles?.find((teacherCycle) => teacherCycle.rewards?.title?.id === title.id);
+    if (cycle) {
+      return {
+        flower: cycle.flower,
+        flowerName: cycle.flowerName,
+        fairyName: cycle.fairyName,
+        fairyAsset: cycle.fairyAsset,
+        condition: `${teacher.teacherName} / ${cycle.cycleName}`,
+        message: `${cycle.flowerName}の花畑で出会いました。`,
+      };
+    }
+  }
+
+  const latestFairy = achievementResult.earnedFairies?.at(-1);
+  return {
+    flower: latestFairy?.flower ?? "cosmos",
+    flowerName: latestFairy?.flowerName ?? "花",
+    fairyName: latestFairy?.name ?? "書庫の妖精",
+    fairyAsset: latestFairy?.fairyAsset ?? "fairy-apollon-flower-style.png",
+    condition: "旅の記録から収蔵",
+    message: "集めた記録が、図鑑の本になりました。",
+  };
+};
+
+const openTitleBookViewer = (title, achievementResult) => {
+  const detail = getTitleBookDetail(title, achievementResult);
+
+  openFairyViewer({
+    src: getAssetPath(detail.fairyAsset),
+    alt: detail.fairyName,
+    name: title.name,
+    status: `${detail.flowerName}の図鑑 / ${detail.condition}`,
+    quote: detail.message,
+    type: "title-book",
+    flower: detail.flower,
+    background: getFairyBookBackground(detail.flower),
+  });
+};
+
+const getMedalViewerDetail = (medal, achievementResult) => {
+  const participationCycle = achievementResult.participation?.achievedCycles
+    ?.find((cycle) => cycle.rewards?.medal?.id === medal.id);
+
+  if (participationCycle) {
+    return {
+      condition: `参加スタンプ ${participationCycle.requiredCount}回`,
+      message: `${participationCycle.flowerName}が満開になった記念です。`,
+    };
+  }
+
+  const circleMilestone = achievementResult.teacherCircle?.achievedMilestones
+    ?.find((milestone) => milestone.earnedMedal?.id === medal.id);
+
+  if (circleMilestone) {
+    return {
+      condition: `先生の輪 ${circleMilestone.requiredRounds}巡達成`,
+      message: `${circleMilestone.requiredRounds}巡分の歩みが、勲章になりました。`,
+    };
+  }
+
+  return {
+    condition: "達成記録から収蔵",
+    message: "ここまで歩いた証です。",
+  };
+};
+
+const openLibraryOwlViewer = () => {
+  if (!libraryOwl) {
+    return;
+  }
+
+  const speech = librarySpeech?.textContent?.replace(/[「」]/g, "") ?? "";
+  openFairyViewer({
+    src: libraryOwl.getAttribute("src") ?? "assets/special-companion-owl-a.png",
+    alt: libraryOwl.alt || "フクロウの書庫番",
+    name: libraryOwl.alt || "フクロウの書庫番",
+    status: libraryGuide?.textContent ?? "書庫の見守り役",
+    quote: speech,
+    type: "special",
+  });
+};
+
+const syncProfileToggleButton = (button, target) => {
+  const isCollapsed = target.classList.contains("is-collapsed");
+  button.textContent = isCollapsed ? "開く" : "閉じる";
+  button.setAttribute("aria-expanded", String(!isCollapsed));
+};
+
+const toggleProfileSection = (button) => {
+  const target = document.querySelector(`[data-profile-collapsible="${button.dataset.profileToggle}"]`);
+
+  if (!target) {
+    return;
+  }
+
+  target.classList.toggle("is-collapsed");
+  syncProfileToggleButton(button, target);
+};
+
+const syncProfileToggleButtons = () => {
+  for (const button of profileToggleButtons) {
+    const target = document.querySelector(`[data-profile-collapsible="${button.dataset.profileToggle}"]`);
+
+    if (target) {
+      syncProfileToggleButton(button, target);
+    }
+  }
+};
+
+const syncLibraryTitleToggle = () => {
+  if (!libraryTitleToggle || !libraryTitleList) {
+    return;
+  }
+
+  const isCollapsed = libraryTitleList.classList.contains("is-collapsed");
+  libraryTitleToggle.textContent = isCollapsed ? "開く" : "閉じる";
+  libraryTitleToggle.setAttribute("aria-expanded", String(!isCollapsed));
+  libraryTitleArtToggle?.setAttribute("aria-expanded", String(!isCollapsed));
+  libraryTitleArtToggle?.setAttribute("aria-label", isCollapsed ? "称号の書架を開く" : "称号の書架を閉じる");
+};
+
+const toggleLibraryTitleList = () => {
+  if (!libraryTitleList) {
+    return;
+  }
+
+  libraryTitleList.classList.toggle("is-collapsed");
+  syncLibraryTitleToggle();
+};
+
+const syncLibraryMedalToggle = () => {
+  if (!libraryMedalToggle || !libraryMedalList) {
+    return;
+  }
+
+  const isCollapsed = libraryMedalList.classList.contains("is-collapsed");
+  libraryMedalToggle.textContent = isCollapsed ? "開く" : "閉じる";
+  libraryMedalToggle.setAttribute("aria-expanded", String(!isCollapsed));
+  libraryMedalArtToggle?.setAttribute("aria-expanded", String(!isCollapsed));
+  libraryMedalArtToggle?.setAttribute("aria-label", isCollapsed ? "勲章の棚を開く" : "勲章の棚を閉じる");
+};
+
+const toggleLibraryMedalList = () => {
+  if (!libraryMedalList) {
+    return;
+  }
+
+  libraryMedalList.classList.toggle("is-collapsed");
+  syncLibraryMedalToggle();
+};
+
+const createProfileFairyItem = ({ src, alt, nameText, statusText, quoteText = "", categoryText, cycleNames = [], cycleFairies = [] }) => {
   const item = document.createElement("button");
   item.type = "button";
   item.className = "profile-fairy-item";
@@ -1484,6 +1742,7 @@ const createProfileFairyItem = ({ src, alt, nameText, statusText, categoryText, 
       thumb.dataset.viewerAlt = cycleFairy.alt;
       thumb.dataset.viewerName = cycleFairy.alt;
       thumb.dataset.viewerStatus = `${categoryText ? `${categoryText} / ` : ""}${cycleFairy.cycleName} 達成済み`;
+      thumb.dataset.viewerQuote = cycleFairy.quote ?? quoteText;
       fairyLine.append(thumb);
     }
 
@@ -1507,11 +1766,12 @@ const createProfileFairyItem = ({ src, alt, nameText, statusText, categoryText, 
         alt: thumb.dataset.viewerAlt,
         name: thumb.dataset.viewerName,
         status: thumb.dataset.viewerStatus,
+        quote: thumb.dataset.viewerQuote,
       });
       return;
     }
 
-    openFairyViewer({ src, alt, name: nameText, status: statusText });
+    openFairyViewer({ src, alt, name: nameText, status: statusText, quote: quoteText });
   });
 
   return item;
@@ -1544,9 +1804,10 @@ const renderProfileFairies = () => {
       alt: fairy.label,
       nameText: fairy.label,
       statusText,
+      quoteText: fairy.quote,
       categoryText: `${teacher.name} / 指導碁スタンプ`,
       cycleNames: [cycleName],
-      cycleFairies: [{ src: fairy.src, alt: fairy.label, cycleName }],
+      cycleFairies: [{ src: fairy.src, alt: fairy.label, cycleName, quote: fairy.quote }],
     }));
   }
 };
@@ -1602,6 +1863,7 @@ const groupEarnedFairiesForProfile = (earnedFairies) => {
         cycleName,
         src: fairy.src,
         alt: fairy.label,
+        quote: fairy.quote,
       });
     }
 
@@ -1650,6 +1912,7 @@ const renderProfileFairiesFromResult = (achievementResult) => {
       alt: fairy.label,
       nameText: fairy.label,
       statusText,
+      quoteText: fairy.quote,
       categoryText: group.categoryText,
       cycleNames: group.cycleNames,
       cycleFairies: group.cycleFairies,
@@ -1685,21 +1948,20 @@ const renderProfileSpecialCompanions = (achievementResult) => {
 
     const copy = document.createElement("div");
     const name = document.createElement("strong");
-    const character = document.createElement("span");
     const status = document.createElement("small");
 
     name.textContent = companion.name;
-    character.textContent = companion.character;
     status.textContent = companion.description;
 
-    copy.append(name, character, status);
+    copy.append(name, status);
     item.append(image, copy);
     item.addEventListener("click", () => {
       openFairyViewer({
         src: `assets/${companion.asset}`,
         alt: companion.name,
         name: companion.name,
-        status: `${companion.character}・${companion.description}`,
+        status: companion.description,
+        quote: companionQuoteById[companion.id] ?? "今日の記録も、旅の宝物だよ。",
         type: "special",
       });
     });
@@ -1707,7 +1969,7 @@ const renderProfileSpecialCompanions = (achievementResult) => {
   }
 };
 
-const renderLibraryCollection = (list, items, emptyMessage, kind) => {
+const renderLibraryCollection = (list, items, emptyMessage, kind, achievementResult) => {
   if (!list) {
     return;
   }
@@ -1722,8 +1984,16 @@ const renderLibraryCollection = (list, items, emptyMessage, kind) => {
   }
 
   for (const item of items) {
-    const entry = document.createElement("article");
+    const isInteractiveItem = kind === "title" || kind === "medal";
+    const entry = document.createElement(isInteractiveItem ? "button" : "article");
     entry.className = `library-collection-item is-${kind}`;
+    if (isInteractiveItem) {
+      entry.type = "button";
+      entry.setAttribute("aria-label", kind === "title" ? `${item.name}の図鑑を開く` : `${item.name}を大きく見る`);
+    }
+    if (kind === "medal") {
+      entry.classList.add(`is-${item.id.replaceAll("_", "-")}`);
+    }
     const medalAsset = kind === "medal" ? getMedalAsset(item.id) : null;
     const mark = document.createElement(medalAsset ? "img" : "span");
     const copy = document.createElement("div");
@@ -1741,7 +2011,42 @@ const renderLibraryCollection = (list, items, emptyMessage, kind) => {
     status.textContent = kind === "medal" ? "勲章棚に収蔵" : "称号の書架に収蔵";
     copy.append(name, status);
     entry.append(mark, copy);
+    if (kind === "title") {
+      entry.addEventListener("click", () => {
+        entry.classList.add("is-opening-book");
+        window.setTimeout(() => entry.classList.remove("is-opening-book"), 420);
+        window.setTimeout(() => openTitleBookViewer(item, achievementResult), 150);
+      });
+    }
+    if (kind === "medal" && medalAsset) {
+      entry.addEventListener("click", () => {
+        const medalDetail = getMedalViewerDetail(item, achievementResult);
+        openFairyViewer({
+          src: medalAsset,
+          alt: item.name,
+          name: item.name,
+          status: medalDetail.condition,
+          quote: medalDetail.message,
+          type: "medal",
+        });
+      });
+    }
     list.append(entry);
+  }
+
+  if (kind === "medal" && items.length % 2 === 1) {
+    const emptyCase = document.createElement("article");
+    emptyCase.className = "library-collection-item is-medal is-empty-case";
+    emptyCase.setAttribute("aria-hidden", "true");
+    const mark = document.createElement("span");
+    const copy = document.createElement("div");
+    const label = document.createElement("strong");
+    const status = document.createElement("small");
+    label.textContent = "次の展示を準備中";
+    status.textContent = "空の展示スペース";
+    copy.append(label, status);
+    emptyCase.append(mark, copy);
+    list.append(emptyCase);
   }
 };
 
@@ -1767,40 +2072,44 @@ const renderOwlLibrary = (achievementResult) => {
     ? "assets/special-companion-owl-b.png"
     : "assets/special-companion-owl-a.png";
   libraryOwl.alt = hasWiseOwl ? "達成を知る賢者" : "知恵の見守り役";
+  libraryOwlViewerButton?.setAttribute("aria-label", `${libraryOwl.alt}を大きく見る`);
   libraryGuide.textContent = hasWiseOwl
     ? "達成を知る賢者が、積み重ねた旅の証を見守っています。"
     : "知恵の見守り役が、旅の記録を大切に収めています。";
 
   librarySpeech.textContent = totalFlowerAchievements >= 18
-    ? "「立派な冒険記録になりました。」"
+    ? "「見事な記録です」"
     : achievementResult.teacherCircle.currentRounds >= 1
-      ? "「よく学び、よく歩みましたね。」"
+      ? "「よく学びましたね」"
       : medals.length >= 3
-        ? "「旅の証を大切に収めました。」"
+        ? "「証を収めました」"
         : totalFlowerAchievements >= 2
-          ? "「花の記録が集まっています。」"
+          ? "「花が集まりました」"
           : titles.length >= 1
-            ? "「新しい書が加わりました。」"
+            ? "「書が増えました」"
             : totalStampCount >= 1
-              ? "「旅の最初の一頁ですね。」"
+              ? "「一頁目です」"
               : "「ようこそ書庫へ。」";
 
-  renderLibraryCollection(libraryTitleList, titles, "まだ収められた称号はありません", "title");
-  renderLibraryCollection(libraryMedalList, medals, "まだ収められた勲章はありません", "medal");
+  renderLibraryCollection(libraryTitleList, titles, "まだ収められた称号はありません", "title", achievementResult);
+  renderLibraryCollection(libraryMedalList, medals, "まだ収められた勲章はありません", "medal", achievementResult);
 
   libraryAchievementList.textContent = "";
   for (const record of [
-    { label: "花と妖精", value: `${totalFlowerAchievements}/18` },
-    { label: "先生の輪", value: `${achievementResult.teacherCircle.currentRounds}巡` },
-    { label: "特別な仲間", value: `${companions.length}/4` },
-    { label: "対局記録", value: `${gameRecords.length}局` },
+    { label: "花図鑑", value: `${totalFlowerAchievements}/18`, mark: "花", tone: "flower" },
+    { label: "先生の輪", value: `${achievementResult.teacherCircle.currentRounds}巡`, mark: "輪", tone: "medal" },
+    { label: "特別な仲間", value: `${companions.length}/4`, mark: "仲", tone: "companion" },
+    { label: "対局記録", value: `${gameRecords.length}局`, mark: "棋", tone: "record" },
   ]) {
     const row = document.createElement("article");
+    row.className = `is-${record.tone}`;
+    const mark = document.createElement("i");
     const label = document.createElement("span");
     const value = document.createElement("strong");
+    mark.setAttribute("aria-hidden", "true");
     label.textContent = record.label;
     value.textContent = record.value;
-    row.append(label, value);
+    row.append(mark, label, value);
     libraryAchievementList.append(row);
   }
 };
@@ -1851,15 +2160,31 @@ const ensureProfileAchievementResults = () => {
   section.dataset.profileAchievementResults = "";
   section.setAttribute("aria-label", "達成判定結果");
 
+  const header = document.createElement("div");
+  header.className = "profile-section-header";
+
   const heading = document.createElement("p");
   heading.textContent = "達成判定結果";
 
-  const list = document.createElement("div");
-  list.className = "profile-achievement-list";
-  list.dataset.profileAchievementList = "";
+  const toggleButton = document.createElement("button");
+  toggleButton.type = "button";
+  toggleButton.className = "profile-toggle-button";
+  toggleButton.dataset.profileToggle = "achievements";
+  toggleButton.setAttribute("aria-expanded", "false");
+  toggleButton.setAttribute("aria-controls", "profile-achievement-list");
+  toggleButton.textContent = "開く";
+  toggleButton.addEventListener("click", () => toggleProfileSection(toggleButton));
 
-  section.append(heading, list);
-  profileFairies.after(section);
+  const list = document.createElement("div");
+  list.className = "profile-achievement-list is-collapsed";
+  list.id = "profile-achievement-list";
+  list.dataset.profileAchievementList = "";
+  list.dataset.profileCollapsible = "achievements";
+
+  header.append(heading, toggleButton);
+  section.append(header, list);
+  (profileSpecialCompanions ?? profileFairies).after(section);
+  syncProfileToggleButton(toggleButton, list);
 
   return section;
 };
@@ -2553,6 +2878,20 @@ for (const closeButton of achievementCloseButtons) {
 for (const closeButton of fairyViewerCloseButtons) {
   closeButton.addEventListener("click", closeFairyViewer);
 }
+
+for (const button of profileToggleButtons) {
+  button.addEventListener("click", () => toggleProfileSection(button));
+}
+
+syncProfileToggleButtons();
+
+libraryTitleToggle?.addEventListener("click", toggleLibraryTitleList);
+libraryTitleArtToggle?.addEventListener("click", toggleLibraryTitleList);
+syncLibraryTitleToggle();
+libraryMedalToggle?.addEventListener("click", toggleLibraryMedalList);
+libraryMedalArtToggle?.addEventListener("click", toggleLibraryMedalList);
+syncLibraryMedalToggle();
+libraryOwlViewerButton?.addEventListener("click", openLibraryOwlViewer);
 
 document.addEventListener("keydown", (event) => {
   if (event.key === "Escape" && fairyViewer && !fairyViewer.hidden) {

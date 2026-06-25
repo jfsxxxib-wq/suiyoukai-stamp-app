@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>冒険記録帳</title>
-    <link rel="stylesheet" href="styles.css?v=20260623-current-flower-03">
+    <link rel="stylesheet" href="styles.css?v=20260625-profile-cards-01">
   </head>
   <body>
     <main class="record-book" aria-label="冒険記録帳">
@@ -55,7 +55,7 @@
               </div>
 
               <div class="adventurer-name-block">
-                <span class="adventurer-seal" aria-hidden="true">水</span>
+                <span class="adventurer-seal" aria-hidden="true"></span>
                 <div>
                   <small>冒険者名</small>
                   <h1>みずの しずく</h1>
@@ -68,11 +68,11 @@
               </section>
 
               <dl class="profile-list">
-                <div>
+                <div class="profile-rank-card">
                   <dt>冒険者ランク</dt>
                   <dd data-profile-rank>初級冒険者</dd>
                 </div>
-                <div>
+                <div class="profile-medal-entry">
                   <dt>勲章</dt>
                   <dd>
                     <span class="medal-row">
@@ -92,17 +92,23 @@
                 </div>
               </dl>
 
-              <section class="profile-badges" aria-label="獲得した勲章">
+              <div class="profile-section-header profile-rewards-header">
+                <p>獲得した勲章・称号</p>
+                <button type="button" class="profile-toggle-button" data-profile-toggle="rewards" aria-expanded="false" aria-controls="profile-rewards-list">開く</button>
+              </div>
+              <section class="profile-badges is-collapsed" id="profile-rewards-list" aria-label="獲得した勲章" data-profile-collapsible="rewards">
                 <span class="badge-chip is-locked" data-circle-badge>🥉 一巡目の輪</span>
                 <span class="badge-chip">🎖️ コスモスの友</span>
                 <span class="badge-chip is-locked">🥈 二巡目の輪</span>
               </section>
               <section class="profile-fairies" aria-label="達成した妖精" data-profile-fairies>
-                <p>達成した妖精</p>
-                <div class="profile-fairy-list" data-profile-fairy-list>
+                <div class="profile-section-header">
+                  <p>達成した妖精</p>
+                  <button type="button" class="profile-toggle-button" data-profile-toggle="fairies" aria-expanded="false" aria-controls="profile-fairy-list">開く</button>
+                </div>
+                <div class="profile-fairy-list is-collapsed" id="profile-fairy-list" data-profile-fairy-list data-profile-collapsible="fairies">
                   <span class="profile-empty">まだ妖精達成はありません</span>
                 </div>
-                <small>この端末のブラウザに保存されています。</small>
               </section>
               <section class="profile-special-companions" aria-label="特別な仲間" data-profile-special-companions>
                 <p>特別な仲間</p>
@@ -387,42 +393,54 @@
               <div class="owl-library-heading">
                 <p class="panel-kicker">知恵と達成の記録</p>
                 <h2>フクロウの書庫</h2>
-                <p data-library-guide>知恵の見守り役が、旅の記録を大切に収めています。</p>
+                <p data-library-guide hidden>知恵の見守り役が、旅の記録を大切に収めています。</p>
               </div>
+              <section class="library-current-title" aria-label="現在の称号">
+                <small>現在ひらいている称号</small>
+                <strong data-library-current-title>まだ称号はありません</strong>
+                <span data-library-summary>称号 0冊・勲章 0点</span>
+              </section>
               <div class="library-owl-guide">
                 <p class="owl-library-speech" data-library-speech>「ようこそ書庫へ。」</p>
-                <img data-library-owl src="assets/special-companion-owl-a.png" alt="知恵の見守り役">
+                <button type="button" class="library-owl-button" data-library-owl-viewer aria-label="知恵の見守り役を大きく見る">
+                  <img data-library-owl src="assets/special-companion-owl-a.png" alt="知恵の見守り役">
+                </button>
               </div>
+              <section class="library-next-shelf" aria-label="次の開架予定">
+                <small>次の開架予定</small>
+                <strong>冒険日誌</strong>
+                <span>旅の思い出を綴る書物は、ただいま準備中です。</span>
+              </section>
             </header>
-
-            <section class="library-current-title" aria-label="現在の称号">
-              <small>現在ひらいている称号</small>
-              <strong data-library-current-title>まだ称号はありません</strong>
-              <span data-library-summary>称号 0冊・勲章 0点</span>
-            </section>
 
             <section class="library-section" aria-labelledby="library-title-heading">
               <div class="library-section-heading">
                 <div>
                   <small>第一書架</small>
-                  <h3 id="library-title-heading">称号の書架</h3>
+                  <h3 id="library-title-heading">称号の書架<span class="library-heading-count" data-library-title-count>0冊</span></h3>
                 </div>
-                <span data-library-title-count>0冊</span>
+                <button type="button" class="library-title-shelf-button" data-library-title-art-toggle aria-expanded="false" aria-controls="library-title-list" aria-label="称号の書架を開く">
+                  <img class="library-title-shelf-art" src="assets/library-bookshelf.png" alt="" aria-hidden="true">
+                </button>
+                <button type="button" class="profile-toggle-button" data-library-title-toggle aria-expanded="false" aria-controls="library-title-list">開く</button>
               </div>
-              <div class="library-title-list" data-library-title-list>
+              <div class="library-title-list is-collapsed" id="library-title-list" data-library-title-list>
                 <p class="library-empty">まだ収められた称号はありません</p>
               </div>
             </section>
 
             <section class="library-section" aria-labelledby="library-medal-heading">
-              <div class="library-section-heading">
+              <div class="library-section-heading library-medal-heading">
                 <div>
                   <small>記念品棚</small>
-                  <h3 id="library-medal-heading">勲章の棚</h3>
+                  <h3 id="library-medal-heading">勲章の棚<span class="library-heading-count" data-library-medal-count>0点</span></h3>
                 </div>
-                <span data-library-medal-count>0点</span>
+                <button type="button" class="library-medal-case-button" data-library-medal-art-toggle aria-expanded="false" aria-controls="library-medal-list" aria-label="勲章の棚を開く">
+                  <img class="library-medal-case-art" src="assets/library-medal-case.png" alt="" aria-hidden="true">
+                </button>
+                <button type="button" class="profile-toggle-button" data-library-medal-toggle aria-expanded="false" aria-controls="library-medal-list">開く</button>
               </div>
-              <div class="library-medal-list" data-library-medal-list>
+              <div class="library-medal-list is-collapsed" id="library-medal-list" data-library-medal-list>
                 <p class="library-empty">まだ収められた勲章はありません</p>
               </div>
             </section>
@@ -437,14 +455,6 @@
               <div class="library-achievement-list" data-library-achievement-list></div>
             </section>
 
-            <section class="library-journal" aria-labelledby="library-journal-heading">
-              <div>
-                <small>次の開架予定</small>
-                <h3 id="library-journal-heading">冒険日誌</h3>
-                <p>旅の思い出を綴る書物は、ただいま準備中です。</p>
-              </div>
-              <button type="button" disabled>準備中</button>
-            </section>
           </div>
 
           <div class="panel-view" data-view="admin" hidden>
@@ -599,6 +609,7 @@
           <button type="button" class="fairy-viewer-close" data-fairy-viewer-close aria-label="戻る">×</button>
           <img class="fairy-viewer-image" data-fairy-viewer-image src="assets/fairy-apollon-flower-style.png" alt="">
           <h2 data-fairy-viewer-name>妖精</h2>
+          <p class="fairy-viewer-quote" data-fairy-viewer-quote>はじめての花が咲いたね！</p>
           <p data-fairy-viewer-status>達成済み</p>
         </article>
       </section>
