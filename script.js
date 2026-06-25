@@ -76,6 +76,12 @@ const libraryMedalList = document.querySelector("[data-library-medal-list]");
 const libraryMedalToggle = document.querySelector("[data-library-medal-toggle]");
 const libraryMedalArtToggle = document.querySelector("[data-library-medal-art-toggle]");
 const libraryAchievementList = document.querySelector("[data-library-achievement-list]");
+const libraryJournalRecords = document.querySelector("[data-library-journal-records]");
+const libraryJournalPages = document.querySelector("[data-library-journal-pages]");
+const libraryJournalPrompt = document.querySelector("[data-library-journal-prompt]");
+const libraryJournalToggle = document.querySelector("[data-library-journal-toggle]");
+const libraryJournalSkip = document.querySelector("[data-library-journal-skip]");
+const libraryJournalNote = document.querySelector("[data-library-journal-note]");
 const participationStamp = document.querySelector(".participation-stamp");
 const participationFlower = document.querySelector(".participation-stamp .stamp-flower");
 const participationFlowerName = document.querySelector("[data-participation-flower-name]");
@@ -1685,6 +1691,26 @@ const toggleLibraryMedalList = () => {
   syncLibraryMedalToggle();
 };
 
+const syncLibraryJournalToggle = () => {
+  if (!libraryJournalToggle || !libraryJournalRecords) {
+    return;
+  }
+
+  const isCollapsed = libraryJournalRecords.classList.contains("is-collapsed");
+  libraryJournalToggle.setAttribute("aria-expanded", String(!isCollapsed));
+  libraryJournalToggle.setAttribute("aria-label", isCollapsed ? "冒険日誌を開く" : "冒険日誌を閉じる");
+};
+
+const toggleLibraryJournal = () => {
+  if (!libraryJournalRecords) {
+    return;
+  }
+
+  libraryJournalRecords.classList.toggle("is-collapsed");
+  libraryJournalPrompt?.closest(".library-journal-prompt")?.classList.toggle("is-collapsed");
+  syncLibraryJournalToggle();
+};
+
 const createProfileFairyItem = ({ src, alt, nameText, statusText, quoteText = "", categoryText, cycleNames = [], cycleFairies = [] }) => {
   const item = document.createElement("button");
   item.type = "button";
@@ -2050,6 +2076,73 @@ const renderLibraryCollection = (list, items, emptyMessage, kind, achievementRes
   }
 };
 
+const getAdventureJournalRecords = (achievementResult) => {
+  const records = [];
+  const latestFairy = achievementResult.earnedFairies?.at(-1);
+  const latestMedal = achievementResult.earnedMedals?.at(-1);
+  const latestTitle = achievementResult.earnedTitles?.at(-1);
+  const latestCompanion = achievementResult.earnedCompanions?.at(-1);
+
+  if (latestFairy) {
+    records.push(`🌸 ${latestFairy.flowerName ?? "花"}の妖精と出会いました`);
+  }
+  if (latestMedal) {
+    records.push(`🏅 ${latestMedal.name}を収めました`);
+  }
+  if (latestTitle) {
+    records.push(`📖 ${latestTitle.name}の本が増えました`);
+  }
+  if (latestCompanion) {
+    records.push(`🦊 ${latestCompanion.name}が仲間になりました`);
+  }
+  if (gameRecords.length > 0) {
+    records.push(`⚫ 対局記録が${gameRecords.length}局になりました`);
+  }
+
+  if (records.length === 0) {
+    records.push("最初の記録を準備しています");
+  }
+
+  return records.slice(0, 4);
+};
+
+const renderAdventureJournalPreview = (achievementResult) => {
+  if (!libraryJournalRecords || !libraryJournalPages || !libraryJournalPrompt) {
+    return;
+  }
+
+  const records = getAdventureJournalRecords(achievementResult);
+  const pageCount = Math.max(
+    1,
+    Math.min(
+      99,
+      achievementResult.earnedFairies.length
+        + achievementResult.earnedMedals.length
+        + achievementResult.earnedTitles.length
+        + (achievementResult.earnedCompanions?.length ?? 0)
+        + gameRecords.length
+    )
+  );
+
+  libraryJournalRecords.textContent = "";
+  for (const record of records) {
+    const item = document.createElement("li");
+    item.textContent = record;
+    libraryJournalRecords.append(item);
+  }
+
+  libraryJournalPages.textContent = `${pageCount}頁`;
+  libraryJournalPrompt.textContent = pageCount > 1
+    ? "今日の思い出、しまっておく？"
+    : "最初の思い出、しまっておく？";
+};
+
+const setJournalPrompt = (message) => {
+  if (libraryJournalPrompt) {
+    libraryJournalPrompt.textContent = message;
+  }
+};
+
 const renderOwlLibrary = (achievementResult) => {
   if (!libraryCurrentTitle) {
     return;
@@ -2093,6 +2186,7 @@ const renderOwlLibrary = (achievementResult) => {
 
   renderLibraryCollection(libraryTitleList, titles, "まだ収められた称号はありません", "title", achievementResult);
   renderLibraryCollection(libraryMedalList, medals, "まだ収められた勲章はありません", "medal", achievementResult);
+  renderAdventureJournalPreview(achievementResult);
 
   libraryAchievementList.textContent = "";
   for (const record of [
@@ -2892,6 +2986,10 @@ libraryMedalToggle?.addEventListener("click", toggleLibraryMedalList);
 libraryMedalArtToggle?.addEventListener("click", toggleLibraryMedalList);
 syncLibraryMedalToggle();
 libraryOwlViewerButton?.addEventListener("click", openLibraryOwlViewer);
+libraryJournalToggle?.addEventListener("click", toggleLibraryJournal);
+syncLibraryJournalToggle();
+libraryJournalSkip?.addEventListener("click", () => setJournalPrompt("わかった。今日もちゃんとしまっておくね。"));
+libraryJournalNote?.addEventListener("click", () => setJournalPrompt("ひとことだけでも、ちゃんと宝物だよ。"));
 
 document.addEventListener("keydown", (event) => {
   if (event.key === "Escape" && fairyViewer && !fairyViewer.hidden) {

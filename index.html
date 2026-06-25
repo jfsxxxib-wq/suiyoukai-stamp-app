@@ -406,10 +406,26 @@
                   <img data-library-owl src="assets/special-companion-owl-a.png" alt="知恵の見守り役">
                 </button>
               </div>
-              <section class="library-next-shelf" aria-label="次の開架予定">
-                <small>次の開架予定</small>
-                <strong>冒険日誌</strong>
-                <span>旅の思い出を綴る書物は、ただいま準備中です。</span>
+              <section class="library-next-shelf" aria-label="冒険日誌">
+                <div class="library-journal-copy">
+                  <small>次の開架予定</small>
+                  <strong>冒険日誌</strong>
+                  <span>旅の思い出を綴る書物は、ただいま準備中です。</span>
+                </div>
+                <button type="button" class="library-journal-book" data-library-journal-toggle aria-expanded="true" aria-controls="library-journal-records library-journal-prompt" aria-label="冒険日誌を閉じる">
+                  <span data-library-journal-pages>1頁</span>
+                  <img class="library-journal-keeper-art" src="assets/library-journal-hedgehog-v2.png" alt="" aria-hidden="true">
+                </button>
+                <ul class="library-journal-records" id="library-journal-records" data-library-journal-records>
+                  <li>最初の記録を準備しています。</li>
+                </ul>
+                <div class="library-journal-prompt" id="library-journal-prompt">
+                  <p data-library-journal-prompt>今日の思い出、しまっておく？</p>
+                  <div class="library-journal-actions">
+                    <button type="button" data-library-journal-skip>今日は書かない</button>
+                    <button type="button" data-library-journal-note>ひとこと残す</button>
+                  </div>
+                </div>
               </section>
             </header>
 
