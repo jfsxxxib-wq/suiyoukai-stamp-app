@@ -159,6 +159,7 @@ let isAdminUnlocked = false;
 
 const progressStorageKey = "suiyoukai-stamp-progress-v1";
 const gameRecordsStorageKey = "suiyoukai-game-records-v1";
+const pendingGameRecordsStorageKey = "suiyoukai-pending-game-records-v2";
 const operationHistoryStorageKey = "suiyoukai-operation-history-v1";
 const backupAppId = "suiyoukai-stamp-adventure";
 const backupFormatVersion = 1;
@@ -701,6 +702,25 @@ const saveGameRecords = () => {
   }
 };
 
+const loadPendingGameRecords = () => {
+  try {
+    const storedRecords = JSON.parse(localStorage.getItem(pendingGameRecordsStorageKey) ?? "[]");
+    return Array.isArray(storedRecords) ? storedRecords.map(sanitizeGameRecord).filter(Boolean) : [];
+  } catch {
+    return [];
+  }
+};
+
+let pendingGameRecords = loadPendingGameRecords();
+
+const savePendingGameRecords = () => {
+  try {
+    localStorage.setItem(pendingGameRecordsStorageKey, JSON.stringify(pendingGameRecords));
+  } catch {
+    // 確認待ちの記録は保存できない環境でも、この画面を開いている間は保持します。
+  }
+};
+
 const sanitizeOperationHistory = (entry = {}) => {
   const target = typeof entry.target === "string" && entry.target
     ? entry.target
@@ -927,6 +947,23 @@ const addGameRecord = (teacherId) => {
   return record;
 };
 
+const addPendingGameRecord = (teacherId) => {
+  const draft = getGameRecordDraft();
+  const record = {
+    id: `pending-game-${Date.now()}-${teacherId}`,
+    teacherId,
+    date: draft.date,
+    handicap: draft.handicap,
+    result: draft.result,
+    recordedAt: new Date().toISOString(),
+  };
+
+  pendingGameRecords = pendingGameRecords.filter((item) => item.id !== record.id);
+  pendingGameRecords.push(record);
+  savePendingGameRecords();
+  return record;
+};
+
 const renderTeacherGameRecords = (teacherId) => {
   if (!teacherGameRecordList) {
     return;
@@ -935,14 +972,31 @@ const renderTeacherGameRecords = (teacherId) => {
   const records = gameRecords
     .filter((record) => record.teacherId === teacherId)
     .sort((a, b) => `${b.date}${b.recordedAt}`.localeCompare(`${a.date}${a.recordedAt}`));
+  const pendingRecords = pendingGameRecords
+    .filter((record) => record.teacherId === teacherId)
+    .sort((a, b) => `${b.date}${b.recordedAt}`.localeCompare(`${a.date}${a.recordedAt}`));
 
   teacherGameRecordList.textContent = "";
-  if (records.length === 0) {
+  if (records.length === 0 && pendingRecords.length === 0) {
     const empty = document.createElement("p");
     empty.className = "game-record-empty";
     empty.textContent = "まだ対局記録はありません";
     teacherGameRecordList.append(empty);
     return;
+  }
+
+  for (const record of pendingRecords) {
+    const item = document.createElement("article");
+    item.className = "teacher-game-record-item is-pending";
+    const date = document.createElement("time");
+    const details = document.createElement("span");
+    const status = document.createElement("small");
+    date.dateTime = record.date;
+    date.textContent = record.date.replaceAll("-", "/");
+    details.textContent = `${record.handicap}・${record.result}`;
+    status.textContent = "運営確認待ち";
+    item.append(date, details, status);
+    teacherGameRecordList.append(item);
   }
 
   for (const record of records) {
@@ -2746,8 +2800,8 @@ const setRecordPhase = (phase, teacher) => {
   teacherDetail.dataset.recordPhase = phase;
 
   flowConfirmStep.classList.toggle("is-active", phase === "confirm");
-  flowConfirmStep.classList.toggle("is-complete", phase === "done" || phase === "achievement");
-  flowDoneStep.classList.toggle("is-complete", phase === "done" || phase === "achievement");
+  flowConfirmStep.classList.toggle("is-complete", phase === "submitted" || phase === "done" || phase === "achievement");
+  flowDoneStep.classList.toggle("is-complete", phase === "submitted" || phase === "done" || phase === "achievement");
   inlineFairyAchievement.hidden = true;
   fairyAchievement.hidden = phase !== "achievement";
   gameRecordForm.hidden = phase !== "confirm";
@@ -2779,17 +2833,17 @@ const setRecordPhase = (phase, teacher) => {
       const nextCount = teacher.stampCount + 1;
       const nextCycleNumber = Math.ceil(nextCount / getTeacherGoal(teacher));
 
-      confirmLabel.textContent = `${nextCycleNumber}巡目の達成確認`;
+      confirmLabel.textContent = `${nextCycleNumber}巡目の達成前チェック`;
       updateGameRecordConfirmation();
-      completeTeacherButton.textContent = "3. 運営確認へ進み妖精スタンプを開く";
-      flowMessage.textContent = "巡の最後の1回です。運営認証後、この1件だけを保存して妖精を表示します。";
+      completeTeacherButton.textContent = "3. 記録を確認待ちにする";
+      flowMessage.textContent = "ここまでは下書きです。反映は運営さんの確認後です。";
       return;
     }
 
-    confirmLabel.textContent = "保存する対局記録";
+    confirmLabel.textContent = "確認待ちにする対局記録";
     updateGameRecordConfirmation();
-    completeTeacherButton.textContent = "3. 運営確認へ進みスタンプを押す";
-    flowMessage.textContent = "対局記録を確認してください。次の運営認証が通った時だけ保存します。";
+    completeTeacherButton.textContent = "3. 記録を確認待ちにする";
+    flowMessage.textContent = "ここまでは下書きです。反映は運営さんの確認後です。";
     return;
   }
 
@@ -2799,6 +2853,15 @@ const setRecordPhase = (phase, teacher) => {
     flowMessage.textContent = hasFirstRoundMedal()
       ? "一巡目の輪を達成しました。冒険者カードに新しい勲章が反映されています。"
       : "スタンプを反映しました。続けて未記録の先生を選べます。";
+    return;
+  }
+
+  if (phase === "submitted") {
+    confirmLabel.textContent = "運営確認待ち";
+    updateGameRecordConfirmation();
+    confirmEffect.textContent = "運営さんの確認後に、対局記録とスタンプへ反映されます。";
+    completeTeacherButton.textContent = "先生一覧に戻る";
+    flowMessage.textContent = "対局記録を確認待ちにしました。当日の押印は不要です。";
     return;
   }
 
@@ -3120,6 +3183,11 @@ participationStampButton.addEventListener("click", () => {
 completeTeacherButton.addEventListener("click", () => {
   const teacher = teacherDetails[activeTeacherKey];
 
+  if (recordPhase === "submitted") {
+    showTeacherList();
+    return;
+  }
+
   if (recordPhase === "done" || recordPhase === "achievement") {
     updateProfileCard();
     showPanel("profile");
@@ -3130,14 +3198,9 @@ completeTeacherButton.addEventListener("click", () => {
     if (Date.now() < confirmSaveReadyAt) {
       return;
     }
-    const teacherKey = activeTeacherKey;
-    const draft = getGameRecordDraft();
-    const nextCount = Math.min(getTeacherMaxCount(teacher), teacher.stampCount + 1);
-    openOperatorAuth({
-      title: `${teacher.name}の指導碁を押印`,
-      summary: `${draft.date}・${draft.handicap}・${draft.result}／スタンプ ${teacher.stampCount}回 → ${nextCount}回`,
-      action: () => completeTeacherStamp(teacherKey),
-    });
+    addPendingGameRecord(activeTeacherKey);
+    renderTeacherGameRecords(activeTeacherKey);
+    setRecordPhase("submitted", teacher);
     return;
   }
 

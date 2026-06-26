@@ -3491,6 +3491,22 @@ dd {
   color: var(--muted);
 }
 
+.teacher-game-record-item.is-pending {
+  border: 1px solid rgba(197, 150, 58, 0.24);
+  border-radius: 8px;
+  background: rgba(255, 250, 240, 0.66);
+}
+
+.teacher-game-record-item small {
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: rgba(255, 246, 221, 0.92);
+  color: #8a5b20;
+  font-size: 0.64rem;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
 @media (max-width: 520px) {
   .game-record-form {
     grid-template-columns: 1fr;
