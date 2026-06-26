@@ -14,3 +14,8 @@ work-generated-raw-teacher-circle-medals/
 # Temporary files
 *.tmp
 *.bak
+
+# Dependency and generated output folders
+node_modules/
+tmp/
+outputs/

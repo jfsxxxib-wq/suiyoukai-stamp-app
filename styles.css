@@ -944,7 +944,7 @@ button {
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  margin: 0 86px 18px 0;
+  margin: 0 0 18px 0;
 }
 
 .card-label,
@@ -962,6 +962,7 @@ button {
   color: var(--green);
   font-size: 0.92rem;
   font-weight: 900;
+  white-space: nowrap;
 }
 
 .stamp-count {
@@ -1311,8 +1312,8 @@ dd {
 
 .profile-toggle-button {
   flex: 0 0 auto;
-  min-height: 30px;
-  padding: 4px 12px;
+  min-height: 44px;
+  padding: 8px 16px;
   border: 1px solid rgba(77, 133, 93, 0.24);
   border-radius: 999px;
   background: rgba(255, 252, 242, 0.72);
@@ -2474,18 +2475,24 @@ dd {
 
 .teacher-card {
   display: grid;
-  grid-template-columns: 34px 1fr;
-  gap: 10px;
+  grid-template-columns: 44px minmax(0, 1fr) auto;
+  gap: 12px;
   align-items: center;
   width: 100%;
-  min-height: 58px;
-  padding: 9px;
+  min-height: 68px;
+  padding: 10px 11px;
   border: 1px solid rgba(75, 55, 36, 0.12);
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.34);
   color: var(--ink);
   text-align: left;
   cursor: pointer;
+}
+
+.teacher-card > span:not(.teacher-flower):not(.teacher-card-action) {
+  align-self: center;
+  min-width: 0;
+  padding-left: 2px;
 }
 
 .teacher-card:hover,
@@ -2535,9 +2542,14 @@ dd {
   font-weight: 900;
 }
 
+.teacher-card.next-teacher::after,
+.teacher-card.is-recorded::after {
+  grid-column: 2 / -1;
+}
+
 .teacher-flower {
-  width: 34px;
-  height: 34px;
+  width: 44px;
+  height: 44px;
   border: 1px solid rgba(75, 55, 36, 0.14);
   border-radius: 50%;
   background-position: center;
@@ -2637,11 +2649,14 @@ dd {
 }
 
 .circle-stamps h4 {
+  flex: 1;
   margin: 0;
-  max-width: 13em;
+  min-width: 0;
   color: #314f34;
-  font-size: 0.94rem;
+  font-size: 0.9rem;
   line-height: 1.2;
+  word-break: keep-all;
+  overflow-wrap: normal;
 }
 
 .circle-stamps-header span {
@@ -2681,10 +2696,10 @@ dd {
 }
 
 .circle-stamp-feature {
-  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-columns: 94px minmax(0, 1fr);
   justify-items: start;
   align-items: center;
-  column-gap: 12px;
+  column-gap: 8px;
   min-height: 128px;
   padding: 14px 12px;
   overflow: hidden;
@@ -2742,6 +2757,9 @@ dd {
 .circle-stamp-copy {
   position: relative;
   z-index: 1;
+  align-self: center;
+  justify-self: center;
+  text-align: left;
 }
 
 .circle-stamp-status {
@@ -2801,8 +2819,8 @@ dd {
 }
 
 .circle-stamp-feature .circle-medal {
-  width: 82px;
-  height: 82px;
+  width: 88px;
+  height: 88px;
   border-width: 3px;
   box-shadow:
     inset 0 0 0 5px rgba(255, 250, 240, 0.62),
@@ -2995,6 +3013,32 @@ dd {
   background:
     radial-gradient(circle at 50% 52%, rgba(255, 250, 240, 0.92) 0 18%, transparent 19%),
     rgba(143, 184, 190, 0.72);
+}
+
+.circle-medal {
+  border: 0;
+  border-radius: 0;
+  background: url("assets/teacher-circle-icon-stamp-medal-v2.png") center / contain no-repeat;
+  box-shadow: none;
+  filter: drop-shadow(0 5px 8px rgba(48, 38, 26, 0.16));
+}
+
+.circle-stamp.is-complete .circle-medal,
+.circle-stamp.is-next .circle-medal,
+.circle-stamp.is-new .circle-medal {
+  border: 0;
+  background: url("assets/teacher-circle-icon-stamp-medal-v2.png") center / contain no-repeat;
+  box-shadow: none;
+}
+
+.circle-stamp-feature .circle-medal {
+  filter: drop-shadow(0 10px 15px rgba(48, 38, 26, 0.16));
+}
+
+.circle-medal::before,
+.circle-medal::after,
+.circle-medal i {
+  display: none;
 }
 
 .teacher-detail {
@@ -5077,6 +5121,20 @@ dd {
   z-index: 3;
 }
 
+.library-journal-book .library-journal-state {
+  left: 8px;
+  right: auto;
+  top: 7px;
+  bottom: auto;
+  padding: 2px 5px;
+  border-radius: 999px;
+  background: rgba(255, 252, 238, 0.92);
+  color: rgba(71, 103, 78, 0.78);
+  font-size: 0.48rem;
+  line-height: 1;
+  box-shadow: 0 2px 5px rgba(69, 54, 29, 0.1);
+}
+
 .owl-library-header .library-journal-keeper-art {
   position: absolute;
   right: 34px;
@@ -5141,8 +5199,8 @@ dd {
 }
 
 .library-journal-actions button {
-  min-height: 30px;
-  padding: 6px 12px;
+  min-height: 44px;
+  padding: 10px 16px;
   border: 1px solid rgba(82, 112, 92, 0.18);
   border-radius: 999px;
   background: rgba(255, 252, 242, 0.82);
@@ -7378,6 +7436,27 @@ body {
   text-align: center;
 }
 
+.fairy-viewer-card:not(.is-title-book-viewer):not(.is-medal-viewer) {
+  overflow: hidden;
+}
+
+.fairy-viewer-card:not(.is-title-book-viewer):not(.is-medal-viewer)::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-image: var(--viewer-frame);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  pointer-events: none;
+}
+
+.fairy-viewer-card:not(.is-title-book-viewer):not(.is-medal-viewer) > * {
+  position: relative;
+  z-index: 1;
+}
+
 .fairy-viewer-card.is-title-book-viewer {
   --viewer-book-bg: none;
   --viewer-flower-color: #d86a83;
@@ -7498,7 +7577,13 @@ body {
 }
 
 .fairy-viewer-card .fairy-viewer-quote + p {
-  margin-top: 14px;
+  width: fit-content;
+  max-width: min(100%, 18em);
+  margin: 14px auto 0;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: rgba(255, 253, 246, 0.86);
+  box-shadow: 0 4px 10px rgba(69, 54, 29, 0.08);
 }
 
 .fairy-viewer-card.is-special-companion .fairy-viewer-image {

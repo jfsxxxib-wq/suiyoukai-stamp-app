@@ -78,6 +78,7 @@ const libraryMedalArtToggle = document.querySelector("[data-library-medal-art-to
 const libraryAchievementList = document.querySelector("[data-library-achievement-list]");
 const libraryJournalRecords = document.querySelector("[data-library-journal-records]");
 const libraryJournalPages = document.querySelector("[data-library-journal-pages]");
+const libraryJournalState = document.querySelector("[data-library-journal-state]");
 const libraryJournalPrompt = document.querySelector("[data-library-journal-prompt]");
 const libraryJournalToggle = document.querySelector("[data-library-journal-toggle]");
 const libraryJournalSkip = document.querySelector("[data-library-journal-skip]");
@@ -1473,7 +1474,44 @@ const fairyBookBackgrounds = {
 
 const getFairyBookBackground = (flower) => fairyBookBackgrounds[flower] ?? fairyBookBackgrounds.cosmos;
 
-const openFairyViewer = ({ src, alt, name, status, quote = "", type = "fairy", flower = "", background = "" }) => {
+const fairyCardFrames = {
+  cosmos: "assets/fairy-card-frame-cosmos-v2.png",
+  iris: "assets/fairy-card-frame-iris-v2.png",
+  lotus: "assets/fairy-card-frame-iris-v2.png",
+  sumire: "assets/fairy-card-frame-iris-v2.png",
+  camellia: "assets/fairy-card-frame-camellia-v2.png",
+  botan: "assets/fairy-card-frame-camellia-v2.png",
+  lily: "assets/fairy-card-frame-camellia-v2.png",
+  sunflower: "assets/fairy-card-frame-sunflower-v2.png",
+  asagao: "assets/fairy-card-frame-sunflower-v2.png",
+  kikyo: "assets/fairy-card-frame-sunflower-v2.png",
+  hydrangea: "assets/fairy-card-frame-hydrangea-v2.png",
+  nadeshiko: "assets/fairy-card-frame-hydrangea-v2.png",
+  suisen: "assets/fairy-card-frame-hydrangea-v2.png",
+  sakura: "assets/fairy-card-frame-sakura-v2.png",
+  hagi: "assets/fairy-card-frame-sakura-v2.png",
+  shakuyaku: "assets/fairy-card-frame-sakura-v2.png",
+  special_first_step: "assets/fairy-card-frame-special-sprout-v2.png",
+  special_next_step: "assets/fairy-card-frame-special-ribbon-v2.png",
+  special_wisdom: "assets/fairy-card-frame-special-wisdom-v2.png",
+};
+
+const specialCompanionFrameKeys = {
+  special_companion_french_bulldog_a: "special_first_step",
+  special_companion_french_bulldog_b: "special_next_step",
+  special_companion_owl_a: "special_wisdom",
+  special_companion_owl_b: "special_wisdom",
+};
+
+const getFairyCardFrame = ({ type = "fairy", flower = "", companionId = "" } = {}) => {
+  if (type === "special") {
+    return fairyCardFrames[specialCompanionFrameKeys[companionId] ?? "special_first_step"];
+  }
+
+  return fairyCardFrames[flower] ?? fairyCardFrames.cosmos;
+};
+
+const openFairyViewer = ({ src, alt, name, status, quote = "", type = "fairy", flower = "", background = "", companionId = "" }) => {
   if (!fairyViewer || !fairyViewerImage || !fairyViewerName || !fairyViewerStatus) {
     return;
   }
@@ -1502,6 +1540,12 @@ const openFairyViewer = ({ src, alt, name, status, quote = "", type = "fairy", f
   } else {
     fairyViewerCard?.style.removeProperty("--viewer-book-bg");
   }
+  const frame = (type === "fairy" || type === "special") ? getFairyCardFrame({ type, flower, companionId }) : "";
+  if (frame) {
+    fairyViewerCard?.style.setProperty("--viewer-frame", `url("${frame}")`);
+  } else {
+    fairyViewerCard?.style.removeProperty("--viewer-frame");
+  }
   fairyViewerCard?.classList.toggle("is-special-companion", type === "special");
   fairyViewerCard?.classList.toggle("is-medal-viewer", type === "medal");
   fairyViewerCard?.classList.toggle("is-title-book-viewer", type === "title-book");
@@ -1521,6 +1565,7 @@ const closeFairyViewer = () => {
   fairyViewerCard?.style.removeProperty("--viewer-flower-color");
   fairyViewerCard?.style.removeProperty("--viewer-flower-accent");
   fairyViewerCard?.style.removeProperty("--viewer-book-bg");
+  fairyViewerCard?.style.removeProperty("--viewer-frame");
   document.body.classList.remove("is-fairy-viewer-open");
 };
 
@@ -1619,6 +1664,9 @@ const openLibraryOwlViewer = () => {
     status: libraryGuide?.textContent ?? "書庫の見守り役",
     quote: speech,
     type: "special",
+    companionId: (libraryOwl.getAttribute("src") ?? "").includes("owl-b")
+      ? "special_companion_owl_b"
+      : "special_companion_owl_a",
   });
 };
 
@@ -1699,6 +1747,9 @@ const syncLibraryJournalToggle = () => {
   const isCollapsed = libraryJournalRecords.classList.contains("is-collapsed");
   libraryJournalToggle.setAttribute("aria-expanded", String(!isCollapsed));
   libraryJournalToggle.setAttribute("aria-label", isCollapsed ? "冒険日誌を開く" : "冒険日誌を閉じる");
+  if (libraryJournalState) {
+    libraryJournalState.textContent = isCollapsed ? "ひらく" : "とじる";
+  }
 };
 
 const toggleLibraryJournal = () => {
@@ -1711,7 +1762,7 @@ const toggleLibraryJournal = () => {
   syncLibraryJournalToggle();
 };
 
-const createProfileFairyItem = ({ src, alt, nameText, statusText, quoteText = "", categoryText, cycleNames = [], cycleFairies = [] }) => {
+const createProfileFairyItem = ({ src, alt, nameText, statusText, quoteText = "", flower = "", categoryText, cycleNames = [], cycleFairies = [] }) => {
   const item = document.createElement("button");
   item.type = "button";
   item.className = "profile-fairy-item";
@@ -1769,6 +1820,7 @@ const createProfileFairyItem = ({ src, alt, nameText, statusText, quoteText = ""
       thumb.dataset.viewerName = cycleFairy.alt;
       thumb.dataset.viewerStatus = `${categoryText ? `${categoryText} / ` : ""}${cycleFairy.cycleName} 達成済み`;
       thumb.dataset.viewerQuote = cycleFairy.quote ?? quoteText;
+      thumb.dataset.viewerFlower = cycleFairy.flower ?? flower;
       fairyLine.append(thumb);
     }
 
@@ -1793,11 +1845,12 @@ const createProfileFairyItem = ({ src, alt, nameText, statusText, quoteText = ""
         name: thumb.dataset.viewerName,
         status: thumb.dataset.viewerStatus,
         quote: thumb.dataset.viewerQuote,
+        flower: thumb.dataset.viewerFlower,
       });
       return;
     }
 
-    openFairyViewer({ src, alt, name: nameText, status: statusText, quote: quoteText });
+    openFairyViewer({ src, alt, name: nameText, status: statusText, quote: quoteText, flower });
   });
 
   return item;
@@ -1831,9 +1884,10 @@ const renderProfileFairies = () => {
       nameText: fairy.label,
       statusText,
       quoteText: fairy.quote,
+      flower: cycleProgress.cycle.flower,
       categoryText: `${teacher.name} / 指導碁スタンプ`,
       cycleNames: [cycleName],
-      cycleFairies: [{ src: fairy.src, alt: fairy.label, cycleName, quote: fairy.quote }],
+      cycleFairies: [{ src: fairy.src, alt: fairy.label, cycleName, quote: fairy.quote, flower: cycleProgress.cycle.flower }],
     }));
   }
 };
@@ -1890,6 +1944,7 @@ const groupEarnedFairiesForProfile = (earnedFairies) => {
         src: fairy.src,
         alt: fairy.label,
         quote: fairy.quote,
+        flower: earnedFairy.flower ?? teacher?.flower,
       });
     }
 
@@ -1939,6 +1994,7 @@ const renderProfileFairiesFromResult = (achievementResult) => {
       nameText: fairy.label,
       statusText,
       quoteText: fairy.quote,
+      flower: earnedFairy.flower ?? teacher?.flower,
       categoryText: group.categoryText,
       cycleNames: group.cycleNames,
       cycleFairies: group.cycleFairies,
@@ -1989,6 +2045,7 @@ const renderProfileSpecialCompanions = (achievementResult) => {
         status: companion.description,
         quote: companionQuoteById[companion.id] ?? "今日の記録も、旅の宝物だよ。",
         type: "special",
+        companionId: companion.id,
       });
     });
     profileSpecialCompanionList.append(item);
@@ -2989,7 +3046,7 @@ libraryOwlViewerButton?.addEventListener("click", openLibraryOwlViewer);
 libraryJournalToggle?.addEventListener("click", toggleLibraryJournal);
 syncLibraryJournalToggle();
 libraryJournalSkip?.addEventListener("click", () => setJournalPrompt("わかった。今日もちゃんとしまっておくね。"));
-libraryJournalNote?.addEventListener("click", () => setJournalPrompt("ひとことだけでも、ちゃんと宝物だよ。"));
+libraryJournalNote?.addEventListener("click", () => setJournalPrompt("ひとこと欄は準備中。残したい気持ちだけ、先にしまっておくね。"));
 
 document.addEventListener("keydown", (event) => {
   if (event.key === "Escape" && fairyViewer && !fairyViewer.hidden) {
