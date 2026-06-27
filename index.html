@@ -6,7 +6,7 @@
     <meta name="google" content="notranslate">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>冒険記録帳</title>
-    <link rel="stylesheet" href="styles.css?v=20260627-admin-game-record-01">
+    <link rel="stylesheet" href="styles.css?v=20260628-shrine-rounds-01">
   </head>
   <body>
     <main class="record-book" aria-label="冒険記録帳">
@@ -412,6 +412,69 @@
 
           </div>
 
+          <div class="panel-view" data-view="shrine" hidden>
+            <section class="kumiawase-shrine" aria-label="組み合わせ神社">
+              <header class="shrine-header">
+                <div>
+                  <p class="panel-kicker">次の目的地</p>
+                  <h2>組み合わせ神社</h2>
+                  <p>水曜会 指導碁の組み合わせ案を作ります。</p>
+                </div>
+                <span class="shrine-seal" aria-hidden="true">結</span>
+              </header>
+
+              <section class="shrine-card shrine-event-card" aria-label="今日の会">
+                <small>水曜会プリセット</small>
+                <strong>先生ごとの多面打ちで組み合わせ</strong>
+                <span>先生ごとに面数と回数を決め、指導碁の組み合わせを出します。</span>
+                <label class="shrine-round-count">
+                  <span>回数</span>
+                  <select data-shrine-round-count aria-label="お告げの回数">
+                    <option value="1">1回</option>
+                    <option value="2">2回</option>
+                    <option value="3" selected>3回</option>
+                    <option value="4">4回</option>
+                  </select>
+                </label>
+              </section>
+
+              <section class="shrine-card" aria-label="参加者入力">
+                <div class="shrine-section-heading">
+                  <h3>参加者</h3>
+                  <button type="button" data-shrine-sample>見本を入れる</button>
+                </div>
+                <label class="shrine-participant-input">
+                  <span>お名前を1行ずつ入力</span>
+                  <textarea data-shrine-participants rows="7" placeholder="例&#10;佐藤さん&#10;鈴木さん&#10;田中さん"></textarea>
+                </label>
+              </section>
+
+              <section class="shrine-card" aria-label="先生選択">
+                <div class="shrine-section-heading">
+                  <h3>今日の先生</h3>
+                  <span data-shrine-teacher-count>0面</span>
+                </div>
+                <div class="shrine-teacher-list" data-shrine-teachers></div>
+              </section>
+
+              <section class="shrine-card shrine-wish-card" aria-label="願いごと">
+                <h3>願いごと</h3>
+                <div class="shrine-wish-list">
+                  <label><input type="checkbox" checked disabled> 先生をなるべく均等に使う</label>
+                  <label><input type="checkbox" checked disabled> 先生の面数まで割り当てる</label>
+                  <label><input type="checkbox" checked disabled> 回ごとに順番をずらす</label>
+                  <label><input type="checkbox" checked disabled> 余った方は待機にする</label>
+                </div>
+              </section>
+
+              <button type="button" class="shrine-oracle-button" data-shrine-generate>お告げを出す</button>
+
+              <section class="shrine-result" data-shrine-result aria-live="polite">
+                <p>参加者と先生を入れると、ここに組み合わせ案が出ます。</p>
+              </section>
+            </section>
+          </div>
+
           <div class="panel-view owl-library" data-view="titles" hidden>
             <header class="owl-library-header">
               <div class="owl-library-heading">
@@ -734,7 +797,7 @@
         status.textContent = "画面の操作が止まりました。Codexにこの表示を見せてください: " + event.message;
       });
     </script>
-    <script src="stamp-rules.js?v=20260627-admin-game-record-01"></script>
-    <script src="script.js?v=20260627-admin-game-record-01"></script>
+    <script src="stamp-rules.js?v=20260628-shrine-rounds-01"></script>
+    <script src="script.js?v=20260628-shrine-rounds-01"></script>
   </body>
 </html>

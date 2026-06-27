@@ -145,6 +145,13 @@ const nextAdventureGuide = document.querySelector("[data-next-adventure-guide]")
 const nextAdventureGuideImage = document.querySelector("[data-next-adventure-guide-image]");
 const nextAdventureGuideSpeech = document.querySelector("[data-next-adventure-guide-speech]");
 const mapDestinationButtons = document.querySelectorAll("[data-map-destination]");
+const shrineTeacherList = document.querySelector("[data-shrine-teachers]");
+const shrineTeacherCount = document.querySelector("[data-shrine-teacher-count]");
+const shrineRoundCount = document.querySelector("[data-shrine-round-count]");
+const shrineParticipants = document.querySelector("[data-shrine-participants]");
+const shrineSampleButton = document.querySelector("[data-shrine-sample]");
+const shrineGenerateButton = document.querySelector("[data-shrine-generate]");
+const shrineResult = document.querySelector("[data-shrine-result]");
 const operatorAuthModal = document.querySelector("[data-operator-auth]");
 const operatorAuthTitle = document.querySelector("[data-operator-auth-title]");
 const operatorAuthSummary = document.querySelector("[data-operator-auth-summary]");
@@ -1280,6 +1287,210 @@ const populateAdminGameRecordTeachers = () => {
     option.value = teacherId;
     option.textContent = teacher.name;
     adminGameRecordTeacher.append(option);
+  }
+};
+
+const renderShrineTeachers = () => {
+  if (!shrineTeacherList) {
+    return;
+  }
+
+  shrineTeacherList.textContent = "";
+  for (const [teacherId, teacher] of Object.entries(teacherDetails)) {
+    const label = document.createElement("label");
+    const input = document.createElement("input");
+    const copy = document.createElement("span");
+    const name = document.createElement("strong");
+    const guide = document.createElement("small");
+    const boardControl = document.createElement("span");
+    const boardLabel = document.createElement("span");
+    const boardSelect = document.createElement("select");
+
+    input.type = "checkbox";
+    input.value = teacherId;
+    input.checked = true;
+    input.dataset.shrineTeacher = teacherId;
+    boardControl.className = "shrine-board-count";
+    boardLabel.textContent = "面数";
+    boardLabel.className = "shrine-board-label";
+    boardSelect.dataset.shrineTeacherBoards = teacherId;
+    boardSelect.setAttribute("aria-label", `${teacher.name} の面数`);
+    for (let count = 1; count <= 6; count += 1) {
+      const option = document.createElement("option");
+      option.value = String(count);
+      option.textContent = `${count}面`;
+      option.selected = count === 3;
+      boardSelect.append(option);
+    }
+    name.textContent = teacher.name;
+    guide.textContent = teacher.guide;
+    copy.append(name, guide);
+    boardControl.append(boardLabel, boardSelect);
+    label.append(input, copy, boardControl);
+    shrineTeacherList.append(label);
+  }
+
+  updateShrineTeacherCount();
+};
+
+const getShrineParticipantNames = () => {
+  const rawNames = (shrineParticipants?.value ?? "")
+    .split(/\r?\n|、|,/)
+    .map((name) => name.trim())
+    .filter(Boolean);
+
+  return [...new Set(rawNames)];
+};
+
+const getSelectedShrineTeachers = () => {
+  if (!shrineTeacherList) {
+    return [];
+  }
+
+  return [...shrineTeacherList.querySelectorAll("[data-shrine-teacher]:checked")]
+    .map((input) => {
+      const boardsInput = shrineTeacherList.querySelector(`[data-shrine-teacher-boards="${input.value}"]`);
+      const boards = Math.max(1, Math.min(12, Number(boardsInput?.value) || 1));
+
+      return {
+        id: input.value,
+        boards,
+        ...teacherDetails[input.value],
+      };
+    })
+    .filter((teacher) => teacher.name);
+};
+
+const updateShrineTeacherCount = () => {
+  if (!shrineTeacherCount) {
+    return;
+  }
+
+  const selectedTeachers = getSelectedShrineTeachers();
+  const totalBoards = selectedTeachers.reduce((total, teacher) => total + teacher.boards, 0);
+  shrineTeacherCount.textContent = `${selectedTeachers.length}人・${totalBoards}面`;
+};
+
+const getShrineRoundCount = () =>
+  Math.max(1, Math.min(4, Number(shrineRoundCount?.value) || 1));
+
+const renderShrineResult = () => {
+  if (!shrineResult) {
+    return;
+  }
+
+  const participants = getShrineParticipantNames();
+  const selectedTeachers = getSelectedShrineTeachers();
+  shrineResult.textContent = "";
+
+  if (participants.length === 0 || selectedTeachers.length === 0) {
+    const empty = document.createElement("p");
+    empty.textContent = participants.length === 0
+      ? "参加者のお名前を入れてください。"
+      : "今日来ている先生を1人以上選んでください。";
+    shrineResult.append(empty);
+    return;
+  }
+
+  const maxBoards = Math.max(...selectedTeachers.map((teacher) => teacher.boards));
+  const slots = [];
+  for (let boardNumber = 1; boardNumber <= maxBoards; boardNumber += 1) {
+    for (const teacher of selectedTeachers) {
+      if (teacher.boards >= boardNumber) {
+        slots.push({ teacher, boardNumber });
+      }
+    }
+  }
+  const roundCount = getShrineRoundCount();
+  const roundResults = [];
+  let totalMatchedCount = 0;
+  let totalWaitingCount = 0;
+
+  for (let roundIndex = 0; roundIndex < roundCount; roundIndex += 1) {
+    const rotatedParticipants = participants.map((_, index) => participants[(index + roundIndex * slots.length) % participants.length]);
+    const matchedCount = Math.min(rotatedParticipants.length, slots.length);
+    const waiting = rotatedParticipants.slice(matchedCount);
+    const assignments = selectedTeachers.map((teacher) => ({ teacher, participants: [] }));
+
+    for (let index = 0; index < matchedCount; index += 1) {
+      const slot = slots[index];
+      const group = assignments.find((item) => item.teacher.id === slot.teacher.id);
+      group?.participants.push({
+        name: rotatedParticipants[index],
+        boardNumber: slot.boardNumber,
+      });
+    }
+
+    roundResults.push({
+      roundNumber: roundIndex + 1,
+      matchedCount,
+      waiting,
+      assignments,
+    });
+    totalMatchedCount += matchedCount;
+    totalWaitingCount += waiting.length;
+  }
+
+  const heading = document.createElement("div");
+  const title = document.createElement("strong");
+  const oracle = document.createElement("p");
+
+  heading.className = "shrine-result-heading";
+  title.textContent = "今日のお告げ";
+  oracle.textContent = totalWaitingCount > 0
+    ? `${roundCount}回分で${totalMatchedCount}面を組みました。待機が出る回があります。`
+    : `${roundCount}回分で${totalMatchedCount}面を組みました。`;
+  heading.append(title, oracle);
+
+  shrineResult.append(heading);
+
+  for (const round of roundResults) {
+    const roundBlock = document.createElement("article");
+    const roundTitle = document.createElement("h3");
+    const groups = document.createElement("div");
+
+    roundBlock.className = "shrine-round-result";
+    roundTitle.textContent = `${round.roundNumber}回目`;
+    groups.className = "shrine-result-groups";
+
+    for (const group of round.assignments.filter((item) => item.participants.length > 0)) {
+      const teacherBlock = document.createElement("article");
+      const teacherName = document.createElement("strong");
+      const teacherMeta = document.createElement("small");
+      const list = document.createElement("ol");
+
+      teacherBlock.className = "shrine-teacher-result";
+      teacherName.textContent = group.teacher.name;
+      teacherMeta.textContent = `${group.participants.length}/${group.teacher.boards}面`;
+
+      for (const participant of group.participants) {
+        const item = document.createElement("li");
+        const order = document.createElement("span");
+        const participantName = document.createElement("strong");
+        order.textContent = `${participant.boardNumber}面`;
+        participantName.textContent = participant.name;
+        item.append(order, participantName);
+        list.append(item);
+      }
+
+      teacherBlock.append(teacherName, teacherMeta, list);
+      groups.append(teacherBlock);
+    }
+
+    roundBlock.append(roundTitle, groups);
+
+    if (round.waiting.length > 0) {
+      const waitBox = document.createElement("div");
+      const waitTitle = document.createElement("strong");
+      const waitNames = document.createElement("span");
+      waitBox.className = "shrine-waiting";
+      waitTitle.textContent = "待機";
+      waitNames.textContent = round.waiting.join("、");
+      waitBox.append(waitTitle, waitNames);
+      roundBlock.append(waitBox);
+    }
+
+    shrineResult.append(roundBlock);
   }
 };
 
@@ -3305,9 +3516,41 @@ for (const button of mapDestinationButtons) {
       return;
     }
 
-    window.alert("組み合わせ神社は準備中です。次の目的地として設計を進めます。");
+    renderShrineTeachers();
+    showPanel("shrine");
   });
 }
+
+shrineTeacherList?.addEventListener("change", updateShrineTeacherCount);
+shrineRoundCount?.addEventListener("change", () => {
+  if (shrineResult?.querySelector(".shrine-round-result")) {
+    renderShrineResult();
+  }
+});
+
+shrineSampleButton?.addEventListener("click", () => {
+  if (!shrineParticipants) {
+    return;
+  }
+
+  shrineParticipants.value = [
+    "佐藤さん",
+    "鈴木さん",
+    "田中さん",
+    "高橋さん",
+    "伊藤さん",
+    "山本さん",
+    "中村さん",
+    "小林さん",
+    "加藤さん",
+    "吉田さん",
+    "山田さん",
+    "渡辺さん",
+  ].join("\n");
+  renderShrineResult();
+});
+
+shrineGenerateButton?.addEventListener("click", renderShrineResult);
 
 backToList.addEventListener("click", showTeacherList);
 
@@ -3677,6 +3920,7 @@ updateTeacherCards();
 updateRoundProgress();
 updateProfileCard();
 populateAdminGameRecordTeachers();
+renderShrineTeachers();
 updateAdminPanel();
 updateAdminLockState();
 

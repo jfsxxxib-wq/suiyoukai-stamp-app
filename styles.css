@@ -1039,6 +1039,336 @@ button {
 
 }
 
+.kumiawase-shrine {
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid rgba(75, 55, 36, 0.16);
+  border-radius: 8px;
+  background:
+    radial-gradient(circle at 86% 8%, rgba(93, 143, 195, 0.18) 0 18%, transparent 19%),
+    linear-gradient(180deg, rgba(255, 250, 240, 0.94), rgba(238, 247, 241, 0.66));
+  box-shadow:
+    inset 0 0 0 5px rgba(255, 250, 240, 0.3),
+    0 12px 28px rgba(48, 38, 26, 0.1);
+}
+
+.shrine-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.shrine-header h2,
+.shrine-header p {
+  margin: 0;
+}
+
+.shrine-header h2 {
+  color: var(--green);
+  font-size: 1.45rem;
+  letter-spacing: 0;
+}
+
+.shrine-header .panel-kicker {
+  padding-right: 0;
+}
+
+.shrine-header p:last-child {
+  color: var(--muted);
+  font-size: 0.86rem;
+  font-weight: 800;
+}
+
+.shrine-seal {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border: 2px solid rgba(255, 250, 240, 0.86);
+  border-radius: 50%;
+  background: #5d8fc3;
+  color: #fffaf0;
+  font-size: 1.35rem;
+  font-weight: 900;
+  box-shadow: 0 10px 24px rgba(48, 38, 26, 0.16);
+}
+
+.shrine-card,
+.shrine-result {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid rgba(75, 55, 36, 0.12);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.48);
+}
+
+.shrine-event-card {
+  background:
+    linear-gradient(90deg, rgba(93, 143, 195, 0.12), transparent 52%),
+    rgba(255, 252, 244, 0.7);
+}
+
+.shrine-round-count {
+  display: inline-grid;
+  grid-template-columns: auto minmax(82px, 110px);
+  align-items: center;
+  gap: 8px;
+  width: fit-content;
+  margin-top: 4px;
+  color: var(--green);
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
+.shrine-round-count select {
+  min-height: 34px;
+  border: 1px solid rgba(75, 55, 36, 0.16);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.82);
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 900;
+  padding: 0 8px;
+}
+
+.shrine-card h3,
+.shrine-card small,
+.shrine-card strong,
+.shrine-card span,
+.shrine-result p {
+  margin: 0;
+}
+
+.shrine-card h3,
+.shrine-event-card strong,
+.shrine-result-heading strong {
+  color: var(--green);
+}
+
+.shrine-card small,
+.shrine-card span,
+.shrine-result p,
+.shrine-waiting span {
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.shrine-section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.shrine-section-heading button {
+  min-height: 34px;
+  border: 1px solid rgba(197, 150, 58, 0.34);
+  border-radius: 999px;
+  background: rgba(255, 250, 240, 0.8);
+  color: #6e531e;
+  font-size: 0.78rem;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.shrine-participant-input {
+  display: grid;
+  gap: 6px;
+  color: var(--green);
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
+.shrine-participant-input textarea {
+  width: 100%;
+  min-height: 150px;
+  resize: vertical;
+  border: 1px solid rgba(75, 55, 36, 0.18);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.82);
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.92rem;
+  font-weight: 800;
+  line-height: 1.55;
+  padding: 10px 12px;
+}
+
+.shrine-teacher-list,
+.shrine-wish-list {
+  display: grid;
+  gap: 8px;
+}
+
+.shrine-teacher-list label,
+.shrine-wish-list label {
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  padding: 9px;
+  border: 1px solid rgba(75, 55, 36, 0.1);
+  border-radius: 8px;
+  background: rgba(255, 250, 240, 0.54);
+  color: var(--ink);
+  font-size: 0.86rem;
+  font-weight: 900;
+}
+
+.shrine-teacher-list input,
+.shrine-wish-list input {
+  width: 18px;
+  height: 18px;
+  accent-color: #5d8fc3;
+}
+
+.shrine-wish-list label {
+  grid-template-columns: 22px minmax(0, 1fr);
+}
+
+.shrine-teacher-list span {
+  display: grid;
+  gap: 2px;
+}
+
+.shrine-teacher-list small {
+  font-size: 0.72rem;
+}
+
+.shrine-board-count {
+  display: grid;
+  gap: 4px;
+  justify-items: end;
+}
+
+.shrine-board-label {
+  color: var(--muted);
+  font-size: 0.68rem;
+  font-weight: 900;
+}
+
+.shrine-board-count select {
+  min-height: 34px;
+  min-width: 76px;
+  border: 1px solid rgba(75, 55, 36, 0.16);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.82);
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 900;
+  padding: 0 8px;
+}
+
+.shrine-oracle-button {
+  min-height: 48px;
+  border: 1px solid rgba(63, 118, 82, 0.38);
+  border-radius: 8px;
+  background:
+    linear-gradient(90deg, rgba(93, 143, 195, 0.18), transparent 52%),
+    rgba(255, 250, 240, 0.92);
+  color: #315f42;
+  font-size: 0.96rem;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.shrine-section-heading button:hover,
+.shrine-section-heading button:focus-visible,
+.shrine-oracle-button:hover,
+.shrine-oracle-button:focus-visible {
+  border-color: rgba(63, 118, 82, 0.48);
+  outline: none;
+}
+
+.shrine-result-groups {
+  display: grid;
+  gap: 10px;
+}
+
+.shrine-round-result {
+  display: grid;
+  gap: 10px;
+  padding: 11px;
+  border: 1px solid rgba(75, 55, 36, 0.1);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.38);
+}
+
+.shrine-round-result h3 {
+  margin: 0;
+  color: #6e531e;
+  font-size: 0.98rem;
+}
+
+.shrine-teacher-result {
+  display: grid;
+  gap: 7px;
+  padding: 10px;
+  border: 1px solid rgba(93, 143, 195, 0.2);
+  border-radius: 8px;
+  background: rgba(246, 252, 247, 0.7);
+}
+
+.shrine-teacher-result > strong {
+  color: var(--green);
+  font-size: 0.95rem;
+}
+
+.shrine-teacher-result > small {
+  color: #5d8fc3;
+  font-size: 0.76rem;
+  font-weight: 900;
+}
+
+.shrine-result ol {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.shrine-result li {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr);
+  gap: 8px;
+  align-items: center;
+  padding: 8px 9px;
+  border: 1px solid rgba(75, 55, 36, 0.08);
+  border-radius: 8px;
+  background: rgba(255, 250, 240, 0.58);
+}
+
+.shrine-result li span {
+  color: #5d8fc3;
+  font-size: 0.76rem;
+  font-weight: 900;
+}
+
+.shrine-result li strong {
+  color: var(--ink);
+  font-size: 0.95rem;
+}
+
+.shrine-waiting {
+  display: grid;
+  gap: 4px;
+  padding: 10px;
+  border: 1px dashed rgba(197, 150, 58, 0.42);
+  border-radius: 8px;
+  background: rgba(255, 250, 240, 0.58);
+}
+
+.shrine-waiting strong {
+  color: #6e531e;
+}
+
 .card-header {
   display: flex;
   align-items: center;
@@ -6910,6 +7240,17 @@ button.library-collection-item.is-title.is-opening-book > span {
 }
 
 @media (max-width: 460px) {
+  .shrine-teacher-list label {
+    grid-template-columns: 22px minmax(0, 1fr);
+  }
+
+  .shrine-board-count {
+    grid-column: 2;
+    grid-template-columns: auto minmax(76px, 92px);
+    align-items: center;
+    justify-items: start;
+  }
+
   .map-destination-button.is-participation {
     left: 5%;
     top: 63%;
