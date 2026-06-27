@@ -1,16 +1,34 @@
 <!doctype html>
-<html lang="ja">
+<html lang="ja" translate="no" class="notranslate">
   <head>
     <meta charset="utf-8">
+    <meta http-equiv="Content-Language" content="ja">
+    <meta name="google" content="notranslate">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>冒険記録帳</title>
-    <link rel="stylesheet" href="styles.css?v=20260625-profile-cards-01">
+    <link rel="stylesheet" href="styles.css?v=20260627-admin-game-record-01">
   </head>
   <body>
     <main class="record-book" aria-label="冒険記録帳">
       <section class="map-hero" aria-label="水曜会探索マップ">
         <img src="assets/shonan-watercolor-map.png" alt="" aria-hidden="true">
         <div class="map-veil"></div>
+        <div class="map-destination-links" aria-label="地図の目的地">
+          <button type="button" class="map-destination-button is-participation" data-map-destination="participation">
+            <span class="map-pin" aria-hidden="true"></span>
+            <span>
+              <small>水曜会</small>
+              <strong>参加する</strong>
+            </span>
+          </button>
+          <button type="button" class="map-destination-button is-shrine" data-map-destination="shrine">
+            <span class="map-pin" aria-hidden="true"></span>
+            <span>
+              <small>次の目的地</small>
+              <strong>組み合わせ神社</strong>
+            </span>
+          </button>
+        </div>
         <div class="journey-title">
           <p>水曜会探索マップ</p>
           <h1>花を見つける小さな旅</h1>
@@ -41,7 +59,7 @@
             <small>まずここ</small>
           </button>
           <button type="button" class="info-tab" data-panel="titles" aria-pressed="false">書庫</button>
-          <button type="button" class="info-tab admin-tab" data-panel="admin" aria-pressed="false" aria-label="運営画面">管理</button>
+          <button type="button" class="info-tab admin-tab" data-panel="admin" aria-pressed="false" aria-label="運営画面" hidden>管理</button>
         </nav>
 
         <section class="info-panel" aria-live="polite" hidden>
@@ -173,11 +191,11 @@
               <span class="participation-stamp-copy">
                 <small>参加スタンプ</small>
                 <strong data-participation-flower-name>コスモス</strong>
-                <em>イベント参加でも押せる共通スタンプ</em>
+                <em>フォーム送信後、運営確認で反映します</em>
                 <span class="participation-stamp-count" data-participation-count>0/10回</span>
                 <span class="participation-stamp-status" data-participation-status>まだ未達成</span>
               </span>
-              <button type="button" class="participation-stamp-button" data-participation-stamp-button>参加スタンプを押す</button>
+              <button type="button" class="participation-stamp-button" data-participation-stamp-button>参加フォームを開く</button>
             </section>
             <div class="teacher-layout" data-teacher-mode="list">
               <section class="teacher-list teacher-screen is-active" aria-label="先生一覧">
@@ -315,7 +333,7 @@
                     <p class="achievement-copy" data-achievement-copy>5回目の指導スタンプで妖精があらわれました。</p>
                   </section>
                   <div class="detail-actions">
-                    <ol class="stamp-flow-steps" aria-label="スタンプ記録の流れ">
+                    <ol class="stamp-flow-steps" aria-label="スタンプ記録の流れ" hidden>
                       <li class="is-complete">先生選択</li>
                       <li data-flow-step="confirm">対局記録</li>
                       <li data-flow-step="done">確認待ち</li>
@@ -323,7 +341,7 @@
                     <section class="game-record-form" data-game-record-form hidden aria-label="対局記録の入力">
                       <label>
                         <span>対局日</span>
-                        <input type="date" data-game-record-date>
+                        <input type="date" lang="ja" data-game-record-date aria-label="対局日">
                       </label>
                       <label>
                         <span>ハンデ</span>
@@ -350,13 +368,19 @@
                         </select>
                       </label>
                     </section>
-                    <section class="stamp-confirm-card" data-confirm-card aria-label="記録内容の確認">
+                    <section class="stamp-confirm-card" data-confirm-card aria-label="記録内容の確認" hidden>
                       <small data-confirm-label>これから記録する内容</small>
                       <strong data-confirm-teacher>常石 隆志 六段</strong>
                       <span data-confirm-effect>指導後スタンプを1つ追加します。</span>
                     </section>
-                    <button type="button" class="complete-teacher">2. 対局記録を入力</button>
-                    <p data-flow-message>全先生と1回対局すると、一巡目の輪が冒険者カードに反映されます。</p>
+                    <a
+                      class="google-form-link"
+                      href="https://docs.google.com/forms/d/e/1FAIpQLSegoLkRkzQTTsj90BbVBdUOzocBhzh452_XsQ183cFLve9Glw/viewform?usp=dialog"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >対局記録フォームを開く（送信後は戻るボタンで戻ってください）</a>
+                    <button type="button" class="complete-teacher" hidden>2. 対局記録を入力</button>
+                    <p data-flow-message>対局後はフォーム送信だけで大丈夫です。運営確認後にスタンプへ反映します。</p>
                   </div>
                 </div>
                 <section class="teacher-game-records" data-teacher-game-records aria-label="保存した対局記録">
@@ -522,6 +546,74 @@
                 <div class="admin-adjustment-list" data-admin-adjustment-list></div>
               </section>
 
+              <section class="admin-participation-apply" aria-label="参加スタンプ反映">
+                <div class="admin-adjustments-header">
+                  <strong>参加フォーム確認</strong>
+                  <span data-admin-participation-date>本日</span>
+                </div>
+                <a
+                  class="admin-participation-form-link"
+                  href="https://docs.google.com/forms/d/e/1FAIpQLSdEqwXBhF3jDi-YUizfnNnLDfTzD7QJTK469-xwQwA21Gl_rA/viewform?usp=publish-editor"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >参加フォームを開く</a>
+                <label class="admin-participation-name">
+                  <span>お名前</span>
+                  <input type="text" data-admin-participation-name aria-label="参加者のお名前" autocomplete="off" placeholder="フォームの名前を入力">
+                </label>
+                <button type="button" data-admin-participation-apply>今日の参加スタンプを反映</button>
+                <small data-admin-participation-message>フォーム回答を確認してから押してください。</small>
+              </section>
+
+              <section class="admin-game-record-apply" aria-label="対局記録フォーム反映">
+                <div class="admin-adjustments-header">
+                  <strong>対局記録フォーム確認</strong>
+                  <span data-admin-game-record-date-label>本日</span>
+                </div>
+                <a
+                  class="admin-game-record-form-link"
+                  href="https://docs.google.com/forms/d/e/1FAIpQLSegoLkRkzQTTsj90BbVBdUOzocBhzh452_XsQ183cFLve9Glw/viewform?usp=dialog"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >対局記録フォームを開く</a>
+                <div class="admin-game-record-grid">
+                  <label>
+                    <span>先生</span>
+                    <select data-admin-game-record-teacher aria-label="先生を選択"></select>
+                  </label>
+                  <label>
+                    <span>対局日</span>
+                    <input type="date" data-admin-game-record-date aria-label="対局日">
+                  </label>
+                  <label>
+                    <span>ハンデ</span>
+                    <select data-admin-game-record-handicap aria-label="ハンデ">
+                      <option value="互先">互先</option>
+                      <option value="定先">定先</option>
+                      <option value="2子">2子</option>
+                      <option value="3子">3子</option>
+                      <option value="4子">4子</option>
+                      <option value="5子">5子</option>
+                      <option value="6子">6子</option>
+                      <option value="7子">7子</option>
+                      <option value="8子">8子</option>
+                      <option value="9子">9子</option>
+                    </select>
+                  </label>
+                  <label>
+                    <span>勝敗</span>
+                    <select data-admin-game-record-result aria-label="勝敗">
+                      <option value="記録なし">記録なし</option>
+                      <option value="勝ち">勝ち</option>
+                      <option value="負け">負け</option>
+                      <option value="持碁">持碁</option>
+                    </select>
+                  </label>
+                </div>
+                <button type="button" data-admin-game-record-apply>対局記録と先生スタンプを反映</button>
+                <small data-admin-game-record-message>フォーム回答を確認してから押してください。</small>
+              </section>
+
               <section class="admin-history" aria-label="直近の操作履歴">
                 <div class="admin-adjustments-header">
                   <strong>直近の操作履歴</strong>
@@ -642,7 +734,7 @@
         status.textContent = "画面の操作が止まりました。Codexにこの表示を見せてください: " + event.message;
       });
     </script>
-    <script src="stamp-rules.js?v=20260619-fairy-guide"></script>
-    <script src="script.js?v=20260623-current-flower-03"></script>
+    <script src="stamp-rules.js?v=20260627-admin-game-record-01"></script>
+    <script src="script.js?v=20260627-admin-game-record-01"></script>
   </body>
 </html>

@@ -474,6 +474,7 @@ const userProgressTemplate = {
 
   stamps: {
     participationCount: 0,
+    lastParticipationStampDate: "",
 
     teacherLessonCounts: {
       tsuneishi: 0,

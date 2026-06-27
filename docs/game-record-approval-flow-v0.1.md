@@ -22,6 +22,14 @@
 
 今年の運用は、まず Googleフォームと Googleスプレッドシートを使う。
 
+参加フォーム:
+https://docs.google.com/forms/d/e/1FAIpQLSdEqwXBhF3jDi-YUizfnNnLDfTzD7QJTK469-xwQwA21Gl_rA/viewform?usp=publish-editor
+
+対局記録フォーム:
+https://docs.google.com/forms/d/e/1FAIpQLSegoLkRkzQTTsj90BbVBdUOzocBhzh452_XsQ183cFLve9Glw/viewform?usp=dialog
+
+アプリ内の先生詳細では「フォームを開く（送信後は戻るボタンで戻ってください）」として案内する。
+
 ### 使用者側
 
 使用者は Googleフォームで対局記録を送信する。

@@ -4,7 +4,10 @@ const tabs = document.querySelectorAll(".info-tab");
 const panels = document.querySelectorAll(".panel-view");
 const dock = document.querySelector(".info-dock");
 const infoPanel = document.querySelector(".info-panel");
+const infoTabs = document.querySelector(".info-tabs");
 const closeButton = document.querySelector(".close-panel");
+const guidebookButton = document.querySelector(".guidebook-button");
+const adminTab = document.querySelector(".admin-tab");
 const teacherCards = document.querySelectorAll(".teacher-card");
 const teacherLayout = document.querySelector(".teacher-layout");
 const teacherList = document.querySelector(".teacher-list");
@@ -124,12 +127,24 @@ const adminRestoreSummary = document.querySelector("[data-admin-restore-summary]
 const adminRestoreInput = document.querySelector("[data-admin-restore-input]");
 const adminRestoreCancel = document.querySelector("[data-admin-restore-cancel]");
 const adminRestoreConfirmButton = document.querySelector("[data-admin-restore-confirm-button]");
+const adminParticipationDate = document.querySelector("[data-admin-participation-date]");
+const adminParticipationName = document.querySelector("[data-admin-participation-name]");
+const adminParticipationApply = document.querySelector("[data-admin-participation-apply]");
+const adminParticipationMessage = document.querySelector("[data-admin-participation-message]");
+const adminGameRecordDateLabel = document.querySelector("[data-admin-game-record-date-label]");
+const adminGameRecordTeacher = document.querySelector("[data-admin-game-record-teacher]");
+const adminGameRecordDate = document.querySelector("[data-admin-game-record-date]");
+const adminGameRecordHandicap = document.querySelector("[data-admin-game-record-handicap]");
+const adminGameRecordResult = document.querySelector("[data-admin-game-record-result]");
+const adminGameRecordApply = document.querySelector("[data-admin-game-record-apply]");
+const adminGameRecordMessage = document.querySelector("[data-admin-game-record-message]");
 const nextAdventureButton = document.querySelector("[data-next-adventure-button]");
 const nextAdventureTitle = document.querySelector("[data-next-adventure-title]");
 const nextAdventureCopy = document.querySelector("[data-next-adventure-copy]");
 const nextAdventureGuide = document.querySelector("[data-next-adventure-guide]");
 const nextAdventureGuideImage = document.querySelector("[data-next-adventure-guide-image]");
 const nextAdventureGuideSpeech = document.querySelector("[data-next-adventure-guide-speech]");
+const mapDestinationButtons = document.querySelectorAll("[data-map-destination]");
 const operatorAuthModal = document.querySelector("[data-operator-auth]");
 const operatorAuthTitle = document.querySelector("[data-operator-auth-title]");
 const operatorAuthSummary = document.querySelector("[data-operator-auth-summary]");
@@ -164,6 +179,8 @@ const operationHistoryStorageKey = "suiyoukai-operation-history-v1";
 const backupAppId = "suiyoukai-stamp-adventure";
 const backupFormatVersion = 1;
 const adminPasscode = "suiyoukai2026";
+const externalGameRecordFormEnabled = true;
+const participationFormUrl = "https://docs.google.com/forms/d/e/1FAIpQLSdEqwXBhF3jDi-YUizfnNnLDfTzD7QJTK469-xwQwA21Gl_rA/viewform?usp=publish-editor";
 const ruleTargets = window.teacherStampTargets ?? [];
 const participationRule = window.stampRules?.participation ?? {};
 const teacherLessonRule = window.stampRules?.teacherLesson ?? {};
@@ -554,6 +571,12 @@ const normalizeProgressCount = (count) => Math.max(0, Number(count) || 0);
 const getStoredParticipationCount = (progress = {}) =>
   progress.stamps?.participationCount ?? progress.participationCount ?? 0;
 
+const getStoredLastParticipationStampDate = (progress = {}) =>
+  progress.stamps?.lastParticipationStampDate ?? progress.lastParticipationStampDate ?? "";
+
+const sanitizeStampDate = (value) =>
+  typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value) ? value : "";
+
 const getStoredTeacherLessonCounts = (progress = {}) =>
   progress.stamps?.teacherLessonCounts ?? progress.teacherLessonCounts ?? {};
 
@@ -615,6 +638,7 @@ const sanitizeProgress = (progress = {}) => {
         getStoredParticipationCount(progress) ?? template.stamps.participationCount,
         getParticipationMaxCount()
       ),
+      lastParticipationStampDate: sanitizeStampDate(getStoredLastParticipationStampDate(progress)),
       teacherLessonCounts,
       teacherCircleRounds: getTeacherCircleRoundsFromCounts(teacherLessonCounts),
     },
@@ -637,6 +661,7 @@ const createResetProgress = () => {
     schemaVersion: template.schemaVersion,
     stamps: {
       participationCount: 0,
+      lastParticipationStampDate: "",
       teacherLessonCounts,
       teacherCircleRounds: 0,
     },
@@ -1239,8 +1264,177 @@ const addParticipationStamp = () => {
     normalizeProgressCount(userProgress.stamps.participationCount) + 1,
     getParticipationMaxCount()
   );
+  userProgress.stamps.lastParticipationStampDate = getTodayForInput();
   syncProgressRewards();
   saveUserProgress();
+};
+
+const populateAdminGameRecordTeachers = () => {
+  if (!adminGameRecordTeacher) {
+    return;
+  }
+
+  adminGameRecordTeacher.textContent = "";
+  for (const [teacherId, teacher] of Object.entries(teacherDetails)) {
+    const option = document.createElement("option");
+    option.value = teacherId;
+    option.textContent = teacher.name;
+    adminGameRecordTeacher.append(option);
+  }
+};
+
+const getAdminGameRecordDraft = () => ({
+  teacherId: adminGameRecordTeacher?.value || activeTeacherKey,
+  date: adminGameRecordDate?.value || getTodayForInput(),
+  handicap: adminGameRecordHandicap?.value || "互先",
+  result: adminGameRecordResult?.value || "記録なし",
+});
+
+const updateAdminGameRecordApply = () => {
+  if (!adminGameRecordApply || !adminGameRecordMessage) {
+    return;
+  }
+
+  if (adminGameRecordDate && !adminGameRecordDate.value) {
+    adminGameRecordDate.value = getTodayForInput();
+  }
+
+  const today = getTodayForInput();
+  const todayLabel = new Date(`${today}T00:00:00`).toLocaleDateString("ja-JP", {
+    month: "numeric",
+    day: "numeric",
+    weekday: "short",
+  });
+  const draft = getAdminGameRecordDraft();
+  const teacher = teacherDetails[draft.teacherId];
+  const currentCount = teacher
+    ? normalizeProgressCount(userProgress.stamps.teacherLessonCounts[draft.teacherId])
+    : 0;
+  const isMaxAchieved = teacher ? currentCount >= getTeacherMaxCount(teacher) : true;
+
+  if (adminGameRecordDateLabel) {
+    adminGameRecordDateLabel.textContent = `本日 ${todayLabel}`;
+  }
+
+  adminGameRecordApply.disabled = !teacher || isMaxAchieved;
+  adminGameRecordApply.textContent = isMaxAchieved
+    ? "この先生は達成済み"
+    : "対局記録と先生スタンプを反映";
+  adminGameRecordMessage.textContent = isMaxAchieved
+    ? "この先生の花スタンプはすべて達成済みです。"
+    : "フォーム回答を確認してから押してください。";
+};
+
+const applyGameRecordFromAdmin = () => {
+  const draft = getAdminGameRecordDraft();
+  const teacher = teacherDetails[draft.teacherId];
+
+  if (!teacher) {
+    updateAdminGameRecordApply();
+    return;
+  }
+
+  const before = normalizeProgressCount(userProgress.stamps.teacherLessonCounts[draft.teacherId]);
+  if (before >= getTeacherMaxCount(teacher)) {
+    updateAdminGameRecordApply();
+    return;
+  }
+
+  gameRecords.push({
+    id: `game-admin-${Date.now()}-${draft.teacherId}`,
+    teacherId: draft.teacherId,
+    date: draft.date,
+    handicap: draft.handicap,
+    result: draft.result,
+    recordedAt: new Date().toISOString(),
+  });
+  saveGameRecords();
+
+  userProgress.stamps.teacherLessonCounts[draft.teacherId] = clampProgressCount(before + 1, getTeacherMaxCount(teacher));
+  userProgress.stamps.teacherCircleRounds = getTeacherCircleRoundsFromCounts(userProgress.stamps.teacherLessonCounts);
+  syncTeacherDetailsFromProgress();
+  syncProgressRewards();
+  saveUserProgress();
+  appendOperationHistory({
+    type: "teacher_stamp",
+    target: `${teacher.name} 対局記録`,
+    before,
+    after: normalizeProgressCount(userProgress.stamps.teacherLessonCounts[draft.teacherId]),
+  });
+  syncAdminDraftFromProgress();
+  renderTeacherGameRecords(activeTeacherKey);
+  updateParticipationStampCard();
+  updateTeacherCards();
+  updateRoundProgress();
+  updateProfileCard();
+  updateAdminPanel();
+
+  if (adminGameRecordMessage) {
+    adminGameRecordMessage.textContent = `${teacher.name} の対局記録と先生スタンプを反映しました。`;
+  }
+};
+
+const updateAdminParticipationApply = () => {
+  if (!adminParticipationDate || !adminParticipationApply || !adminParticipationMessage) {
+    return;
+  }
+
+  const today = getTodayForInput();
+  const todayLabel = new Date(`${today}T00:00:00`).toLocaleDateString("ja-JP", {
+    month: "numeric",
+    day: "numeric",
+    weekday: "short",
+  });
+  const isStampedToday = userProgress.stamps.lastParticipationStampDate === today;
+  const currentCount = normalizeProgressCount(userProgress.stamps.participationCount);
+  const isMaxAchieved = currentCount >= getParticipationMaxCount();
+
+  adminParticipationDate.textContent = `本日 ${todayLabel}`;
+  adminParticipationApply.disabled = isStampedToday || isMaxAchieved;
+  adminParticipationApply.textContent = isStampedToday
+    ? "本日は反映済み"
+    : isMaxAchieved
+      ? "参加スタンプ達成済み"
+      : "今日の参加スタンプを反映";
+
+  if (isStampedToday) {
+    adminParticipationMessage.textContent = "今日はすでに参加スタンプを反映しています。";
+  } else if (isMaxAchieved) {
+    adminParticipationMessage.textContent = "参加スタンプはすべて達成済みです。";
+  } else {
+    adminParticipationMessage.textContent = "フォーム回答を確認してから押してください。";
+  }
+};
+
+const applyTodayParticipationStampFromAdmin = () => {
+  if (userProgress.stamps.lastParticipationStampDate === getTodayForInput()) {
+    updateAdminParticipationApply();
+    return;
+  }
+
+  const before = normalizeProgressCount(userProgress.stamps.participationCount);
+  if (before >= getParticipationMaxCount()) {
+    updateAdminParticipationApply();
+    return;
+  }
+
+  const participantName = adminParticipationName?.value.trim() || "参加者";
+  addParticipationStamp();
+  appendOperationHistory({
+    type: "participation_stamp",
+    target: `${participantName} 参加スタンプ`,
+    before,
+    after: normalizeProgressCount(userProgress.stamps.participationCount),
+  });
+  syncAdminDraftFromProgress();
+  updateParticipationStampCard();
+  updateTeacherCards();
+  updateRoundProgress();
+  updateProfileCard();
+  updateAdminPanel();
+  if (adminParticipationMessage) {
+    adminParticipationMessage.textContent = `${participantName} さんの本日分を反映しました。`;
+  }
 };
 
 const getAdminDraftChanges = () => {
@@ -1471,6 +1665,13 @@ const getCurrentProgressForEvaluation = () => userProgress;
 const getCurrentAchievementResult = () =>
   window.achievementEvaluators.evaluateAllAchievements(getCurrentProgressForEvaluation());
 
+const hasParticipationStampToday = () =>
+  userProgress.stamps.lastParticipationStampDate === getTodayForInput();
+
+const openParticipationForm = () => {
+  window.open(participationFormUrl, "_blank", "noopener,noreferrer");
+};
+
 const updateParticipationStampCard = () => {
   if (!participationCount || !participationStatus || !participationStampButton) {
     return;
@@ -1480,6 +1681,8 @@ const updateParticipationStampCard = () => {
   const goal = getParticipationGoal();
   const cycleProgress = getCycleProgress(currentCount, goal, participationFlowerCycles);
   const isFirstAchievementAchieved = currentCount >= goal;
+  const isMaxAchieved = currentCount >= cycleProgress.maxCount;
+  const isStampedToday = hasParticipationStampToday();
 
   if (participationFlowerName) {
     participationFlowerName.textContent = cycleProgress.cycle.flowerName;
@@ -1488,11 +1691,15 @@ const updateParticipationStampCard = () => {
   applyFlowerVisual(participationFlower, cycleProgress.cycle);
 
   participationCount.textContent = `${cycleProgress.countInCycle}/${goal}回`;
-  participationStatus.textContent = isFirstAchievementAchieved
-    ? `${cycleProgress.cycleNumber}巡目 ${cycleProgress.cycle.flowerName}`
-    : `あと${Math.max(0, goal - cycleProgress.countInCycle)}回`;
-  participationStampButton.textContent = currentCount >= cycleProgress.maxCount ? "参加スタンプ達成済み" : "運営確認して参加スタンプを押す";
-  participationStampButton.disabled = currentCount >= cycleProgress.maxCount;
+  participationStatus.textContent = isStampedToday
+    ? "本日は押印済み"
+    : isFirstAchievementAchieved
+      ? `${cycleProgress.cycleNumber}巡目 ${cycleProgress.cycle.flowerName}`
+      : `あと${Math.max(0, goal - cycleProgress.countInCycle)}回`;
+  participationStampButton.textContent = isMaxAchieved
+    ? "参加スタンプ達成済み"
+    : "参加フォームを開く";
+  participationStampButton.disabled = isMaxAchieved;
 };
 
 const getAssetPath = (asset) => {
@@ -2785,6 +2992,8 @@ const updateAdminPanel = () => {
   adminStampButton.disabled = !isAdminDraftDirty;
   renderAdminAdjustments();
   renderAdminHistory();
+  updateAdminParticipationApply();
+  updateAdminGameRecordApply();
 };
 
 const isTeacherCycleAchievementCount = (count, teacher) => {
@@ -2807,6 +3016,16 @@ const setRecordPhase = (phase, teacher) => {
   gameRecordForm.hidden = phase !== "confirm";
   confirmCard.hidden = teacher.stampCount >= getTeacherMaxCount(teacher) && phase !== "done";
   confirmCard.classList.toggle("is-achievement-preview", phase === "confirm" && isTeacherCycleAchievementCount(teacher.stampCount + 1, teacher));
+
+  if (externalGameRecordFormEnabled && phase !== "done" && phase !== "achievement") {
+    gameRecordForm.hidden = true;
+    confirmCard.hidden = true;
+    completeTeacherButton.hidden = true;
+    flowMessage.textContent = teacher.stampCount >= getTeacherMaxCount(teacher)
+      ? "この先生の花スタンプはすべて達成済みです。"
+      : "対局後はフォーム送信だけで大丈夫です。運営確認後にスタンプへ反映します。";
+    return;
+  }
 
   if (teacher.stampCount >= getTeacherMaxCount(teacher) && phase !== "done" && phase !== "achievement") {
     completeTeacherButton.textContent = "全ての花スタンプ達成済み";
@@ -3070,14 +3289,23 @@ for (const flowerCard of flowerGuideCards) {
     const flowerMeta = flowerCard.querySelector(".flower-guide-meta")?.textContent ?? "";
 
     if (target === "participation") {
-      participationStamp?.scrollIntoView({ behavior: "smooth", block: "center" });
-      participationStampButton?.focus({ preventScroll: true });
-      showFlowerGuideArrival(participationStamp, `${flowerName}の参加スタンプです`);
+      openParticipationForm();
       return;
     }
 
     openTeacherDetailFromCard(document.querySelector(`.teacher-card[data-teacher="${target}"]`));
     showFlowerGuideArrival(teacherDetail, `${flowerName}は${flowerMeta}の1巡目の花です`);
+  });
+}
+
+for (const button of mapDestinationButtons) {
+  button.addEventListener("click", () => {
+    if (button.dataset.mapDestination === "participation") {
+      openParticipationForm();
+      return;
+    }
+
+    window.alert("組み合わせ神社は準備中です。次の目的地として設計を進めます。");
   });
 }
 
@@ -3123,6 +3351,77 @@ achievementProfileButton.addEventListener("click", () => {
   showPanel("profile");
 });
 
+let adminEntryTimer = null;
+let adminEntryTapCount = 0;
+let adminEntryTapResetTimer = null;
+const adminEntryHash = "#admin";
+
+const clearAdminEntryTimer = () => {
+  if (!adminEntryTimer) {
+    return;
+  }
+
+  window.clearTimeout(adminEntryTimer);
+  adminEntryTimer = null;
+};
+
+const openAdminEntry = () => {
+  clearAdminEntryTimer();
+  window.clearTimeout(adminEntryTapResetTimer);
+  adminEntryTapCount = 0;
+  if (adminTab) {
+    adminTab.hidden = false;
+  }
+  infoTabs?.classList.add("is-admin-available");
+  lockAdminPanel();
+  showPanel("admin");
+  adminPasscodeMessage.textContent = "運営用パスコードを入力してください。";
+  adminPasscodeInput?.focus();
+};
+
+const syncAdminDirectEntry = () => {
+  const shouldShow = window.location.hash === adminEntryHash;
+  if (adminTab) {
+    adminTab.hidden = !shouldShow;
+  }
+  infoTabs?.classList.toggle("is-admin-available", shouldShow);
+};
+
+guidebookButton?.addEventListener("pointerdown", () => {
+  clearAdminEntryTimer();
+  adminEntryTimer = window.setTimeout(openAdminEntry, 1200);
+});
+
+for (const eventName of ["pointerup", "pointerleave", "pointercancel", "blur"]) {
+  guidebookButton?.addEventListener(eventName, clearAdminEntryTimer);
+}
+
+guidebookButton?.addEventListener("click", () => {
+  if (window.location.hash === adminEntryHash) {
+    openAdminEntry();
+    return;
+  }
+
+  window.clearTimeout(adminEntryTapResetTimer);
+  adminEntryTapCount += 1;
+
+  if (adminEntryTapCount >= 3) {
+    if (adminTab) {
+      adminTab.hidden = false;
+      adminTab.focus();
+    }
+    infoTabs?.classList.add("is-admin-available");
+    return;
+  }
+
+  adminEntryTapResetTimer = window.setTimeout(() => {
+    adminEntryTapCount = 0;
+  }, 1800);
+});
+
+window.addEventListener("hashchange", syncAdminDirectEntry);
+syncAdminDirectEntry();
+
 nextAdventureButton.addEventListener("click", () => {
   if (nextAdventureButton.dataset.adventureType === "complete") {
     showPanel("titles");
@@ -3163,22 +3462,16 @@ for (const input of [gameRecordDate, gameRecordHandicap, gameRecordResult]) {
 }
 
 participationStampButton.addEventListener("click", () => {
-  const before = normalizeProgressCount(userProgress.stamps.participationCount);
-  const after = Math.min(getParticipationMaxCount(), before + 1);
-
-  openOperatorAuth({
-    title: "参加スタンプを押印",
-    summary: `参加スタンプを ${before}回 → ${after}回 にします。`,
-    action: () => {
-      addParticipationStamp();
-      appendOperationHistory({ type: "participation_stamp", target: "参加スタンプ", before, after });
-      syncAdminDraftFromProgress();
-      updateParticipationStampCard();
-      updateProfileCard();
-      updateAdminPanel();
-    },
-  });
+  openParticipationForm();
 });
+
+adminParticipationApply?.addEventListener("click", applyTodayParticipationStampFromAdmin);
+adminGameRecordApply?.addEventListener("click", applyGameRecordFromAdmin);
+
+for (const input of [adminGameRecordTeacher, adminGameRecordDate, adminGameRecordHandicap, adminGameRecordResult]) {
+  input?.addEventListener("input", updateAdminGameRecordApply);
+  input?.addEventListener("change", updateAdminGameRecordApply);
+}
 
 completeTeacherButton.addEventListener("click", () => {
   const teacher = teacherDetails[activeTeacherKey];
@@ -3383,6 +3676,7 @@ updateParticipationStampCard();
 updateTeacherCards();
 updateRoundProgress();
 updateProfileCard();
+populateAdminGameRecordTeachers();
 updateAdminPanel();
 updateAdminLockState();
 

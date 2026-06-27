@@ -363,8 +363,8 @@
   box-shadow: none;
 }
 
-.info-dock.is-detail-open .teacher-detail .teacher-photo-card .stamp-flow-steps,
-.info-dock.is-detail-open .teacher-detail .teacher-photo-card .stamp-confirm-card {
+.info-dock.is-detail-open .teacher-detail .teacher-photo-card .stamp-flow-steps:not([hidden]),
+.info-dock.is-detail-open .teacher-detail .teacher-photo-card .stamp-confirm-card:not([hidden]) {
   display: grid;
 }
 
@@ -523,6 +523,98 @@ button {
     linear-gradient(90deg, rgba(255, 250, 240, 0.12), transparent 46%);
   pointer-events: none;
 
+}
+
+.map-destination-links {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.map-destination-button {
+  position: absolute;
+  display: inline-grid;
+  grid-template-columns: 28px minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+  min-width: 154px;
+  min-height: 50px;
+  padding: 8px 12px 8px 9px;
+  border: 1px solid rgba(75, 55, 36, 0.2);
+  border-radius: 999px;
+  background: rgba(255, 252, 244, 0.82);
+  color: var(--ink);
+  box-shadow: 0 10px 22px rgba(48, 38, 26, 0.14);
+  text-align: left;
+  cursor: pointer;
+  pointer-events: auto;
+  backdrop-filter: blur(4px);
+}
+
+.map-destination-button small,
+.map-destination-button strong {
+  display: block;
+  line-height: 1.25;
+}
+
+.map-destination-button small {
+  color: var(--muted);
+  font-size: 0.68rem;
+  font-weight: 900;
+}
+
+.map-destination-button strong {
+  color: #386b4b;
+  font-size: 0.9rem;
+  font-weight: 900;
+}
+
+.map-pin {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: 2px solid rgba(255, 252, 244, 0.95);
+  border-radius: 50% 50% 50% 8px;
+  background: var(--destination-color, #d89b3c);
+  box-shadow:
+    0 3px 8px rgba(48, 38, 26, 0.18),
+    inset 0 0 0 2px rgba(255, 252, 244, 0.38);
+  transform: rotate(-45deg);
+}
+
+.map-pin::after {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 252, 244, 0.95);
+}
+
+.map-destination-button > span:last-child {
+  min-width: 0;
+}
+
+.map-destination-button.is-participation {
+  --destination-color: #d9a53c;
+  right: clamp(94px, 20vw, 292px);
+  bottom: clamp(128px, 18vw, 250px);
+}
+
+.map-destination-button.is-shrine {
+  --destination-color: #5d8fc3;
+  right: clamp(34px, 10vw, 156px);
+  bottom: clamp(250px, 34vw, 450px);
+}
+
+.map-destination-button:hover,
+.map-destination-button:focus-visible {
+  border-color: rgba(63, 118, 82, 0.38);
+  background: rgba(255, 252, 244, 0.94);
+  outline: none;
+  transform: translateY(-1px);
 }
 
 .journey-title {
@@ -759,7 +851,7 @@ button {
 
 .info-tabs {
   display: grid;
-  grid-template-columns: 1.12fr 1.08fr 0.74fr 52px;
+  grid-template-columns: 1.12fr 1.08fr 0.74fr;
   gap: 6px;
   padding: 7px;
   border: 1px solid var(--line);
@@ -767,6 +859,10 @@ button {
   background: rgba(255, 250, 240, 0.82);
   box-shadow: 0 12px 28px rgba(48, 38, 26, 0.15);
   backdrop-filter: blur(5px);
+}
+
+.info-tabs.is-admin-available {
+  grid-template-columns: 1.06fr 1fr 0.72fr 52px;
 }
 
 .info-dock.is-collapsed .info-tabs {
@@ -786,6 +882,10 @@ button {
   font-weight: 900;
   cursor: pointer;
   white-space: nowrap;
+}
+
+.info-tab[hidden] {
+  display: none !important;
 }
 
 .info-tab span,
@@ -1820,6 +1920,105 @@ dd {
 .admin-adjustment-list {
   display: grid;
   gap: 9px;
+}
+
+.admin-participation-apply,
+.admin-game-record-apply {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid rgba(63, 118, 82, 0.24);
+  border-radius: 8px;
+  background:
+    linear-gradient(90deg, rgba(63, 118, 82, 0.09), transparent 48%),
+    rgba(246, 252, 247, 0.62);
+}
+
+.admin-participation-name,
+.admin-game-record-grid label {
+  display: grid;
+  gap: 6px;
+  color: var(--green);
+  font-size: 0.76rem;
+  font-weight: 900;
+}
+
+.admin-participation-name input,
+.admin-game-record-grid input,
+.admin-game-record-grid select {
+  min-height: 42px;
+  min-width: 0;
+  border: 1px solid rgba(75, 55, 36, 0.18);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.82);
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.92rem;
+  font-weight: 900;
+  padding: 0 12px;
+}
+
+.admin-game-record-grid {
+  display: grid;
+  gap: 9px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+@media (max-width: 460px) {
+  .admin-game-record-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.admin-participation-form-link,
+.admin-game-record-form-link {
+  display: grid;
+  place-items: center;
+  min-height: 42px;
+  border: 1px solid rgba(197, 150, 58, 0.34);
+  border-radius: 8px;
+  background: rgba(255, 250, 240, 0.72);
+  color: #6e531e;
+  font-size: 0.84rem;
+  font-weight: 900;
+  text-align: center;
+  text-decoration: none;
+}
+
+.admin-participation-form-link:hover,
+.admin-participation-form-link:focus-visible,
+.admin-game-record-form-link:hover,
+.admin-game-record-form-link:focus-visible {
+  border-color: rgba(63, 118, 82, 0.38);
+  outline: none;
+}
+
+.admin-participation-apply button,
+.admin-game-record-apply button {
+  min-height: 46px;
+  border: 1px solid rgba(63, 118, 82, 0.38);
+  border-radius: 8px;
+  background:
+    linear-gradient(90deg, rgba(63, 118, 82, 0.16), transparent 52%),
+    rgba(255, 250, 240, 0.9);
+  color: #315f42;
+  font-size: 0.92rem;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.admin-participation-apply button:disabled,
+.admin-game-record-apply button:disabled {
+  cursor: default;
+  opacity: 0.62;
+}
+
+.admin-participation-apply small,
+.admin-game-record-apply small {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 800;
+  line-height: 1.5;
 }
 
 .admin-history {
@@ -3401,6 +3600,30 @@ dd {
   font-size: 0.84rem;
   font-weight: 900;
   cursor: pointer;
+}
+
+.google-form-link {
+  display: block;
+  width: 100%;
+  min-height: 42px;
+  padding: 12px 14px;
+  border: 1px solid rgba(63, 118, 82, 0.34);
+  border-radius: 8px;
+  background:
+    linear-gradient(90deg, rgba(63, 118, 82, 0.14), transparent 52%),
+    rgba(247, 252, 241, 0.9);
+  color: #2f6846;
+  font-size: 0.84rem;
+  font-weight: 900;
+  line-height: 1.35;
+  text-align: center;
+  text-decoration: none;
+}
+
+.google-form-link:hover,
+.google-form-link:focus-visible {
+  border-color: rgba(63, 118, 82, 0.5);
+  outline: none;
 }
 
 .complete-teacher:hover,
@@ -5967,6 +6190,45 @@ button.library-collection-item.is-title.is-opening-book > span {
     padding: 11px 13px;
   }
 
+  .map-destination-button {
+    grid-template-columns: 24px minmax(0, 1fr);
+    min-width: 136px;
+    min-height: 46px;
+    padding: 7px 10px 7px 8px;
+  }
+
+  .map-destination-button strong {
+    font-size: 0.82rem;
+  }
+
+  .map-destination-button small {
+    font-size: 0.62rem;
+  }
+
+  .map-pin {
+    width: 24px;
+    height: 24px;
+  }
+
+  .map-pin::after {
+    width: 7px;
+    height: 7px;
+  }
+
+  .map-destination-button.is-participation {
+    left: 18px;
+    right: auto;
+    top: 536px;
+    bottom: auto;
+  }
+
+  .map-destination-button.is-shrine {
+    left: 106px;
+    right: auto;
+    top: 402px;
+    bottom: auto;
+  }
+
   .info-dock {
     justify-self: center;
     width: min(100%, 520px);
@@ -5987,9 +6249,13 @@ button.library-collection-item.is-title.is-opening-book > span {
   }
 
   .info-tabs {
-    grid-template-columns: 1.12fr 1.02fr 0.72fr 0.68fr;
+    grid-template-columns: 1.12fr 1.02fr 0.72fr;
     gap: 4px;
     padding: 5px;
+  }
+
+  .info-tabs.is-admin-available {
+    grid-template-columns: 1.02fr 0.94fr 0.66fr 44px;
   }
 
   .info-tab {
@@ -6644,6 +6910,16 @@ button.library-collection-item.is-title.is-opening-book > span {
 }
 
 @media (max-width: 460px) {
+  .map-destination-button.is-participation {
+    left: 5%;
+    top: 63%;
+  }
+
+  .map-destination-button.is-shrine {
+    left: 27%;
+    top: 47%;
+  }
+
   .info-dock.is-detail-open .teacher-photo-card {
     min-height: 680px;
     padding-bottom: 158px;
@@ -7019,8 +7295,8 @@ button.library-collection-item.is-title.is-opening-book > span {
   box-shadow: none;
 }
 
-.info-dock.is-detail-open .teacher-detail .teacher-photo-card .stamp-flow-steps,
-.info-dock.is-detail-open .teacher-detail .teacher-photo-card .stamp-confirm-card,
+.info-dock.is-detail-open .teacher-detail .teacher-photo-card .stamp-flow-steps:not([hidden]),
+.info-dock.is-detail-open .teacher-detail .teacher-photo-card .stamp-confirm-card:not([hidden]),
 .info-dock.is-detail-open .teacher-detail .teacher-photo-card .detail-actions p {
   display: revert;
 }
@@ -7286,7 +7562,7 @@ body {
   }
 
   .info-tabs {
-    grid-template-columns: 1.08fr 1fr 0.72fr 0.66fr;
+    grid-template-columns: 1.08fr 1fr 0.72fr;
     gap: 4px;
     padding: 5px;
   }
