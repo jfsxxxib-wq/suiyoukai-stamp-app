@@ -1135,6 +1135,39 @@ button {
   padding: 0 8px;
 }
 
+.shrine-mode-switch {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.shrine-mode-switch button {
+  min-height: 40px;
+  border: 1px solid rgba(75, 55, 36, 0.14);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.56);
+  color: var(--muted);
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.shrine-mode-switch button.is-active {
+  border-color: rgba(93, 143, 195, 0.38);
+  background:
+    linear-gradient(90deg, rgba(93, 143, 195, 0.16), transparent 58%),
+    rgba(255, 250, 240, 0.92);
+  color: #315f42;
+}
+
+.shrine-mode-switch button:hover,
+.shrine-mode-switch button:focus-visible {
+  border-color: rgba(63, 118, 82, 0.42);
+  outline: none;
+}
+
 .shrine-card h3,
 .shrine-card small,
 .shrine-card strong,
@@ -1174,6 +1207,110 @@ button {
   font-size: 0.78rem;
   font-weight: 900;
   cursor: pointer;
+}
+
+.shrine-participant-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.shrine-roster-panel {
+  display: grid;
+  gap: 9px;
+  padding: 10px;
+  border: 1px solid rgba(93, 143, 195, 0.18);
+  border-radius: 8px;
+  background:
+    linear-gradient(90deg, rgba(93, 143, 195, 0.08), transparent 58%),
+    rgba(255, 252, 244, 0.64);
+}
+
+.shrine-roster-panel[hidden] {
+  display: none;
+}
+
+.shrine-roster-actions {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 6px;
+}
+
+.shrine-roster-actions button,
+.shrine-roster-editor button {
+  min-height: 38px;
+  border: 1px solid rgba(63, 118, 82, 0.28);
+  border-radius: 8px;
+  background: rgba(255, 250, 240, 0.88);
+  color: #315f42;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.shrine-roster-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+  max-height: 230px;
+  overflow: auto;
+  padding-right: 2px;
+}
+
+.shrine-roster-list label {
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr);
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 7px 8px;
+  border: 1px solid rgba(75, 55, 36, 0.1);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.54);
+  color: var(--ink);
+  font-size: 0.84rem;
+  font-weight: 900;
+}
+
+.shrine-roster-list input {
+  width: 18px;
+  height: 18px;
+  accent-color: #5d8fc3;
+}
+
+.shrine-roster-editor {
+  display: grid;
+  gap: 7px;
+  color: var(--green);
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
+.shrine-roster-editor[hidden] {
+  display: none;
+}
+
+.shrine-roster-editor textarea {
+  width: 100%;
+  min-height: 132px;
+  resize: vertical;
+  border: 1px solid rgba(75, 55, 36, 0.18);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.82);
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 800;
+  line-height: 1.5;
+  padding: 9px 11px;
+}
+
+.shrine-roster-panel small {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 800;
 }
 
 .shrine-participant-input {
@@ -1354,6 +1491,19 @@ button {
 .shrine-result li strong {
   color: var(--ink);
   font-size: 0.95rem;
+}
+
+.shrine-pair-list li,
+.shrine-pairgo-list li {
+  grid-template-columns: 46px minmax(0, 1fr) 24px minmax(0, 1fr);
+}
+
+.shrine-pair-list li small,
+.shrine-pairgo-list li small {
+  color: #6e531e;
+  font-size: 0.76rem;
+  font-weight: 900;
+  text-align: center;
 }
 
 .shrine-waiting {
@@ -7240,6 +7390,43 @@ button.library-collection-item.is-title.is-opening-book > span {
 }
 
 @media (max-width: 460px) {
+  .shrine-mode-switch {
+    grid-template-columns: 1fr;
+  }
+
+  .shrine-section-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .shrine-participant-actions,
+  .shrine-roster-actions {
+    width: 100%;
+    grid-template-columns: 1fr;
+  }
+
+  .shrine-participant-actions {
+    display: grid;
+  }
+
+  .shrine-roster-list {
+    grid-template-columns: 1fr;
+    max-height: 260px;
+  }
+
+  .shrine-pair-list li {
+    grid-template-columns: 42px minmax(0, 1fr);
+  }
+
+  .shrine-pairgo-list li {
+    grid-template-columns: 42px minmax(0, 1fr);
+  }
+
+  .shrine-pair-list li small,
+  .shrine-pairgo-list li small {
+    display: none;
+  }
+
   .shrine-teacher-list label {
     grid-template-columns: 22px minmax(0, 1fr);
   }

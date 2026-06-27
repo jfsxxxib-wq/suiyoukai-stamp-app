@@ -6,7 +6,7 @@
     <meta name="google" content="notranslate">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>冒険記録帳</title>
-    <link rel="stylesheet" href="styles.css?v=20260628-shrine-rounds-01">
+    <link rel="stylesheet" href="styles.css?v=20260628-shrine-roster-01">
   </head>
   <body>
     <main class="record-book" aria-label="冒険記録帳">
@@ -424,9 +424,14 @@
               </header>
 
               <section class="shrine-card shrine-event-card" aria-label="今日の会">
-                <small>水曜会プリセット</small>
-                <strong>先生ごとの多面打ちで組み合わせ</strong>
-                <span>先生ごとに面数と回数を決め、指導碁の組み合わせを出します。</span>
+                <small data-shrine-mode-kicker>水曜会プリセット</small>
+                <strong data-shrine-mode-title>先生ごとの多面打ちで組み合わせ</strong>
+                <span data-shrine-mode-copy>先生ごとに面数と回数を決め、指導碁の組み合わせを出します。</span>
+                <div class="shrine-mode-switch" aria-label="組み合わせモード">
+                  <button type="button" class="is-active" data-shrine-mode="lesson" aria-pressed="true">指導碁 多面打ち</button>
+                  <button type="button" data-shrine-mode="amateur" aria-pressed="false">アマチュア大会 一対一</button>
+                  <button type="button" data-shrine-mode="pairgo" aria-pressed="false">ペア碁</button>
+                </div>
                 <label class="shrine-round-count">
                   <span>回数</span>
                   <select data-shrine-round-count aria-label="お告げの回数">
@@ -441,15 +446,31 @@
               <section class="shrine-card" aria-label="参加者入力">
                 <div class="shrine-section-heading">
                   <h3>参加者</h3>
-                  <button type="button" data-shrine-sample>見本を入れる</button>
+                  <div class="shrine-participant-actions">
+                    <button type="button" data-shrine-roster-toggle aria-expanded="false">よく来る人を開く</button>
+                    <button type="button" data-shrine-sample>見本を入れる</button>
+                  </div>
                 </div>
+                <section class="shrine-roster-panel" data-shrine-roster-panel hidden aria-label="よく来る人の名簿">
+                  <div class="shrine-roster-actions">
+                    <button type="button" data-shrine-roster-apply>選んだ人を参加者欄へ入れる</button>
+                    <button type="button" data-shrine-roster-edit-toggle aria-expanded="false">名簿を編集</button>
+                  </div>
+                  <div class="shrine-roster-list" data-shrine-roster-list></div>
+                  <label class="shrine-roster-editor" data-shrine-roster-editor hidden>
+                    <span>名簿を1行ずつ編集</span>
+                    <textarea data-shrine-roster-editor-text rows="6"></textarea>
+                    <button type="button" data-shrine-roster-save>名簿を保存</button>
+                  </label>
+                  <small data-shrine-roster-message>来ている人にチェックしてください。</small>
+                </section>
                 <label class="shrine-participant-input">
                   <span>お名前を1行ずつ入力</span>
                   <textarea data-shrine-participants rows="7" placeholder="例&#10;佐藤さん&#10;鈴木さん&#10;田中さん"></textarea>
                 </label>
               </section>
 
-              <section class="shrine-card" aria-label="先生選択">
+              <section class="shrine-card" aria-label="先生選択" data-shrine-lesson-only>
                 <div class="shrine-section-heading">
                   <h3>今日の先生</h3>
                   <span data-shrine-teacher-count>0面</span>
@@ -459,11 +480,23 @@
 
               <section class="shrine-card shrine-wish-card" aria-label="願いごと">
                 <h3>願いごと</h3>
-                <div class="shrine-wish-list">
+                <div class="shrine-wish-list" data-shrine-lesson-only>
                   <label><input type="checkbox" checked disabled> 先生をなるべく均等に使う</label>
                   <label><input type="checkbox" checked disabled> 先生の面数まで割り当てる</label>
                   <label><input type="checkbox" checked disabled> 回ごとに順番をずらす</label>
                   <label><input type="checkbox" checked disabled> 余った方は待機にする</label>
+                </div>
+                <div class="shrine-wish-list" data-shrine-amateur-only hidden>
+                  <label><input type="checkbox" checked disabled> 1対1で組み合わせる</label>
+                  <label><input type="checkbox" checked disabled> 同じ回で同じ人を重複させない</label>
+                  <label><input type="checkbox" checked disabled> 次回以降、同じ相手を避けやすい形にする</label>
+                  <label><input type="checkbox" checked disabled> 奇数人数は待機を出す</label>
+                </div>
+                <div class="shrine-wish-list" data-shrine-pairgo-only hidden>
+                  <label><input type="checkbox" checked disabled> 2人1組のペアを作る</label>
+                  <label><input type="checkbox" checked disabled> ペア同士の対局を組む</label>
+                  <label><input type="checkbox" checked disabled> 同じ回で同じ人を重複させない</label>
+                  <label><input type="checkbox" checked disabled> 余りは待機にする</label>
                 </div>
               </section>
 
@@ -797,7 +830,7 @@
         status.textContent = "画面の操作が止まりました。Codexにこの表示を見せてください: " + event.message;
       });
     </script>
-    <script src="stamp-rules.js?v=20260628-shrine-rounds-01"></script>
-    <script src="script.js?v=20260628-shrine-rounds-01"></script>
+    <script src="stamp-rules.js?v=20260628-shrine-roster-01"></script>
+    <script src="script.js?v=20260628-shrine-roster-01"></script>
   </body>
 </html>
