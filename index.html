@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="ja" translate="no" class="notranslate">
   <head>
     <meta charset="utf-8">
@@ -6,7 +6,7 @@
     <meta name="google" content="notranslate">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>冒険記録帳</title>
-    <link rel="stylesheet" href="styles.css?v=20260628-shrine-roster-01">
+    <link rel="stylesheet" href="styles.css?v=20260628-shrine-intro-torii-rest-01">
   </head>
   <body>
     <main class="record-book" aria-label="冒険記録帳">
@@ -49,6 +49,25 @@
           <span aria-hidden="true">□</span>
           冒険の書
         </button>
+      </section>
+
+      <section class="shrine-intro" data-shrine-intro hidden aria-label="組み合わせ神社への導入">
+        <div class="shrine-intro-stage" aria-hidden="true">
+          <div class="shrine-intro-scene is-approach"></div>
+          <div class="shrine-intro-scene is-torii"></div>
+          <div class="shrine-intro-scene is-otter"></div>
+          <div class="shrine-intro-scene is-blessing"></div>
+          <div class="shrine-intro-scene is-portal"></div>
+          <div class="shrine-intro-petals"></div>
+          <div class="shrine-intro-ring">
+            <span></span>
+          </div>
+          <div class="shrine-intro-doors">
+            <span></span>
+            <span></span>
+          </div>
+          <p class="shrine-intro-caption" data-shrine-intro-caption>参道を進みます</p>
+        </div>
       </section>
 
       <section class="info-dock is-collapsed" aria-label="冒険情報">
@@ -422,6 +441,17 @@
                 </div>
                 <span class="shrine-seal" aria-hidden="true">結</span>
               </header>
+
+              <section class="shrine-guide-card" aria-label="組み合わせ神社の案内">
+                <div class="shrine-guide-character is-fox" aria-hidden="true">
+                  <img src="assets/fairy-companion-lily-white-fox.png" alt="">
+                </div>
+                <p data-shrine-fox-speech>今日はどんなご縁を結びましょう？</p>
+                <div class="shrine-guide-character is-otter" aria-hidden="true">
+                  <img src="assets/shrine-otter-go-stone.png" alt="">
+                </div>
+                <p data-shrine-otter-speech>石は準備できています！</p>
+              </section>
 
               <section class="shrine-card shrine-event-card" aria-label="今日の会">
                 <small data-shrine-mode-kicker>水曜会プリセット</small>
@@ -830,7 +860,8 @@
         status.textContent = "画面の操作が止まりました。Codexにこの表示を見せてください: " + event.message;
       });
     </script>
-    <script src="stamp-rules.js?v=20260628-shrine-roster-01"></script>
-    <script src="script.js?v=20260628-shrine-roster-01"></script>
+    <script src="stamp-rules.js?v=20260628-shrine-intro-torii-rest-01"></script>
+    <script src="script.js?v=20260628-shrine-intro-torii-rest-01"></script>
   </body>
 </html>
+

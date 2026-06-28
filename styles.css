@@ -1095,6 +1095,72 @@ button {
   box-shadow: 0 10px 24px rgba(48, 38, 26, 0.16);
 }
 
+.shrine-guide-card {
+  display: grid;
+  grid-template-columns: 46px minmax(0, 1fr);
+  gap: 9px 10px;
+  align-items: center;
+  padding: 11px;
+  border: 1px solid rgba(93, 143, 195, 0.18);
+  border-radius: 8px;
+  background:
+    linear-gradient(90deg, rgba(93, 143, 195, 0.1), transparent 58%),
+    rgba(255, 252, 244, 0.7);
+}
+
+.shrine-guide-character {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  overflow: visible;
+  color: #fffaf0;
+  font-size: 0.9rem;
+  font-weight: 900;
+  box-shadow: 0 7px 14px rgba(48, 38, 26, 0.12);
+}
+
+.shrine-guide-character.is-fox {
+  background:
+    radial-gradient(circle at 50% 58%, rgba(255, 250, 240, 0.88) 0 28%, transparent 29%),
+    linear-gradient(180deg, #f0a34a, #c85a32);
+}
+
+.shrine-guide-character.is-otter {
+  background:
+    radial-gradient(circle at 50% 58%, rgba(255, 250, 240, 0.72) 0 30%, transparent 31%),
+    linear-gradient(180deg, #caa27a, #8d6343);
+}
+
+.shrine-guide-character img {
+  width: 58px;
+  height: 58px;
+  object-fit: contain;
+  filter: drop-shadow(0 5px 9px rgba(48, 38, 26, 0.18));
+}
+
+.shrine-guide-character.is-fox img {
+  transform: translateY(-5px);
+}
+
+.shrine-guide-card p {
+  display: grid;
+  gap: 2px;
+  margin: 0;
+}
+
+.shrine-guide-card strong {
+  color: var(--green);
+  font-size: 0.82rem;
+}
+
+.shrine-guide-card span {
+  color: var(--ink);
+  font-size: 0.88rem;
+  font-weight: 900;
+}
+
 .shrine-card,
 .shrine-result {
   display: grid;
@@ -1238,6 +1304,7 @@ button {
 }
 
 .shrine-roster-actions button,
+.shrine-record-actions button,
 .shrine-roster-editor button {
   min-height: 38px;
   border: 1px solid rgba(63, 118, 82, 0.28);
@@ -1248,6 +1315,69 @@ button {
   font-size: 0.82rem;
   font-weight: 900;
   cursor: pointer;
+}
+
+.shrine-record-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.shrine-record-actions button:disabled {
+  cursor: default;
+  opacity: 0.48;
+}
+
+.shrine-record-list {
+  display: grid;
+  gap: 9px;
+}
+
+.shrine-record-list p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.shrine-record {
+  display: grid;
+  gap: 7px;
+  padding: 10px;
+  border: 1px solid rgba(93, 143, 195, 0.18);
+  border-radius: 8px;
+  background: rgba(255, 252, 244, 0.62);
+}
+
+.shrine-record-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.shrine-record-heading strong {
+  color: var(--green);
+}
+
+.shrine-record-heading small,
+.shrine-records > small {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.shrine-record pre {
+  max-height: 210px;
+  margin: 0;
+  overflow: auto;
+  white-space: pre-wrap;
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 800;
+  line-height: 1.55;
 }
 
 .shrine-roster-list {
@@ -1535,6 +1665,816 @@ button {
 
 .panel-kicker {
   padding-right: 92px;
+}
+
+.shrine-intro {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  background: rgba(22, 33, 31, 0.38);
+  backdrop-filter: blur(2px);
+}
+
+.shrine-intro[hidden] {
+  display: none;
+}
+
+.shrine-intro-stage {
+  position: relative;
+  width: min(90vw, 460px);
+  height: min(82vh, 820px);
+  aspect-ratio: 9 / 16;
+  overflow: hidden;
+  border: 2px solid rgba(255, 250, 240, 0.92);
+  border-radius: 8px;
+  background: #f7d7c8;
+  box-shadow: 0 18px 46px rgba(20, 24, 20, 0.28);
+}
+
+.shrine-intro-stage::before,
+.shrine-intro-stage::after {
+  content: "";
+  pointer-events: none;
+}
+
+.shrine-intro-stage::before {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(255, 245, 225, 0.16), transparent 28%),
+    radial-gradient(circle at 50% 46%, transparent 0 42%, rgba(64, 30, 20, 0.24) 100%);
+  z-index: 4;
+}
+
+.shrine-intro-stage::after {
+  position: absolute;
+  inset: 0;
+  border: 1px solid rgba(255, 250, 240, 0.46);
+  border-radius: inherit;
+  box-shadow: inset 0 0 42px rgba(67, 35, 24, 0.22);
+  z-index: 9;
+}
+
+.shrine-intro-scene {
+  position: absolute;
+  inset: 0;
+  background-position: center;
+  background-size: cover;
+  opacity: 0;
+  transform: scale(1.03);
+}
+
+.shrine-intro-scene.is-approach {
+  background-image: url("assets/shrine-intro-approach-fox-guide.png");
+  background-position: center 48%;
+  opacity: 1;
+}
+
+.shrine-intro-scene.is-torii {
+  background-image: url("assets/shrine-intro-torii-foxes-full.png");
+  background-position: center center;
+}
+
+.shrine-intro-scene.is-otter {
+  background-image: url("assets/shrine-intro-otter.jpg");
+}
+
+.shrine-intro-scene.is-blessing {
+  background-image: url("assets/shrine-intro-blessing.jpg");
+}
+
+.shrine-intro-scene.is-portal {
+  background-image: url("assets/shrine-intro-portal-paw.jpg");
+  background-position: center center;
+  background-size: 100% 100%;
+}
+
+.shrine-intro-petals {
+  position: absolute;
+  inset: -12% -8%;
+  z-index: 5;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 12% 14%, rgba(255, 190, 210, 0.95) 0 0.8%, transparent 1%),
+    radial-gradient(circle at 28% 38%, rgba(255, 210, 222, 0.82) 0 0.7%, transparent 0.95%),
+    radial-gradient(circle at 72% 18%, rgba(255, 196, 212, 0.92) 0 0.85%, transparent 1.05%),
+    radial-gradient(circle at 84% 42%, rgba(255, 222, 230, 0.78) 0 0.7%, transparent 0.95%),
+    radial-gradient(circle at 45% 72%, rgba(255, 194, 212, 0.72) 0 0.65%, transparent 0.9%);
+  opacity: 0.82;
+}
+
+.shrine-intro-path {
+  position: absolute;
+  left: 50%;
+  bottom: -4%;
+  width: 62%;
+  height: 70%;
+  background:
+    repeating-linear-gradient(90deg, rgba(92, 74, 54, 0.12) 0 2px, transparent 2px 44px),
+    linear-gradient(180deg, rgba(255, 250, 240, 0.82), rgba(217, 188, 145, 0.94));
+  clip-path: polygon(42% 0, 58% 0, 100% 100%, 0 100%);
+  transform: translateX(-50%);
+}
+
+.shrine-intro-footsteps {
+  position: absolute;
+  left: 50%;
+  bottom: 18%;
+  width: 24%;
+  height: 42%;
+  opacity: 0;
+  transform: translateX(-50%);
+}
+
+.shrine-intro-footsteps span {
+  position: absolute;
+  left: 50%;
+  display: block;
+  width: 13px;
+  height: 19px;
+  border-radius: 50% 50% 44% 44%;
+  background: rgba(93, 68, 45, 0.28);
+  box-shadow: 0 1px 4px rgba(48, 38, 26, 0.1);
+  transform: translateX(-50%) rotate(-12deg);
+}
+
+.shrine-intro-footsteps span:nth-child(1) {
+  top: 78%;
+  margin-left: -18px;
+}
+
+.shrine-intro-footsteps span:nth-child(2) {
+  top: 60%;
+  margin-left: 17px;
+  transform: translateX(-50%) rotate(12deg);
+}
+
+.shrine-intro-footsteps span:nth-child(3) {
+  top: 42%;
+  margin-left: -12px;
+}
+
+.shrine-intro-footsteps span:nth-child(4) {
+  top: 25%;
+  margin-left: 10px;
+  transform: translateX(-50%) rotate(12deg) scale(0.86);
+}
+
+.shrine-intro-footsteps span:nth-child(5) {
+  top: 9%;
+  margin-left: -4px;
+  transform: translateX(-50%) rotate(-8deg) scale(0.72);
+}
+
+.shrine-intro-traveler {
+  position: absolute;
+  left: 50%;
+  bottom: 12%;
+  width: 24px;
+  height: 24px;
+  border: 3px solid rgba(255, 250, 240, 0.84);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 50% 42%, rgba(255, 250, 240, 0.98) 0 22%, transparent 23%),
+    #5d8fc3;
+  box-shadow: 0 0 18px rgba(255, 239, 178, 0.68), 0 6px 12px rgba(48, 38, 26, 0.18);
+  opacity: 0;
+  transform: translateX(-50%);
+}
+
+.shrine-intro-lanterns {
+  position: absolute;
+  inset: 25% 6% auto;
+  height: 18%;
+  background:
+    radial-gradient(ellipse at 8% 20%, rgba(255, 239, 178, 0.96) 0 3%, transparent 3.5%),
+    radial-gradient(ellipse at 22% 45%, rgba(255, 239, 178, 0.92) 0 3%, transparent 3.5%),
+    radial-gradient(ellipse at 78% 45%, rgba(255, 239, 178, 0.92) 0 3%, transparent 3.5%),
+    radial-gradient(ellipse at 92% 20%, rgba(255, 239, 178, 0.96) 0 3%, transparent 3.5%),
+    linear-gradient(12deg, transparent 0 49%, rgba(93, 68, 45, 0.32) 50% 51%, transparent 52%),
+    linear-gradient(-12deg, transparent 0 49%, rgba(93, 68, 45, 0.32) 50% 51%, transparent 52%);
+  opacity: 0;
+}
+
+.shrine-intro-torii {
+  position: absolute;
+  left: 50%;
+  top: 18%;
+  width: 56%;
+  height: 30%;
+  opacity: 0;
+  background:
+    linear-gradient(180deg, #8f1d18, #ef4a31 52%, #9f1f19) 50% 0 / 98% 14% no-repeat,
+    linear-gradient(180deg, #b82d22, #f25a38) 50% 24% / 82% 12% no-repeat;
+  transform: translateX(-50%) scale(0.8);
+}
+
+.shrine-intro-torii::before,
+.shrine-intro-torii::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  width: 10%;
+  height: 84%;
+  border-radius: 10px 10px 0 0;
+  background: linear-gradient(90deg, #a62920, #ef4a31 54%, #9f1f19);
+}
+
+.shrine-intro-torii::before {
+  left: 17%;
+}
+
+.shrine-intro-torii::after {
+  right: 17%;
+}
+
+.shrine-intro-plaque {
+  position: absolute;
+  left: 50%;
+  top: 7%;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 48px;
+  border: 2px solid rgba(224, 174, 77, 0.8);
+  border-radius: 4px;
+  background: #3b271d;
+  color: #f6d483;
+  font-size: 1rem;
+  font-weight: 900;
+  transform: translateX(-50%);
+}
+
+.shrine-intro-shrine {
+  position: absolute;
+  left: 50%;
+  top: 35%;
+  width: 40%;
+  height: 26%;
+  opacity: 0.42;
+  border-radius: 8px 8px 3px 3px;
+  background:
+    linear-gradient(180deg, #2b2724 0 18%, transparent 19%),
+    linear-gradient(90deg, rgba(55, 35, 24, 0.98), rgba(96, 62, 40, 0.96));
+  box-shadow: inset 0 0 0 5px rgba(255, 223, 149, 0.12), 0 12px 24px rgba(48, 38, 26, 0.18);
+  transform: translateX(-50%) scale(0.88);
+}
+
+.shrine-intro-shrine::before {
+  content: "";
+  position: absolute;
+  left: -9%;
+  right: -9%;
+  top: -28%;
+  height: 36%;
+  border-radius: 50% 50% 6px 6px;
+  background: linear-gradient(180deg, #30343d, #17191e);
+}
+
+.shrine-intro-rope {
+  position: absolute;
+  left: 16%;
+  right: 16%;
+  top: 30%;
+  height: 6px;
+  border-radius: 999px;
+  background: #d6b66f;
+}
+
+.shrine-intro-fox,
+.shrine-intro-otter {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  opacity: 0;
+}
+
+.shrine-intro-fox {
+  top: 39%;
+  width: 106px;
+  height: 126px;
+  background: none;
+  filter: drop-shadow(0 10px 16px rgba(48, 38, 26, 0.2));
+}
+
+.shrine-intro-fox::before,
+.shrine-intro-fox::after {
+  content: none;
+}
+
+.shrine-intro-fox::before {
+  left: 8px;
+  transform: rotate(-22deg);
+}
+
+.shrine-intro-fox::after {
+  right: 8px;
+  transform: rotate(22deg) scaleX(-1);
+}
+
+.shrine-intro-fox.is-left {
+  left: 6%;
+  transform: translateX(-40px);
+}
+
+.shrine-intro-fox.is-right {
+  right: 6%;
+  transform: translateX(40px);
+}
+
+.shrine-intro-fox img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.shrine-intro-fox.is-right img {
+  transform: scaleX(-1);
+}
+
+.shrine-intro-otter {
+  left: 50%;
+  top: 46%;
+  width: 132px;
+  height: 150px;
+  background: none;
+  filter: drop-shadow(0 12px 18px rgba(48, 38, 26, 0.22));
+  opacity: 0.22;
+  transform: translate(-50%, 18px) scale(0.88);
+}
+
+.shrine-intro-otter img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.shrine-intro-ring {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  opacity: 0;
+  z-index: 6;
+  background: radial-gradient(circle, rgba(255, 230, 157, 0.28), transparent 44%);
+}
+
+.shrine-intro-ring span {
+  width: 112px;
+  height: 112px;
+  border: 8px solid rgba(255, 230, 157, 0.82);
+  border-radius: 50%;
+  box-shadow: 0 0 34px rgba(255, 206, 104, 0.64);
+}
+
+.shrine-intro-doors {
+  position: absolute;
+  inset: 0 8%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18%;
+  z-index: 7;
+  pointer-events: none;
+}
+
+.shrine-intro-doors span {
+  border: 1px solid rgba(255, 230, 157, 0.28);
+  background:
+    linear-gradient(90deg, rgba(255, 230, 157, 0.16), transparent 28%),
+    linear-gradient(180deg, rgba(91, 57, 38, 0.58), rgba(45, 31, 26, 0.42));
+  opacity: 0;
+  box-shadow: 0 0 18px rgba(255, 230, 157, 0.12);
+}
+
+.shrine-intro-doors span:first-child {
+  transform-origin: left center;
+}
+
+.shrine-intro-doors span:last-child {
+  transform-origin: right center;
+}
+
+.shrine-intro-caption {
+  display: none;
+  position: absolute;
+  left: 50%;
+  bottom: 18px;
+  width: max-content;
+  max-width: calc(100% - 36px);
+  margin: 0;
+  padding: 10px 14px;
+  border: 1px solid rgba(255, 250, 240, 0.78);
+  border-radius: 8px;
+  background: rgba(255, 250, 240, 0.9);
+  color: #5a3b2d;
+  font-size: 0.94rem;
+  font-weight: 900;
+  text-align: center;
+  z-index: 11;
+  transform: translateX(-50%);
+}
+
+.shrine-intro.is-playing .shrine-intro-stage {
+  animation: shrine-stage-drift 8100ms ease-in-out both;
+}
+
+.shrine-intro.is-playing .shrine-intro-scene.is-approach {
+  animation: shrine-scene-approach 8100ms ease-in-out both;
+}
+
+.shrine-intro.is-playing .shrine-intro-scene.is-torii {
+  animation: shrine-scene-torii 8100ms ease-in-out both;
+}
+
+.shrine-intro.is-playing .shrine-intro-scene.is-otter {
+  animation: shrine-scene-otter 8100ms ease-in-out both;
+}
+
+.shrine-intro.is-playing .shrine-intro-scene.is-blessing {
+  animation: shrine-scene-blessing 8100ms ease-in-out both;
+}
+
+.shrine-intro.is-playing .shrine-intro-scene.is-portal {
+  animation: shrine-scene-portal 8100ms ease-in-out both;
+}
+
+.shrine-intro.is-playing .shrine-intro-petals {
+  animation: shrine-petals-drift 8100ms ease-in-out both;
+}
+
+.shrine-intro.is-playing .shrine-intro-lanterns {
+  animation: shrine-fade-in 780ms ease-out 120ms both;
+}
+
+.shrine-intro.is-playing .shrine-intro-footsteps {
+  animation: shrine-footsteps-show 1900ms ease-out 260ms both;
+}
+
+.shrine-intro.is-playing .shrine-intro-footsteps span {
+  animation: shrine-footstep-pop 1200ms ease-out both;
+}
+
+.shrine-intro.is-playing .shrine-intro-footsteps span:nth-child(1) {
+  animation-delay: 360ms;
+}
+
+.shrine-intro.is-playing .shrine-intro-footsteps span:nth-child(2) {
+  animation-delay: 560ms;
+}
+
+.shrine-intro.is-playing .shrine-intro-footsteps span:nth-child(3) {
+  animation-delay: 760ms;
+}
+
+.shrine-intro.is-playing .shrine-intro-footsteps span:nth-child(4) {
+  animation-delay: 960ms;
+}
+
+.shrine-intro.is-playing .shrine-intro-footsteps span:nth-child(5) {
+  animation-delay: 1160ms;
+}
+
+.shrine-intro.is-playing .shrine-intro-traveler {
+  animation: shrine-traveler-walk 1650ms ease-in-out 280ms both;
+}
+
+.shrine-intro.is-playing .shrine-intro-torii {
+  animation: shrine-torii-appear 980ms ease-out 1280ms both;
+}
+
+.shrine-intro.is-playing .shrine-intro-shrine {
+  animation: shrine-shrine-appear 1150ms ease-out 1220ms both;
+}
+
+.shrine-intro.is-playing .shrine-intro-fox.is-left {
+  animation: shrine-fox-left 920ms ease-out 1920ms both;
+}
+
+.shrine-intro.is-playing .shrine-intro-fox.is-right {
+  animation: shrine-fox-right 920ms ease-out 2040ms both;
+}
+
+.shrine-intro.is-playing .shrine-intro-otter {
+  animation: shrine-otter-appear 1050ms cubic-bezier(.2, .9, .26, 1.18) 2920ms both;
+}
+
+.shrine-intro.is-playing .shrine-intro-ring {
+  animation: shrine-ring-open 980ms ease-out 7000ms both;
+}
+
+.shrine-intro.is-playing .shrine-intro-ring span {
+  animation: shrine-ring-scale 980ms ease-out 7000ms both;
+}
+
+.shrine-intro.is-playing .shrine-intro-doors span {
+  animation: none;
+}
+
+@keyframes shrine-stage-drift {
+  0% { transform: scale(1.02); }
+  54% { transform: scale(1.05); }
+  100% { transform: scale(1.08); }
+}
+
+@keyframes shrine-scene-approach {
+  0% {
+    opacity: 1;
+    transform: scale(1.01) translateY(0);
+    filter: brightness(1.04) saturate(1.02);
+  }
+
+  24% {
+    opacity: 1;
+    transform: scale(1.045) translateY(-0.5%);
+    filter: brightness(1.06) saturate(1.06);
+  }
+
+  38% {
+    opacity: 0;
+    transform: scale(1.08) translateY(-1.5%);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(1.08) translateY(-1.5%);
+  }
+}
+
+@keyframes shrine-scene-torii {
+  0% {
+    opacity: 0;
+    transform: scale(1.01) translateY(1%);
+  }
+
+  28% {
+    opacity: 0;
+    transform: scale(1.01) translateY(1%);
+  }
+
+  42% {
+    opacity: 1;
+    transform: scale(1.06) translateY(0);
+  }
+
+  56% {
+    opacity: 1;
+    transform: scale(1.12) translateY(-1%);
+  }
+
+  66% {
+    opacity: 0;
+    transform: scale(1.16) translateY(-1.5%);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(1.16) translateY(-1.5%);
+  }
+}
+
+@keyframes shrine-scene-otter {
+  0% {
+    opacity: 0;
+    transform: scale(1.04) translateY(2%);
+  }
+
+  50% {
+    opacity: 0;
+    transform: scale(1.04) translateY(2%);
+  }
+
+  62% {
+    opacity: 1;
+    transform: scale(1.09) translateY(0);
+  }
+
+  73% {
+    opacity: 1;
+    transform: scale(1.15) translateY(-1%);
+  }
+
+  82% {
+    opacity: 0;
+    transform: scale(1.2) translateY(-2%);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(1.2) translateY(-2%);
+  }
+}
+
+@keyframes shrine-scene-blessing {
+  0% {
+    opacity: 0;
+    transform: scale(1.02);
+    filter: brightness(1);
+  }
+
+  68% {
+    opacity: 0;
+    transform: scale(1.02);
+  }
+
+  78% {
+    opacity: 1;
+    transform: scale(1.08);
+    filter: brightness(1.1);
+  }
+
+  88% {
+    opacity: 0.9;
+    transform: scale(1.12);
+    filter: brightness(1.18);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(1.16);
+    filter: brightness(1.25);
+  }
+}
+
+@keyframes shrine-scene-portal {
+  0% {
+    opacity: 0;
+    transform: scale(0.98);
+    filter: brightness(1);
+  }
+
+  82% {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+
+  91% {
+    opacity: 1;
+    transform: scale(1.04);
+    filter: brightness(1.08) saturate(1.06);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1.14);
+    filter: brightness(1.22) saturate(1.12);
+  }
+}
+
+@keyframes shrine-petals-drift {
+  0% {
+    opacity: 0.46;
+    transform: translate3d(-2%, -2%, 0) rotate(0deg);
+  }
+
+  48% {
+    opacity: 0.8;
+    transform: translate3d(1%, 4%, 0) rotate(5deg);
+  }
+
+  100% {
+    opacity: 0.58;
+    transform: translate3d(3%, 9%, 0) rotate(9deg);
+  }
+}
+
+@keyframes shrine-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes shrine-footsteps-show {
+  0% { opacity: 0; }
+  18% { opacity: 1; }
+  100% { opacity: 0.74; }
+}
+
+@keyframes shrine-footstep-pop {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(8px) scale(0.76) rotate(-12deg);
+  }
+
+  32% {
+    opacity: 0.9;
+  }
+
+  100% {
+    opacity: 0.32;
+  }
+}
+
+@keyframes shrine-traveler-walk {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 42px) scale(1.1);
+  }
+
+  18% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -132px) scale(0.48);
+  }
+}
+
+@keyframes shrine-torii-appear {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(28px) scale(0.78);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+}
+
+@keyframes shrine-shrine-appear {
+  from {
+    opacity: 0.42;
+    transform: translateX(-50%) translateY(12px) scale(0.9);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+}
+
+@keyframes shrine-fox-left {
+  from {
+    opacity: 0;
+    transform: translateX(-54px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes shrine-fox-right {
+  from {
+    opacity: 0;
+    transform: translateX(54px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes shrine-otter-appear {
+  from {
+    opacity: 0.22;
+    transform: translate(-50%, 22px) scale(0.86);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
+}
+
+@keyframes shrine-ring-open {
+  0% { opacity: 0; }
+  28% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes shrine-ring-scale {
+  from { transform: scale(0.58); }
+  to { transform: scale(4.8); }
+}
+
+@keyframes shrine-door-open {
+  0% {
+    opacity: 0;
+    transform: scaleX(0.78);
+  }
+
+  18% {
+    opacity: 0.72;
+    transform: scaleX(0.78);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scaleX(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shrine-intro,
+  .shrine-intro * {
+    animation: none !important;
+  }
 }
 
 .card-label,
@@ -7390,6 +8330,48 @@ button.library-collection-item.is-title.is-opening-book > span {
 }
 
 @media (max-width: 460px) {
+  .shrine-intro-stage {
+    width: min(94vw, 390px);
+    height: min(80vh, 690px);
+  }
+
+  .shrine-intro-fox {
+    width: 78px;
+    height: 104px;
+  }
+
+  .shrine-intro-fox.is-left {
+    left: 6%;
+  }
+
+  .shrine-intro-fox.is-right {
+    right: 6%;
+  }
+
+  .shrine-intro-otter {
+    width: 110px;
+    height: 128px;
+  }
+
+  .shrine-intro-traveler {
+    width: 20px;
+    height: 20px;
+  }
+
+  .shrine-guide-card {
+    grid-template-columns: 38px minmax(0, 1fr);
+  }
+
+  .shrine-guide-character {
+    width: 36px;
+    height: 36px;
+  }
+
+  .shrine-guide-character img {
+    width: 50px;
+    height: 50px;
+  }
+
   .shrine-mode-switch {
     grid-template-columns: 1fr;
   }
@@ -7400,12 +8382,14 @@ button.library-collection-item.is-title.is-opening-book > span {
   }
 
   .shrine-participant-actions,
-  .shrine-roster-actions {
+  .shrine-roster-actions,
+  .shrine-record-actions {
     width: 100%;
     grid-template-columns: 1fr;
   }
 
-  .shrine-participant-actions {
+  .shrine-participant-actions,
+  .shrine-record-actions {
     display: grid;
   }
 

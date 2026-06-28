@@ -145,6 +145,8 @@ const nextAdventureGuide = document.querySelector("[data-next-adventure-guide]")
 const nextAdventureGuideImage = document.querySelector("[data-next-adventure-guide-image]");
 const nextAdventureGuideSpeech = document.querySelector("[data-next-adventure-guide-speech]");
 const mapDestinationButtons = document.querySelectorAll("[data-map-destination]");
+const shrineIntro = document.querySelector("[data-shrine-intro]");
+const shrineIntroCaption = document.querySelector("[data-shrine-intro-caption]");
 const shrineTeacherList = document.querySelector("[data-shrine-teachers]");
 const shrineTeacherCount = document.querySelector("[data-shrine-teacher-count]");
 const shrineRoundCount = document.querySelector("[data-shrine-round-count]");
@@ -152,6 +154,8 @@ const shrineModeButtons = document.querySelectorAll("[data-shrine-mode]");
 const shrineModeKicker = document.querySelector("[data-shrine-mode-kicker]");
 const shrineModeTitle = document.querySelector("[data-shrine-mode-title]");
 const shrineModeCopy = document.querySelector("[data-shrine-mode-copy]");
+const shrineFoxSpeech = document.querySelector("[data-shrine-fox-speech]");
+const shrineOtterSpeech = document.querySelector("[data-shrine-otter-speech]");
 const shrineLessonOnlyItems = document.querySelectorAll("[data-shrine-lesson-only]");
 const shrineAmateurOnlyItems = document.querySelectorAll("[data-shrine-amateur-only]");
 const shrinePairgoOnlyItems = document.querySelectorAll("[data-shrine-pairgo-only]");
@@ -168,6 +172,10 @@ const shrineRosterSave = document.querySelector("[data-shrine-roster-save]");
 const shrineRosterMessage = document.querySelector("[data-shrine-roster-message]");
 const shrineGenerateButton = document.querySelector("[data-shrine-generate]");
 const shrineResult = document.querySelector("[data-shrine-result]");
+const shrineRecordSave = document.querySelector("[data-shrine-record-save]");
+const shrineRecordClear = document.querySelector("[data-shrine-record-clear]");
+const shrineRecordList = document.querySelector("[data-shrine-record-list]");
+const shrineRecordMessage = document.querySelector("[data-shrine-record-message]");
 const operatorAuthModal = document.querySelector("[data-operator-auth]");
 const operatorAuthTitle = document.querySelector("[data-operator-auth-title]");
 const operatorAuthSummary = document.querySelector("[data-operator-auth-summary]");
@@ -182,6 +190,7 @@ let confirmSaveReadyAt = 0;
 let adminDraft = null;
 let pendingOperatorAction = null;
 let pendingRestoreBackup = null;
+let isShrineIntroPlaying = false;
 
 const medalAssets = {
   medal_participation_cosmos_full_bloom: "assets/medal-stage-02.png",
@@ -205,6 +214,7 @@ const adminPasscode = "suiyoukai2026";
 const externalGameRecordFormEnabled = true;
 const participationFormUrl = "https://docs.google.com/forms/d/e/1FAIpQLSdEqwXBhF3jDi-YUizfnNnLDfTzD7QJTK469-xwQwA21Gl_rA/viewform?usp=publish-editor";
 const shrineRosterStorageKey = "suiyoukai-shrine-roster-v1";
+const shrineRecordStorageKey = "suiyoukai-shrine-records-v1";
 const ruleTargets = window.teacherStampTargets ?? [];
 const participationRule = window.stampRules?.participation ?? {};
 const teacherLessonRule = window.stampRules?.teacherLesson ?? {};
@@ -1427,6 +1437,72 @@ const setShrineRosterMessage = (message) => {
   }
 };
 
+const loadShrineRecords = () => {
+  try {
+    const records = JSON.parse(localStorage.getItem(shrineRecordStorageKey) ?? "[]");
+    return Array.isArray(records) ? records.filter((record) => record?.body).slice(0, 12) : [];
+  } catch {
+    return [];
+  }
+};
+
+let shrineRecords = loadShrineRecords();
+
+const saveShrineRecords = () => {
+  try {
+    localStorage.setItem(shrineRecordStorageKey, JSON.stringify(shrineRecords.slice(0, 12)));
+  } catch {
+    if (shrineRecordMessage) {
+      shrineRecordMessage.textContent = "この端末では記録を保存できませんでした。";
+    }
+  }
+};
+
+const getShrineModeLabel = (mode = getShrineMode()) => ({
+  lesson: "指導碁",
+  amateur: "一対一",
+  pairgo: "ペア碁",
+})[mode] ?? "組み合わせ";
+
+const renderShrineRecords = () => {
+  if (!shrineRecordList) {
+    return;
+  }
+
+  shrineRecordList.textContent = "";
+  if (shrineRecords.length === 0) {
+    const empty = document.createElement("p");
+    empty.textContent = "保存したお告げはここに残ります。";
+    shrineRecordList.append(empty);
+    return;
+  }
+
+  for (const record of shrineRecords) {
+    const article = document.createElement("article");
+    const heading = document.createElement("div");
+    const title = document.createElement("strong");
+    const meta = document.createElement("small");
+    const body = document.createElement("pre");
+
+    article.className = "shrine-record";
+    heading.className = "shrine-record-heading";
+    title.textContent = record.title || "保存したお告げ";
+    meta.textContent = record.createdAt || "";
+    body.textContent = record.body;
+    heading.append(title, meta);
+    article.append(heading, body);
+    shrineRecordList.append(article);
+  }
+};
+
+const updateShrineRecordSaveState = () => {
+  if (!shrineRecordSave || !shrineResult) {
+    return;
+  }
+
+  shrineRecordSave.disabled = !shrineResult.querySelector(".shrine-round-result");
+};
+
 const getShrineParticipantNames = () => {
   const rawNames = (shrineParticipants?.value ?? "")
     .split(/\r?\n|、|,/)
@@ -1471,6 +1547,32 @@ const getShrineRoundCount = () =>
 const getShrineMode = () =>
   [...shrineModeButtons].find((button) => button.classList.contains("is-active"))?.dataset.shrineMode ?? "lesson";
 
+const shrineModeSpeech = {
+  lesson: {
+    fox: "今日はどんなご縁を結びましょう？",
+    otter: "石は準備できています！",
+  },
+  amateur: {
+    fox: "よい対局のご縁を結びましょう。",
+    otter: "対局札を並べておきました！",
+  },
+  pairgo: {
+    fox: "ふたり組のご縁を探しましょう。",
+    otter: "ペアの石、きれいに磨きました！",
+  },
+};
+
+const updateShrineGuideSpeech = (mode = getShrineMode()) => {
+  const speech = shrineModeSpeech[mode] ?? shrineModeSpeech.lesson;
+
+  if (shrineFoxSpeech) {
+    shrineFoxSpeech.textContent = speech.fox;
+  }
+  if (shrineOtterSpeech) {
+    shrineOtterSpeech.textContent = speech.otter;
+  }
+};
+
 const updateShrineMode = (mode = getShrineMode()) => {
   const isAmateur = mode === "amateur";
   const isPairgo = mode === "pairgo";
@@ -1514,6 +1616,59 @@ const updateShrineMode = (mode = getShrineMode()) => {
         ? "参加者だけで、回数分の一対一組み合わせを出します。"
         : "先生ごとに面数と回数を決め、指導碁の組み合わせを出します。";
   }
+
+  updateShrineGuideSpeech(mode);
+};
+
+const enterShrinePanel = () => {
+  renderShrineTeachers();
+  updateShrineGuideSpeech();
+  showPanel("shrine");
+};
+
+const openShrineWithIntro = () => {
+  if (isShrineIntroPlaying) {
+    return;
+  }
+
+  const prefersReducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
+  if (!shrineIntro || prefersReducedMotion) {
+    enterShrinePanel();
+    return;
+  }
+
+  isShrineIntroPlaying = true;
+  shrineIntro.hidden = false;
+  shrineIntro.classList.remove("is-playing");
+  shrineIntro.offsetHeight;
+  shrineIntro.classList.add("is-playing");
+  if (shrineIntroCaption) {
+    shrineIntroCaption.textContent = "参道の入口に立ちます";
+  }
+
+  const introCaptions = [
+    { at: 750, text: "狐の巫女が鳥居へ案内します" },
+    { at: 1850, text: "赤い鳥居へ向かって進みます" },
+    { at: 2850, text: "二人の狐の間を、ゆっくりくぐります" },
+    { at: 4700, text: "神社の奥でラッコが待っています" },
+    { at: 6350, text: "ご縁を結ぶ準備ができました" },
+    { at: 7400, text: "組み合わせ神社へ入ります" },
+  ];
+
+  for (const caption of introCaptions) {
+    window.setTimeout(() => {
+      if (shrineIntroCaption && isShrineIntroPlaying) {
+        shrineIntroCaption.textContent = caption.text;
+      }
+    }, caption.at);
+  }
+
+  window.setTimeout(() => {
+    shrineIntro.classList.remove("is-playing");
+    shrineIntro.hidden = true;
+    isShrineIntroPlaying = false;
+    enterShrinePanel();
+  }, 8100);
 };
 
 const renderLessonShrineResult = (participants, roundCount) => {
@@ -1813,20 +1968,24 @@ const renderShrineResult = () => {
     const empty = document.createElement("p");
     empty.textContent = "参加者のお名前を入れてください。";
     shrineResult.append(empty);
+    updateShrineRecordSaveState();
     return;
   }
 
   if (mode === "amateur") {
     renderAmateurShrineResult(participants, roundCount);
+    updateShrineRecordSaveState();
     return;
   }
 
   if (mode === "pairgo") {
     renderPairgoShrineResult(participants, roundCount);
+    updateShrineRecordSaveState();
     return;
   }
 
   renderLessonShrineResult(participants, roundCount);
+  updateShrineRecordSaveState();
 };
 
 const getAdminGameRecordDraft = () => ({
@@ -3008,7 +3167,7 @@ const setJournalPrompt = (message) => {
 };
 
 const renderOwlLibrary = (achievementResult) => {
-  if (!libraryCurrentTitle) {
+  if (!libraryCurrentTitle || !librarySummary || !libraryTitleCount || !libraryMedalCount || !libraryOwl || !libraryGuide || !librarySpeech) {
     return;
   }
 
@@ -3851,8 +4010,7 @@ for (const button of mapDestinationButtons) {
       return;
     }
 
-    renderShrineTeachers();
-    showPanel("shrine");
+    openShrineWithIntro();
   });
 }
 
@@ -3871,6 +4029,7 @@ for (const button of shrineModeButtons) {
       const empty = document.createElement("p");
       empty.textContent = "参加者を入れて「お告げを出す」を押してください。";
       shrineResult.append(empty);
+      updateShrineRecordSaveState();
     }
   });
 }
@@ -3978,6 +4137,44 @@ shrineSampleButton?.addEventListener("click", () => {
 });
 
 shrineGenerateButton?.addEventListener("click", renderShrineResult);
+
+shrineRecordSave?.addEventListener("click", () => {
+  if (!shrineResult?.querySelector(".shrine-round-result")) {
+    updateShrineRecordSaveState();
+    return;
+  }
+
+  const mode = getShrineMode();
+  const createdAt = new Date().toLocaleString("ja-JP", {
+    month: "numeric",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+  const body = shrineResult.innerText.trim();
+
+  shrineRecords = [{
+    id: `shrine-${Date.now()}`,
+    title: `${getShrineModeLabel(mode)}のお告げ`,
+    mode,
+    createdAt,
+    body,
+  }, ...shrineRecords].slice(0, 12);
+  saveShrineRecords();
+  renderShrineRecords();
+  if (shrineRecordMessage) {
+    shrineRecordMessage.textContent = "今のお告げを保存しました。";
+  }
+});
+
+shrineRecordClear?.addEventListener("click", () => {
+  shrineRecords = [];
+  saveShrineRecords();
+  renderShrineRecords();
+  if (shrineRecordMessage) {
+    shrineRecordMessage.textContent = "御神託帳を空にしました。";
+  }
+});
 
 backToList.addEventListener("click", showTeacherList);
 
@@ -4349,7 +4546,9 @@ updateProfileCard();
 populateAdminGameRecordTeachers();
 renderShrineTeachers();
 renderShrineRoster();
+renderShrineRecords();
 updateShrineMode();
+updateShrineRecordSaveState();
 updateAdminPanel();
 updateAdminLockState();
 
