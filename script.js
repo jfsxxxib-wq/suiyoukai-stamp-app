@@ -147,6 +147,7 @@ const nextAdventureGuideSpeech = document.querySelector("[data-next-adventure-gu
 const mapDestinationButtons = document.querySelectorAll("[data-map-destination]");
 const shrineIntro = document.querySelector("[data-shrine-intro]");
 const shrineIntroCaption = document.querySelector("[data-shrine-intro-caption]");
+const shrineIntroSkip = document.querySelector("[data-shrine-intro-skip]");
 const shrineTeacherList = document.querySelector("[data-shrine-teachers]");
 const shrineTeacherCount = document.querySelector("[data-shrine-teacher-count]");
 const shrineRoundCount = document.querySelector("[data-shrine-round-count]");
@@ -160,7 +161,17 @@ const shrineLessonOnlyItems = document.querySelectorAll("[data-shrine-lesson-onl
 const shrineAmateurOnlyItems = document.querySelectorAll("[data-shrine-amateur-only]");
 const shrinePairgoOnlyItems = document.querySelectorAll("[data-shrine-pairgo-only]");
 const shrineParticipants = document.querySelector("[data-shrine-participants]");
+const shrineGroupSize = document.querySelector("[data-shrine-group-size]");
+const shrineFixedGroups = document.querySelector("[data-shrine-fixed-groups]");
+const shrineMixedGenderPairs = document.querySelector("[data-shrine-mixed-gender-pairs]");
+const shrineCloseStrengthPairs = document.querySelector("[data-shrine-close-strength-pairs]");
+const shrineBalancedTeamStrength = document.querySelector("[data-shrine-balanced-team-strength]");
+const shrineMatchMethod = document.querySelector("[data-shrine-match-method]");
+const shrineNumberCount = document.querySelector("[data-shrine-number-count]");
+const shrineNumberApply = document.querySelector("[data-shrine-number-apply]");
+const shrineNumberMessage = document.querySelector("[data-shrine-number-message]");
 const shrineSampleButton = document.querySelector("[data-shrine-sample]");
+const shrineResetButton = document.querySelector("[data-shrine-reset]");
 const shrineRosterToggle = document.querySelector("[data-shrine-roster-toggle]");
 const shrineRosterPanel = document.querySelector("[data-shrine-roster-panel]");
 const shrineRosterList = document.querySelector("[data-shrine-roster-list]");
@@ -191,6 +202,7 @@ let adminDraft = null;
 let pendingOperatorAction = null;
 let pendingRestoreBackup = null;
 let isShrineIntroPlaying = false;
+let shrineIntroTimerIds = [];
 
 const medalAssets = {
   medal_participation_cosmos_full_bloom: "assets/medal-stage-02.png",
@@ -1380,21 +1392,157 @@ const defaultShrineRoster = [
   "岡田さん",
 ];
 
+const shrineGenderLabel = {
+  male: "男",
+  female: "女",
+};
+
+const normalizeShrineGender = (value) => {
+  const text = String(value ?? "").trim();
+  if (["男", "男性", "男子", "male", "m"].includes(text.toLowerCase())) {
+    return "male";
+  }
+  if (["女", "女性", "女子", "female", "f"].includes(text.toLowerCase())) {
+    return "female";
+  }
+  return "";
+};
+
+const parseShrineStrength = (value) => {
+  const text = String(value ?? "").trim();
+  if (!text) {
+    return { type: "", value: "", score: null };
+  }
+
+  const pointMatch = text.match(/^(\d+(?:\.\d+)?)\s*(?:点|pt|point|points)?$/i);
+  if (pointMatch) {
+    const point = Number(pointMatch[1]);
+    return { type: "point", value: String(point), score: point };
+  }
+
+  const danMatch = text.match(/^(\d+)\s*段$/);
+  if (danMatch) {
+    const dan = Math.max(1, Math.min(9, Number(danMatch[1])));
+    return { type: "dan", value: String(dan), score: 1000 + dan * 100 };
+  }
+
+  const kyuMatch = text.match(/^(\d+)\s*級$/);
+  if (kyuMatch) {
+    const kyu = Math.max(1, Math.min(30, Number(kyuMatch[1])));
+    return { type: "kyu", value: String(kyu), score: 1000 - kyu * 40 };
+  }
+
+  return { type: "", value: "", score: null };
+};
+
+const normalizeShrineStrength = (strength = {}) => {
+  if (typeof strength === "string" || typeof strength === "number") {
+    return parseShrineStrength(strength);
+  }
+
+  const type = String(strength.type ?? "").trim();
+  const value = String(strength.value ?? "").trim();
+  if (!type || !value) {
+    return parseShrineStrength("");
+  }
+  if (type === "point") {
+    return parseShrineStrength(`${value}点`);
+  }
+  if (type === "dan") {
+    return parseShrineStrength(`${value}段`);
+  }
+  if (type === "kyu") {
+    return parseShrineStrength(`${value}級`);
+  }
+  return parseShrineStrength("");
+};
+
+const formatShrineStrength = (strength = {}) => {
+  const normalized = normalizeShrineStrength(strength);
+  if (!normalized.type || !normalized.value) {
+    return "";
+  }
+  if (normalized.type === "point") {
+    return `${normalized.value}点`;
+  }
+  if (normalized.type === "dan") {
+    return `${normalized.value}段`;
+  }
+  if (normalized.type === "kyu") {
+    return `${normalized.value}級`;
+  }
+  return "";
+};
+
+const parseShrinePersonLine = (value) => {
+  const text = String(value ?? "").trim();
+  const tokens = text.split(/[\s　]+/).filter(Boolean);
+  let gender = "";
+  let strength = parseShrineStrength("");
+  const nameTokens = [];
+
+  for (const token of tokens) {
+    const tokenGender = normalizeShrineGender(token);
+    const tokenStrength = parseShrineStrength(token);
+    if (tokenGender && !gender) {
+      gender = tokenGender;
+    } else if (tokenStrength.type && !strength.type) {
+      strength = tokenStrength;
+    } else {
+      nameTokens.push(token);
+    }
+  }
+
+  const name = nameTokens.join(" ").trim();
+
+  return { name, gender, strength };
+};
+
+const formatShrinePersonLine = (person) => {
+  const name = String(person?.name ?? "").trim();
+  const gender = normalizeShrineGender(person?.gender);
+  const strengthText = formatShrineStrength(person?.strength);
+  return [name, gender ? shrineGenderLabel[gender] : "", strengthText].filter(Boolean).join(" ");
+};
+
 const normalizeRosterNames = (value) => {
-  const names = Array.isArray(value)
+  const rawItems = Array.isArray(value)
     ? value
     : String(value ?? "").split(/\r?\n|、|,/);
+  const seen = new Set();
+  const entries = [];
 
-  return [...new Set(names.map((name) => String(name).trim()).filter(Boolean))];
+  for (const item of rawItems) {
+    const person = typeof item === "object" && item !== null
+      ? {
+          name: String(item.name ?? "").trim(),
+          gender: normalizeShrineGender(item.gender),
+          strength: normalizeShrineStrength(item.strength),
+        }
+      : parseShrinePersonLine(item);
+
+    if (!person.name || seen.has(person.name)) {
+      continue;
+    }
+
+    seen.add(person.name);
+    entries.push({
+      name: person.name,
+      gender: normalizeShrineGender(person.gender),
+      strength: normalizeShrineStrength(person.strength),
+    });
+  }
+
+  return entries;
 };
 
 const loadShrineRoster = () => {
   try {
     const stored = JSON.parse(localStorage.getItem(shrineRosterStorageKey) ?? "[]");
     const names = normalizeRosterNames(stored);
-    return names.length > 0 ? names : defaultShrineRoster;
+    return names.length > 0 ? names : normalizeRosterNames(defaultShrineRoster);
   } catch {
-    return defaultShrineRoster;
+    return normalizeRosterNames(defaultShrineRoster);
   }
 };
 
@@ -1415,18 +1563,59 @@ const renderShrineRoster = () => {
 
   shrineRosterList.textContent = "";
   if (shrineRosterEditorText) {
-    shrineRosterEditorText.value = shrineRosterNames.join("\n");
+    shrineRosterEditorText.value = shrineRosterNames.map(formatShrinePersonLine).join("\n");
   }
 
-  for (const name of shrineRosterNames) {
+  for (const person of shrineRosterNames) {
     const label = document.createElement("label");
     const checkbox = document.createElement("input");
-    const text = document.createElement("span");
+    const nameInput = document.createElement("input");
+    const genderSelect = document.createElement("select");
+    const strengthType = document.createElement("select");
+    const strengthValue = document.createElement("input");
+    const strength = normalizeShrineStrength(person.strength);
     checkbox.type = "checkbox";
-    checkbox.value = name;
-    checkbox.dataset.shrineRosterName = name;
-    text.textContent = name;
-    label.append(checkbox, text);
+    checkbox.value = formatShrinePersonLine(person);
+    checkbox.dataset.shrineRosterName = person.name;
+    nameInput.type = "text";
+    nameInput.value = person.name;
+    nameInput.dataset.shrineRosterFullName = person.name;
+    nameInput.setAttribute("aria-label", "フルネーム");
+    genderSelect.dataset.shrineRosterGender = person.name;
+    genderSelect.setAttribute("aria-label", `${person.name} の男女`);
+    for (const [value, labelText] of [
+      ["", "未設定"],
+      ["female", "女"],
+      ["male", "男"],
+    ]) {
+      const option = document.createElement("option");
+      option.value = value;
+      option.textContent = labelText;
+      option.selected = person.gender === value;
+      genderSelect.append(option);
+    }
+    strengthType.dataset.shrineRosterStrengthType = person.name;
+    strengthType.setAttribute("aria-label", `${person.name} の棋力方式`);
+    for (const [value, labelText] of [
+      ["", "棋力"],
+      ["point", "点"],
+      ["dan", "段"],
+      ["kyu", "級"],
+    ]) {
+      const option = document.createElement("option");
+      option.value = value;
+      option.textContent = labelText;
+      option.selected = strength.type === value;
+      strengthType.append(option);
+    }
+    strengthValue.type = "number";
+    strengthValue.min = "1";
+    strengthValue.inputMode = "numeric";
+    strengthValue.value = strength.value;
+    strengthValue.placeholder = "値";
+    strengthValue.dataset.shrineRosterStrengthValue = person.name;
+    strengthValue.setAttribute("aria-label", `${person.name} の棋力`);
+    label.append(checkbox, nameInput, genderSelect, strengthType, strengthValue);
     shrineRosterList.append(label);
   }
 };
@@ -1447,6 +1636,7 @@ const loadShrineRecords = () => {
 };
 
 let shrineRecords = loadShrineRecords();
+let shrineMatchSession = null;
 
 const saveShrineRecords = () => {
   try {
@@ -1460,8 +1650,8 @@ const saveShrineRecords = () => {
 
 const getShrineModeLabel = (mode = getShrineMode()) => ({
   lesson: "指導碁",
-  amateur: "一対一",
-  pairgo: "ペア碁",
+  amateur: "大会対戦",
+  pairgo: "ペア・団体づくり",
 })[mode] ?? "組み合わせ";
 
 const renderShrineRecords = () => {
@@ -1503,13 +1693,70 @@ const updateShrineRecordSaveState = () => {
   shrineRecordSave.disabled = !shrineResult.querySelector(".shrine-round-result");
 };
 
-const getShrineParticipantNames = () => {
-  const rawNames = (shrineParticipants?.value ?? "")
+const getShrineParticipantPeople = () => {
+  const rawPeople = (shrineParticipants?.value ?? "")
     .split(/\r?\n|、|,/)
-    .map((name) => name.trim())
-    .filter(Boolean);
+    .map(parseShrinePersonLine)
+    .filter((person) => person.name);
+  const seen = new Set();
+  const people = [];
 
-  return [...new Set(rawNames)];
+  for (const person of rawPeople) {
+    if (seen.has(person.name)) {
+      continue;
+    }
+    seen.add(person.name);
+    people.push(person);
+  }
+
+  return people;
+};
+
+const getShrineParticipantNames = () => getShrineParticipantPeople().map((person) => person.name);
+
+const getShrineRawParticipantLines = () => (shrineParticipants?.value ?? "")
+  .split(/\r?\n|、|,/)
+  .map((name) => name.trim())
+  .filter(Boolean);
+
+const getShrinePreferMixedGender = () => Boolean(shrineMixedGenderPairs?.checked);
+const getShrinePreferCloseStrength = () => Boolean(shrineCloseStrengthPairs?.checked);
+const getShrinePreferBalancedStrength = () => Boolean(shrineBalancedTeamStrength?.checked);
+
+const getShrineGenderLabel = (gender) => shrineGenderLabel[normalizeShrineGender(gender)] ?? "";
+
+const formatShrineMemberName = (person) => {
+  const genderLabel = getShrineGenderLabel(person.gender);
+  return genderLabel ? `${person.name}（${genderLabel}）` : person.name;
+};
+
+const appendShrineParticipants = (names) => {
+  if (!shrineParticipants) {
+    return [];
+  }
+
+  const existingPeople = getShrineParticipantPeople();
+  const peopleByName = new Map(existingPeople.map((person) => [person.name, { ...person }]));
+
+  for (const name of names) {
+    const person = parseShrinePersonLine(name);
+    if (!person.name) {
+      continue;
+    }
+
+    const existing = peopleByName.get(person.name);
+    peopleByName.set(person.name, {
+      name: person.name,
+      gender: person.gender || existing?.gender || "",
+      strength: normalizeShrineStrength(person.strength).type
+        ? normalizeShrineStrength(person.strength)
+        : normalizeShrineStrength(existing?.strength),
+    });
+  }
+
+  const mergedLines = [...peopleByName.values()].map(formatShrinePersonLine);
+  shrineParticipants.value = mergedLines.join("\n");
+  return [...peopleByName.values()].map((person) => person.name);
 };
 
 const getSelectedShrineTeachers = () => {
@@ -1549,16 +1796,16 @@ const getShrineMode = () =>
 
 const shrineModeSpeech = {
   lesson: {
-    fox: "今日はどんなご縁を結びましょう？",
-    otter: "石は準備できています！",
+    fox: "今日はどんな\nご縁を結ぶ？",
+    otter: "石の準備\nできてるよ！",
   },
   amateur: {
-    fox: "よい対局のご縁を結びましょう。",
-    otter: "対局札を並べておきました！",
+    fox: "よい対戦のご縁を結びましょう。",
+    otter: "対戦札を並べておきました！",
   },
   pairgo: {
-    fox: "ふたり組のご縁を探しましょう。",
-    otter: "ペアの石、きれいに磨きました！",
+    fox: "ペアと団体のご縁を整えましょう。",
+    otter: "番号札もできてるよ！",
   },
 };
 
@@ -1597,23 +1844,23 @@ const updateShrineMode = (mode = getShrineMode()) => {
 
   if (shrineModeKicker) {
     shrineModeKicker.textContent = isPairgo
-      ? "ペア碁プリセット"
+      ? "ペア・団体プリセット"
       : isAmateur
-        ? "大会プリセット"
+        ? "大会対戦プリセット"
         : "水曜会プリセット";
   }
   if (shrineModeTitle) {
     shrineModeTitle.textContent = isPairgo
-      ? "2人1組のペア碁を組み合わせ"
+      ? "ペア・団体を作って番号を付ける"
       : isAmateur
-        ? "参加者同士を一対一で組み合わせ"
+        ? "個人や組番号で大会対戦を作る"
         : "先生ごとの多面打ちで組み合わせ";
   }
   if (shrineModeCopy) {
     shrineModeCopy.textContent = isPairgo
-      ? "参加者からペアを作り、ペア同士の対局を出します。"
+      ? "決まっている組を先に使い、当日の人をペアや団体にして番号を出します。"
       : isAmateur
-        ? "参加者だけで、回数分の一対一組み合わせを出します。"
+        ? "個人名やペア・団体番号から、一対一の対戦組み合わせを出します。"
         : "先生ごとに面数と回数を決め、指導碁の組み合わせを出します。";
   }
 
@@ -1624,6 +1871,23 @@ const enterShrinePanel = () => {
   renderShrineTeachers();
   updateShrineGuideSpeech();
   showPanel("shrine");
+};
+
+const clearShrineIntroTimers = () => {
+  for (const timerId of shrineIntroTimerIds) {
+    window.clearTimeout(timerId);
+  }
+  shrineIntroTimerIds = [];
+};
+
+const finishShrineIntro = () => {
+  clearShrineIntroTimers();
+  if (shrineIntro) {
+    shrineIntro.classList.remove("is-playing");
+    shrineIntro.hidden = true;
+  }
+  isShrineIntroPlaying = false;
+  enterShrinePanel();
 };
 
 const openShrineWithIntro = () => {
@@ -1637,6 +1901,7 @@ const openShrineWithIntro = () => {
     return;
   }
 
+  clearShrineIntroTimers();
   isShrineIntroPlaying = true;
   shrineIntro.hidden = false;
   shrineIntro.classList.remove("is-playing");
@@ -1656,19 +1921,15 @@ const openShrineWithIntro = () => {
   ];
 
   for (const caption of introCaptions) {
-    window.setTimeout(() => {
+    const timerId = window.setTimeout(() => {
       if (shrineIntroCaption && isShrineIntroPlaying) {
         shrineIntroCaption.textContent = caption.text;
       }
     }, caption.at);
+    shrineIntroTimerIds.push(timerId);
   }
 
-  window.setTimeout(() => {
-    shrineIntro.classList.remove("is-playing");
-    shrineIntro.hidden = true;
-    isShrineIntroPlaying = false;
-    enterShrinePanel();
-  }, 8100);
+  shrineIntroTimerIds.push(window.setTimeout(finishShrineIntro, 8100));
 };
 
 const renderLessonShrineResult = (participants, roundCount) => {
@@ -1810,35 +2071,357 @@ const createAmateurRound = (names, roundIndex) => {
   return { pairs, waiting };
 };
 
-const renderAmateurShrineResult = (participants, roundCount) => {
-  if (participants.length < 2) {
-    const empty = document.createElement("p");
-    empty.textContent = "一対一の組み合わせには、参加者を2人以上入れてください。";
-    shrineResult.append(empty);
+const getShrineMatchMethod = () =>
+  shrineMatchMethod?.value || "shuffle";
+
+const getShrineMatchMethodLabel = (method = getShrineMatchMethod()) => ({
+  shuffle: "交流戦・遊びイベント",
+  tournament: "トーナメント初回",
+  swiss: "スイス方式初回",
+})[method] ?? "交流戦・遊びイベント";
+
+const getShrineSessionMethodLabel = (method = getShrineMatchMethod()) => ({
+  shuffle: "交流戦・遊びイベント",
+  tournament: "トーナメント方式",
+  swiss: "スイス方式",
+})[method] ?? "交流戦・遊びイベント";
+
+const getSwissRoundLimit = (entryCount) =>
+  Math.max(1, Math.ceil(Math.log2(Math.max(2, entryCount))));
+
+const canAdvanceShrineMatchSession = () => {
+  if (!shrineMatchSession) {
+    return false;
+  }
+
+  const latestRound = shrineMatchSession.rounds.at(-1);
+  if (!latestRound?.pairs.length) {
+    return false;
+  }
+
+  if (shrineMatchSession.method === "swiss") {
+    return shrineMatchSession.rounds.length < getSwissRoundLimit(shrineMatchSession.entries.length);
+  }
+
+  return true;
+};
+
+const normalizeShrineNumber = (value) =>
+  Number(String(value).replace(/[０-９]/g, (char) => String.fromCharCode(char.charCodeAt(0) - 0xfee0)));
+
+const parseShrineNumberedEntry = (name) => {
+  const match = String(name).trim().match(/^(\d+|[０-９]+)\s*番(?:\s*(.*))?$/);
+  if (!match) {
+    return null;
+  }
+
+  return {
+    number: normalizeShrineNumber(match[1]),
+    entryName: match[2]?.trim() || "ペア・団体・個人",
+  };
+};
+
+const normalizeShrineEntry = (name, index, assignedNumber = index + 1) => {
+  const numberedEntry = parseShrineNumberedEntry(name);
+  const entryNumber = numberedEntry?.number || assignedNumber;
+  const entryName = numberedEntry?.entryName || name;
+  const numberLabel = `${entryNumber}番`;
+  const label = numberedEntry && entryName === "ペア・団体・個人"
+    ? numberLabel
+    : `${numberLabel} ${entryName}`;
+
+  return {
+    id: `entry-${entryNumber}-${index + 1}-${name}`,
+    number: entryNumber,
+    raw: name,
+    numberLabel,
+    entryName,
+    label,
+    score: 0,
+  };
+};
+
+const createShrineEntries = (participants) => {
+  const usedNumbers = new Set(participants
+    .map(parseShrineNumberedEntry)
+    .filter(Boolean)
+    .map((entry) => entry.number));
+  let nextNumber = 1;
+
+  return participants.map((name, index) => {
+    if (parseShrineNumberedEntry(name)) {
+      return normalizeShrineEntry(name, index);
+    }
+
+    while (usedNumbers.has(nextNumber)) {
+      nextNumber += 1;
+    }
+
+    const entry = normalizeShrineEntry(name, index, nextNumber);
+    usedNumbers.add(nextNumber);
+    nextNumber += 1;
+    return entry;
+  });
+};
+
+const createEntryRound = (entries, roundIndex = 0) => {
+  const players = entries.length % 2 === 0 ? [...entries] : [...entries, null];
+  const fixed = players[0];
+  let rotating = players.slice(1);
+
+  for (let index = 0; index < roundIndex; index += 1) {
+    rotating = [rotating.at(-1), ...rotating.slice(0, -1)];
+  }
+
+  const arranged = [fixed, ...rotating];
+  const pairs = [];
+  let waiting = null;
+
+  for (let index = 0; index < arranged.length / 2; index += 1) {
+    const left = arranged[index];
+    const right = arranged[arranged.length - 1 - index];
+
+    if (!left || !right) {
+      waiting = left || right;
+      continue;
+    }
+
+    pairs.push({ left, right, result: "" });
+  }
+
+  return { pairs, waiting };
+};
+
+const createAdjacentEntryRound = (entries) => {
+  const pairs = [];
+  let waiting = null;
+
+  for (let index = 0; index < entries.length; index += 2) {
+    const left = entries[index];
+    const right = entries[index + 1];
+
+    if (!right) {
+      waiting = left;
+      continue;
+    }
+
+    pairs.push({ left, right, result: "" });
+  }
+
+  return { pairs, waiting };
+};
+
+const createShrineMatchSession = (entries, method) => {
+  const sessionEntries = entries.map((entry) => ({ ...entry, score: 0 }));
+
+  return {
+    method,
+    entries: sessionEntries,
+    rounds: [{
+      roundNumber: 1,
+      ...createEntryRound(sessionEntries, 0),
+    }],
+    message: "",
+  };
+};
+
+const renderShrineEntryList = (entries) => {
+  const entryBlock = document.createElement("article");
+  const entryTitle = document.createElement("h3");
+  const entryList = document.createElement("ol");
+
+  entryBlock.className = "shrine-round-result is-entry-list";
+  entryTitle.textContent = "出場番号";
+  entryList.className = "shrine-entry-list";
+
+  for (const entry of entries) {
+    const item = document.createElement("li");
+    const number = document.createElement("span");
+    const name = document.createElement("strong");
+    number.textContent = entry.numberLabel;
+    name.textContent = entry.entryName;
+    item.append(number, name);
+    entryList.append(item);
+  }
+
+  entryBlock.append(entryTitle, entryList);
+  shrineResult.append(entryBlock);
+};
+
+const renderShrineMatchRound = (round, { interactive = false } = {}) => {
+  const roundBlock = document.createElement("article");
+  const roundTitle = document.createElement("h3");
+  const list = document.createElement("ol");
+
+  roundBlock.className = interactive
+    ? "shrine-round-result is-amateur has-results"
+    : "shrine-round-result is-amateur";
+  roundTitle.textContent = `${round.roundNumber}回目`;
+  list.className = "shrine-pair-list";
+
+  for (const [index, pair] of round.pairs.entries()) {
+    const item = document.createElement("li");
+    const order = document.createElement("span");
+    const left = document.createElement("strong");
+    const versus = document.createElement("small");
+    const right = document.createElement("strong");
+
+    order.textContent = `${index + 1}局`;
+    left.textContent = pair.left.label;
+    versus.textContent = "対";
+    right.textContent = pair.right.label;
+    item.append(order, left, versus, right);
+
+    if (interactive) {
+      const result = document.createElement("select");
+      result.dataset.shrineMatchResult = "true";
+      result.dataset.roundIndex = String(round.roundNumber - 1);
+      result.dataset.matchIndex = String(index);
+      result.setAttribute("aria-label", `${round.roundNumber}回目 ${index + 1}局の結果`);
+      result.innerHTML = `
+        <option value="">結果</option>
+        <option value="left">${pair.left.numberLabel}勝ち</option>
+        <option value="right">${pair.right.numberLabel}勝ち</option>
+        <option value="draw">引き分け</option>
+      `;
+      result.value = pair.result || "";
+      item.append(result);
+    } else if (pair.result) {
+      const resultText = document.createElement("em");
+      resultText.className = "shrine-match-result-text";
+      resultText.textContent = ({
+        left: `${pair.left.numberLabel}勝ち`,
+        right: `${pair.right.numberLabel}勝ち`,
+        draw: "引き分け",
+      })[pair.result] ?? "";
+      item.append(resultText);
+    }
+
+    list.append(item);
+  }
+
+  roundBlock.append(roundTitle, list);
+
+  if (round.waiting) {
+    const waitBox = document.createElement("div");
+    const waitTitle = document.createElement("strong");
+    const waitNames = document.createElement("span");
+    waitBox.className = "shrine-waiting";
+    waitTitle.textContent = "待機";
+    waitNames.textContent = round.waiting.label;
+    waitBox.append(waitTitle, waitNames);
+    roundBlock.append(waitBox);
+  }
+
+  shrineResult.append(roundBlock);
+};
+
+const renderShrineMatchSession = () => {
+  if (!shrineMatchSession) {
     return;
   }
 
   const heading = document.createElement("div");
   const title = document.createElement("strong");
   const oracle = document.createElement("p");
-  const totalPairs = Math.floor(participants.length / 2) * roundCount;
+  const latestRound = shrineMatchSession.rounds.at(-1);
+  const totalPairs = shrineMatchSession.rounds.reduce((total, round) => total + round.pairs.length, 0);
+  const canAdvance = canAdvanceShrineMatchSession();
 
   heading.className = "shrine-result-heading";
-  title.textContent = "大会のお告げ";
-  oracle.textContent = participants.length % 2 === 0
-    ? `${roundCount}回分で${totalPairs}局を組みました。`
-    : `${roundCount}回分で${totalPairs}局を組みました。奇数のため各回に待機があります。`;
+  title.textContent = "大会対戦のお告げ";
+  oracle.textContent = `${getShrineSessionMethodLabel(shrineMatchSession.method)}として${totalPairs}局を組みました。`;
   heading.append(title, oracle);
   shrineResult.append(heading);
 
-  for (let roundIndex = 0; roundIndex < roundCount; roundIndex += 1) {
-    const round = createAmateurRound(participants, roundIndex);
+  renderShrineEntryList(shrineMatchSession.entries);
+
+  for (const round of shrineMatchSession.rounds) {
+    renderShrineMatchRound(round, { interactive: round === latestRound && latestRound?.pairs.some((pair) => !pair.result) });
+  }
+
+  if (shrineMatchSession.message) {
+    const message = document.createElement("p");
+    message.textContent = shrineMatchSession.message;
+    shrineResult.append(message);
+  }
+
+  if (canAdvance) {
+    const actions = document.createElement("div");
+    const nextButton = document.createElement("button");
+    actions.className = "shrine-next-round-actions";
+    nextButton.type = "button";
+    nextButton.dataset.shrineNextRound = "true";
+    nextButton.textContent = "次の回を作る";
+    actions.append(nextButton);
+    shrineResult.append(actions);
+  } else if (latestRound?.pairs.some((pair) => !pair.result)) {
+    const actions = document.createElement("div");
+    const nextButton = document.createElement("button");
+    actions.className = "shrine-next-round-actions";
+    nextButton.type = "button";
+    nextButton.dataset.shrineNextRound = "true";
+    nextButton.textContent = "結果を確定";
+    actions.append(nextButton);
+    shrineResult.append(actions);
+  } else if (shrineMatchSession.method === "swiss" && !shrineMatchSession.message.includes("終了")) {
+    const done = document.createElement("p");
+    done.textContent = `${getSwissRoundLimit(shrineMatchSession.entries.length)}回戦まで組みました。スイス方式はここで終了です。`;
+    shrineResult.append(done);
+  }
+};
+
+const renderAmateurShrineResult = (participants) => {
+  if (participants.length < 2) {
+    const empty = document.createElement("p");
+    empty.textContent = "大会対戦には、参加者または組番号を2つ以上入れてください。";
+    shrineResult.append(empty);
+    return;
+  }
+
+  const entries = createShrineEntries(participants);
+  const matchMethod = getShrineMatchMethod();
+  if (matchMethod !== "shuffle") {
+    const currentSignature = participants.join("\n");
+    if (
+      !shrineMatchSession ||
+      shrineMatchSession.method !== matchMethod ||
+      shrineMatchSession.signature !== currentSignature
+    ) {
+      shrineMatchSession = createShrineMatchSession(entries, matchMethod);
+      shrineMatchSession.signature = currentSignature;
+    }
+    renderShrineMatchSession();
+    return;
+  }
+
+  shrineMatchSession = null;
+  const effectiveRoundCount = 1;
+  const heading = document.createElement("div");
+  const title = document.createElement("strong");
+  const oracle = document.createElement("p");
+  const totalPairs = Math.floor(entries.length / 2) * effectiveRoundCount;
+
+  heading.className = "shrine-result-heading";
+  title.textContent = "大会対戦のお告げ";
+  oracle.textContent = entries.length % 2 === 0
+    ? `${getShrineMatchMethodLabel(matchMethod)}として${totalPairs}局を組みました。`
+    : `${getShrineMatchMethodLabel(matchMethod)}として${totalPairs}局を組みました。奇数のため待機があります。`;
+  heading.append(title, oracle);
+  shrineResult.append(heading);
+
+  renderShrineEntryList(entries);
+
+  for (let roundIndex = 0; roundIndex < effectiveRoundCount; roundIndex += 1) {
+    const round = createAmateurRound(entries.map((entry) => entry.label), roundIndex);
     const roundBlock = document.createElement("article");
     const roundTitle = document.createElement("h3");
     const list = document.createElement("ol");
 
     roundBlock.className = "shrine-round-result is-amateur";
-    roundTitle.textContent = `${roundIndex + 1}回目`;
+    roundTitle.textContent = matchMethod === "shuffle"
+      ? `${roundIndex + 1}回目`
+      : "初回組み合わせ";
     list.className = "shrine-pair-list";
 
     for (const [index, pair] of round.pairs.entries()) {
@@ -1870,31 +2453,229 @@ const renderAmateurShrineResult = (participants, roundCount) => {
 
     shrineResult.append(roundBlock);
   }
+
 };
 
-const createPairgoRound = (names, roundIndex) => {
-  const rotated = names.map((_, index) => names[(index + roundIndex * 4) % names.length]);
-  const games = [];
-  const gameCount = Math.floor(rotated.length / 4);
+const applyShrineMatchResultsAndAdvance = () => {
+  if (!shrineMatchSession || !shrineResult) {
+    return;
+  }
 
-  for (let index = 0; index < gameCount; index += 1) {
-    const base = index * 4;
-    games.push({
-      pairA: [rotated[base], rotated[base + 1]],
-      pairB: [rotated[base + 2], rotated[base + 3]],
+  const latestRound = shrineMatchSession.rounds.at(-1);
+  if (!latestRound) {
+    return;
+  }
+
+  const resultInputs = [...shrineResult.querySelectorAll("[data-shrine-match-result]")];
+  if (resultInputs.some((input) => !input.value)) {
+    shrineMatchSession.message = "すべての対戦結果を選んでから、次の回を作ってください。";
+    shrineResult.textContent = "";
+    renderShrineMatchSession();
+    return;
+  }
+
+  for (const input of resultInputs) {
+    const matchIndex = Number(input.dataset.matchIndex);
+    const pair = latestRound.pairs[matchIndex];
+    if (pair) {
+      pair.result = input.value;
+    }
+  }
+
+  if (!canAdvanceShrineMatchSession()) {
+    shrineMatchSession.message = shrineMatchSession.method === "swiss"
+      ? `${getSwissRoundLimit(shrineMatchSession.entries.length)}回戦まで結果を入れました。スイス方式はここで終了です。`
+      : "結果を入れました。";
+    shrineResult.textContent = "";
+    renderShrineMatchSession();
+    return;
+  }
+
+  const nextEntries = [];
+  for (const pair of latestRound.pairs) {
+    if (pair.result === "left") {
+      pair.left.score += 1;
+      nextEntries.push(pair.left);
+    } else if (pair.result === "right") {
+      pair.right.score += 1;
+      nextEntries.push(pair.right);
+    } else if (pair.result === "draw") {
+      pair.left.score += 0.5;
+      pair.right.score += 0.5;
+      if (shrineMatchSession.method === "tournament") {
+        nextEntries.push(pair.left, pair.right);
+      }
+    }
+  }
+
+  if (latestRound.waiting) {
+    latestRound.waiting.score += 1;
+    nextEntries.push(latestRound.waiting);
+  }
+
+  if (shrineMatchSession.method === "tournament") {
+    if (nextEntries.length <= 1) {
+      shrineMatchSession.message = nextEntries[0]
+        ? `${nextEntries[0].label} が勝ち残りました。`
+        : "次へ進む人がいません。";
+      shrineResult.textContent = "";
+      renderShrineMatchSession();
+      return;
+    }
+
+    shrineMatchSession.rounds.push({
+      roundNumber: shrineMatchSession.rounds.length + 1,
+      ...createEntryRound(nextEntries, 0),
+    });
+    shrineMatchSession.message = "勝った人で次の回を作りました。";
+  } else {
+    const rankedEntries = [...shrineMatchSession.entries]
+      .sort((a, b) => b.score - a.score || a.number - b.number);
+
+    shrineMatchSession.rounds.push({
+      roundNumber: shrineMatchSession.rounds.length + 1,
+      ...createAdjacentEntryRound(rankedEntries),
+    });
+    shrineMatchSession.message = "成績が近い人同士で次の回を作りました。待機は1点として扱います。";
+  }
+
+  shrineResult.textContent = "";
+  renderShrineMatchSession();
+  updateShrineRecordSaveState();
+};
+
+const splitShrineGroupLine = (line) =>
+  line
+    .split(/[、,，・/／\s]+/)
+    .map((name) => name.trim())
+    .filter(Boolean);
+
+const getShrineGroupSize = () =>
+  Math.max(2, Math.min(15, Number(shrineGroupSize?.value) || 2));
+
+const getShrineFixedGroups = () => {
+  const seen = new Set();
+
+  return (shrineFixedGroups?.value ?? "")
+    .split(/\r?\n/)
+    .map((line) => splitShrineGroupLine(line))
+    .filter((group) => group.length >= 2)
+    .map((group) => group.filter((name) => {
+      if (seen.has(name)) {
+        return false;
+      }
+      seen.add(name);
+      return true;
+    }))
+    .filter((group) => group.length >= 2);
+};
+
+const arrangePairgoFreeMembers = (freePeople, groupSize) => {
+  const strengthScore = (person) => normalizeShrineStrength(person.strength).score;
+  const knownStrengthPeople = freePeople.filter((person) => strengthScore(person) !== null);
+  const unknownStrengthPeople = freePeople.filter((person) => strengthScore(person) === null);
+  const byStrength = [...knownStrengthPeople].sort((a, b) => strengthScore(a) - strengthScore(b));
+
+  if (getShrinePreferBalancedStrength() && groupSize > 2 && knownStrengthPeople.length >= groupSize) {
+    const groups = Array.from({ length: Math.ceil(freePeople.length / groupSize) }, () => []);
+    const sorted = [...knownStrengthPeople].sort((a, b) => strengthScore(b) - strengthScore(a));
+    sorted.forEach((person, index) => {
+      const cycle = Math.floor(index / groups.length);
+      const offset = index % groups.length;
+      const targetIndex = cycle % 2 === 0 ? offset : groups.length - 1 - offset;
+      groups[targetIndex].push(person);
+    });
+    return groups.flat().concat(unknownStrengthPeople).map((person) => person.name);
+  }
+
+  const femalePeople = freePeople.filter((person) => person.gender === "female");
+  const malePeople = freePeople.filter((person) => person.gender === "male");
+  const unknownPeople = freePeople.filter((person) => !person.gender);
+
+  if (!getShrinePreferMixedGender() && getShrinePreferCloseStrength() && groupSize === 2 && knownStrengthPeople.length > 0) {
+    return byStrength.concat(unknownStrengthPeople).map((person) => person.name);
+  }
+
+  if (!getShrinePreferMixedGender()) {
+    return freePeople.map((person) => person.name);
+  }
+
+  if (groupSize !== 2) {
+    const ordered = getShrinePreferCloseStrength()
+      ? [...femalePeople, ...malePeople].sort((a, b) => (strengthScore(a) ?? 0) - (strengthScore(b) ?? 0))
+      : [...femalePeople, ...malePeople];
+    return [...ordered, ...unknownPeople].map((person) => person.name);
+  }
+
+  const arranged = [];
+  const femaleQueue = getShrinePreferCloseStrength()
+    ? [...femalePeople].sort((a, b) => (strengthScore(a) ?? 0) - (strengthScore(b) ?? 0))
+    : [...femalePeople];
+  const maleQueue = [...malePeople];
+
+  while (femaleQueue.length > 0 && maleQueue.length > 0) {
+    const female = femaleQueue.shift();
+    let maleIndex = 0;
+    if (getShrinePreferCloseStrength() && strengthScore(female) !== null) {
+      let bestDiff = Infinity;
+      for (let index = 0; index < maleQueue.length; index += 1) {
+        const diff = Math.abs((strengthScore(maleQueue[index]) ?? strengthScore(female)) - strengthScore(female));
+        if (diff < bestDiff) {
+          bestDiff = diff;
+          maleIndex = index;
+        }
+      }
+    }
+    const [male] = maleQueue.splice(maleIndex, 1);
+    arranged.push(female.name, male.name);
+  }
+
+  arranged.push(
+    ...femaleQueue.map((person) => person.name),
+    ...maleQueue.map((person) => person.name),
+    ...unknownPeople.map((person) => person.name)
+  );
+
+  return arranged;
+};
+
+const createPairgoGroups = (participants) => {
+  const groupSize = getShrineGroupSize();
+  const fixedGroups = getShrineFixedGroups();
+  const fixedMembers = new Set(fixedGroups.flat());
+  const freePeople = getShrineParticipantPeople().filter((person) => !fixedMembers.has(person.name));
+  const freeMembers = arrangePairgoFreeMembers(freePeople, groupSize);
+  const groups = fixedGroups.map((members, index) => ({
+    number: index + 1,
+    type: "決定済み",
+    members,
+  }));
+  const waiting = [];
+
+  for (let index = 0; index < freeMembers.length; index += groupSize) {
+    const members = freeMembers.slice(index, index + groupSize);
+
+    if (members.length < groupSize) {
+      waiting.push(...members);
+      continue;
+    }
+
+    groups.push({
+      number: groups.length + 1,
+      type: "当日組",
+      members,
     });
   }
 
-  return {
-    games,
-    waiting: rotated.slice(gameCount * 4),
-  };
+  return { groupSize, groups, waiting, fixedGroups };
 };
 
-const renderPairgoShrineResult = (participants, roundCount) => {
-  if (participants.length < 4) {
+const renderPairgoShrineResult = (participants) => {
+  const { groupSize, groups, waiting, fixedGroups } = createPairgoGroups(participants);
+
+  if (participants.length < 2 && fixedGroups.length === 0) {
     const empty = document.createElement("p");
-    empty.textContent = "ペア碁の組み合わせには、参加者を4人以上入れてください。";
+    empty.textContent = "ペア・団体づくりには、参加者を2人以上入れてください。";
     shrineResult.append(empty);
     return;
   }
@@ -1902,55 +2683,69 @@ const renderPairgoShrineResult = (participants, roundCount) => {
   const heading = document.createElement("div");
   const title = document.createElement("strong");
   const oracle = document.createElement("p");
-  const gamesPerRound = Math.floor(participants.length / 4);
-  const waitingCount = participants.length % 4;
 
   heading.className = "shrine-result-heading";
-  title.textContent = "ペア碁のお告げ";
-  oracle.textContent = waitingCount > 0
-    ? `${roundCount}回分で${gamesPerRound * roundCount}局を組みました。各回に待機があります。`
-    : `${roundCount}回分で${gamesPerRound * roundCount}局を組みました。`;
+  title.textContent = "ペア・団体づくりのお告げ";
+  oracle.textContent = groups.length > 0
+    ? `${groups.length}組に番号を付けました。大会対戦タブでは、この番号を参加者として使えます。`
+    : `${groupSize}人組を作るには人数が足りません。控えを確認してください。`;
   heading.append(title, oracle);
   shrineResult.append(heading);
 
-  for (let roundIndex = 0; roundIndex < roundCount; roundIndex += 1) {
-    const round = createPairgoRound(participants, roundIndex);
+  if (getShrinePreferMixedGender()) {
+    const genderNote = document.createElement("p");
+    genderNote.textContent = "男女の記録がある人は、男女の組を優先して並べました。";
+    shrineResult.append(genderNote);
+  }
+  if (getShrinePreferCloseStrength() || getShrinePreferBalancedStrength()) {
+    const strengthNote = document.createElement("p");
+    strengthNote.textContent = getShrinePreferBalancedStrength()
+      ? "棋力の記録がある人は、全チームの平均棋力が近くなるように並べました。"
+      : "棋力の記録がある人は、棋力が近い組を優先しました。";
+    shrineResult.append(strengthNote);
+  }
+
+  if (groups.length > 0) {
     const roundBlock = document.createElement("article");
     const roundTitle = document.createElement("h3");
     const list = document.createElement("ol");
 
     roundBlock.className = "shrine-round-result is-pairgo";
-    roundTitle.textContent = `${roundIndex + 1}回目`;
-    list.className = "shrine-pairgo-list";
+    roundTitle.textContent = "出場単位";
+    list.className = "shrine-pairgo-list is-groups";
 
-    for (const [index, game] of round.games.entries()) {
+    for (const group of groups) {
       const item = document.createElement("li");
       const order = document.createElement("span");
-      const pairA = document.createElement("strong");
-      const versus = document.createElement("small");
-      const pairB = document.createElement("strong");
-      order.textContent = `${index + 1}局`;
-      pairA.textContent = game.pairA.join("・");
-      versus.textContent = "対";
-      pairB.textContent = game.pairB.join("・");
-      item.append(order, pairA, versus, pairB);
+      const members = document.createElement("strong");
+      const type = document.createElement("small");
+
+      order.textContent = `${group.number}番`;
+      members.textContent = group.members.join("・");
+      type.textContent = group.type;
+      item.append(order, members, type);
       list.append(item);
     }
 
     roundBlock.append(roundTitle, list);
-
-    if (round.waiting.length > 0) {
-      const waitBox = document.createElement("div");
-      const waitTitle = document.createElement("strong");
-      const waitNames = document.createElement("span");
-      waitBox.className = "shrine-waiting";
-      waitTitle.textContent = "待機";
-      waitNames.textContent = round.waiting.join("、");
-      waitBox.append(waitTitle, waitNames);
-      roundBlock.append(waitBox);
-    }
-
     shrineResult.append(roundBlock);
+  }
+
+  if (waiting.length > 0) {
+    const waitBox = document.createElement("div");
+    const waitTitle = document.createElement("strong");
+    const waitNames = document.createElement("span");
+    waitBox.className = "shrine-waiting";
+    waitTitle.textContent = "控え";
+    waitNames.textContent = waiting.join("、");
+    waitBox.append(waitTitle, waitNames);
+    shrineResult.append(waitBox);
+  }
+
+  if (groups.length > 0) {
+    const note = document.createElement("p");
+    note.textContent = `大会対戦タブに ${groups.map((group) => `${group.number}番`).join("、")} を入れると、組同士の対戦を作れます。`;
+    shrineResult.append(note);
   }
 };
 
@@ -1964,7 +2759,7 @@ const renderShrineResult = () => {
   const mode = getShrineMode();
   shrineResult.textContent = "";
 
-  if (participants.length === 0) {
+  if (participants.length === 0 && !(mode === "pairgo" && getShrineFixedGroups().length > 0)) {
     const empty = document.createElement("p");
     empty.textContent = "参加者のお名前を入れてください。";
     shrineResult.append(empty);
@@ -1973,13 +2768,13 @@ const renderShrineResult = () => {
   }
 
   if (mode === "amateur") {
-    renderAmateurShrineResult(participants, roundCount);
+    renderAmateurShrineResult(participants);
     updateShrineRecordSaveState();
     return;
   }
 
   if (mode === "pairgo") {
-    renderPairgoShrineResult(participants, roundCount);
+    renderPairgoShrineResult(participants);
     updateShrineRecordSaveState();
     return;
   }
@@ -4023,6 +4818,7 @@ shrineRoundCount?.addEventListener("change", () => {
 
 for (const button of shrineModeButtons) {
   button.addEventListener("click", () => {
+    shrineMatchSession = null;
     updateShrineMode(button.dataset.shrineMode);
     if (shrineResult) {
       shrineResult.textContent = "";
@@ -4059,7 +4855,7 @@ shrineRosterEditToggle?.addEventListener("click", () => {
   shrineRosterEditToggle.setAttribute("aria-expanded", String(willOpen));
   shrineRosterEditToggle.textContent = willOpen ? "編集を閉じる" : "名簿を編集";
   if (willOpen && shrineRosterEditorText) {
-    shrineRosterEditorText.value = shrineRosterNames.join("\n");
+    shrineRosterEditorText.value = shrineRosterNames.map(formatShrinePersonLine).join("\n");
   }
 });
 
@@ -4070,6 +4866,63 @@ shrineRosterSave?.addEventListener("click", () => {
   setShrineRosterMessage(`名簿を${shrineRosterNames.length}人で保存しました。`);
 });
 
+const syncShrineRosterRow = (target) => {
+  if (!(target instanceof HTMLElement) || !target.matches("[data-shrine-roster-gender], [data-shrine-roster-strength-type], [data-shrine-roster-strength-value], [data-shrine-roster-full-name]")) {
+    return;
+  }
+
+  const row = target.closest("label");
+  const checkbox = row?.querySelector("[data-shrine-roster-name]");
+  const originalName = checkbox?.dataset.shrineRosterName;
+  const nameInput = row?.querySelector("[data-shrine-roster-full-name]");
+  const genderSelect = row?.querySelector("[data-shrine-roster-gender]");
+  const strengthType = row?.querySelector("[data-shrine-roster-strength-type]");
+  const strengthValue = row?.querySelector("[data-shrine-roster-strength-value]");
+  const nextName = nameInput?.value.trim() || originalName;
+
+  shrineRosterNames = shrineRosterNames.map((person) => person.name === originalName
+    ? {
+        name: nextName,
+        gender: normalizeShrineGender(genderSelect?.value),
+        strength: normalizeShrineStrength({
+          type: strengthType?.value,
+          value: strengthValue?.value,
+        }),
+      }
+    : person);
+  saveShrineRoster();
+
+  const updatedPerson = shrineRosterNames.find((person) => person.name === nextName);
+  if (checkbox && updatedPerson) {
+    checkbox.dataset.shrineRosterName = updatedPerson.name;
+    checkbox.value = formatShrinePersonLine(updatedPerson);
+  }
+  if (nameInput && updatedPerson) {
+    nameInput.dataset.shrineRosterFullName = updatedPerson.name;
+  }
+  const nextGenderSelect = row?.querySelector("[data-shrine-roster-gender]");
+  const nextStrengthType = row?.querySelector("[data-shrine-roster-strength-type]");
+  const nextStrengthValue = row?.querySelector("[data-shrine-roster-strength-value]");
+  if (nextGenderSelect && updatedPerson) {
+    nextGenderSelect.dataset.shrineRosterGender = updatedPerson.name;
+  }
+  if (nextStrengthType && updatedPerson) {
+    nextStrengthType.dataset.shrineRosterStrengthType = updatedPerson.name;
+  }
+  if (nextStrengthValue && updatedPerson) {
+    nextStrengthValue.dataset.shrineRosterStrengthValue = updatedPerson.name;
+  }
+  setShrineRosterMessage("名簿の記録を保存しました。");
+};
+
+shrineRosterList?.addEventListener("change", (event) => {
+  syncShrineRosterRow(event.target);
+});
+
+shrineRosterList?.addEventListener("input", (event) => {
+  syncShrineRosterRow(event.target);
+});
+
 shrineRosterApply?.addEventListener("click", () => {
   if (!shrineParticipants || !shrineRosterList) {
     return;
@@ -4077,10 +4930,12 @@ shrineRosterApply?.addEventListener("click", () => {
 
   const selectedNames = [...shrineRosterList.querySelectorAll("[data-shrine-roster-name]:checked")]
     .map((input) => input.value);
+  const beforeCount = getShrineParticipantNames().length;
+  const mergedNames = appendShrineParticipants(selectedNames);
+  const addedCount = Math.max(0, mergedNames.length - beforeCount);
 
-  shrineParticipants.value = selectedNames.join("\n");
   setShrineRosterMessage(selectedNames.length > 0
-    ? `${selectedNames.length}人を参加者欄へ入れました。`
+    ? `${addedCount}人を参加者欄へ足しました。`
     : "来ている人をチェックしてください。");
 });
 
@@ -4104,27 +4959,26 @@ shrineSampleButton?.addEventListener("click", () => {
     "渡辺さん",
   ];
   const amateurSample = [
+    "1番",
+    "2番",
+    "3番",
+    "4番",
+    "5番",
+    "6番",
     "青木さん",
     "石井さん",
-    "上田さん",
-    "遠藤さん",
-    "岡田さん",
-    "加藤さん",
-    "木村さん",
-    "近藤さん",
-    "斎藤さん",
   ];
   const pairgoSample = [
-    "春子さん",
-    "夏美さん",
-    "秋人さん",
-    "冬馬さん",
-    "朝子さん",
-    "昼夫さん",
-    "夕子さん",
-    "夜一さん",
-    "星乃さん",
-    "月野さん",
+    "春子さん 女 3級",
+    "秋人さん 男 2級",
+    "夏美さん 女 1200点",
+    "冬馬さん 男 1250点",
+    "朝子さん 女 5級",
+    "昼夫さん 男 4級",
+    "夕子さん 女 1段",
+    "夜一さん 男 1段",
+    "星乃さん 女 2段",
+    "月野さん 1300点",
   ];
   const sampleByMode = {
     amateur: amateurSample,
@@ -4132,11 +4986,121 @@ shrineSampleButton?.addEventListener("click", () => {
     lesson: lessonSample,
   };
 
-  shrineParticipants.value = (sampleByMode[getShrineMode()] ?? lessonSample).join("\n");
+  const mode = getShrineMode();
+  if (mode === "pairgo") {
+    if (shrineGroupSize) {
+      shrineGroupSize.value = "2";
+    }
+    if (shrineFixedGroups) {
+      shrineFixedGroups.value = [
+        "春子さん・秋人さん",
+        "夏美さん・冬馬さん",
+      ].join("\n");
+    }
+    shrineParticipants.value = [
+      "朝子さん 女 5級",
+      "昼夫さん 男 4級",
+      "夕子さん 女 1段",
+      "夜一さん 男 1段",
+      "星乃さん 女 2段",
+      "月野さん 1300点",
+    ].join("\n");
+    renderShrineResult();
+    return;
+  }
+
+  if (shrineFixedGroups) {
+    shrineFixedGroups.value = "";
+  }
+  shrineParticipants.value = (sampleByMode[mode] ?? lessonSample).join("\n");
   renderShrineResult();
 });
 
+shrineResetButton?.addEventListener("click", () => {
+  if (shrineParticipants) {
+    shrineParticipants.value = "";
+  }
+  if (shrineFixedGroups) {
+    shrineFixedGroups.value = "";
+  }
+  if (shrineResult) {
+    shrineResult.textContent = "";
+    const empty = document.createElement("p");
+    empty.textContent = "参加者を入れて「お告げを出す」を押してください。";
+    shrineResult.append(empty);
+  }
+  if (shrineNumberMessage) {
+    shrineNumberMessage.textContent = "例: 8なら 1番から8番までを入れます。個人戦では個人番号として使えます。";
+  }
+  for (const checkbox of shrineRosterList?.querySelectorAll("[data-shrine-roster-name]:checked") ?? []) {
+    checkbox.checked = false;
+  }
+  shrineMatchSession = null;
+  setShrineRosterMessage("入力をリセットしました。名簿はそのまま残っています。");
+  updateShrineRecordSaveState();
+});
+
 shrineGenerateButton?.addEventListener("click", renderShrineResult);
+shrineResult?.addEventListener("click", (event) => {
+  if (event.target instanceof HTMLElement && event.target.matches("[data-shrine-next-round]")) {
+    applyShrineMatchResultsAndAdvance();
+  }
+});
+shrineIntroSkip?.addEventListener("click", () => {
+  if (isShrineIntroPlaying) {
+    finishShrineIntro();
+  }
+});
+shrineGroupSize?.addEventListener("change", () => {
+  if (getShrineMode() === "pairgo") {
+    renderShrineResult();
+  }
+});
+shrineFixedGroups?.addEventListener("input", () => {
+  if (getShrineMode() === "pairgo") {
+    renderShrineResult();
+  }
+});
+shrineMatchMethod?.addEventListener("change", () => {
+  if (getShrineMode() === "amateur") {
+    renderShrineResult();
+  }
+});
+shrineMixedGenderPairs?.addEventListener("change", () => {
+  if (getShrineMode() === "pairgo") {
+    renderShrineResult();
+  }
+});
+shrineCloseStrengthPairs?.addEventListener("change", () => {
+  if (getShrineMode() === "pairgo") {
+    renderShrineResult();
+  }
+});
+shrineBalancedTeamStrength?.addEventListener("change", () => {
+  if (getShrineMode() === "pairgo") {
+    renderShrineResult();
+  }
+});
+shrineNumberApply?.addEventListener("click", () => {
+  if (!shrineParticipants || !shrineNumberCount) {
+    return;
+  }
+
+  const count = Math.max(2, Math.min(200, Number(shrineNumberCount.value) || 2));
+  shrineNumberCount.value = String(count);
+  const numberNames = Array.from({ length: count }, (_, index) => `${index + 1}番`);
+  const beforeCount = getShrineParticipantNames().length;
+  const mergedNames = appendShrineParticipants(numberNames);
+  const addedCount = Math.max(0, mergedNames.length - beforeCount);
+
+  if (shrineNumberMessage) {
+    shrineNumberMessage.textContent = addedCount > 0
+      ? `1番から${count}番までを参加者欄へ足しました。名前と番号の両方を使えます。`
+      : `1番から${count}番までは、すでに参加者欄に入っています。`;
+  }
+
+  renderShrineResult();
+});
 
 shrineRecordSave?.addEventListener("click", () => {
   if (!shrineResult?.querySelector(".shrine-round-result")) {

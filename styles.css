@@ -1081,84 +1081,139 @@ button {
   font-weight: 800;
 }
 
-.shrine-seal {
-  display: grid;
-  place-items: center;
-  width: 48px;
-  height: 48px;
-  border: 2px solid rgba(255, 250, 240, 0.86);
-  border-radius: 50%;
-  background: #5d8fc3;
-  color: #fffaf0;
-  font-size: 1.35rem;
-  font-weight: 900;
-  box-shadow: 0 10px 24px rgba(48, 38, 26, 0.16);
+.shrine-torii-mark {
+  position: relative;
+  display: block;
+  justify-self: start;
+  width: 62px;
+  height: 52px;
+  margin-right: 10px;
+  border-radius: 8px;
+  background:
+    linear-gradient(#c7362b, #c7362b) 5px 7px / 52px 9px no-repeat,
+    linear-gradient(#e44b37, #e44b37) 0 15px / 62px 10px no-repeat,
+    linear-gradient(#bf3028, #bf3028) 13px 20px / 9px 30px no-repeat,
+    linear-gradient(#bf3028, #bf3028) 40px 20px / 9px 30px no-repeat,
+    linear-gradient(180deg, rgba(255, 250, 240, 0.92), rgba(255, 236, 214, 0.72));
+  box-shadow: 0 10px 20px rgba(139, 62, 42, 0.16);
 }
 
 .shrine-guide-card {
   display: grid;
-  grid-template-columns: 46px minmax(0, 1fr);
-  gap: 9px 10px;
-  align-items: center;
-  padding: 11px;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 8px;
+  align-items: end;
+  padding: 12px 10px 10px;
   border: 1px solid rgba(93, 143, 195, 0.18);
   border-radius: 8px;
   background:
-    linear-gradient(90deg, rgba(93, 143, 195, 0.1), transparent 58%),
+    radial-gradient(circle at 18% 18%, rgba(255, 211, 219, 0.3), transparent 32%),
+    linear-gradient(90deg, rgba(93, 143, 195, 0.1), transparent 62%),
     rgba(255, 252, 244, 0.7);
 }
 
-.shrine-guide-character {
+.shrine-guide-companion {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: end;
+  gap: 6px;
+  margin: 0;
+  min-width: 0;
+}
+
+.shrine-guide-companion.is-fox {
+  justify-self: end;
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.shrine-guide-companion.is-otter {
+  justify-self: start;
+}
+
+.shrine-guide-companion.is-fox .shrine-guide-orb {
+  order: 2;
+}
+
+.shrine-guide-orb {
   display: grid;
   place-items: center;
-  width: 42px;
-  height: 42px;
+  width: 88px;
+  height: 88px;
+  border: 2px solid rgba(255, 250, 240, 0.9);
   border-radius: 50%;
-  overflow: visible;
-  color: #fffaf0;
-  font-size: 0.9rem;
-  font-weight: 900;
-  box-shadow: 0 7px 14px rgba(48, 38, 26, 0.12);
-}
-
-.shrine-guide-character.is-fox {
+  overflow: hidden;
   background:
-    radial-gradient(circle at 50% 58%, rgba(255, 250, 240, 0.88) 0 28%, transparent 29%),
-    linear-gradient(180deg, #f0a34a, #c85a32);
+    radial-gradient(circle at 35% 28%, rgba(255, 255, 255, 0.96), transparent 27%),
+    linear-gradient(145deg, #dbeefd, #a9d4ec);
+  box-shadow: 0 12px 22px rgba(48, 38, 26, 0.16);
 }
 
-.shrine-guide-character.is-otter {
+.shrine-guide-companion.is-otter .shrine-guide-orb {
+  width: 86px;
+  height: 86px;
   background:
-    radial-gradient(circle at 50% 58%, rgba(255, 250, 240, 0.72) 0 30%, transparent 31%),
-    linear-gradient(180deg, #caa27a, #8d6343);
+    radial-gradient(circle at 34% 26%, rgba(255, 255, 255, 0.94), transparent 26%),
+    linear-gradient(145deg, #ffe2ec, #f4bfd0);
 }
 
-.shrine-guide-character img {
-  width: 58px;
-  height: 58px;
+.shrine-guide-orb img {
+  width: 116%;
+  height: 116%;
   object-fit: contain;
-  filter: drop-shadow(0 5px 9px rgba(48, 38, 26, 0.18));
+  filter: drop-shadow(0 8px 12px rgba(48, 38, 26, 0.2));
 }
 
-.shrine-guide-character.is-fox img {
-  transform: translateY(-5px);
+.shrine-guide-companion.is-fox .shrine-guide-orb img {
+  width: 128%;
+  height: 128%;
+  object-fit: cover;
+  object-position: 50% 18%;
 }
 
-.shrine-guide-card p {
-  display: grid;
-  gap: 2px;
+.shrine-guide-companion.is-otter .shrine-guide-orb img {
+  width: 118%;
+  height: 118%;
+}
+
+.shrine-guide-companion figcaption {
+  position: relative;
   margin: 0;
-}
-
-.shrine-guide-card strong {
-  color: var(--green);
-  font-size: 0.82rem;
-}
-
-.shrine-guide-card span {
+  align-self: center;
+  padding: 8px 9px;
+  border: 1px solid rgba(75, 55, 36, 0.12);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.78);
   color: var(--ink);
-  font-size: 0.88rem;
+  font-size: 0.78rem;
   font-weight: 900;
+  line-height: 1.45;
+  white-space: pre;
+  box-shadow: 0 8px 18px rgba(48, 38, 26, 0.08);
+}
+
+.shrine-guide-companion.is-otter figcaption {
+  min-width: 98px;
+}
+
+.shrine-guide-companion figcaption::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 8px;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.78);
+  border-left: 1px solid rgba(75, 55, 36, 0.12);
+  border-bottom: 1px solid rgba(75, 55, 36, 0.12);
+  transform: translateY(-50%) rotate(45deg);
+}
+
+.shrine-guide-companion.is-fox figcaption::before {
+  right: -5px;
+  transform: translateY(-50%) rotate(225deg);
+}
+
+.shrine-guide-companion.is-otter figcaption::before {
+  left: -5px;
 }
 
 .shrine-card,
@@ -1391,10 +1446,10 @@ button {
 
 .shrine-roster-list label {
   display: grid;
-  grid-template-columns: 22px minmax(0, 1fr);
+  grid-template-columns: 22px minmax(110px, 1fr) 74px 64px 66px;
   align-items: center;
   gap: 6px;
-  min-height: 36px;
+  min-height: 44px;
   padding: 7px 8px;
   border: 1px solid rgba(75, 55, 36, 0.1);
   border-radius: 8px;
@@ -1408,6 +1463,26 @@ button {
   width: 18px;
   height: 18px;
   accent-color: #5d8fc3;
+}
+
+.shrine-roster-list input[type="text"],
+.shrine-roster-list input[type="number"],
+.shrine-roster-list select {
+  width: 100%;
+  min-height: 30px;
+  border: 1px solid rgba(75, 55, 36, 0.14);
+  border-radius: 8px;
+  background: rgba(255, 252, 246, 0.94);
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.76rem;
+  font-weight: 900;
+  padding: 3px 7px;
+}
+
+.shrine-roster-list input[type="text"],
+.shrine-roster-list input[type="number"] {
+  font-size: 0.8rem;
 }
 
 .shrine-roster-editor {
@@ -1464,6 +1539,115 @@ button {
   font-weight: 800;
   line-height: 1.55;
   padding: 10px 12px;
+}
+
+.shrine-pairgo-builder {
+  gap: 12px;
+}
+
+.shrine-tournament-builder {
+  gap: 12px;
+}
+
+.shrine-number-entry {
+  gap: 12px;
+}
+
+.shrine-number-entry-row {
+  display: grid;
+  grid-template-columns: minmax(120px, 150px) minmax(0, 1fr);
+  gap: 10px;
+  align-items: end;
+}
+
+.shrine-number-entry-row label {
+  display: grid;
+  gap: 7px;
+}
+
+.shrine-number-entry-row span {
+  color: #6e531e;
+  font-size: 0.86rem;
+  font-weight: 900;
+}
+
+.shrine-number-entry-row input {
+  width: 100%;
+  border: 1px solid rgba(75, 55, 36, 0.16);
+  border-radius: 8px;
+  background: rgba(255, 252, 244, 0.86);
+  color: var(--ink);
+  font: inherit;
+  font-weight: 900;
+  padding: 8px 10px;
+}
+
+.shrine-number-entry-row button {
+  min-height: 42px;
+  border: 1px solid rgba(63, 118, 82, 0.18);
+  border-radius: 8px;
+  background: rgba(255, 252, 244, 0.86);
+  color: var(--green);
+  font: inherit;
+  font-size: 0.84rem;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.shrine-group-size,
+.shrine-fixed-groups,
+.shrine-match-method {
+  display: grid;
+  gap: 7px;
+}
+
+.shrine-group-size span,
+.shrine-fixed-groups span,
+.shrine-match-method span {
+  color: #6e531e;
+  font-size: 0.86rem;
+  font-weight: 900;
+}
+
+.shrine-fixed-groups span {
+  color: var(--green);
+  font-size: 0.98rem;
+}
+
+.shrine-group-size select,
+.shrine-match-method select,
+.shrine-fixed-groups textarea {
+  width: 100%;
+  border: 1px solid rgba(75, 55, 36, 0.16);
+  border-radius: 8px;
+  background: rgba(255, 252, 244, 0.86);
+  color: var(--ink);
+  font: inherit;
+  font-weight: 800;
+}
+
+.shrine-group-size select {
+  max-width: 180px;
+  padding: 8px 10px;
+}
+
+.shrine-match-method select {
+  max-width: 260px;
+  padding: 8px 10px;
+}
+
+.shrine-fixed-groups textarea {
+  min-height: 96px;
+  padding: 10px 12px;
+  line-height: 1.55;
+  resize: vertical;
+}
+
+.shrine-form-hint {
+  color: rgba(75, 55, 36, 0.72);
+  font-size: 0.76rem;
+  font-weight: 800;
+  line-height: 1.6;
 }
 
 .shrine-teacher-list,
@@ -1628,6 +1812,45 @@ button {
   grid-template-columns: 46px minmax(0, 1fr) 24px minmax(0, 1fr);
 }
 
+.shrine-round-result.has-results .shrine-pair-list li {
+  grid-template-columns: 46px minmax(0, 1fr) 24px minmax(0, 1fr) minmax(112px, 138px);
+}
+
+.shrine-pair-list select {
+  width: 100%;
+  border: 1px solid rgba(75, 55, 36, 0.16);
+  border-radius: 8px;
+  background: rgba(255, 252, 244, 0.92);
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 900;
+  padding: 7px 8px;
+}
+
+.shrine-match-result-text {
+  display: inline-grid;
+  place-items: center;
+  min-height: 34px;
+  border: 1px solid rgba(63, 118, 82, 0.16);
+  border-radius: 8px;
+  background: rgba(239, 250, 241, 0.88);
+  color: var(--green);
+  font-size: 0.78rem;
+  font-style: normal;
+  font-weight: 900;
+  padding: 6px 8px;
+  text-align: center;
+}
+
+.shrine-pairgo-list.is-groups li {
+  grid-template-columns: 48px minmax(0, 1fr) 72px;
+}
+
+.shrine-entry-list li {
+  grid-template-columns: 48px minmax(0, 1fr);
+}
+
 .shrine-pair-list li small,
 .shrine-pairgo-list li small {
   color: #6e531e;
@@ -1643,6 +1866,24 @@ button {
   border: 1px dashed rgba(197, 150, 58, 0.42);
   border-radius: 8px;
   background: rgba(255, 250, 240, 0.58);
+}
+
+.shrine-next-round-actions {
+  display: grid;
+  justify-items: end;
+}
+
+.shrine-next-round-actions button {
+  border: 1px solid rgba(63, 118, 82, 0.2);
+  border-radius: 8px;
+  background: linear-gradient(180deg, rgba(255, 252, 244, 0.96), rgba(239, 250, 241, 0.92));
+  color: var(--green);
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 900;
+  padding: 10px 14px;
+  cursor: pointer;
+  box-shadow: 0 8px 16px rgba(48, 38, 26, 0.08);
 }
 
 .shrine-waiting strong {
@@ -2075,6 +2316,30 @@ button {
   text-align: center;
   z-index: 11;
   transform: translateX(-50%);
+}
+
+.shrine-intro-skip {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 12;
+  border: 1px solid rgba(255, 250, 240, 0.72);
+  border-radius: 999px;
+  background: rgba(255, 252, 244, 0.88);
+  color: #6e531e;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 900;
+  padding: 8px 12px;
+  box-shadow: 0 10px 20px rgba(48, 38, 26, 0.16);
+  cursor: pointer;
+}
+
+.shrine-intro-skip:hover,
+.shrine-intro-skip:focus-visible {
+  background: rgba(255, 255, 255, 0.96);
+  outline: 2px solid rgba(93, 143, 195, 0.44);
+  outline-offset: 2px;
 }
 
 .shrine-intro.is-playing .shrine-intro-stage {
@@ -8359,17 +8624,34 @@ button.library-collection-item.is-title.is-opening-book > span {
   }
 
   .shrine-guide-card {
-    grid-template-columns: 38px minmax(0, 1fr);
+    grid-template-columns: 1fr;
+    gap: 8px;
   }
 
-  .shrine-guide-character {
-    width: 36px;
-    height: 36px;
+  .shrine-guide-companion,
+  .shrine-guide-companion.is-fox {
+    grid-template-columns: auto minmax(0, 1fr);
+    justify-self: stretch;
   }
 
-  .shrine-guide-character img {
-    width: 50px;
-    height: 50px;
+  .shrine-guide-companion.is-fox .shrine-guide-orb {
+    order: 0;
+  }
+
+  .shrine-guide-orb,
+  .shrine-guide-companion.is-otter .shrine-guide-orb {
+    width: 78px;
+    height: 78px;
+  }
+
+  .shrine-guide-companion figcaption {
+    font-size: 0.76rem;
+  }
+
+  .shrine-guide-companion.is-fox figcaption::before {
+    left: -5px;
+    right: auto;
+    transform: translateY(-50%) rotate(45deg);
   }
 
   .shrine-mode-switch {
@@ -8393,9 +8675,22 @@ button.library-collection-item.is-title.is-opening-book > span {
     display: grid;
   }
 
+  .shrine-number-entry-row {
+    grid-template-columns: 1fr;
+  }
+
   .shrine-roster-list {
     grid-template-columns: 1fr;
     max-height: 260px;
+  }
+
+  .shrine-roster-list label {
+    grid-template-columns: 22px minmax(0, 1fr) 72px;
+  }
+
+  .shrine-roster-list select[data-shrine-roster-strength-type],
+  .shrine-roster-list input[data-shrine-roster-strength-value] {
+    grid-column: span 1;
   }
 
   .shrine-pair-list li {
@@ -8403,6 +8698,22 @@ button.library-collection-item.is-title.is-opening-book > span {
   }
 
   .shrine-pairgo-list li {
+    grid-template-columns: 42px minmax(0, 1fr);
+  }
+
+  .shrine-round-result.has-results .shrine-pair-list li {
+    grid-template-columns: 42px minmax(0, 1fr);
+  }
+
+  .shrine-round-result.has-results .shrine-pair-list li select {
+    grid-column: 1 / -1;
+  }
+
+  .shrine-match-result-text {
+    grid-column: 1 / -1;
+  }
+
+  .shrine-pairgo-list.is-groups li {
     grid-template-columns: 42px minmax(0, 1fr);
   }
 

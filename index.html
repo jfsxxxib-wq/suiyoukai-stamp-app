@@ -6,7 +6,7 @@
     <meta name="google" content="notranslate">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>冒険記録帳</title>
-    <link rel="stylesheet" href="styles.css?v=20260628-shrine-intro-torii-rest-01">
+    <link rel="stylesheet" href="styles.css?v=20260629-shrine-guide-space-01">
   </head>
   <body>
     <main class="record-book" aria-label="冒険記録帳">
@@ -68,6 +68,7 @@
           </div>
           <p class="shrine-intro-caption" data-shrine-intro-caption>参道を進みます</p>
         </div>
+        <button type="button" class="shrine-intro-skip" data-shrine-intro-skip>すぐ参拝する</button>
       </section>
 
       <section class="info-dock is-collapsed" aria-label="冒険情報">
@@ -439,18 +440,24 @@
                   <h2>組み合わせ神社</h2>
                   <p>水曜会 指導碁の組み合わせ案を作ります。</p>
                 </div>
-                <span class="shrine-seal" aria-hidden="true">結</span>
+                <span class="shrine-torii-mark" aria-hidden="true"></span>
               </header>
 
               <section class="shrine-guide-card" aria-label="組み合わせ神社の案内">
-                <div class="shrine-guide-character is-fox" aria-hidden="true">
-                  <img src="assets/fairy-companion-lily-white-fox.png" alt="">
-                </div>
-                <p data-shrine-fox-speech>今日はどんなご縁を結びましょう？</p>
-                <div class="shrine-guide-character is-otter" aria-hidden="true">
-                  <img src="assets/shrine-otter-go-stone.png" alt="">
-                </div>
-                <p data-shrine-otter-speech>石は準備できています！</p>
+                <figure class="shrine-guide-companion is-fox">
+                  <span class="shrine-guide-orb" aria-hidden="true">
+                    <img src="assets/special-fox-miko-connection-c.png" alt="">
+                  </span>
+                  <figcaption data-shrine-fox-speech>今日はどんな
+ご縁を結ぶ？</figcaption>
+                </figure>
+                <figure class="shrine-guide-companion is-otter">
+                  <span class="shrine-guide-orb" aria-hidden="true">
+                    <img src="assets/shrine-otter-miko.png" alt="">
+                  </span>
+                  <figcaption data-shrine-otter-speech>石の準備
+できてるよ！</figcaption>
+                </figure>
               </section>
 
               <section class="shrine-card shrine-event-card" aria-label="今日の会">
@@ -459,18 +466,71 @@
                 <span data-shrine-mode-copy>先生ごとに面数と回数を決め、指導碁の組み合わせを出します。</span>
                 <div class="shrine-mode-switch" aria-label="組み合わせモード">
                   <button type="button" class="is-active" data-shrine-mode="lesson" aria-pressed="true">指導碁 多面打ち</button>
-                  <button type="button" data-shrine-mode="amateur" aria-pressed="false">アマチュア大会 一対一</button>
-                  <button type="button" data-shrine-mode="pairgo" aria-pressed="false">ペア碁</button>
+                  <button type="button" data-shrine-mode="amateur" aria-pressed="false">大会対戦</button>
+                  <button type="button" data-shrine-mode="pairgo" aria-pressed="false">ペア・団体づくり</button>
                 </div>
-                <label class="shrine-round-count">
-                  <span>回数</span>
-                  <select data-shrine-round-count aria-label="お告げの回数">
-                    <option value="1">1回</option>
-                    <option value="2">2回</option>
-                    <option value="3" selected>3回</option>
-                    <option value="4">4回</option>
+              </section>
+
+              <section class="shrine-card shrine-pairgo-builder" aria-label="ペア・団体づくり" data-shrine-pairgo-only hidden>
+                <div class="shrine-section-heading">
+                  <h3>ペア・団体づくり</h3>
+                  <small>作った組に番号を付けます</small>
+                </div>
+                <label class="shrine-fixed-groups">
+                  <span>決まっているペア・団体</span>
+                  <textarea data-shrine-fixed-groups rows="4" placeholder="例&#10;佐藤さん・鈴木さん&#10;田中さん・山本さん"></textarea>
+                </label>
+                <label class="shrine-group-size">
+                  <span>1組の人数</span>
+                  <select data-shrine-group-size aria-label="1組の人数">
+                    <option value="2" selected>2人組</option>
+                    <option value="3">3人組</option>
+                    <option value="4">4人組</option>
+                    <option value="5">5人組</option>
+                    <option value="6">6人組</option>
+                    <option value="7">7人組</option>
+                    <option value="8">8人組</option>
+                    <option value="9">9人組</option>
+                    <option value="10">10人組</option>
+                    <option value="11">11人組</option>
+                    <option value="12">12人組</option>
+                    <option value="13">13人組</option>
+                    <option value="14">14人組</option>
+                    <option value="15">15人組</option>
                   </select>
                 </label>
+                <small class="shrine-form-hint">決まっていない人は参加者欄に1人ずつ入れてください。お告げで空いている人を組にします。</small>
+              </section>
+
+              <section class="shrine-card shrine-tournament-builder" aria-label="大会対戦の設定" data-shrine-amateur-only hidden>
+                <div class="shrine-section-heading">
+                  <h3>大会対戦</h3>
+                  <small>個人名や組番号で対戦を作ります</small>
+                </div>
+                <label class="shrine-match-method">
+                  <span>対戦方式</span>
+                  <select data-shrine-match-method aria-label="対戦方式">
+                    <option value="shuffle" selected>交流戦・遊びイベント</option>
+                    <option value="tournament">トーナメント初回</option>
+                    <option value="swiss">スイス方式初回</option>
+                  </select>
+                </label>
+                <small class="shrine-form-hint">ペア・団体づくりで出した番号や、個人戦の出場番号も参加者として入力できます。リーグ戦はここでは扱いません。</small>
+              </section>
+
+              <section class="shrine-card shrine-number-entry" aria-label="組番号の一括入力" data-shrine-amateur-only hidden>
+                <div class="shrine-section-heading">
+                  <h3>番号を使う</h3>
+                  <small>個人戦にもペア・団体にも使えます</small>
+                </div>
+                <div class="shrine-number-entry-row">
+                  <label>
+                    <span>最後の番号</span>
+                    <input type="number" min="2" max="200" value="8" inputmode="numeric" data-shrine-number-count aria-label="最後の番号">
+                  </label>
+                  <button type="button" data-shrine-number-apply>番号を参加者欄へ入れる</button>
+                </div>
+                <small class="shrine-form-hint" data-shrine-number-message>例: 8なら 1番から8番までを入れます。個人戦では個人番号として使えます。</small>
               </section>
 
               <section class="shrine-card" aria-label="参加者入力">
@@ -479,6 +539,7 @@
                   <div class="shrine-participant-actions">
                     <button type="button" data-shrine-roster-toggle aria-expanded="false">よく来る人を開く</button>
                     <button type="button" data-shrine-sample>見本を入れる</button>
+                    <button type="button" data-shrine-reset>リセット</button>
                   </div>
                 </div>
                 <section class="shrine-roster-panel" data-shrine-roster-panel hidden aria-label="よく来る人の名簿">
@@ -488,15 +549,15 @@
                   </div>
                   <div class="shrine-roster-list" data-shrine-roster-list></div>
                   <label class="shrine-roster-editor" data-shrine-roster-editor hidden>
-                    <span>名簿を1行ずつ編集</span>
-                    <textarea data-shrine-roster-editor-text rows="6"></textarea>
+                    <span>名簿を1行ずつ編集（例: 佐藤花子さん 女 3級 / 鈴木太郎さん 男 1200点）</span>
+                    <textarea data-shrine-roster-editor-text rows="6" placeholder="例&#10;佐藤花子さん 女 3級&#10;鈴木太郎さん 男 1200点&#10;田中一郎さん 2段"></textarea>
                     <button type="button" data-shrine-roster-save>名簿を保存</button>
                   </label>
                   <small data-shrine-roster-message>来ている人にチェックしてください。</small>
                 </section>
                 <label class="shrine-participant-input">
-                  <span>お名前を1行ずつ入力</span>
-                  <textarea data-shrine-participants rows="7" placeholder="例&#10;佐藤さん&#10;鈴木さん&#10;田中さん"></textarea>
+                  <span>フルネームを1行ずつ入力（性別・棋力も書けます）</span>
+                  <textarea data-shrine-participants rows="7" placeholder="例&#10;佐藤花子さん 女 3級&#10;鈴木太郎さん 男 1200点&#10;田中一郎さん 2段"></textarea>
                 </label>
               </section>
 
@@ -505,6 +566,15 @@
                   <h3>今日の先生</h3>
                   <span data-shrine-teacher-count>0面</span>
                 </div>
+                <label class="shrine-round-count" data-shrine-round-count-wrap>
+                  <span>回数</span>
+                  <select data-shrine-round-count aria-label="お告げの回数">
+                    <option value="1">1回</option>
+                    <option value="2">2回</option>
+                    <option value="3" selected>3回</option>
+                    <option value="4">4回</option>
+                  </select>
+                </label>
                 <div class="shrine-teacher-list" data-shrine-teachers></div>
               </section>
 
@@ -517,16 +587,19 @@
                   <label><input type="checkbox" checked disabled> 余った方は待機にする</label>
                 </div>
                 <div class="shrine-wish-list" data-shrine-amateur-only hidden>
-                  <label><input type="checkbox" checked disabled> 1対1で組み合わせる</label>
-                  <label><input type="checkbox" checked disabled> 同じ回で同じ人を重複させない</label>
-                  <label><input type="checkbox" checked disabled> 次回以降、同じ相手を避けやすい形にする</label>
-                  <label><input type="checkbox" checked disabled> 奇数人数は待機を出す</label>
+                  <label><input type="checkbox" checked disabled> 個人名や組番号で1対1を作る</label>
+                  <label><input type="checkbox" checked disabled> 個人にも出場番号を付ける</label>
+                  <label><input type="checkbox" checked disabled> 交流戦は相手を変えやすくする</label>
+                  <label><input type="checkbox" checked disabled> リーグ戦はここでは扱わない</label>
                 </div>
                 <div class="shrine-wish-list" data-shrine-pairgo-only hidden>
-                  <label><input type="checkbox" checked disabled> 2人1組のペアを作る</label>
-                  <label><input type="checkbox" checked disabled> ペア同士の対局を組む</label>
-                  <label><input type="checkbox" checked disabled> 同じ回で同じ人を重複させない</label>
-                  <label><input type="checkbox" checked disabled> 余りは待機にする</label>
+                  <label><input type="checkbox" checked disabled> ペア・団体を作る</label>
+                  <label><input type="checkbox" checked data-shrine-mixed-gender-pairs> 男女のペアを優先する</label>
+                  <label><input type="checkbox" checked data-shrine-close-strength-pairs> 棋力が近いを優先する</label>
+                  <label><input type="checkbox" checked data-shrine-balanced-team-strength> 全チームの平均棋力が近くなる</label>
+                  <label><input type="checkbox" checked disabled> 決まっている組を先に使う</label>
+                  <label><input type="checkbox" checked disabled> 作った組に番号を付ける</label>
+                  <label><input type="checkbox" checked disabled> 余りは控えにする</label>
                 </div>
               </section>
 
@@ -860,8 +933,8 @@
         status.textContent = "画面の操作が止まりました。Codexにこの表示を見せてください: " + event.message;
       });
     </script>
-    <script src="stamp-rules.js?v=20260628-shrine-intro-torii-rest-01"></script>
-    <script src="script.js?v=20260628-shrine-intro-torii-rest-01"></script>
+    <script src="stamp-rules.js?v=20260628-shrine-skip-01"></script>
+    <script src="script.js?v=20260629-shrine-speech-02"></script>
   </body>
 </html>
 
