@@ -152,6 +152,9 @@ const shrineTeacherList = document.querySelector("[data-shrine-teachers]");
 const shrineTeacherCount = document.querySelector("[data-shrine-teacher-count]");
 const shrineRoundCount = document.querySelector("[data-shrine-round-count]");
 const shrineModeButtons = document.querySelectorAll("[data-shrine-mode]");
+const shrinePathModeButtons = document.querySelectorAll("[data-shrine-path-mode]");
+const shrinePathResultButton = document.querySelector("[data-shrine-path-result]");
+const shrineCollapsibleButtons = document.querySelectorAll("[data-shrine-collapsible-toggle]");
 const shrineModeKicker = document.querySelector("[data-shrine-mode-kicker]");
 const shrineModeTitle = document.querySelector("[data-shrine-mode-title]");
 const shrineModeCopy = document.querySelector("[data-shrine-mode-copy]");
@@ -160,6 +163,8 @@ const shrineOtterSpeech = document.querySelector("[data-shrine-otter-speech]");
 const shrineLessonOnlyItems = document.querySelectorAll("[data-shrine-lesson-only]");
 const shrineAmateurOnlyItems = document.querySelectorAll("[data-shrine-amateur-only]");
 const shrinePairgoOnlyItems = document.querySelectorAll("[data-shrine-pairgo-only]");
+const shrineNumberEntryCard = document.querySelector(".shrine-number-entry");
+const shrineParticipantCard = document.querySelector("[data-shrine-participant-card]");
 const shrineParticipants = document.querySelector("[data-shrine-participants]");
 const shrineGroupSize = document.querySelector("[data-shrine-group-size]");
 const shrineFixedGroups = document.querySelector("[data-shrine-fixed-groups]");
@@ -170,6 +175,13 @@ const shrineMatchMethod = document.querySelector("[data-shrine-match-method]");
 const shrineNumberCount = document.querySelector("[data-shrine-number-count]");
 const shrineNumberApply = document.querySelector("[data-shrine-number-apply]");
 const shrineNumberMessage = document.querySelector("[data-shrine-number-message]");
+const shrineQuickName = document.querySelector("[data-shrine-quick-name]");
+const shrineQuickGender = document.querySelector("[data-shrine-quick-gender]");
+const shrineQuickStrengthType = document.querySelector("[data-shrine-quick-strength-type]");
+const shrineQuickStrengthValue = document.querySelector("[data-shrine-quick-strength-value]");
+const shrineQuickAdd = document.querySelector("[data-shrine-quick-add]");
+const shrineQuickMessage = document.querySelector("[data-shrine-quick-message]");
+const shrineQuickAddPanel = document.querySelector(".shrine-participant-quick-add");
 const shrineSampleButton = document.querySelector("[data-shrine-sample]");
 const shrineResetButton = document.querySelector("[data-shrine-reset]");
 const shrineRosterToggle = document.querySelector("[data-shrine-roster-toggle]");
@@ -1414,21 +1426,52 @@ const parseShrineStrength = (value) => {
     return { type: "", value: "", score: null };
   }
 
-  const pointMatch = text.match(/^(\d+(?:\.\d+)?)\s*(?:点|pt|point|points)?$/i);
+  const japaneseNumberMap = {
+    初: 1,
+    一: 1,
+    二: 2,
+    三: 3,
+    四: 4,
+    五: 5,
+    六: 6,
+    七: 7,
+    八: 8,
+    九: 9,
+    十: 10,
+  };
+  const parseJapaneseNumber = (numberText) => {
+    if (!numberText) {
+      return null;
+    }
+    if (japaneseNumberMap[numberText] !== undefined) {
+      return japaneseNumberMap[numberText];
+    }
+    const tenParts = numberText.split("十");
+    if (tenParts.length === 2) {
+      const tens = tenParts[0] ? japaneseNumberMap[tenParts[0]] : 1;
+      const ones = tenParts[1] ? japaneseNumberMap[tenParts[1]] : 0;
+      return tens && ones !== undefined ? tens * 10 + ones : null;
+    }
+    return null;
+  };
+
+  const pointMatch = text.match(/^(-?\d+(?:\.\d+)?)\s*(?:点|pt|point|points)?$/i);
   if (pointMatch) {
     const point = Number(pointMatch[1]);
     return { type: "point", value: String(point), score: point };
   }
 
-  const danMatch = text.match(/^(\d+)\s*段$/);
+  const danMatch = text.match(/^(\d+|初|[一二三四五六七八九十]+)\s*段$/);
   if (danMatch) {
-    const dan = Math.max(1, Math.min(9, Number(danMatch[1])));
+    const rawDan = /^\d+$/.test(danMatch[1]) ? Number(danMatch[1]) : parseJapaneseNumber(danMatch[1]);
+    const dan = Math.max(1, Math.min(9, Number(rawDan) || 1));
     return { type: "dan", value: String(dan), score: 1000 + dan * 100 };
   }
 
-  const kyuMatch = text.match(/^(\d+)\s*級$/);
+  const kyuMatch = text.match(/^(\d+|[一二三四五六七八九十]+)\s*級$/);
   if (kyuMatch) {
-    const kyu = Math.max(1, Math.min(30, Number(kyuMatch[1])));
+    const rawKyu = /^\d+$/.test(kyuMatch[1]) ? Number(kyuMatch[1]) : parseJapaneseNumber(kyuMatch[1]);
+    const kyu = Math.max(1, Math.min(30, Number(rawKyu) || 1));
     return { type: "kyu", value: String(kyu), score: 1000 - kyu * 40 };
   }
 
@@ -1637,6 +1680,8 @@ const loadShrineRecords = () => {
 
 let shrineRecords = loadShrineRecords();
 let shrineMatchSession = null;
+let latestPairgoGroups = [];
+let shrineAmateurUsesCarriedGroups = false;
 
 const saveShrineRecords = () => {
   try {
@@ -1820,12 +1865,69 @@ const updateShrineGuideSpeech = (mode = getShrineMode()) => {
   }
 };
 
+const updateShrineParticipantInputVisibility = (mode = getShrineMode()) => {
+  const shouldHideCarriedInputs = mode === "amateur" && shrineAmateurUsesCarriedGroups;
+
+  if (shrineNumberEntryCard) {
+    shrineNumberEntryCard.hidden = shouldHideCarriedInputs || mode !== "amateur";
+  }
+  if (shrineParticipantCard) {
+    shrineParticipantCard.hidden = shouldHideCarriedInputs;
+  }
+  if (shrineQuickAddPanel) {
+    shrineQuickAddPanel.hidden = shouldHideCarriedInputs;
+  }
+};
+
+const getShrineCollapsiblePanel = (button) => {
+  const key = button?.dataset.shrineCollapsibleToggle;
+  return key ? document.querySelector(`[data-shrine-collapsible="${key}"]`) : null;
+};
+
+const getShrineCollapsibleLabel = (key, isOpen) => {
+  const labels = {
+    "pairgo-settings": isOpen ? "細かい設定を閉じる" : "細かい設定を開く",
+    wishes: isOpen ? "願いごとを閉じる" : "願いごとを開く",
+  };
+  return labels[key] ?? (isOpen ? "閉じる" : "開く");
+};
+
+const syncShrineCollapsibleButton = (button) => {
+  const panel = getShrineCollapsiblePanel(button);
+  const key = button?.dataset.shrineCollapsibleToggle;
+
+  if (!button || !panel || !key) {
+    return;
+  }
+
+  const isOpen = !panel.hidden;
+  button.textContent = getShrineCollapsibleLabel(key, isOpen);
+  button.setAttribute("aria-expanded", String(isOpen));
+};
+
+const toggleShrineCollapsiblePanel = (button) => {
+  const panel = getShrineCollapsiblePanel(button);
+
+  if (!panel) {
+    return;
+  }
+
+  panel.hidden = !panel.hidden;
+  syncShrineCollapsibleButton(button);
+};
+
 const updateShrineMode = (mode = getShrineMode()) => {
   const isAmateur = mode === "amateur";
   const isPairgo = mode === "pairgo";
 
   for (const button of shrineModeButtons) {
     const isSelected = button.dataset.shrineMode === mode;
+    button.classList.toggle("is-active", isSelected);
+    button.setAttribute("aria-pressed", String(isSelected));
+  }
+
+  for (const button of shrinePathModeButtons) {
+    const isSelected = button.dataset.shrinePathMode === mode;
     button.classList.toggle("is-active", isSelected);
     button.setAttribute("aria-pressed", String(isSelected));
   }
@@ -1865,6 +1967,7 @@ const updateShrineMode = (mode = getShrineMode()) => {
   }
 
   updateShrineGuideSpeech(mode);
+  updateShrineParticipantInputVisibility(mode);
 };
 
 const enterShrinePanel = () => {
@@ -2248,6 +2351,174 @@ const renderShrineEntryList = (entries) => {
   shrineResult.append(entryBlock);
 };
 
+const syncVisibleShrineMatchResults = () => {
+  if (!shrineMatchSession || !shrineResult) {
+    return;
+  }
+
+  for (const input of shrineResult.querySelectorAll("[data-shrine-match-result]")) {
+    const roundIndex = Number(input.dataset.roundIndex);
+    const matchIndex = Number(input.dataset.matchIndex);
+    const pair = shrineMatchSession.rounds[roundIndex]?.pairs[matchIndex];
+    if (pair) {
+      pair.result = input.value;
+    }
+  }
+};
+
+const getShrineEntryRoundMark = (entry, round) => {
+  if (round.waiting?.id === entry.id) {
+    return { mark: "休", score: 1 };
+  }
+
+  const pair = round.pairs.find((item) => item.left.id === entry.id || item.right.id === entry.id);
+  if (!pair) {
+    return { mark: "・", score: 0 };
+  }
+  if (!pair.result) {
+    return { mark: "—", score: 0 };
+  }
+  if (pair.result === "draw") {
+    return { mark: "△", score: 0.5 };
+  }
+
+  const isLeft = pair.left.id === entry.id;
+  const isWin = (pair.result === "left" && isLeft) || (pair.result === "right" && !isLeft);
+  return { mark: isWin ? "〇" : "×", score: isWin ? 1 : 0 };
+};
+
+const getShrinePairWinner = (pair) => {
+  if (!pair?.result || pair.result === "draw") {
+    return null;
+  }
+  return pair.result === "left" ? pair.left : pair.right;
+};
+
+const renderShrineTournamentBracket = () => {
+  if (!shrineMatchSession || shrineMatchSession.method !== "tournament") {
+    return null;
+  }
+
+  const bracket = document.createElement("div");
+  bracket.className = "shrine-tournament-bracket";
+
+  for (const round of shrineMatchSession.rounds) {
+    const column = document.createElement("section");
+    const heading = document.createElement("strong");
+    const matches = document.createElement("div");
+
+    column.className = "shrine-tournament-round";
+    heading.textContent = `${round.roundNumber}回目`;
+    matches.className = "shrine-tournament-matches";
+    column.append(heading, matches);
+
+    for (const [index, pair] of round.pairs.entries()) {
+      const match = document.createElement("article");
+      const winner = getShrinePairWinner(pair);
+      const winnerChip = document.createElement("span");
+      const branch = document.createElement("span");
+      const contenders = document.createElement("div");
+
+      match.className = "shrine-tournament-match";
+      winnerChip.className = "shrine-tournament-winner";
+      winnerChip.textContent = winner ? winner.numberLabel : "?";
+      branch.className = "shrine-tournament-branch";
+      contenders.className = "shrine-tournament-contenders";
+
+      for (const side of [pair.left, pair.right]) {
+        const player = document.createElement("span");
+        const number = document.createElement("em");
+        const name = document.createElement("strong");
+        player.className = winner?.id === side.id
+          ? "shrine-tournament-player is-winner"
+          : "shrine-tournament-player";
+        number.textContent = side.numberLabel.replace("番", "");
+        name.textContent = side.entryName;
+        player.append(number, name);
+        contenders.append(player);
+      }
+
+      match.append(winnerChip, branch, contenders);
+      matches.append(match);
+    }
+
+    if (round.waiting) {
+      const waiting = document.createElement("article");
+      const player = document.createElement("span");
+      const number = document.createElement("em");
+      const name = document.createElement("strong");
+      const winnerChip = document.createElement("span");
+
+      waiting.className = "shrine-tournament-match is-waiting";
+      player.className = "shrine-tournament-player is-winner";
+      number.textContent = round.waiting.numberLabel.replace("番", "");
+      name.textContent = round.waiting.entryName;
+      winnerChip.className = "shrine-tournament-winner";
+      winnerChip.textContent = "休";
+      player.append(number, name);
+      waiting.append(winnerChip, player);
+      matches.append(waiting);
+    }
+
+    bracket.append(column);
+  }
+
+  return bracket;
+};
+
+const renderShrineMatchSummary = () => {
+  if (!shrineMatchSession || !shrineResult || shrineMatchSession.method === "shuffle") {
+    return;
+  }
+
+  const summaryBlock = document.createElement("article");
+  const title = document.createElement("h3");
+  const lead = document.createElement("p");
+  const list = document.createElement("ol");
+  const entrySummaries = shrineMatchSession.entries.map((entry) => {
+    const roundMarks = shrineMatchSession.rounds.map((round) => getShrineEntryRoundMark(entry, round));
+    const score = roundMarks.reduce((total, item) => total + item.score, 0);
+    return {
+      entry,
+      score,
+      marks: roundMarks.map((item) => item.mark),
+    };
+  }).sort((a, b) => b.score - a.score || a.entry.number - b.entry.number);
+
+  summaryBlock.className = "shrine-round-result shrine-match-summary";
+  title.textContent = shrineMatchSession.method === "swiss" ? "スイス方式の表" : "トーナメント表の結果";
+  lead.textContent = shrineMatchSession.method === "swiss"
+    ? "〇 勝ち / × 負け / △ 引き分け / 休 待機"
+    : "勝ち残りと各回の結果をまとめます。";
+  list.className = "shrine-match-summary-list";
+
+  const tournamentBracket = renderShrineTournamentBracket();
+  if (tournamentBracket) {
+    summaryBlock.append(title, lead, tournamentBracket);
+  } else {
+    summaryBlock.append(title, lead);
+  }
+
+  for (const [index, summary] of entrySummaries.entries()) {
+    const item = document.createElement("li");
+    const rank = document.createElement("span");
+    const name = document.createElement("strong");
+    const marks = document.createElement("span");
+    const score = document.createElement("em");
+
+    rank.textContent = `${index + 1}`;
+    name.textContent = summary.entry.label;
+    marks.className = "shrine-match-marks";
+    marks.textContent = summary.marks.join(" ");
+    score.textContent = `${summary.score}点`;
+    item.append(rank, name, marks, score);
+    list.append(item);
+  }
+
+  summaryBlock.append(list);
+  shrineResult.append(summaryBlock);
+};
+
 const renderShrineMatchRound = (round, { interactive = false } = {}) => {
   const roundBlock = document.createElement("article");
   const roundTitle = document.createElement("h3");
@@ -2335,6 +2606,7 @@ const renderShrineMatchSession = () => {
   shrineResult.append(heading);
 
   renderShrineEntryList(shrineMatchSession.entries);
+  renderShrineMatchSummary();
 
   for (const round of shrineMatchSession.rounds) {
     renderShrineMatchRound(round, { interactive: round === latestRound && latestRound?.pairs.some((pair) => !pair.result) });
@@ -2536,7 +2808,9 @@ const applyShrineMatchResultsAndAdvance = () => {
       roundNumber: shrineMatchSession.rounds.length + 1,
       ...createAdjacentEntryRound(rankedEntries),
     });
-    shrineMatchSession.message = "成績が近い人同士で次の回を作りました。待機は1点として扱います。";
+    shrineMatchSession.message = latestRound.waiting
+      ? "成績が近い人同士で次の回を作りました。待機は1点として扱います。"
+      : "成績が近い人同士で次の回を作りました。";
   }
 
   shrineResult.textContent = "";
@@ -2672,8 +2946,10 @@ const createPairgoGroups = (participants) => {
 
 const renderPairgoShrineResult = (participants) => {
   const { groupSize, groups, waiting, fixedGroups } = createPairgoGroups(participants);
+  latestPairgoGroups = groups;
 
   if (participants.length < 2 && fixedGroups.length === 0) {
+    latestPairgoGroups = [];
     const empty = document.createElement("p");
     empty.textContent = "ペア・団体づくりには、参加者を2人以上入れてください。";
     shrineResult.append(empty);
@@ -2744,8 +3020,16 @@ const renderPairgoShrineResult = (participants) => {
 
   if (groups.length > 0) {
     const note = document.createElement("p");
-    note.textContent = `大会対戦タブに ${groups.map((group) => `${group.number}番`).join("、")} を入れると、組同士の対戦を作れます。`;
+    const actions = document.createElement("div");
+    const nextButton = document.createElement("button");
+    note.textContent = `次に「対戦を決める」を押すと、${groups.map((group) => `${group.number}番`).join("、")} を引き継いで組同士の対戦を作れます。`;
+    actions.className = "shrine-next-round-actions";
+    nextButton.type = "button";
+    nextButton.dataset.shrineUsePairgoGroups = "true";
+    nextButton.textContent = "この組で対戦へ進む";
+    actions.append(nextButton);
     shrineResult.append(note);
+    shrineResult.append(actions);
   }
 };
 
@@ -2781,6 +3065,28 @@ const renderShrineResult = () => {
 
   renderLessonShrineResult(participants, roundCount);
   updateShrineRecordSaveState();
+};
+
+const carryPairgoGroupsToAmateurParticipants = ({ force = false } = {}) => {
+  if (!shrineParticipants || latestPairgoGroups.length === 0) {
+    shrineAmateurUsesCarriedGroups = false;
+    updateShrineParticipantInputVisibility("amateur");
+    return false;
+  }
+
+  if (!force && shrineParticipants.value.trim()) {
+    shrineAmateurUsesCarriedGroups = false;
+    updateShrineParticipantInputVisibility("amateur");
+    return false;
+  }
+
+  shrineParticipants.value = latestPairgoGroups.map((group) => `${group.number}番`).join("\n");
+  shrineAmateurUsesCarriedGroups = true;
+  updateShrineParticipantInputVisibility("amateur");
+  if (shrineNumberMessage) {
+    shrineNumberMessage.textContent = `${latestPairgoGroups.length}組を大会対戦へ引き継ぎました。`;
+  }
+  return true;
 };
 
 const getAdminGameRecordDraft = () => ({
@@ -4819,7 +5125,16 @@ shrineRoundCount?.addEventListener("change", () => {
 for (const button of shrineModeButtons) {
   button.addEventListener("click", () => {
     shrineMatchSession = null;
-    updateShrineMode(button.dataset.shrineMode);
+    const nextMode = button.dataset.shrineMode;
+    if (nextMode !== "amateur" || latestPairgoGroups.length === 0) {
+      shrineAmateurUsesCarriedGroups = false;
+    }
+    updateShrineMode(nextMode);
+    const carriedGroups = nextMode === "amateur" && carryPairgoGroupsToAmateurParticipants({ force: true });
+    if (carriedGroups) {
+      renderShrineResult();
+      return;
+    }
     if (shrineResult) {
       shrineResult.textContent = "";
       const empty = document.createElement("p");
@@ -5016,6 +5331,59 @@ shrineSampleButton?.addEventListener("click", () => {
   renderShrineResult();
 });
 
+shrineQuickAdd?.addEventListener("click", () => {
+  if (!shrineParticipants || !shrineQuickName) {
+    return;
+  }
+
+  const name = shrineQuickName.value.trim();
+  if (!name) {
+    if (shrineQuickMessage) {
+      shrineQuickMessage.textContent = "名前を入れてから追加してください。";
+    }
+    shrineQuickName.focus();
+    return;
+  }
+
+  const existingNames = new Set(getShrineParticipantPeople().map((person) => person.name));
+  if (existingNames.has(name)) {
+    if (shrineQuickMessage) {
+      shrineQuickMessage.textContent = `${name} はすでに参加者欄に入っています。`;
+    }
+    return;
+  }
+
+  const personLine = formatShrinePersonLine({
+    name,
+    gender: shrineQuickGender?.value,
+    strength: {
+      type: shrineQuickStrengthType?.value,
+      value: shrineQuickStrengthValue?.value,
+    },
+  });
+  const currentLines = shrineParticipants.value
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+
+  shrineParticipants.value = [...currentLines, personLine].join("\n");
+  shrineQuickName.value = "";
+  if (shrineQuickGender) {
+    shrineQuickGender.value = "";
+  }
+  if (shrineQuickStrengthType) {
+    shrineQuickStrengthType.value = "";
+  }
+  if (shrineQuickStrengthValue) {
+    shrineQuickStrengthValue.value = "";
+  }
+  if (shrineQuickMessage) {
+    shrineQuickMessage.textContent = `${name} を参加者欄へ追加しました。`;
+  }
+  shrineQuickName.focus();
+  renderShrineResult();
+});
+
 shrineResetButton?.addEventListener("click", () => {
   if (shrineParticipants) {
     shrineParticipants.value = "";
@@ -5032,18 +5400,66 @@ shrineResetButton?.addEventListener("click", () => {
   if (shrineNumberMessage) {
     shrineNumberMessage.textContent = "例: 8なら 1番から8番までを入れます。個人戦では個人番号として使えます。";
   }
+  if (shrineQuickName) {
+    shrineQuickName.value = "";
+  }
+  if (shrineQuickGender) {
+    shrineQuickGender.value = "";
+  }
+  if (shrineQuickStrengthType) {
+    shrineQuickStrengthType.value = "";
+  }
+  if (shrineQuickStrengthValue) {
+    shrineQuickStrengthValue.value = "";
+  }
+  if (shrineQuickMessage) {
+    shrineQuickMessage.textContent = "名前を入れて追加してください。";
+  }
   for (const checkbox of shrineRosterList?.querySelectorAll("[data-shrine-roster-name]:checked") ?? []) {
     checkbox.checked = false;
   }
   shrineMatchSession = null;
+  shrineAmateurUsesCarriedGroups = false;
+  updateShrineParticipantInputVisibility();
   setShrineRosterMessage("入力をリセットしました。名簿はそのまま残っています。");
   updateShrineRecordSaveState();
 });
 
 shrineGenerateButton?.addEventListener("click", renderShrineResult);
+for (const button of shrineCollapsibleButtons) {
+  syncShrineCollapsibleButton(button);
+  button.addEventListener("click", () => toggleShrineCollapsiblePanel(button));
+}
+for (const button of shrinePathModeButtons) {
+  button.addEventListener("click", () => {
+    const nextMode = button.dataset.shrinePathMode;
+    if (nextMode !== "amateur" || latestPairgoGroups.length === 0) {
+      shrineAmateurUsesCarriedGroups = false;
+    }
+    updateShrineMode(nextMode);
+    if (nextMode === "amateur") {
+      carryPairgoGroupsToAmateurParticipants({ force: true });
+    }
+    renderShrineResult();
+  });
+}
+shrinePathResultButton?.addEventListener("click", () => {
+  if (!shrineResult) {
+    return;
+  }
+  syncVisibleShrineMatchResults();
+  renderShrineResult();
+  shrineResult.scrollIntoView({ behavior: "smooth", block: "start" });
+});
 shrineResult?.addEventListener("click", (event) => {
   if (event.target instanceof HTMLElement && event.target.matches("[data-shrine-next-round]")) {
     applyShrineMatchResultsAndAdvance();
+  }
+  if (event.target instanceof HTMLElement && event.target.matches("[data-shrine-use-pairgo-groups]")) {
+    shrineMatchSession = null;
+    updateShrineMode("amateur");
+    carryPairgoGroupsToAmateurParticipants({ force: true });
+    renderShrineResult();
   }
 });
 shrineIntroSkip?.addEventListener("click", () => {
