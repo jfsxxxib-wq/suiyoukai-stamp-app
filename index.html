@@ -367,7 +367,8 @@
                         <span>ハンデ</span>
                         <select data-game-record-handicap>
                           <option value="互先">互先</option>
-                          <option value="定先">定先</option>
+                          <option value="先">先</option>
+                          <option value="先逆コミ6.5目">先逆コミ6.5目</option>
                           <option value="2子">2子</option>
                           <option value="3子">3子</option>
                           <option value="4子">4子</option>
@@ -492,6 +493,7 @@
                   <button type="button" data-shrine-collapsible-toggle="pairgo-settings" aria-expanded="false" aria-controls="shrine-pairgo-settings">細かい設定を開く</button>
                 </div>
                 <small class="shrine-form-hint">2人組ならこのまま使えます。決まっている組や3人組以上は開いて設定します。</small>
+                <small class="shrine-form-hint shrine-use-tip" data-shrine-pairgo-only hidden>大人数の時は4人組を作り、各組の代表を決めてから代表トーナメントに進めます。</small>
                 <div class="shrine-collapsible-panel" id="shrine-pairgo-settings" data-shrine-collapsible="pairgo-settings" hidden>
                   <label class="shrine-fixed-groups">
                     <span>決まっているペア・団体</span>
@@ -534,6 +536,7 @@
                   </select>
                 </label>
                 <small class="shrine-form-hint">ペア・団体づくりで出した番号や、個人戦の出場番号も参加者として入力できます。リーグ戦はここでは扱いません。</small>
+                <small class="shrine-form-hint shrine-use-tip" data-shrine-amateur-only hidden>32人なら4人×8組で代表を決め、代表8人でトーナメントにすると扱いやすいです。</small>
               </section>
 
               <section class="shrine-card shrine-number-entry" aria-label="組番号の一括入力" data-shrine-amateur-only hidden>
@@ -662,7 +665,17 @@
                 </div>
               </section>
 
-              <button type="button" class="shrine-oracle-button" data-shrine-generate>お告げを出す</button>
+              <section class="shrine-card shrine-oracle-panel" aria-label="お告げを出す前の確認">
+                <label class="shrine-match-method shrine-match-method-shortcut" data-shrine-amateur-only hidden>
+                  <span>対戦方式</span>
+                  <select data-shrine-match-method-shortcut aria-label="下の対戦方式">
+                    <option value="shuffle" selected>交流戦・遊びイベント</option>
+                    <option value="tournament">トーナメント初回</option>
+                    <option value="swiss">スイス方式初回</option>
+                  </select>
+                </label>
+                <button type="button" class="shrine-oracle-button" data-shrine-generate>お告げを出す</button>
+              </section>
 
               <section class="shrine-result" data-shrine-result aria-live="polite">
                 <p>参加者と先生を入れると、ここに組み合わせ案が出ます。</p>
@@ -847,7 +860,8 @@
                     <span>ハンデ</span>
                     <select data-admin-game-record-handicap aria-label="ハンデ">
                       <option value="互先">互先</option>
-                      <option value="定先">定先</option>
+                      <option value="先">先</option>
+                      <option value="先逆コミ6.5目">先逆コミ6.5目</option>
                       <option value="2子">2子</option>
                       <option value="3子">3子</option>
                       <option value="4子">4子</option>

@@ -1369,6 +1369,14 @@ button {
   font-weight: 800;
 }
 
+.shrine-result-note {
+  padding: 8px 10px;
+  border: 1px solid rgba(63, 118, 82, 0.13);
+  border-radius: 8px;
+  background: rgba(239, 250, 241, 0.58);
+  text-align: center;
+}
+
 .shrine-section-heading {
   display: flex;
   align-items: center;
@@ -1436,6 +1444,14 @@ button {
   font-size: 0.82rem;
   font-weight: 900;
   cursor: pointer;
+}
+
+.shrine-roster-actions button.has-selection {
+  border-color: rgba(63, 118, 82, 0.52);
+  background:
+    linear-gradient(90deg, rgba(63, 118, 82, 0.18), rgba(239, 250, 241, 0.94));
+  color: var(--green);
+  box-shadow: 0 6px 14px rgba(63, 118, 82, 0.14);
 }
 
 .shrine-record-actions {
@@ -1799,6 +1815,15 @@ button {
   line-height: 1.6;
 }
 
+.shrine-use-tip {
+  display: block;
+  padding: 8px 10px;
+  border: 1px solid rgba(63, 118, 82, 0.13);
+  border-radius: 8px;
+  background: rgba(239, 250, 241, 0.58);
+  color: var(--green);
+}
+
 .shrine-teacher-list,
 .shrine-wish-list {
   display: grid;
@@ -1876,6 +1901,23 @@ button {
   font-size: 0.96rem;
   font-weight: 900;
   cursor: pointer;
+}
+
+.shrine-oracle-panel {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.shrine-oracle-panel .shrine-oracle-button {
+  width: 100%;
+}
+
+.shrine-match-method-shortcut {
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+}
+
+.shrine-match-method-shortcut select {
+  max-width: none;
 }
 
 .shrine-section-heading button:hover,
@@ -2051,10 +2093,36 @@ button {
 .shrine-tournament-bracket {
   display: grid;
   grid-auto-flow: column;
-  grid-auto-columns: minmax(180px, 1fr);
-  gap: 14px;
+  grid-auto-columns: minmax(190px, 1fr);
+  gap: 18px;
   overflow-x: auto;
-  padding: 4px 2px 8px;
+  padding: 6px 2px 10px;
+}
+
+.shrine-tournament-bracket.is-large {
+  grid-auto-flow: initial;
+  grid-auto-columns: initial;
+  grid-template-columns: max-content minmax(132px, 0.72fr) max-content;
+  align-items: center;
+  min-width: min(860px, 190vw);
+  gap: 14px;
+  padding: 8px 2px 12px;
+}
+
+.shrine-tournament-side {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(132px, 150px);
+  align-items: center;
+  gap: 10px;
+}
+
+.shrine-tournament-side.is-left-side {
+  justify-content: end;
+}
+
+.shrine-tournament-side.is-right-side {
+  justify-content: start;
 }
 
 .shrine-tournament-round {
@@ -2062,6 +2130,14 @@ button {
   align-content: center;
   gap: 8px;
   min-width: 0;
+}
+
+.shrine-tournament-round.is-large {
+  min-width: 0;
+}
+
+.shrine-tournament-final {
+  min-width: 132px;
 }
 
 .shrine-tournament-round > strong {
@@ -2073,7 +2149,20 @@ button {
 
 .shrine-tournament-matches {
   display: grid;
-  gap: 16px;
+  gap: 18px;
+}
+
+.shrine-tournament-round.is-large .shrine-tournament-matches {
+  gap: 12px;
+}
+
+.shrine-tournament-round.is-large:nth-child(2) .shrine-tournament-matches,
+.shrine-tournament-side .shrine-tournament-round:nth-child(2) .shrine-tournament-matches {
+  gap: 34px;
+}
+
+.shrine-tournament-side .shrine-tournament-round:nth-child(3) .shrine-tournament-matches {
+  gap: 76px;
 }
 
 .shrine-tournament-match {
@@ -2081,10 +2170,15 @@ button {
   display: grid;
   justify-items: center;
   gap: 0;
-  padding: 8px 8px 10px;
-  border: 1px solid rgba(75, 55, 36, 0.14);
+  padding: 6px 6px 8px;
+  border: 1px solid rgba(75, 55, 36, 0.08);
   border-radius: 8px;
-  background: rgba(255, 250, 240, 0.74);
+  background:
+    linear-gradient(180deg, rgba(255, 252, 244, 0.82), rgba(255, 255, 255, 0.38));
+}
+
+.shrine-tournament-match.is-large {
+  padding: 5px 5px 7px;
 }
 
 .shrine-tournament-contenders {
@@ -2130,13 +2224,28 @@ button {
   max-width: 100%;
 }
 
+.shrine-tournament-match.is-large .shrine-tournament-player strong {
+  font-size: 0.7rem;
+}
+
 .shrine-tournament-player.is-winner {
   border-color: rgba(63, 118, 82, 0.22);
   background: rgba(239, 250, 241, 0.86);
 }
 
+.shrine-tournament-player.is-loser {
+  color: var(--muted);
+  opacity: 0.58;
+}
+
+.shrine-tournament-player.is-placeholder {
+  border-style: dashed;
+  color: var(--muted);
+  opacity: 0.68;
+}
+
 .shrine-tournament-player.is-winner em,
-.shrine-tournament-winner {
+.shrine-tournament-match.has-winner .shrine-tournament-winner {
   border-color: rgba(63, 118, 82, 0.3);
   background: rgba(239, 250, 241, 0.96);
   color: var(--green);
@@ -2157,6 +2266,11 @@ button {
   margin-bottom: 4px;
 }
 
+.shrine-tournament-match.is-large .shrine-tournament-branch {
+  width: 78%;
+  height: 22px;
+}
+
 .shrine-tournament-branch::before {
   content: "";
   position: absolute;
@@ -2165,6 +2279,10 @@ button {
   width: 1px;
   height: 14px;
   background: rgba(75, 55, 36, 0.36);
+}
+
+.shrine-tournament-match.is-large .shrine-tournament-branch::before {
+  height: 12px;
 }
 
 .shrine-tournament-branch::after {
@@ -2177,6 +2295,29 @@ button {
   border-left: 1px solid rgba(75, 55, 36, 0.36);
   border-right: 1px solid rgba(75, 55, 36, 0.36);
   border-top: 1px solid rgba(75, 55, 36, 0.36);
+}
+
+.shrine-tournament-match.is-large .shrine-tournament-branch::after {
+  top: 12px;
+}
+
+.shrine-tournament-match.has-winner .shrine-tournament-branch::before,
+.shrine-tournament-match.has-winner .shrine-tournament-branch::after {
+  background: rgba(63, 118, 82, 0.44);
+  border-color: rgba(63, 118, 82, 0.44);
+}
+
+.shrine-tournament-round.is-preview {
+  opacity: 0.86;
+}
+
+.shrine-tournament-round.is-preview > strong {
+  color: var(--muted);
+}
+
+.shrine-tournament-match.is-preview {
+  border-style: dashed;
+  background: rgba(255, 255, 255, 0.34);
 }
 
 .shrine-tournament-match.is-waiting {
