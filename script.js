@@ -1744,6 +1744,21 @@ const getShrineModeLabel = (mode = getShrineMode()) => ({
   pairgo: "ペア・団体づくり",
 })[mode] ?? "組み合わせ";
 
+const getShrineRecordPreview = (body = "") => {
+  const hiddenLines = new Set([
+    "結果を確定",
+    "次の回を作る",
+    "必要なら、今の組み合わせを残せます。",
+    "結果を出すと保存できるようになります。",
+  ]);
+  const lines = String(body)
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter((line) => line && !hiddenLines.has(line));
+
+  return lines.slice(0, 3).join(" / ") || "保存した組み合わせです。";
+};
+
 const renderShrineRecords = () => {
   if (!shrineRecordList) {
     return;
@@ -1752,9 +1767,16 @@ const renderShrineRecords = () => {
   shrineRecordList.textContent = "";
   if (shrineRecords.length === 0) {
     const empty = document.createElement("p");
-    empty.textContent = "保存したお告げはここに残ります。";
+    empty.textContent = "まだ残した組み合わせはありません。";
     shrineRecordList.append(empty);
+    if (shrineRecordClear) {
+      shrineRecordClear.disabled = true;
+    }
     return;
+  }
+
+  if (shrineRecordClear) {
+    shrineRecordClear.disabled = false;
   }
 
   for (const record of shrineRecords) {
@@ -1762,25 +1784,49 @@ const renderShrineRecords = () => {
     const heading = document.createElement("div");
     const title = document.createElement("strong");
     const meta = document.createElement("small");
+    const preview = document.createElement("p");
+    const details = document.createElement("details");
+    const summary = document.createElement("summary");
     const body = document.createElement("pre");
 
     article.className = "shrine-record";
     heading.className = "shrine-record-heading";
-    title.textContent = record.title || "保存したお告げ";
+    title.textContent = record.title || "保存した組み合わせ案";
     meta.textContent = record.createdAt || "";
+    preview.className = "shrine-record-preview";
+    preview.textContent = getShrineRecordPreview(record.body);
+    details.className = "shrine-record-details";
+    summary.textContent = "内容を見る";
     body.textContent = record.body;
     heading.append(title, meta);
-    article.append(heading, body);
+    details.append(summary, body);
+    article.append(heading, preview, details);
     shrineRecordList.append(article);
   }
 };
+
+const getShrineResultMarkClass = (mark) => ({
+  "〇": "is-win",
+  "×": "is-loss",
+  "△": "is-draw",
+  "休": "is-rest",
+  "・": "is-pending",
+  "—": "is-pending",
+})[mark] ?? "is-pending";
+
+const shrineRecordWaitingMessage = "結果を出すと保存できるようになります。";
+const shrineRecordReadyMessage = "必要なら、今の組み合わせを残せます。";
 
 const updateShrineRecordSaveState = () => {
   if (!shrineRecordSave || !shrineResult) {
     return;
   }
 
-  shrineRecordSave.disabled = !shrineResult.querySelector(".shrine-round-result");
+  const canSave = Boolean(shrineResult.querySelector(".shrine-round-result"));
+  shrineRecordSave.disabled = !canSave;
+  if (shrineRecordMessage) {
+    shrineRecordMessage.textContent = canSave ? shrineRecordReadyMessage : shrineRecordWaitingMessage;
+  }
 };
 
 const getShrineParticipantPeople = () => {
@@ -1932,7 +1978,7 @@ const getShrineCollapsiblePanel = (button) => {
 const getShrineCollapsibleLabel = (key, isOpen) => {
   const labels = {
     "pairgo-settings": isOpen ? "細かい設定を閉じる" : "細かい設定を開く",
-    wishes: isOpen ? "願いごとを閉じる" : "願いごとを開く",
+    wishes: isOpen ? "希望条件を閉じる" : "希望条件を開く",
   };
   return labels[key] ?? (isOpen ? "閉じる" : "開く");
 };
@@ -2030,12 +2076,12 @@ const clearShrineIntroTimers = () => {
 
 const finishShrineIntro = () => {
   clearShrineIntroTimers();
+  enterShrinePanel();
   if (shrineIntro) {
     shrineIntro.classList.remove("is-playing");
     shrineIntro.hidden = true;
   }
   isShrineIntroPlaying = false;
-  enterShrinePanel();
 };
 
 const openShrineWithIntro = () => {
@@ -2051,6 +2097,7 @@ const openShrineWithIntro = () => {
 
   clearShrineIntroTimers();
   isShrineIntroPlaying = true;
+  enterShrinePanel();
   shrineIntro.hidden = false;
   shrineIntro.classList.remove("is-playing");
   shrineIntro.offsetHeight;
@@ -2133,7 +2180,7 @@ const renderLessonShrineResult = (participants, roundCount) => {
   const oracle = document.createElement("p");
 
   heading.className = "shrine-result-heading";
-  title.textContent = "今日のお告げ";
+  title.textContent = "今日の組み合わせ";
   oracle.textContent = totalWaitingCount > 0
     ? `${roundCount}回分で${totalMatchedCount}面を組みました。待機が出る回があります。`
     : `${roundCount}回分で${totalMatchedCount}面を組みました。`;
@@ -2141,8 +2188,17 @@ const renderLessonShrineResult = (participants, roundCount) => {
 
   shrineResult.append(heading);
   const recordNote = document.createElement("p");
+  const recordNoteStart = document.createElement("span");
+  const recordNoteText = document.createElement("span");
+  const recordNoteEnd = document.createElement("span");
   recordNote.className = "shrine-result-note";
-  recordNote.textContent = "✿ 花図鑑へ結果を記入してください。 ✿";
+  recordNoteStart.className = "shrine-result-note-flower";
+  recordNoteEnd.className = "shrine-result-note-flower";
+  recordNoteText.className = "shrine-result-note-text";
+  recordNoteStart.textContent = "✿";
+  recordNoteText.textContent = "花図鑑へ記入してください";
+  recordNoteEnd.textContent = "✿";
+  recordNote.append(recordNoteStart, recordNoteText, recordNoteEnd);
   shrineResult.append(recordNote);
 
   for (const round of roundResults) {
@@ -2235,6 +2291,11 @@ const syncShrineMatchMethodControls = (value = getShrineMatchMethod()) => {
   }
 };
 
+const setShrineMatchMethod = (value = "shuffle") => {
+  syncShrineMatchMethodControls(value);
+  shrineMatchSession = null;
+};
+
 const getShrineMatchMethodLabel = (method = getShrineMatchMethod()) => ({
   shuffle: "交流戦・遊びイベント",
   tournament: "トーナメント初回",
@@ -2249,6 +2310,9 @@ const getShrineSessionMethodLabel = (method = getShrineMatchMethod()) => ({
 
 const getSwissRoundLimit = (entryCount) =>
   Math.max(1, Math.ceil(Math.log2(Math.max(2, entryCount))));
+
+const getShrineRoundLabel = (roundNumber, method = shrineMatchSession?.method) =>
+  method === "swiss" ? `${roundNumber}回戦` : `${roundNumber}回目`;
 
 const canAdvanceShrineMatchSession = () => {
   if (!shrineMatchSession) {
@@ -2476,18 +2540,24 @@ const renderShrineEntryList = (entries) => {
   const entryBlock = document.createElement("article");
   const entryTitle = document.createElement("h3");
   const entryList = document.createElement("ol");
+  const numberOnly = entries.every((entry) => entry.entryName === "ペア・団体・個人");
 
   entryBlock.className = "shrine-round-result is-entry-list";
   entryTitle.textContent = "出場番号";
-  entryList.className = "shrine-entry-list";
+  entryList.className = numberOnly ? "shrine-entry-list is-number-only" : "shrine-entry-list";
 
   for (const entry of entries) {
     const item = document.createElement("li");
     const number = document.createElement("span");
     const name = document.createElement("strong");
+    const hasName = entry.entryName !== "ペア・団体・個人";
+    item.className = hasName ? "" : "is-number-only";
     number.textContent = entry.numberLabel;
-    name.textContent = entry.entryName;
-    item.append(number, name);
+    name.textContent = hasName ? entry.entryName : "";
+    item.append(number);
+    if (hasName) {
+      item.append(name);
+    }
     entryList.append(item);
   }
 
@@ -2597,7 +2667,13 @@ const createShrineTournamentPreviewEntry = (index) => ({
   entryName: "勝者",
 });
 
-const createShrineTournamentMatchElement = (pair, { preview = false, waiting = false } = {}) => {
+const getShrineTournamentEntryName = (entry) =>
+  entry.entryName === "ペア・団体・個人" ? "" : entry.entryName;
+
+const getShrineTournamentRoundLabel = (roundNumber, finalRoundNumber) =>
+  roundNumber === finalRoundNumber ? "決勝戦" : `${roundNumber}回戦`;
+
+const createShrineTournamentMatchElement = (pair, { preview = false, waiting = false, final = false } = {}) => {
   const match = document.createElement("article");
   const winner = getShrinePairWinner(pair);
   const winnerChip = document.createElement("span");
@@ -2607,17 +2683,18 @@ const createShrineTournamentMatchElement = (pair, { preview = false, waiting = f
     winner ? "has-winner" : "",
     preview ? "is-preview" : "",
     waiting ? "is-waiting" : "",
+    final ? "is-final" : "",
   ].filter(Boolean).join(" ");
   winnerChip.className = "shrine-tournament-winner";
-  winnerChip.textContent = waiting ? "休" : winner ? winner.numberLabel : "?";
+  winnerChip.textContent = waiting ? "休" : winner ? winner.numberLabel.replace("番", "") : "?";
 
   if (waiting) {
     const player = document.createElement("span");
     const number = document.createElement("em");
     const name = document.createElement("strong");
     player.className = "shrine-tournament-player is-winner";
-    number.textContent = pair.left.numberLabel.replace("逡ｪ", "");
-    name.textContent = pair.left.entryName;
+    number.textContent = pair.left.numberLabel.replace("番", "");
+    name.textContent = getShrineTournamentEntryName(pair.left);
     player.append(number, name);
     match.append(winnerChip, player);
     return match;
@@ -2639,8 +2716,8 @@ const createShrineTournamentMatchElement = (pair, { preview = false, waiting = f
       winner && !isWinner ? "is-loser" : "",
       side.id?.startsWith("preview-") ? "is-placeholder" : "",
     ].filter(Boolean).join(" ");
-    number.textContent = side.numberLabel.replace("逡ｪ", "");
-    name.textContent = side.entryName;
+    number.textContent = side.numberLabel.replace("番", "");
+    name.textContent = getShrineTournamentEntryName(side);
     player.append(number, name);
     contenders.append(player);
   }
@@ -2649,7 +2726,7 @@ const createShrineTournamentMatchElement = (pair, { preview = false, waiting = f
   return match;
 };
 
-const renderShrineTournamentPreviewRound = (latestRound) => {
+const renderShrineTournamentPreviewRound = (latestRound, finalRoundNumber) => {
   if (!latestRound || latestRound.pairs.length <= 1) {
     return null;
   }
@@ -2664,7 +2741,7 @@ const renderShrineTournamentPreviewRound = (latestRound) => {
   const heading = document.createElement("strong");
   const matches = document.createElement("div");
   column.className = "shrine-tournament-round is-preview";
-  heading.textContent = "次の回";
+  heading.textContent = getShrineTournamentRoundLabel(latestRound.roundNumber + 1, finalRoundNumber);
   matches.className = "shrine-tournament-matches";
   column.append(heading, matches);
 
@@ -2718,7 +2795,7 @@ const appendShrineTournamentSideColumn = (side, round, pairs) => {
     side === "right" ? "is-right-side" : "is-left-side",
     round.isPreview ? "is-preview" : "",
   ].filter(Boolean).join(" ");
-  heading.textContent = `${round.roundNumber}蝗樒岼`;
+  heading.textContent = getShrineTournamentRoundLabel(round.roundNumber, getShrineTournamentDisplayRounds().at(-1)?.roundNumber ?? round.roundNumber);
   matches.className = "shrine-tournament-matches";
   column.append(heading, matches);
 
@@ -2737,50 +2814,41 @@ const renderShrineLargeTournamentBracket = () => {
   }
 
   const rounds = getShrineTournamentDisplayRounds();
-  const finalRound = rounds.at(-1);
-  if (!finalRound?.pairs.length) {
+  const finalRoundNumber = rounds.at(-1)?.roundNumber ?? 1;
+  if (!rounds.some((round) => round.pairs.length > 0)) {
     return null;
   }
 
   const bracket = document.createElement("div");
-  const leftSide = document.createElement("div");
-  const center = document.createElement("section");
-  const rightSide = document.createElement("div");
-  const finalHeading = document.createElement("strong");
-  const finalMatches = document.createElement("div");
+  bracket.className = "shrine-tournament-bracket is-large is-upright";
 
-  bracket.className = "shrine-tournament-bracket is-large";
-  leftSide.className = "shrine-tournament-side is-left-side";
-  center.className = [
-    "shrine-tournament-round",
-    "shrine-tournament-final",
-    finalRound.isPreview ? "is-preview" : "",
-  ].filter(Boolean).join(" ");
-  rightSide.className = "shrine-tournament-side is-right-side";
+  for (const round of [...rounds].reverse()) {
+    const column = document.createElement("section");
+    const heading = document.createElement("strong");
+    const matches = document.createElement("div");
 
-  finalHeading.textContent = `${finalRound.roundNumber}蝗樒岼`;
-  finalMatches.className = "shrine-tournament-matches";
-  finalMatches.append(createShrineTournamentMatchElement(finalRound.pairs[0], { preview: Boolean(finalRound.isPreview) }));
-  center.append(finalHeading, finalMatches);
+    column.className = [
+      "shrine-tournament-round",
+      "is-large",
+      "is-upright-round",
+      round.isPreview ? "is-preview" : "",
+    ].filter(Boolean).join(" ");
+    heading.textContent = getShrineTournamentRoundLabel(round.roundNumber, finalRoundNumber);
+    matches.className = "shrine-tournament-matches";
+    column.append(heading, matches);
 
-  const sideRounds = rounds.slice(0, -1);
-  for (const round of sideRounds) {
-    const splitIndex = Math.ceil(round.pairs.length / 2);
-    const leftPairs = round.pairs.slice(0, splitIndex);
-    if (leftPairs.length) {
-      leftSide.append(appendShrineTournamentSideColumn("left", round, leftPairs));
+    for (const pair of round.pairs) {
+      const match = createShrineTournamentMatchElement(pair, {
+        preview: Boolean(round.isPreview),
+        final: round.roundNumber === finalRoundNumber,
+      });
+      match.classList.add("is-large");
+      matches.append(match);
     }
+
+    bracket.append(column);
   }
 
-  for (const round of [...sideRounds].reverse()) {
-    const splitIndex = Math.ceil(round.pairs.length / 2);
-    const rightPairs = round.pairs.slice(splitIndex);
-    if (rightPairs.length) {
-      rightSide.append(appendShrineTournamentSideColumn("right", round, rightPairs));
-    }
-  }
-
-  bracket.append(leftSide, center, rightSide);
   return bracket;
 };
 
@@ -2795,6 +2863,8 @@ const renderShrineTournamentBracket = () => {
   }
 
   const bracket = document.createElement("div");
+  const displayRounds = getShrineTournamentDisplayRounds();
+  const finalRoundNumber = displayRounds.at(-1)?.roundNumber ?? shrineMatchSession.rounds.at(-1)?.roundNumber ?? 1;
   bracket.className = "shrine-tournament-bracket";
 
   for (const round of shrineMatchSession.rounds) {
@@ -2803,7 +2873,7 @@ const renderShrineTournamentBracket = () => {
     const matches = document.createElement("div");
 
     column.className = "shrine-tournament-round";
-    heading.textContent = `${round.roundNumber}回目`;
+    heading.textContent = getShrineTournamentRoundLabel(round.roundNumber, finalRoundNumber);
     matches.className = "shrine-tournament-matches";
     column.append(heading, matches);
 
@@ -2814,9 +2884,13 @@ const renderShrineTournamentBracket = () => {
       const branch = document.createElement("span");
       const contenders = document.createElement("div");
 
-      match.className = winner ? "shrine-tournament-match has-winner" : "shrine-tournament-match";
+      match.className = [
+        "shrine-tournament-match",
+        winner ? "has-winner" : "",
+        round.roundNumber === finalRoundNumber ? "is-final" : "",
+      ].filter(Boolean).join(" ");
       winnerChip.className = "shrine-tournament-winner";
-      winnerChip.textContent = winner ? winner.numberLabel : "?";
+      winnerChip.textContent = winner ? winner.numberLabel.replace("番", "") : "?";
       branch.className = "shrine-tournament-branch";
       contenders.className = "shrine-tournament-contenders";
 
@@ -2830,7 +2904,7 @@ const renderShrineTournamentBracket = () => {
             ? "shrine-tournament-player is-loser"
             : "shrine-tournament-player";
         number.textContent = side.numberLabel.replace("番", "");
-        name.textContent = side.entryName;
+        name.textContent = getShrineTournamentEntryName(side);
         player.append(number, name);
         contenders.append(player);
       }
@@ -2851,7 +2925,7 @@ const renderShrineTournamentBracket = () => {
       waiting.className = "shrine-tournament-match is-waiting";
       player.className = "shrine-tournament-player is-winner";
       number.textContent = round.waiting.numberLabel.replace("番", "");
-      name.textContent = round.waiting.entryName;
+      name.textContent = getShrineTournamentEntryName(round.waiting);
       winnerChip.className = "shrine-tournament-winner";
       winnerChip.textContent = "休";
       player.append(number, name);
@@ -2863,7 +2937,7 @@ const renderShrineTournamentBracket = () => {
     bracket.append(column);
   }
 
-  const previewRound = renderShrineTournamentPreviewRound(shrineMatchSession.rounds.at(-1));
+  const previewRound = renderShrineTournamentPreviewRound(shrineMatchSession.rounds.at(-1), finalRoundNumber);
   if (previewRound) {
     bracket.append(previewRound);
   }
@@ -2891,10 +2965,10 @@ const renderShrineMatchSummary = () => {
   }).sort((a, b) => b.score - a.score || a.entry.number - b.entry.number);
 
   summaryBlock.className = "shrine-round-result shrine-match-summary";
-  title.textContent = shrineMatchSession.method === "swiss" ? "スイス方式の表" : "トーナメント表の結果";
+  title.textContent = shrineMatchSession.method === "swiss" ? "スイス方式の途中表" : "トーナメント表の結果";
   lead.textContent = shrineMatchSession.method === "swiss"
-    ? "〇 勝ち / × 負け / △ 引き分け / 休 待機"
-    : "勝ち残りと各回の結果をまとめます。";
+    ? `${getSwissRoundLimit(shrineMatchSession.entries.length)}回戦まで行います。〇 勝ち / × 負け / △ 引き分け / 休 待機`
+    : "勝ち上がりを番号で表示します。結果を入れると次の回へ進めます。";
   list.className = "shrine-match-summary-list";
 
   const tournamentBracket = renderShrineTournamentBracket();
@@ -2914,7 +2988,12 @@ const renderShrineMatchSummary = () => {
     rank.textContent = `${index + 1}`;
     name.textContent = summary.entry.label;
     marks.className = "shrine-match-marks";
-    marks.textContent = summary.marks.join(" ");
+    for (const mark of summary.marks) {
+      const markChip = document.createElement("span");
+      markChip.className = `shrine-match-mark ${getShrineResultMarkClass(mark)}`;
+      markChip.textContent = mark;
+      marks.append(markChip);
+    }
     score.textContent = `${summary.score}点`;
     item.append(rank, name, marks, score);
     list.append(item);
@@ -2932,7 +3011,12 @@ const renderShrineMatchRound = (round, { interactive = false } = {}) => {
   roundBlock.className = interactive
     ? "shrine-round-result is-amateur has-results"
     : "shrine-round-result is-amateur";
-  roundTitle.textContent = `${round.roundNumber}回目`;
+  const finalRoundNumber = shrineMatchSession?.method === "tournament"
+    ? getShrineTournamentDisplayRounds().at(-1)?.roundNumber ?? round.roundNumber
+    : round.roundNumber;
+  roundTitle.textContent = shrineMatchSession?.method === "tournament"
+    ? getShrineTournamentRoundLabel(round.roundNumber, finalRoundNumber)
+    : getShrineRoundLabel(round.roundNumber);
   list.className = "shrine-pair-list";
 
   for (const [index, pair] of round.pairs.entries()) {
@@ -2953,7 +3037,7 @@ const renderShrineMatchRound = (round, { interactive = false } = {}) => {
       result.dataset.shrineMatchResult = "true";
       result.dataset.roundIndex = String(round.roundNumber - 1);
       result.dataset.matchIndex = String(index);
-      result.setAttribute("aria-label", `${round.roundNumber}回目 ${index + 1}局の結果`);
+      result.setAttribute("aria-label", `${getShrineRoundLabel(round.roundNumber)} ${index + 1}局の結果`);
       result.innerHTML = `
         <option value="">結果</option>
         <option value="left">${pair.left.numberLabel}勝ち</option>
@@ -3006,7 +3090,7 @@ const renderShrineMatchSession = () => {
   const canAdvance = canAdvanceShrineMatchSession();
 
   heading.className = "shrine-result-heading";
-  title.textContent = "大会対戦のお告げ";
+  title.textContent = "大会対戦の組み合わせ";
   oracle.textContent = `${getShrineSessionMethodLabel(shrineMatchSession.method)}として${totalPairs}局を組みました。`;
   heading.append(title, oracle);
   shrineResult.append(heading);
@@ -3030,7 +3114,9 @@ const renderShrineMatchSession = () => {
     actions.className = "shrine-next-round-actions";
     nextButton.type = "button";
     nextButton.dataset.shrineNextRound = "true";
-    nextButton.textContent = "次の回を作る";
+    nextButton.textContent = shrineMatchSession.method === "swiss"
+      ? `${latestRound.roundNumber + 1}回戦を作る`
+      : "次の回を作る";
     actions.append(nextButton);
     shrineResult.append(actions);
   } else if (latestRound?.pairs.some((pair) => !pair.result)) {
@@ -3081,7 +3167,7 @@ const renderAmateurShrineResult = (participants) => {
   const totalPairs = Math.floor(entries.length / 2) * effectiveRoundCount;
 
   heading.className = "shrine-result-heading";
-  title.textContent = "大会対戦のお告げ";
+  title.textContent = "大会対戦の組み合わせ";
   oracle.textContent = entries.length % 2 === 0
     ? `${getShrineMatchMethodLabel(matchMethod)}として${totalPairs}局を組みました。`
     : `${getShrineMatchMethodLabel(matchMethod)}として${totalPairs}局を組みました。奇数のため待機があります。`;
@@ -3368,7 +3454,7 @@ const renderPairgoShrineResult = (participants) => {
   const oracle = document.createElement("p");
 
   heading.className = "shrine-result-heading";
-  title.textContent = "ペア・団体づくりのお告げ";
+  title.textContent = "ペア・団体づくりの結果";
   oracle.textContent = groups.length > 0
     ? `${groups.length}組に番号を付けました。大会対戦タブでは、この番号を参加者として使えます。`
     : `${groupSize}人組を作るには人数が足りません。控えを確認してください。`;
@@ -3429,11 +3515,11 @@ const renderPairgoShrineResult = (participants) => {
     const note = document.createElement("p");
     const actions = document.createElement("div");
     const nextButton = document.createElement("button");
-    note.textContent = `次に「対戦を決める」を押すと、${groups.map((group) => `${group.number}番`).join("、")} を引き継いで組同士の対戦を作れます。`;
+    note.textContent = `${groups.map((group) => `${group.number}番`).join("、")} を使って、組同士の代表トーナメントへ進めます。`;
     actions.className = "shrine-next-round-actions";
     nextButton.type = "button";
     nextButton.dataset.shrineUsePairgoGroups = "true";
-    nextButton.textContent = "この組で対戦へ進む";
+    nextButton.textContent = "この番号で代表トーナメントへ進む";
     actions.append(nextButton);
     shrineResult.append(note);
     shrineResult.append(actions);
@@ -3488,10 +3574,11 @@ const carryPairgoGroupsToAmateurParticipants = ({ force = false } = {}) => {
   }
 
   shrineParticipants.value = latestPairgoGroups.map((group) => `${group.number}番`).join("\n");
+  setShrineMatchMethod("tournament");
   shrineAmateurUsesCarriedGroups = true;
   updateShrineParticipantInputVisibility("amateur");
   if (shrineNumberMessage) {
-    shrineNumberMessage.textContent = `${latestPairgoGroups.length}組を大会対戦へ引き継ぎました。`;
+    shrineNumberMessage.textContent = `${latestPairgoGroups.length}組を代表トーナメントへ引き継ぎました。`;
   }
   return true;
 };
@@ -5545,7 +5632,7 @@ for (const button of shrineModeButtons) {
     if (shrineResult) {
       shrineResult.textContent = "";
       const empty = document.createElement("p");
-      empty.textContent = "参加者を入れて「お告げを出す」を押してください。";
+      empty.textContent = "参加者を入れて「組み合わせを出す」を押してください。";
       shrineResult.append(empty);
       updateShrineRecordSaveState();
     }
@@ -5813,7 +5900,7 @@ shrineResetButton?.addEventListener("click", () => {
   if (shrineResult) {
     shrineResult.textContent = "";
     const empty = document.createElement("p");
-    empty.textContent = "参加者を入れて「お告げを出す」を押してください。";
+    empty.textContent = "参加者を入れて「組み合わせを出す」を押してください。";
     shrineResult.append(empty);
   }
   if (shrineNumberMessage) {
@@ -5961,7 +6048,7 @@ shrineRecordSave?.addEventListener("click", () => {
 
   shrineRecords = [{
     id: `shrine-${Date.now()}`,
-    title: `${getShrineModeLabel(mode)}のお告げ`,
+    title: `${getShrineModeLabel(mode)}の組み合わせ`,
     mode,
     createdAt,
     body,
@@ -5969,16 +6056,23 @@ shrineRecordSave?.addEventListener("click", () => {
   saveShrineRecords();
   renderShrineRecords();
   if (shrineRecordMessage) {
-    shrineRecordMessage.textContent = "今のお告げを保存しました。";
+    shrineRecordMessage.textContent = "今の組み合わせを残しました。";
   }
 });
 
 shrineRecordClear?.addEventListener("click", () => {
+  if (shrineRecords.length === 0) {
+    renderShrineRecords();
+    return;
+  }
+  if (!window.confirm("保存した組み合わせをすべて空にしますか？")) {
+    return;
+  }
   shrineRecords = [];
   saveShrineRecords();
   renderShrineRecords();
   if (shrineRecordMessage) {
-    shrineRecordMessage.textContent = "御神託帳を空にしました。";
+    shrineRecordMessage.textContent = "保存した組み合わせを空にしました。";
   }
 });
 

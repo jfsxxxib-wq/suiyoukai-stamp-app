@@ -6,7 +6,7 @@
     <meta name="google" content="notranslate">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>冒険記録帳</title>
-    <link rel="stylesheet" href="styles.css?v=20260629-shrine-guide-space-01">
+    <link rel="stylesheet" href="styles.css?v=20260701-shrine-winner-medal-01">
   </head>
   <body>
     <main class="record-book" aria-label="冒険記録帳">
@@ -439,7 +439,7 @@
                 <div>
                   <p class="panel-kicker">次の目的地</p>
                   <h2>組み合わせ神社</h2>
-                  <p>水曜会 指導碁の組み合わせ案を作ります。</p>
+                  <p>水曜会の組み合わせ案を作ります。</p>
                 </div>
                 <span class="shrine-torii-mark" aria-hidden="true"></span>
               </header>
@@ -518,7 +518,7 @@
                       <option value="15">15人組</option>
                     </select>
                   </label>
-                  <small class="shrine-form-hint">決まっていない人は参加者欄に1人ずつ入れてください。お告げで空いている人を組にします。</small>
+                  <small class="shrine-form-hint">決まっていない人は参加者欄に1人ずつ入れてください。空いている人を自動で組にします。</small>
                 </div>
               </section>
 
@@ -624,7 +624,7 @@
                 </div>
                 <label class="shrine-round-count" data-shrine-round-count-wrap>
                   <span>回数</span>
-                  <select data-shrine-round-count aria-label="お告げの回数">
+                  <select data-shrine-round-count aria-label="組み合わせの回数">
                     <option value="1">1回</option>
                     <option value="2">2回</option>
                     <option value="3" selected>3回</option>
@@ -634,12 +634,12 @@
                 <div class="shrine-teacher-list" data-shrine-teachers></div>
               </section>
 
-              <section class="shrine-card shrine-wish-card" aria-label="願いごと">
+              <section class="shrine-card shrine-wish-card" aria-label="希望条件">
                 <div class="shrine-section-heading">
-                  <h3>願いごと</h3>
-                  <button type="button" data-shrine-collapsible-toggle="wishes" aria-expanded="false" aria-controls="shrine-wish-options">願いごとを開く</button>
+                  <h3>希望条件</h3>
+                  <button type="button" data-shrine-collapsible-toggle="wishes" aria-expanded="false" aria-controls="shrine-wish-options">希望条件を開く</button>
                 </div>
-                <small class="shrine-form-hint">いつものおすすめ設定でお告げを出します。変えたい時だけ開きます。</small>
+                <small class="shrine-form-hint">いつものおすすめ条件で作ります。変えたい時だけ開きます。</small>
                 <div class="shrine-collapsible-panel" id="shrine-wish-options" data-shrine-collapsible="wishes" hidden>
                   <div class="shrine-wish-list" data-shrine-lesson-only>
                     <label><input type="checkbox" checked disabled> 先生をなるべく均等に使う</label>
@@ -665,7 +665,7 @@
                 </div>
               </section>
 
-              <section class="shrine-card shrine-oracle-panel" aria-label="お告げを出す前の確認">
+              <section class="shrine-card shrine-oracle-panel" aria-label="組み合わせを出す前の確認">
                 <label class="shrine-match-method shrine-match-method-shortcut" data-shrine-amateur-only hidden>
                   <span>対戦方式</span>
                   <select data-shrine-match-method-shortcut aria-label="下の対戦方式">
@@ -674,11 +674,24 @@
                     <option value="swiss">スイス方式初回</option>
                   </select>
                 </label>
-                <button type="button" class="shrine-oracle-button" data-shrine-generate>お告げを出す</button>
+                <button type="button" class="shrine-oracle-button" data-shrine-generate>組み合わせを出す</button>
               </section>
 
               <section class="shrine-result" data-shrine-result aria-live="polite">
                 <p>参加者と先生を入れると、ここに組み合わせ案が出ます。</p>
+              </section>
+
+              <section class="shrine-card shrine-records" aria-label="保存した組み合わせ">
+                <div class="shrine-card-heading">
+                  <h3>今日の組み合わせ</h3>
+                  <small>必要な案だけ残せます</small>
+                </div>
+                <div class="shrine-record-actions">
+                  <button type="button" data-shrine-record-save disabled>今の組み合わせを残す</button>
+                  <button type="button" data-shrine-record-clear>保存を空にする</button>
+                </div>
+                <small data-shrine-record-message>結果を出すと保存できるようになります。</small>
+                <div class="shrine-record-list" data-shrine-record-list></div>
               </section>
             </section>
           </div>
@@ -1007,7 +1020,7 @@
       });
     </script>
     <script src="stamp-rules.js?v=20260628-shrine-skip-01"></script>
-    <script src="script.js?v=20260629-shrine-speech-02"></script>
+    <script src="script.js?v=20260701-shrine-mobile-03"></script>
   </body>
 </html>
 
