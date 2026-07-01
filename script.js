@@ -83,9 +83,13 @@ const libraryJournalRecords = document.querySelector("[data-library-journal-reco
 const libraryJournalPages = document.querySelector("[data-library-journal-pages]");
 const libraryJournalState = document.querySelector("[data-library-journal-state]");
 const libraryJournalPrompt = document.querySelector("[data-library-journal-prompt]");
+const libraryJournalKeeperSpeech = document.querySelector("[data-library-journal-keeper-speech]");
 const libraryJournalToggle = document.querySelector("[data-library-journal-toggle]");
 const libraryJournalSkip = document.querySelector("[data-library-journal-skip]");
 const libraryJournalNote = document.querySelector("[data-library-journal-note]");
+const libraryJournalNoteForm = document.querySelector("[data-library-journal-note-form]");
+const libraryJournalNoteInput = document.querySelector("[data-library-journal-note-input]");
+const libraryJournalNoteSave = document.querySelector("[data-library-journal-note-save]");
 const participationStamp = document.querySelector(".participation-stamp");
 const participationFlower = document.querySelector(".participation-stamp .stamp-flower");
 const participationFlowerName = document.querySelector("[data-participation-flower-name]");
@@ -138,6 +142,14 @@ const adminGameRecordHandicap = document.querySelector("[data-admin-game-record-
 const adminGameRecordResult = document.querySelector("[data-admin-game-record-result]");
 const adminGameRecordApply = document.querySelector("[data-admin-game-record-apply]");
 const adminGameRecordMessage = document.querySelector("[data-admin-game-record-message]");
+const adminTeacherProfileSelect = document.querySelector("[data-admin-teacher-profile-select]");
+const adminTeacherProfileStyle = document.querySelector("[data-admin-teacher-profile-style]");
+const adminTeacherProfileLesson = document.querySelector("[data-admin-teacher-profile-lesson]");
+const adminTeacherProfileNote = document.querySelector("[data-admin-teacher-profile-note]");
+const adminTeacherProfileSave = document.querySelector("[data-admin-teacher-profile-save]");
+const adminTeacherProfileReset = document.querySelector("[data-admin-teacher-profile-reset]");
+const adminTeacherProfileState = document.querySelector("[data-admin-teacher-profile-state]");
+const adminTeacherProfileMessage = document.querySelector("[data-admin-teacher-profile-message]");
 const nextAdventureButton = document.querySelector("[data-next-adventure-button]");
 const nextAdventureTitle = document.querySelector("[data-next-adventure-title]");
 const nextAdventureCopy = document.querySelector("[data-next-adventure-copy]");
@@ -188,11 +200,17 @@ const shrineResetButton = document.querySelector("[data-shrine-reset]");
 const shrineRosterToggle = document.querySelector("[data-shrine-roster-toggle]");
 const shrineRosterPanel = document.querySelector("[data-shrine-roster-panel]");
 const shrineRosterList = document.querySelector("[data-shrine-roster-list]");
+const shrineRosterSearch = document.querySelector("[data-shrine-roster-search]");
 const shrineRosterApply = document.querySelector("[data-shrine-roster-apply]");
 const shrineRosterEditToggle = document.querySelector("[data-shrine-roster-edit-toggle]");
 const shrineRosterEditor = document.querySelector("[data-shrine-roster-editor]");
 const shrineRosterEditorText = document.querySelector("[data-shrine-roster-editor-text]");
+const shrineRosterFormName = document.querySelector("[data-shrine-roster-form-name]");
+const shrineRosterFormGender = document.querySelector("[data-shrine-roster-form-gender]");
+const shrineRosterFormStrengthType = document.querySelector("[data-shrine-roster-form-strength-type]");
+const shrineRosterFormStrengthValue = document.querySelector("[data-shrine-roster-form-strength-value]");
 const shrineRosterSave = document.querySelector("[data-shrine-roster-save]");
+const shrineRosterDelete = document.querySelector("[data-shrine-roster-delete]");
 const shrineRosterMessage = document.querySelector("[data-shrine-roster-message]");
 const shrineGenerateButton = document.querySelector("[data-shrine-generate]");
 const shrineResult = document.querySelector("[data-shrine-result]");
@@ -233,6 +251,7 @@ const progressStorageKey = "suiyoukai-stamp-progress-v1";
 const gameRecordsStorageKey = "suiyoukai-game-records-v1";
 const pendingGameRecordsStorageKey = "suiyoukai-pending-game-records-v2";
 const operationHistoryStorageKey = "suiyoukai-operation-history-v1";
+const teacherProfileStorageKey = "suiyoukai-teacher-profiles-v1";
 const backupAppId = "suiyoukai-stamp-adventure";
 const backupFormatVersion = 1;
 const adminPasscode = "suiyoukai2026";
@@ -240,6 +259,7 @@ const externalGameRecordFormEnabled = true;
 const participationFormUrl = "https://docs.google.com/forms/d/e/1FAIpQLSdEqwXBhF3jDi-YUizfnNnLDfTzD7QJTK469-xwQwA21Gl_rA/viewform?usp=publish-editor";
 const shrineRosterStorageKey = "suiyoukai-shrine-roster-v1";
 const shrineRecordStorageKey = "suiyoukai-shrine-records-v1";
+const libraryJournalStorageKey = "suiyoukai-library-journal-v1";
 const ruleTargets = window.teacherStampTargets ?? [];
 const participationRule = window.stampRules?.participation ?? {};
 const teacherLessonRule = window.stampRules?.teacherLesson ?? {};
@@ -610,6 +630,60 @@ for (const [teacherKey, teacher] of Object.entries(teacherDetails)) {
   });
 }
 
+const teacherProfileFields = ["style", "lesson", "note"];
+
+const sanitizeTeacherProfileOverrides = (stored = {}) => {
+  if (!stored || typeof stored !== "object" || Array.isArray(stored)) {
+    return {};
+  }
+
+  return Object.fromEntries(
+    Object.entries(stored)
+      .filter(([teacherId]) => Boolean(teacherDetails[teacherId]))
+      .map(([teacherId, profile]) => {
+        const cleanProfile = {};
+
+        if (profile && typeof profile === "object" && !Array.isArray(profile)) {
+          for (const field of teacherProfileFields) {
+            if (typeof profile[field] === "string") {
+              const text = profile[field].trim().slice(0, 120);
+
+              if (text && text !== teacherDetails[teacherId][field]) {
+                cleanProfile[field] = text;
+              }
+            }
+          }
+        }
+
+        return [teacherId, cleanProfile];
+      })
+      .filter(([, profile]) => Object.keys(profile).length > 0)
+  );
+};
+
+const loadTeacherProfileOverrides = () => {
+  try {
+    return sanitizeTeacherProfileOverrides(JSON.parse(localStorage.getItem(teacherProfileStorageKey) ?? "{}"));
+  } catch {
+    return {};
+  }
+};
+
+let teacherProfileOverrides = loadTeacherProfileOverrides();
+
+const saveTeacherProfileOverrides = () => {
+  try {
+    localStorage.setItem(teacherProfileStorageKey, JSON.stringify(teacherProfileOverrides));
+  } catch {
+    // 紹介文を保存できない環境でも、表示中の画面はそのまま使えます。
+  }
+};
+
+const getTeacherProfile = (teacherId) => ({
+  ...teacherDetails[teacherId],
+  ...(teacherProfileOverrides[teacherId] ?? {}),
+});
+
 const cloneProgressTemplate = () => JSON.parse(JSON.stringify(window.userProgressTemplate ?? {
   schemaVersion: 2,
   stamps: {
@@ -786,6 +860,63 @@ const saveGameRecords = () => {
   }
 };
 
+const sanitizeLibraryJournalEntry = (entry = {}) => {
+  const text = typeof entry.text === "string" ? entry.text.trim() : "";
+  const createdAt = typeof entry.createdAt === "string" ? entry.createdAt : "";
+
+  if (!text) {
+    return null;
+  }
+
+  return {
+    id: typeof entry.id === "string" && entry.id ? entry.id : `journal-${Date.now()}`,
+    text: text.slice(0, 80),
+    source: typeof entry.source === "string" && entry.source ? entry.source : "manual",
+    createdAt,
+  };
+};
+
+const loadLibraryJournalEntries = () => {
+  try {
+    const storedEntries = JSON.parse(localStorage.getItem(libraryJournalStorageKey) ?? "[]");
+    return Array.isArray(storedEntries)
+      ? storedEntries.map(sanitizeLibraryJournalEntry).filter(Boolean).slice(0, 12)
+      : [];
+  } catch {
+    return [];
+  }
+};
+
+let libraryJournalEntries = loadLibraryJournalEntries();
+
+const saveLibraryJournalEntries = () => {
+  try {
+    localStorage.setItem(libraryJournalStorageKey, JSON.stringify(libraryJournalEntries.slice(0, 12)));
+  } catch {
+    // 思い出メモを保存できない環境でも、他の記録はそのまま使えます。
+  }
+};
+
+const addLibraryJournalEntry = ({ text, source = "manual" }) => {
+  const entry = sanitizeLibraryJournalEntry({
+    id: `journal-${Date.now()}-${libraryJournalEntries.length}`,
+    text,
+    source,
+    createdAt: new Date().toISOString(),
+  });
+
+  if (!entry) {
+    return null;
+  }
+
+  libraryJournalEntries = [
+    entry,
+    ...libraryJournalEntries.filter((item) => item.text !== entry.text),
+  ].slice(0, 12);
+  saveLibraryJournalEntries();
+  return entry;
+};
+
 const loadPendingGameRecords = () => {
   try {
     const storedRecords = JSON.parse(localStorage.getItem(pendingGameRecordsStorageKey) ?? "[]");
@@ -866,6 +997,7 @@ const createBackupData = () => ({
   savedAt: new Date().toISOString(),
   progress: cloneJsonData(userProgress),
   operationHistory: cloneJsonData(operationHistory),
+  teacherProfiles: cloneJsonData(teacherProfileOverrides),
 });
 
 const getBackupFilename = (kind = "backup") => {
@@ -951,6 +1083,7 @@ const validateBackupData = (backup) => {
     savedAt: backup.savedAt,
     progress: sanitizeProgress(progress),
     operationHistory: backup.operationHistory.map(sanitizeOperationHistory).slice(-50),
+    teacherProfiles: sanitizeTeacherProfileOverrides(backup.teacherProfiles ?? {}),
   };
 };
 
@@ -1342,6 +1475,134 @@ const populateAdminGameRecordTeachers = () => {
   }
 };
 
+const populateAdminTeacherProfileEditor = () => {
+  if (!adminTeacherProfileSelect) {
+    return;
+  }
+
+  adminTeacherProfileSelect.textContent = "";
+  for (const [teacherId, teacher] of Object.entries(teacherDetails)) {
+    const option = document.createElement("option");
+    option.value = teacherId;
+    option.textContent = teacher.name;
+    adminTeacherProfileSelect.append(option);
+  }
+
+  if (teacherDetails[activeTeacherKey]) {
+    adminTeacherProfileSelect.value = activeTeacherKey;
+  }
+};
+
+const syncAdminTeacherProfileEditor = () => {
+  if (!adminTeacherProfileSelect || !adminTeacherProfileStyle || !adminTeacherProfileLesson || !adminTeacherProfileNote) {
+    return;
+  }
+
+  const teacherId = adminTeacherProfileSelect.value || activeTeacherKey;
+  const profile = getTeacherProfile(teacherId);
+
+  if (!profile) {
+    return;
+  }
+
+  adminTeacherProfileStyle.value = profile.style;
+  adminTeacherProfileLesson.value = profile.lesson;
+  adminTeacherProfileNote.value = profile.note;
+
+  if (adminTeacherProfileState) {
+    adminTeacherProfileState.textContent = teacherProfileOverrides[teacherId] ? "変更あり" : "初期文";
+  }
+
+  if (adminTeacherProfileMessage) {
+    adminTeacherProfileMessage.textContent = "花図鑑の先生紹介に反映されます。";
+  }
+};
+
+const markAdminTeacherProfileDirty = () => {
+  if (adminTeacherProfileState) {
+    adminTeacherProfileState.textContent = "未保存";
+  }
+
+  if (adminTeacherProfileMessage) {
+    adminTeacherProfileMessage.textContent = "保存すると花図鑑の紹介欄に反映されます。";
+  }
+};
+
+const saveAdminTeacherProfileEditor = () => {
+  if (!adminTeacherProfileSelect || !adminTeacherProfileStyle || !adminTeacherProfileLesson || !adminTeacherProfileNote) {
+    return;
+  }
+
+  const teacherId = adminTeacherProfileSelect.value;
+  const teacher = teacherDetails[teacherId];
+
+  if (!teacher) {
+    return;
+  }
+
+  const nextProfile = {};
+  for (const [field, element] of [
+    ["style", adminTeacherProfileStyle],
+    ["lesson", adminTeacherProfileLesson],
+    ["note", adminTeacherProfileNote],
+  ]) {
+    const text = element.value.trim().slice(0, 120) || teacher[field];
+
+    element.value = text;
+    if (text !== teacher[field]) {
+      nextProfile[field] = text;
+    }
+  }
+
+  if (Object.keys(nextProfile).length > 0) {
+    teacherProfileOverrides[teacherId] = nextProfile;
+  } else {
+    delete teacherProfileOverrides[teacherId];
+  }
+
+  saveTeacherProfileOverrides();
+
+  if (teacherId === activeTeacherKey) {
+    renderTeacherDetail(activeTeacherKey);
+  }
+
+  syncAdminTeacherProfileEditor();
+  if (adminTeacherProfileState) {
+    adminTeacherProfileState.textContent = "保存済み";
+  }
+  if (adminTeacherProfileMessage) {
+    adminTeacherProfileMessage.textContent = `${teacher.name} の紹介文を保存しました。`;
+  }
+};
+
+const resetAdminTeacherProfileEditor = () => {
+  if (!adminTeacherProfileSelect) {
+    return;
+  }
+
+  const teacherId = adminTeacherProfileSelect.value;
+  const teacher = teacherDetails[teacherId];
+
+  if (!teacher) {
+    return;
+  }
+
+  delete teacherProfileOverrides[teacherId];
+  saveTeacherProfileOverrides();
+
+  if (teacherId === activeTeacherKey) {
+    renderTeacherDetail(activeTeacherKey);
+  }
+
+  syncAdminTeacherProfileEditor();
+  if (adminTeacherProfileState) {
+    adminTeacherProfileState.textContent = "初期文";
+  }
+  if (adminTeacherProfileMessage) {
+    adminTeacherProfileMessage.textContent = `${teacher.name} の紹介文を初期文に戻しました。`;
+  }
+};
+
 const renderShrineTeachers = () => {
   if (!shrineTeacherList) {
     return;
@@ -1591,6 +1852,8 @@ const loadShrineRoster = () => {
 };
 
 let shrineRosterNames = loadShrineRoster();
+let editingShrineRosterName = "";
+let lastSavedShrineRosterName = "";
 
 const saveShrineRoster = () => {
   try {
@@ -1600,28 +1863,131 @@ const saveShrineRoster = () => {
   }
 };
 
+const setRosterStrengthValueMode = (input, type) => {
+  if (!input) {
+    return;
+  }
+
+  if (type === "point") {
+    input.type = "text";
+    input.removeAttribute("min");
+    input.removeAttribute("step");
+    input.inputMode = "text";
+    input.pattern = "-?[0-9]*";
+    input.placeholder = "0";
+    return;
+  }
+
+  input.type = "text";
+  input.min = "1";
+  input.step = "1";
+  input.inputMode = "numeric";
+  input.pattern = "[0-9]*";
+  input.placeholder = "数字";
+};
+
+const clearShrineRosterForm = () => {
+  editingShrineRosterName = "";
+  if (shrineRosterFormName) {
+    shrineRosterFormName.value = "";
+  }
+  if (shrineRosterFormGender) {
+    shrineRosterFormGender.value = "";
+  }
+  if (shrineRosterFormStrengthType) {
+    shrineRosterFormStrengthType.value = "";
+  }
+  if (shrineRosterFormStrengthValue) {
+    shrineRosterFormStrengthValue.value = "";
+    setRosterStrengthValueMode(shrineRosterFormStrengthValue, "");
+  }
+};
+
+const fillShrineRosterForm = (person = {}) => {
+  const strength = normalizeShrineStrength(person.strength);
+  editingShrineRosterName = String(person.name ?? "").trim();
+  if (shrineRosterFormName) {
+    shrineRosterFormName.value = editingShrineRosterName;
+  }
+  if (shrineRosterFormGender) {
+    shrineRosterFormGender.value = normalizeShrineGender(person.gender);
+  }
+  if (shrineRosterFormStrengthType) {
+    shrineRosterFormStrengthType.value = strength.type;
+  }
+  if (shrineRosterFormStrengthValue) {
+    setRosterStrengthValueMode(shrineRosterFormStrengthValue, strength.type);
+    shrineRosterFormStrengthValue.value = strength.value;
+  }
+};
+
 const renderShrineRoster = () => {
   if (!shrineRosterList) {
     return;
   }
 
+  const query = shrineRosterSearch?.value.trim().toLowerCase() ?? "";
+  const selectedNames = new Set([...shrineRosterList.querySelectorAll("[data-shrine-roster-name]:checked")]
+    .map((input) => input.dataset.shrineRosterName)
+    .filter(Boolean));
   shrineRosterList.textContent = "";
+  const visibleRosterNames = query
+    ? shrineRosterNames.filter((person) => {
+        const text = [
+          person.name,
+          normalizeShrineGender(person.gender) ? shrineGenderLabel[normalizeShrineGender(person.gender)] : "未設定",
+          formatShrineStrength(person.strength) || "棋力未設定",
+        ].join(" ").toLowerCase();
+        return text.includes(query) || selectedNames.has(person.name);
+      })
+    : shrineRosterNames;
+
+  for (const person of visibleRosterNames) {
+    const row = document.createElement("div");
+    const checkbox = document.createElement("input");
+    const editButton = document.createElement("button");
+    const name = document.createElement("strong");
+    const meta = document.createElement("small");
+
+    checkbox.type = "checkbox";
+    checkbox.value = formatShrinePersonLine(person);
+    checkbox.dataset.shrineRosterName = person.name;
+    checkbox.checked = selectedNames.has(person.name);
+    editButton.type = "button";
+    editButton.dataset.shrineRosterEditName = person.name;
+    name.textContent = person.name;
+    meta.textContent = [
+      normalizeShrineGender(person.gender) ? shrineGenderLabel[normalizeShrineGender(person.gender)] : "未設定",
+      formatShrineStrength(person.strength) || "棋力未設定",
+    ].join("・");
+    editButton.append(name, meta);
+    row.className = "shrine-roster-row";
+    row.dataset.shrineRosterRow = person.name;
+    row.append(checkbox, editButton);
+    shrineRosterList.append(row);
+  }
+  return;
+
   if (shrineRosterEditorText) {
     shrineRosterEditorText.value = shrineRosterNames.map(formatShrinePersonLine).join("\n");
   }
 
   const updateStrengthValueInput = (input, type) => {
     if (type === "point") {
-      input.min = "-5";
+      input.type = "text";
+      input.removeAttribute("min");
       input.removeAttribute("step");
-      input.inputMode = "numeric";
+      input.inputMode = "text";
+      input.pattern = "-?[0-9]*";
       input.placeholder = "0";
       return;
     }
 
+    input.type = "text";
     input.min = "1";
     input.step = "1";
     input.inputMode = "numeric";
+    input.pattern = "[0-9]*";
     input.placeholder = "値";
   };
 
@@ -1667,7 +2033,7 @@ const renderShrineRoster = () => {
       option.selected = strength.type === value;
       strengthType.append(option);
     }
-    strengthValue.type = "number";
+    strengthValue.type = "text";
     updateStrengthValueInput(strengthValue, strength.type);
     strengthValue.value = strength.value;
     strengthValue.dataset.shrineRosterStrengthValue = person.name;
@@ -1683,16 +2049,20 @@ const updateShrineRosterStrengthValueInput = (input, type) => {
   }
 
   if (type === "point") {
-    input.min = "-5";
+    input.type = "text";
+    input.removeAttribute("min");
     input.removeAttribute("step");
-    input.inputMode = "numeric";
+    input.inputMode = "text";
+    input.pattern = "-?[0-9]*";
     input.placeholder = "0";
     return;
   }
 
+  input.type = "text";
   input.min = "1";
   input.step = "1";
   input.inputMode = "numeric";
+  input.pattern = "[0-9]*";
   input.placeholder = "値";
 };
 
@@ -1757,6 +2127,30 @@ const getShrineRecordPreview = (body = "") => {
     .filter((line) => line && !hiddenLines.has(line));
 
   return lines.slice(0, 3).join(" / ") || "保存した組み合わせです。";
+};
+
+const getShrineRecordJournalText = ({ mode, body = "" }) => {
+  const text = String(body);
+  const championMatch = text.match(/([0-9０-９]+番)[^\n]{0,12}優勝/);
+
+  if (championMatch) {
+    return `今日は大会対戦をして、${championMatch[1]}が優勝しました`;
+  }
+
+  if (mode === "pairgo") {
+    const groupMatch = text.match(/([0-9０-９]+)組/);
+    return groupMatch
+      ? `今日はペア・団体を${groupMatch[1]}組作りました`
+      : "今日はペア・団体づくりをしました";
+  }
+
+  if (mode === "amateur") {
+    return text.includes("スイス方式")
+      ? "今日はスイス方式の大会対戦をしました"
+      : "今日は大会対戦をしました";
+  }
+
+  return "今日は指導碁の組み合わせを作りました";
 };
 
 const renderShrineRecords = () => {
@@ -4313,6 +4707,28 @@ const syncLibraryJournalToggle = () => {
   }
 };
 
+const libraryJournalKeeperMessages = [
+  "思い出が増えてきたね。",
+  "今日も記録しておいたよ。",
+  "書かなくても大丈夫だよ。",
+  "しまっておきたい日だね。",
+  "あとでまた読もうね。",
+];
+
+let lastLibraryJournalKeeperMessage = "";
+
+const updateLibraryJournalKeeperSpeech = () => {
+  if (!libraryJournalKeeperSpeech || libraryJournalKeeperMessages.length === 0) {
+    return;
+  }
+
+  const candidates = libraryJournalKeeperMessages.filter((message) => message !== lastLibraryJournalKeeperMessage);
+  const messages = candidates.length > 0 ? candidates : libraryJournalKeeperMessages;
+  const nextMessage = messages[Math.floor(Math.random() * messages.length)];
+  lastLibraryJournalKeeperMessage = nextMessage;
+  libraryJournalKeeperSpeech.textContent = nextMessage;
+};
+
 const toggleLibraryJournal = () => {
   if (!libraryJournalRecords) {
     return;
@@ -4320,7 +4736,11 @@ const toggleLibraryJournal = () => {
 
   libraryJournalRecords.classList.toggle("is-collapsed");
   libraryJournalPrompt?.closest(".library-journal-prompt")?.classList.toggle("is-collapsed");
+  libraryJournalKeeperSpeech?.classList.toggle("is-collapsed", libraryJournalRecords.classList.contains("is-collapsed"));
   syncLibraryJournalToggle();
+  if (!libraryJournalRecords.classList.contains("is-collapsed")) {
+    updateLibraryJournalKeeperSpeech();
+  }
 };
 
 const createProfileFairyItem = ({ src, alt, nameText, statusText, quoteText = "", flower = "", categoryText, cycleNames = [], cycleFairies = [] }) => {
@@ -4694,6 +5114,11 @@ const renderLibraryCollection = (list, items, emptyMessage, kind, achievementRes
   }
 };
 
+const createAdventureJournalRecord = (text, source = "achievement") => ({
+  text,
+  source,
+});
+
 const getAdventureJournalRecords = (achievementResult) => {
   const records = [];
   const latestFairy = achievementResult.earnedFairies?.at(-1);
@@ -4702,23 +5127,27 @@ const getAdventureJournalRecords = (achievementResult) => {
   const latestCompanion = achievementResult.earnedCompanions?.at(-1);
 
   if (latestFairy) {
-    records.push(`🌸 ${latestFairy.flowerName ?? "花"}の妖精と出会いました`);
+    records.push(createAdventureJournalRecord(`🌸 ${latestFairy.flowerName ?? "花"}の妖精と出会いました`));
   }
   if (latestMedal) {
-    records.push(`🏅 ${latestMedal.name}を収めました`);
+    records.push(createAdventureJournalRecord(`🏅 ${latestMedal.name}を収めました`));
   }
   if (latestTitle) {
-    records.push(`📖 ${latestTitle.name}の本が増えました`);
+    records.push(createAdventureJournalRecord(`📖 ${latestTitle.name}の本が増えました`));
   }
   if (latestCompanion) {
-    records.push(`🦊 ${latestCompanion.name}が仲間になりました`);
+    records.push(createAdventureJournalRecord(`🦊 ${latestCompanion.name}が仲間になりました`));
   }
   if (gameRecords.length > 0) {
-    records.push(`⚫ 対局記録が${gameRecords.length}局になりました`);
+    records.push(createAdventureJournalRecord(`⚫ 対局記録が${gameRecords.length}局になりました`));
+  }
+  for (const entry of libraryJournalEntries.slice(0, 3)) {
+    const mark = entry.source === "shrine" ? "⛩" : "✎";
+    records.push(createAdventureJournalRecord(`${mark} ${entry.text}`, entry.source));
   }
 
   if (records.length === 0) {
-    records.push("最初の記録を準備しています");
+    records.push(createAdventureJournalRecord("最初の記録を準備しています"));
   }
 
   return records.slice(0, 4);
@@ -4739,13 +5168,16 @@ const renderAdventureJournalPreview = (achievementResult) => {
         + achievementResult.earnedTitles.length
         + (achievementResult.earnedCompanions?.length ?? 0)
         + gameRecords.length
+        + libraryJournalEntries.length
     )
   );
 
   libraryJournalRecords.textContent = "";
   for (const record of records) {
     const item = document.createElement("li");
-    item.textContent = record;
+    const entry = typeof record === "string" ? createAdventureJournalRecord(record) : record;
+    item.className = `is-journal-${entry.source}`;
+    item.textContent = entry.text;
     libraryJournalRecords.append(item);
   }
 
@@ -4759,6 +5191,40 @@ const setJournalPrompt = (message) => {
   if (libraryJournalPrompt) {
     libraryJournalPrompt.textContent = message;
   }
+};
+
+const handleLibraryJournalNote = () => {
+  if (!libraryJournalNoteForm || !libraryJournalNoteInput) {
+    setJournalPrompt("ひとこと欄を開けませんでした。");
+    return;
+  }
+
+  libraryJournalNoteForm.hidden = false;
+  libraryJournalNoteInput.focus();
+  setJournalPrompt("短いひとことを、ここにしまえます。");
+};
+
+const saveLibraryJournalNote = () => {
+  const note = libraryJournalNoteInput?.value ?? "";
+  const entry = addLibraryJournalEntry({
+    text: note,
+    source: "manual",
+  });
+
+  if (!entry) {
+    setJournalPrompt("ひとことを入れると、ここにしまえます。");
+    return;
+  }
+
+  if (libraryJournalNoteInput) {
+    libraryJournalNoteInput.value = "";
+  }
+  if (libraryJournalNoteForm) {
+    libraryJournalNoteForm.hidden = true;
+  }
+  renderAdventureJournalPreview(getCurrentAchievementResult());
+  updateLibraryJournalKeeperSpeech();
+  setJournalPrompt("ひとことをしまいました。");
 };
 
 const renderOwlLibrary = (achievementResult) => {
@@ -5422,6 +5888,7 @@ const setRecordPhase = (phase, teacher) => {
 
 const renderTeacherDetail = (teacherKey) => {
   const teacher = teacherDetails[teacherKey];
+  const profile = getTeacherProfile(teacherKey);
   const cycleProgress = getCurrentTeacherCycleProgress(teacher);
   const isAllCyclesComplete = teacher.stampCount >= getTeacherMaxCount(teacher);
 
@@ -5440,9 +5907,9 @@ const renderTeacherDetail = (teacherKey) => {
   applyFlowerVariables(photoCard, cycleProgress.cycle);
   document.querySelector("[data-teacher-photo]").dataset.teacherPhoto = teacher.photo;
   document.querySelector("[data-photo-initial]").textContent = teacher.initial;
-  document.querySelector("[data-teacher-style]").textContent = teacher.style;
-  document.querySelector("[data-teacher-lesson]").textContent = teacher.lesson;
-  document.querySelector("[data-teacher-note]").textContent = teacher.note;
+  document.querySelector("[data-teacher-style]").textContent = profile.style;
+  document.querySelector("[data-teacher-lesson]").textContent = profile.lesson;
+  document.querySelector("[data-teacher-note]").textContent = profile.note;
   renderTeacherGameRecords(teacherKey);
   const isCycleAchievementPreview = !isAllCyclesComplete && isTeacherCycleAchievementCount(teacher.stampCount + 1, teacher);
   const nextCycleNumber = Math.ceil((teacher.stampCount + 1) / getTeacherGoal(teacher));
@@ -5646,8 +6113,16 @@ shrineRosterToggle?.addEventListener("click", () => {
 
   const willOpen = shrineRosterPanel.hidden;
   shrineRosterPanel.hidden = !willOpen;
+  if (!willOpen) {
+    shrineRosterPanel.classList.remove("is-editing");
+    if (shrineRosterEditor) {
+      shrineRosterEditor.hidden = true;
+    }
+    shrineRosterEditToggle?.setAttribute("aria-expanded", "false");
+  }
   shrineRosterToggle.setAttribute("aria-expanded", String(willOpen));
   shrineRosterToggle.textContent = willOpen ? "よく来る人を閉じる" : "よく来る人を開く";
+  shrineRosterEditToggle.textContent = willOpen ? "登録欄を閉じる" : "登録する";
   if (willOpen) {
     renderShrineRoster();
     updateShrineRosterApplyState();
@@ -5662,19 +6137,113 @@ shrineRosterEditToggle?.addEventListener("click", () => {
 
   const willOpen = shrineRosterEditor.hidden;
   shrineRosterEditor.hidden = !willOpen;
+  shrineRosterPanel?.classList.toggle("is-editing", willOpen);
   shrineRosterEditToggle.setAttribute("aria-expanded", String(willOpen));
   shrineRosterEditToggle.textContent = willOpen ? "編集を閉じる" : "名簿を編集";
+  if (willOpen) {
+    clearShrineRosterForm();
+    setShrineRosterMessage("上の欄に入れて登録できます。下の名前をタップすると直せます。");
+    shrineRosterFormName?.focus();
+  }
   if (willOpen && shrineRosterEditorText) {
     shrineRosterEditorText.value = shrineRosterNames.map(formatShrinePersonLine).join("\n");
   }
 });
 
 shrineRosterSave?.addEventListener("click", () => {
+  if (shrineRosterFormName) {
+    const name = shrineRosterFormName.value.trim();
+    if (!name) {
+      setShrineRosterMessage("名前を入れてから登録してください。");
+      shrineRosterFormName.focus();
+      return;
+    }
+
+    const nextPerson = {
+      name,
+      gender: normalizeShrineGender(shrineRosterFormGender?.value),
+      strength: normalizeShrineStrength({
+        type: shrineRosterFormStrengthType?.value,
+        value: shrineRosterFormStrengthValue?.value,
+      }),
+    };
+    lastSavedShrineRosterName = name;
+    const withoutCurrent = shrineRosterNames.filter((person) =>
+      person.name !== editingShrineRosterName && person.name !== name
+    );
+    shrineRosterNames = normalizeRosterNames([...withoutCurrent, nextPerson]);
+    saveShrineRoster();
+    renderShrineRoster();
+    clearShrineRosterForm();
+    updateShrineRosterApplyState();
+    setShrineRosterMessage(`${name} をよく来る人に登録しました。`);
+    return;
+  }
+
   shrineRosterNames = normalizeRosterNames(shrineRosterEditorText?.value ?? "");
   saveShrineRoster();
   renderShrineRoster();
+  if (shrineRosterEditor) {
+    shrineRosterEditor.hidden = true;
+  }
+  shrineRosterPanel?.classList.remove("is-editing");
+  shrineRosterEditToggle?.setAttribute("aria-expanded", "false");
   updateShrineRosterApplyState();
   setShrineRosterMessage(`名簿を${shrineRosterNames.length}人で保存しました。`);
+});
+
+shrineRosterSave?.addEventListener("click", () => {
+  setShrineRosterMessage(`名簿を${shrineRosterNames.length}人で保存しました。来ている人にチェックしてください。`);
+});
+
+shrineRosterDelete?.addEventListener("click", () => {
+  if (!editingShrineRosterName) {
+    clearShrineRosterForm();
+    setShrineRosterMessage("入力欄を空にしました。");
+    return;
+  }
+
+  const deletedName = editingShrineRosterName;
+  shrineRosterNames = shrineRosterNames.filter((person) => person.name !== deletedName);
+  saveShrineRoster();
+  renderShrineRoster();
+  clearShrineRosterForm();
+  updateShrineRosterApplyState();
+  setShrineRosterMessage(`${deletedName} をよく来る人から消しました。`);
+});
+
+shrineRosterSave?.addEventListener("click", () => {
+  if (shrineRosterFormName) {
+    const savedName = lastSavedShrineRosterName || shrineRosterFormName.value.trim() || "名簿";
+    setShrineRosterMessage(`${savedName} を登録しました。来ている人にチェックしてください。`);
+  }
+});
+
+shrineRosterFormStrengthType?.addEventListener("change", () => {
+  setRosterStrengthValueMode(shrineRosterFormStrengthValue, shrineRosterFormStrengthType.value);
+});
+
+shrineRosterList?.addEventListener("click", (event) => {
+  const button = event.target instanceof HTMLElement
+    ? event.target.closest("[data-shrine-roster-edit-name]")
+    : null;
+  if (!button) {
+    return;
+  }
+
+  const person = shrineRosterNames.find((item) => item.name === button.dataset.shrineRosterEditName);
+  if (!person) {
+    return;
+  }
+
+  if (shrineRosterEditor) {
+    shrineRosterEditor.hidden = false;
+  }
+  shrineRosterPanel?.classList.add("is-editing");
+  shrineRosterEditToggle?.setAttribute("aria-expanded", "true");
+  fillShrineRosterForm(person);
+  setShrineRosterMessage(`${person.name} の内容を上の欄で直せます。`);
+  shrineRosterFormName?.focus();
 });
 
 const syncShrineRosterRow = (target) => {
@@ -5735,6 +6304,11 @@ shrineRosterList?.addEventListener("change", (event) => {
 
 shrineRosterList?.addEventListener("input", (event) => {
   syncShrineRosterRow(event.target);
+});
+
+shrineRosterSearch?.addEventListener("input", () => {
+  renderShrineRoster();
+  updateShrineRosterApplyState();
 });
 
 shrineRosterApply?.addEventListener("click", () => {
@@ -6055,8 +6629,14 @@ shrineRecordSave?.addEventListener("click", () => {
   }, ...shrineRecords].slice(0, 12);
   saveShrineRecords();
   renderShrineRecords();
+  addLibraryJournalEntry({
+    text: getShrineRecordJournalText({ mode, body }),
+    source: "shrine",
+  });
+  updateProfileCard();
+  updateLibraryJournalKeeperSpeech();
   if (shrineRecordMessage) {
-    shrineRecordMessage.textContent = "今の組み合わせを残しました。";
+    shrineRecordMessage.textContent = "今の組み合わせを書庫の日誌にも残しました。";
   }
 });
 
@@ -6104,7 +6684,14 @@ libraryOwlViewerButton?.addEventListener("click", openLibraryOwlViewer);
 libraryJournalToggle?.addEventListener("click", toggleLibraryJournal);
 syncLibraryJournalToggle();
 libraryJournalSkip?.addEventListener("click", () => setJournalPrompt("わかった。今日もちゃんとしまっておくね。"));
-libraryJournalNote?.addEventListener("click", () => setJournalPrompt("ひとこと欄は準備中。残したい気持ちだけ、先にしまっておくね。"));
+libraryJournalNote?.addEventListener("click", handleLibraryJournalNote);
+libraryJournalNoteSave?.addEventListener("click", saveLibraryJournalNote);
+libraryJournalNoteInput?.addEventListener("keydown", (event) => {
+  if (event.key === "Enter") {
+    event.preventDefault();
+    saveLibraryJournalNote();
+  }
+});
 
 document.addEventListener("keydown", (event) => {
   if (event.key === "Escape" && fairyViewer && !fairyViewer.hidden) {
@@ -6234,10 +6821,17 @@ participationStampButton.addEventListener("click", () => {
 
 adminParticipationApply?.addEventListener("click", applyTodayParticipationStampFromAdmin);
 adminGameRecordApply?.addEventListener("click", applyGameRecordFromAdmin);
+adminTeacherProfileSelect?.addEventListener("change", syncAdminTeacherProfileEditor);
+adminTeacherProfileSave?.addEventListener("click", saveAdminTeacherProfileEditor);
+adminTeacherProfileReset?.addEventListener("click", resetAdminTeacherProfileEditor);
 
 for (const input of [adminGameRecordTeacher, adminGameRecordDate, adminGameRecordHandicap, adminGameRecordResult]) {
   input?.addEventListener("input", updateAdminGameRecordApply);
   input?.addEventListener("change", updateAdminGameRecordApply);
+}
+
+for (const input of [adminTeacherProfileStyle, adminTeacherProfileLesson, adminTeacherProfileNote]) {
+  input?.addEventListener("input", markAdminTeacherProfileDirty);
 }
 
 completeTeacherButton.addEventListener("click", () => {
@@ -6372,6 +6966,8 @@ adminRestoreConfirmButton.addEventListener("click", () => {
     downloadBackupData(createBackupData(), "before-restore");
     userProgress = sanitizeProgress(restoreBackup.progress);
     operationHistory = restoreBackup.operationHistory.map(sanitizeOperationHistory).filter(Boolean).slice(-50);
+    teacherProfileOverrides = sanitizeTeacherProfileOverrides(restoreBackup.teacherProfiles ?? {});
+    saveTeacherProfileOverrides();
     syncTeacherDetailsFromProgress();
     syncProgressRewards();
     saveUserProgress();
@@ -6382,6 +6978,7 @@ adminRestoreConfirmButton.addEventListener("click", () => {
       after: getTotalStampCount(),
     });
     syncAdminDraftFromProgress();
+    syncAdminTeacherProfileEditor();
     updateParticipationStampCard();
     renderTeacherDetail(activeTeacherKey);
     updateTeacherCards();
@@ -6444,11 +7041,14 @@ updateTeacherCards();
 updateRoundProgress();
 updateProfileCard();
 populateAdminGameRecordTeachers();
+populateAdminTeacherProfileEditor();
+syncAdminTeacherProfileEditor();
 renderShrineTeachers();
 renderShrineRoster();
 renderShrineRecords();
 updateShrineMode();
 updateShrineRecordSaveState();
+updateLibraryJournalKeeperSpeech();
 updateAdminPanel();
 updateAdminLockState();
 

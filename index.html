@@ -6,7 +6,7 @@
     <meta name="google" content="notranslate">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>冒険記録帳</title>
-    <link rel="stylesheet" href="styles.css?v=20260701-shrine-winner-medal-01">
+    <link rel="stylesheet" href="styles.css?v=20260701-teacher-profile-admin-01">
   </head>
   <body>
     <main class="record-book" aria-label="冒険記録帳">
@@ -566,14 +566,47 @@
                 <section class="shrine-roster-panel" data-shrine-roster-panel hidden aria-label="よく来る人の名簿">
                   <div class="shrine-roster-actions">
                     <button type="button" data-shrine-roster-apply>選んだ人を参加者欄へ入れる</button>
-                    <button type="button" data-shrine-roster-edit-toggle aria-expanded="false">名簿を編集</button>
+                    <button type="button" data-shrine-roster-edit-toggle aria-expanded="false">登録する</button>
                   </div>
-                  <div class="shrine-roster-list" data-shrine-roster-list></div>
-                  <label class="shrine-roster-editor" data-shrine-roster-editor hidden>
-                    <span>名簿を1行ずつ編集（例: 佐藤花子さん 女 3級 / 鈴木太郎さん 男 1200点）</span>
-                    <textarea data-shrine-roster-editor-text rows="6" placeholder="例&#10;佐藤花子さん 女 3級&#10;鈴木太郎さん 男 1200点&#10;田中一郎さん 2段"></textarea>
-                    <button type="button" data-shrine-roster-save>名簿を保存</button>
+                  <div class="shrine-roster-editor" data-shrine-roster-editor hidden>
+                    <strong>よく来る人を登録</strong>
+                    <div class="shrine-roster-form-grid">
+                      <label>
+                        <span>名前</span>
+                        <input type="text" data-shrine-roster-form-name autocomplete="off" placeholder="佐藤さん">
+                      </label>
+                      <label>
+                        <span>性別</span>
+                        <select data-shrine-roster-form-gender>
+                          <option value="">未設定</option>
+                          <option value="female">女</option>
+                          <option value="male">男</option>
+                        </select>
+                      </label>
+                      <label>
+                        <span>段級位</span>
+                        <select data-shrine-roster-form-strength-type>
+                          <option value="">未設定</option>
+                          <option value="kyu">級</option>
+                          <option value="dan">段</option>
+                          <option value="point">点</option>
+                        </select>
+                      </label>
+                      <label>
+                        <span>数字入力</span>
+                        <input type="text" data-shrine-roster-form-strength-value inputmode="text" pattern="-?[0-9]*" placeholder="0">
+                      </label>
+                    </div>
+                    <div class="shrine-roster-form-actions">
+                      <button type="button" data-shrine-roster-save>登録</button>
+                      <button type="button" data-shrine-roster-delete>消去</button>
+                    </div>
+                  </div>
+                  <label class="shrine-roster-search">
+                    <span>探す</span>
+                    <input type="search" data-shrine-roster-search placeholder="名前・性別・棋力">
                   </label>
+                  <div class="shrine-roster-list" data-shrine-roster-list></div>
                   <small data-shrine-roster-message>来ている人にチェックしてください。</small>
                 </section>
                 <section class="shrine-participant-quick-add" aria-label="参加者を1人ずつ追加">
@@ -605,7 +638,7 @@
                     </label>
                     <label>
                       <span>数値</span>
-                      <input type="number" min="-5" data-shrine-quick-strength-value inputmode="numeric" placeholder="0">
+                      <input type="text" data-shrine-quick-strength-value inputmode="text" pattern="-?[0-9]*" placeholder="0">
                     </label>
                     <button type="button" data-shrine-quick-add>参加者欄へ追加</button>
                   </div>
@@ -718,13 +751,12 @@
                 <div class="library-journal-copy">
                   <small>次の開架予定</small>
                   <strong>冒険日誌</strong>
-                  <span>旅の思い出を綴る書物は、ただいま準備中です。</span>
+                  <span>今日の出来事と小さなひとことをしまえます。</span>
                 </div>
-                <button type="button" class="library-journal-book" data-library-journal-toggle aria-expanded="true" aria-controls="library-journal-records library-journal-prompt" aria-label="冒険日誌を閉じる">
-                  <span class="library-journal-state" data-library-journal-state>とじる</span>
-                  <span data-library-journal-pages>1頁</span>
-                  <img class="library-journal-keeper-art" src="assets/library-journal-hedgehog-v2.png" alt="" aria-hidden="true">
-                </button>
+                <div class="library-journal-keeper">
+                  <p class="library-journal-keeper-speech" data-library-journal-keeper-speech>思い出が増えてきたね。</p>
+                  <img class="library-journal-keeper-art" src="assets/library-journal-hedgehog-with-book.png" alt="" aria-hidden="true">
+                </div>
                 <ul class="library-journal-records" id="library-journal-records" data-library-journal-records>
                   <li>最初の記録を準備しています。</li>
                 </ul>
@@ -734,6 +766,14 @@
                     <button type="button" data-library-journal-skip>今日は書かない</button>
                     <button type="button" data-library-journal-note>ひとこと残す</button>
                   </div>
+                  <div class="library-journal-note-form" data-library-journal-note-form hidden>
+                    <input type="text" data-library-journal-note-input aria-label="今日のひとこと" maxlength="80" placeholder="今日のひとこと">
+                    <button type="button" data-library-journal-note-save>残す</button>
+                  </div>
+                  <button type="button" class="library-journal-book" data-library-journal-toggle aria-expanded="true" aria-controls="library-journal-records library-journal-prompt" aria-label="冒険日誌を閉じる">
+                    <span class="library-journal-state" data-library-journal-state>とじる</span>
+                    <span data-library-journal-pages>1頁</span>
+                  </button>
                 </div>
               </section>
             </header>
@@ -899,6 +939,34 @@
                 <small data-admin-game-record-message>フォーム回答を確認してから押してください。</small>
               </section>
 
+              <section class="admin-teacher-profile-editor" aria-label="先生紹介の編集">
+                <div class="admin-adjustments-header">
+                  <strong>先生紹介を編集</strong>
+                  <span data-admin-teacher-profile-state>保存済み</span>
+                </div>
+                <label>
+                  <span>先生</span>
+                  <select data-admin-teacher-profile-select aria-label="紹介文を編集する先生"></select>
+                </label>
+                <label>
+                  <span>棋風</span>
+                  <textarea data-admin-teacher-profile-style rows="2" aria-label="棋風の紹介文"></textarea>
+                </label>
+                <label>
+                  <span>レッスン</span>
+                  <textarea data-admin-teacher-profile-lesson rows="2" aria-label="レッスンの紹介文"></textarea>
+                </label>
+                <label>
+                  <span>おすすめ</span>
+                  <textarea data-admin-teacher-profile-note rows="2" aria-label="おすすめの紹介文"></textarea>
+                </label>
+                <div class="admin-teacher-profile-actions">
+                  <button type="button" data-admin-teacher-profile-save>紹介文を保存</button>
+                  <button type="button" data-admin-teacher-profile-reset>初期文に戻す</button>
+                </div>
+                <small data-admin-teacher-profile-message>花図鑑の先生紹介に反映されます。</small>
+              </section>
+
               <section class="admin-history" aria-label="直近の操作履歴">
                 <div class="admin-adjustments-header">
                   <strong>直近の操作履歴</strong>
@@ -1020,7 +1088,7 @@
       });
     </script>
     <script src="stamp-rules.js?v=20260628-shrine-skip-01"></script>
-    <script src="script.js?v=20260701-shrine-mobile-03"></script>
+    <script src="script.js?v=20260701-teacher-profile-admin-01"></script>
   </body>
 </html>
 
