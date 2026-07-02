@@ -1,7 +1,7 @@
 {
   "appId": "suiyoukai-stamp-adventure",
   "formatVersion": 1,
-  "savedAt": "2026-07-02T12:15:40.960Z",
+  "savedAt": "2026-07-02T12:15:42.391Z",
   "progress": {
     "schemaVersion": 2,
     "stamps": {
@@ -117,6 +117,14 @@
       "before": 9,
       "after": 10,
       "recordedAt": "2026-06-19T00:00:00.000Z"
+    },
+    {
+      "id": "operation-1782994541945-1-restore",
+      "type": "restore",
+      "target": "バックアップ記録",
+      "before": 1,
+      "after": 25,
+      "recordedAt": "2026-07-02T12:15:41.945Z"
     }
   ],
   "teacherProfiles": {}

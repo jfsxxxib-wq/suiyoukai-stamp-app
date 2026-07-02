@@ -1,0 +1,121 @@
+{
+  "ok": true,
+  "checkedAt": "2026-07-02T12:15:29.697Z",
+  "files": {
+    "script": "script.js",
+    "rules": "stamp-rules.js"
+  },
+  "primaryTeacherIds": [
+    "tsuneishi",
+    "yuki",
+    "koike",
+    "yamashiro",
+    "matsumoto"
+  ],
+  "futureTeacherIds": [
+    "teacher_extra_01",
+    "teacher_extra_02"
+  ],
+  "plannedStock": [
+    {
+      "teacherSlot": "新先生A",
+      "cycle": 1,
+      "flower": "すずらん",
+      "companion": "ネズミ妖精"
+    },
+    {
+      "teacherSlot": "新先生A",
+      "cycle": 2,
+      "flower": "木蓮",
+      "companion": "白猫妖精"
+    },
+    {
+      "teacherSlot": "新先生A",
+      "cycle": 3,
+      "flower": "ひなげし",
+      "companion": "リス妖精"
+    },
+    {
+      "teacherSlot": "新先生B",
+      "cycle": 1,
+      "flower": "白詰草",
+      "companion": "トイプードル妖精"
+    },
+    {
+      "teacherSlot": "新先生B",
+      "cycle": 2,
+      "flower": "蘭",
+      "companion": "亀妖精"
+    },
+    {
+      "teacherSlot": "新先生B",
+      "cycle": 3,
+      "flower": "花水木",
+      "companion": "鶴妖精"
+    }
+  ],
+  "checks": [
+    {
+      "name": "基本5人の先生ID",
+      "result": "OK",
+      "teacherIds": [
+        "tsuneishi",
+        "yuki",
+        "koike",
+        "yamashiro",
+        "matsumoto",
+        "teacher_extra_01",
+        "teacher_extra_02"
+      ]
+    },
+    {
+      "name": "追加先生2人の先生ID",
+      "result": "OK",
+      "teacherIds": [
+        "teacher_extra_01",
+        "teacher_extra_02"
+      ]
+    },
+    {
+      "name": "先生の輪の計算対象",
+      "result": "OK",
+      "detail": "先生の輪は teacherCircle.teacherIds の基本5人だけを見る。追加先生は押印対象でも輪の達成条件には含めない。"
+    },
+    {
+      "name": "バックアップ形式",
+      "result": "OK",
+      "formatVersion": 1
+    },
+    {
+      "name": "旧バックアップ復元リスク",
+      "result": "OK",
+      "detail": "旧バックアップに新先生IDが無くても、復元時に0回として補完できる。"
+    },
+    {
+      "name": "通常読み込み時の補完",
+      "result": "OK",
+      "detail": "通常の progress 読み込みでは teacherDetails 由来のIDを補完する作り。"
+    },
+    {
+      "name": "先生の輪の必要人数",
+      "result": "OK",
+      "detail": "requiredTeachersPerRound を使うため、基本5人の輪を維持できる。"
+    },
+    {
+      "name": "先生の輪の後退防止",
+      "result": "OK",
+      "detail": "基本5人が1回ずつ、新先生2人が0回の想定でも、輪の判定は基本5人なら1巡のまま。",
+      "simulatedCounts": {
+        "tsuneishi": 1,
+        "yuki": 1,
+        "koike": 1,
+        "yamashiro": 1,
+        "matsumoto": 1,
+        "teacher_extra_01": 0,
+        "teacher_extra_02": 0
+      }
+    }
+  ],
+  "requiredBeforeImplementation": [],
+  "nextStep": "追加先生の仮IDを使った表示検証へ進める。"
+}

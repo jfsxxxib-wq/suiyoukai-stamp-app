@@ -202,6 +202,18 @@
                   <span class="flower-guide-meta">松本先生</span>
                   <span class="flower-guide-action">1巡目を見る</span>
                 </button>
+                <button type="button" class="flower-guide-card" data-flower-guide-target="teacher_extra_01" aria-label="すずらんの追加先生Aスタンプへ移動">
+                  <img src="assets/suisen-stamp-stage-05-list.png" alt="すずらん" loading="eager" decoding="async">
+                  <span class="flower-guide-name">すずらん</span>
+                  <span class="flower-guide-meta">追加先生A</span>
+                  <span class="flower-guide-action">1巡目を見る</span>
+                </button>
+                <button type="button" class="flower-guide-card" data-flower-guide-target="teacher_extra_02" aria-label="白詰草の追加先生Bスタンプへ移動">
+                  <img src="assets/cosmos-stamp-stage-05-v2.png" alt="白詰草" loading="eager" decoding="async">
+                  <span class="flower-guide-name">白詰草</span>
+                  <span class="flower-guide-meta">追加先生B</span>
+                  <span class="flower-guide-action">1巡目を見る</span>
+                </button>
               </div>
             </section>
             <h3 class="teacher-guide-heading">先生を選んで花を育てる</h3>
@@ -260,6 +272,22 @@
                   <span>
                     <strong>松本 武久 八段</strong>
                     <small>未記録・ここをタップして一巡目を達成</small>
+                  </span>
+                  <span class="teacher-card-action">見る&nbsp;›</span>
+                </button>
+                <button type="button" class="teacher-card next-teacher" data-teacher="teacher_extra_01" aria-pressed="false">
+                  <span class="teacher-flower" aria-hidden="true"></span>
+                  <span>
+                    <strong>追加先生A</strong>
+                    <small>追加先生枠・すずらんから始まる花巡り</small>
+                  </span>
+                  <span class="teacher-card-action">見る&nbsp;›</span>
+                </button>
+                <button type="button" class="teacher-card next-teacher" data-teacher="teacher_extra_02" aria-pressed="false">
+                  <span class="teacher-flower" aria-hidden="true"></span>
+                  <span>
+                    <strong>追加先生B</strong>
+                    <small>追加先生枠・白詰草から始まる花巡り</small>
                   </span>
                   <span class="teacher-card-action">見る&nbsp;›</span>
                 </button>
@@ -1087,8 +1115,8 @@
         status.textContent = "画面の操作が止まりました。Codexにこの表示を見せてください: " + event.message;
       });
     </script>
-    <script src="stamp-rules.js?v=20260628-shrine-skip-01"></script>
-    <script src="script.js?v=20260701-teacher-profile-admin-01"></script>
+    <script src="stamp-rules.js?v=20260702-extra-teachers-01"></script>
+    <script src="script.js?v=20260702-extra-teachers-01"></script>
   </body>
 </html>
 

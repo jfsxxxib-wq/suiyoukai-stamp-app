@@ -265,6 +265,7 @@ const participationRule = window.stampRules?.participation ?? {};
 const teacherLessonRule = window.stampRules?.teacherLesson ?? {};
 const teacherCircleRule = window.stampRules?.teacherCircle ?? {};
 const teacherTargetById = Object.fromEntries(ruleTargets.map((target) => [target.teacherId, target]));
+const teacherCircleTargetIds = teacherCircleRule.teacherIds ?? ruleTargets.map((target) => target.teacherId);
 
 const getTeacherTarget = (teacherKey) => teacherTargetById[teacherKey];
 const getParticipationGoal = () => participationRule.maxCount ?? 10;
@@ -347,6 +348,66 @@ const flowerCatalog = {
     flowerColor: "#f3e6bd",
     accentColor: "#c78a49",
   },
+  suzuran: {
+    flower: "suzuran",
+    flowerName: "すずらん",
+    flowerAsset: "suisen-stamp-stage-05-list.png",
+    fairyId: "fairy_suzuran_mouse",
+    fairyName: "すずらんのネズミ妖精",
+    fairyAsset: "fairy-evolution-stage-01.png",
+    flowerColor: "#f0f7df",
+    accentColor: "#8fb985",
+  },
+  mokuren: {
+    flower: "mokuren",
+    flowerName: "木蓮",
+    flowerAsset: "lily-stamp-stage-05-list.png",
+    fairyId: "fairy_mokuren_white_cat",
+    fairyName: "木蓮の白猫妖精",
+    fairyAsset: "fairy-evolution-stage-02.png",
+    flowerColor: "#f5e7ef",
+    accentColor: "#b985a7",
+  },
+  hinageshi: {
+    flower: "hinageshi",
+    flowerName: "ひなげし",
+    flowerAsset: "nadeshiko-stamp-stage-05-list.png",
+    fairyId: "fairy_hinageshi_squirrel",
+    fairyName: "ひなげしのリス妖精",
+    fairyAsset: "fairy-companion-kikyo-red-squirrel.png",
+    flowerColor: "#f1a1a7",
+    accentColor: "#d85f65",
+  },
+  shirotsumekusa: {
+    flower: "shirotsumekusa",
+    flowerName: "白詰草",
+    flowerAsset: "cosmos-stamp-stage-05-v2.png",
+    fairyId: "fairy_shirotsumekusa_toy_poodle",
+    fairyName: "白詰草のトイプードル妖精",
+    fairyAsset: "special-companion-french-bulldog-a.png",
+    flowerColor: "#ecf4de",
+    accentColor: "#78a768",
+  },
+  ran: {
+    flower: "ran",
+    flowerName: "蘭",
+    flowerAsset: "sumire-stamp-stage-05-list.png",
+    fairyId: "fairy_ran_turtle",
+    fairyName: "蘭の亀妖精",
+    fairyAsset: "fairy-evolution-stage-03.png",
+    flowerColor: "#ddc7ef",
+    accentColor: "#8e66ba",
+  },
+  hanamizuki: {
+    flower: "hanamizuki",
+    flowerName: "花水木",
+    flowerAsset: "sakura-stamp-stage-05-list.png",
+    fairyId: "fairy_hanamizuki_crane",
+    fairyName: "花水木の鶴妖精",
+    fairyAsset: "fairy-evolution-stage-04.png",
+    flowerColor: "#f3dce0",
+    accentColor: "#c66b7c",
+  },
   asagao: {
     flower: "asagao",
     flowerName: "朝顔",
@@ -427,6 +488,8 @@ const teacherCycleFlowerAssignments = {
   koike: ["sunflower", "asagao", "kikyo"],
   yamashiro: ["hydrangea", "nadeshiko", "suisen"],
   matsumoto: ["sakura", "hagi", "shakuyaku"],
+  teacher_extra_01: ["suzuran", "mokuren", "hinageshi"],
+  teacher_extra_02: ["shirotsumekusa", "ran", "hanamizuki"],
 };
 
 const getCycleProgress = (count, perCycleGoal, cycles) => {
@@ -596,6 +659,32 @@ const teacherDetails = {
     lesson: "序盤から中盤のつながりをたどり、形が育つ手を探す指導",
     note: "全体の流れをつかみたい冒険者へ",
   },
+  teacher_extra_01: {
+    name: "追加先生A",
+    guide: "新しい花をひらく案内人",
+    stampCount: 0,
+    fairy: false,
+    photo: "extra-a",
+    flower: "suzuran",
+    initial: "追A",
+    completedFirstRound: false,
+    style: "やさしく局面を整え、新しい気づきを見つける",
+    lesson: "すずらんから始まる花巡りを、冒険者の歩幅に合わせて進める指導",
+    note: "新しい先生枠を試したい冒険者へ",
+  },
+  teacher_extra_02: {
+    name: "追加先生B",
+    guide: "新しい道を照らす案内人",
+    stampCount: 0,
+    fairy: false,
+    photo: "extra-b",
+    flower: "shirotsumekusa",
+    initial: "追B",
+    completedFirstRound: false,
+    style: "小さな発見を拾いながら、次の一手へつなげる",
+    lesson: "白詰草から始まる花巡りを、落ち着いて積み重ねる指導",
+    note: "新しい相性を探したい冒険者へ",
+  },
 };
 
 for (const [teacherKey, teacher] of Object.entries(teacherDetails)) {
@@ -726,8 +815,8 @@ const getStoredEarnedCompanions = (progress = {}) =>
   progress.earned?.companions ?? progress.earnedCompanions ?? [];
 
 const getTeacherCircleRoundsFromCounts = (teacherLessonCounts = {}) => {
-  const teacherIds = ruleTargets.length > 0
-    ? ruleTargets.map((target) => target.teacherId)
+  const teacherIds = teacherCircleTargetIds.length > 0
+    ? teacherCircleTargetIds
     : Object.keys(teacherDetails);
 
   if (teacherIds.length === 0) {
@@ -1054,14 +1143,22 @@ const validateBackupData = (backup) => {
     throw new Error("スタンプ記録の形式が壊れています。");
   }
 
-  for (const teacherId of Object.keys(teacherDetails)) {
-    if (!isValidBackupCount(teacherCounts[teacherId])
-      || teacherCounts[teacherId] > getTeacherMaxCount(teacherDetails[teacherId])) {
+  const sanitizedProgress = sanitizeProgress(progress);
+  const sanitizedTeacherCounts = sanitizedProgress.stamps.teacherLessonCounts;
+
+  for (const [teacherId, count] of Object.entries(teacherCounts)) {
+    const teacher = teacherDetails[teacherId];
+
+    if (!teacher) {
+      continue;
+    }
+
+    if (!isValidBackupCount(count) || count > getTeacherMaxCount(teacher)) {
       throw new Error("先生ごとのスタンプ記録が正しくありません。");
     }
   }
 
-  if (stamps.teacherCircleRounds !== getTeacherCircleRoundsFromCounts(teacherCounts)) {
+  if (sanitizedProgress.stamps.teacherCircleRounds !== getTeacherCircleRoundsFromCounts(sanitizedTeacherCounts)) {
     throw new Error("先生の輪の記録が一致しません。");
   }
 
@@ -1081,7 +1178,7 @@ const validateBackupData = (backup) => {
     appId: backupAppId,
     formatVersion: backupFormatVersion,
     savedAt: backup.savedAt,
-    progress: sanitizeProgress(progress),
+    progress: sanitizedProgress,
     operationHistory: backup.operationHistory.map(sanitizeOperationHistory).slice(-50),
     teacherProfiles: sanitizeTeacherProfileOverrides(backup.teacherProfiles ?? {}),
   };
@@ -4213,7 +4310,7 @@ const showPanel = (target) => {
 };
 
 const getCompletedFirstRoundCount = () =>
-  Object.values(teacherDetails).filter((teacher) => teacher.completedFirstRound).length;
+  teacherCircleTargetIds.filter((teacherId) => teacherDetails[teacherId]?.completedFirstRound).length;
 
 const hasFirstRoundMedal = () => getCompletedFirstRoundCount() >= getTeacherCircleRequiredCount();
 
@@ -5482,11 +5579,14 @@ updateTeacherCards = () => {
     card.classList.toggle("is-recorded", teacher.completedFirstRound);
     card.classList.toggle("next-teacher", !teacher.completedFirstRound);
 
+    const isCircleTeacher = teacherCircleTargetIds.includes(card.dataset.teacher);
+    const teacherGroupLabel = isCircleTeacher ? "先生の輪" : "追加先生枠";
+
     applyFlowerVisual(flower, cycleProgress.cycle);
 
     label.textContent = teacher.completedFirstRound
-      ? `先生の輪 済・${getTeacherStampText(teacher)}`
-      : `先生の輪 未・${getTeacherStampText(teacher)}`;
+      ? `${teacherGroupLabel} 済・${getTeacherStampText(teacher)}`
+      : `${teacherGroupLabel} 未・${getTeacherStampText(teacher)}`;
   }
 };
 
@@ -5534,7 +5634,7 @@ const getNextAdventure = () => {
     .find((rounds) => rounds > currentCircleRounds);
 
   if (nextCircleMilestone) {
-    const remaining = Object.keys(teacherDetails).reduce(
+    const remaining = teacherCircleTargetIds.reduce(
       (total, teacherId) => total + Math.max(0, nextCircleMilestone - normalizeProgressCount(userProgress.stamps.teacherLessonCounts[teacherId])),
       0
     );
