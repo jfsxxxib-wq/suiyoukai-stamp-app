@@ -139,6 +139,57 @@ const achievementRules = {
           },
         },
       },
+      {
+        teacherId: "teacher_extra_03",
+        teacherName: "追加先生C",
+        flower: "yamabuki",
+        flowerName: "山吹",
+        flowerAsset: "yamabuki-stamp-stage-05-list.png",
+        fairyId: "fairy_yamabuki_shiba",
+        fairyName: "山吹の柴犬妖精",
+        fairyAsset: "fairy-companion-yamabuki-shiba.png",
+        rewards: {
+          medal: null,
+          title: {
+            id: "title_teacher_extra_03_yamabuki_fairy_friend",
+            name: "追加先生C 山吹の柴犬妖精と出会った人",
+          },
+        },
+      },
+      {
+        teacherId: "teacher_extra_04",
+        teacherName: "追加先生D",
+        flower: "kingyosou",
+        flowerName: "金魚草",
+        flowerAsset: "kingyosou-stamp-stage-05-list.png",
+        fairyId: "fairy_kingyosou_rabbit",
+        fairyName: "金魚草のうさぎ妖精",
+        fairyAsset: "fairy-companion-kingyosou-rabbit.png",
+        rewards: {
+          medal: null,
+          title: {
+            id: "title_teacher_extra_04_kingyosou_fairy_friend",
+            name: "追加先生D 金魚草のうさぎ妖精と出会った人",
+          },
+        },
+      },
+      {
+        teacherId: "teacher_extra_05",
+        teacherName: "追加先生E",
+        flower: "tsuyukusa",
+        flowerName: "露草",
+        flowerAsset: "tsuyukusa-stamp-stage-05-list.png",
+        fairyId: "fairy_tsuyukusa_otter",
+        fairyName: "露草のカワウソ妖精",
+        fairyAsset: "fairy-companion-tsuyukusa-otter.png",
+        rewards: {
+          medal: null,
+          title: {
+            id: "title_teacher_extra_05_tsuyukusa_fairy_friend",
+            name: "追加先生E 露草のカワウソ妖精と出会った人",
+          },
+        },
+      },
     ],
   },
 
@@ -208,6 +259,20 @@ const achievementRules = {
         },
       },
     ],
+  },
+
+  extraTeacherCircle: {
+    id: "extra_teacher_circle",
+    label: "新しい先生の輪",
+    requiredTeachersPerRound: 5,
+    teacherIds: [
+      "teacher_extra_01",
+      "teacher_extra_02",
+      "teacher_extra_03",
+      "teacher_extra_04",
+      "teacher_extra_05",
+    ],
+    description: "追加先生5人分の枠。既存の先生の輪とは別に、新しい先生の出会いを準備しておくためのまとまり。",
   },
 };
 
@@ -282,6 +347,14 @@ const stampRules = {
       titleId: milestone.rewards.title.id,
       titleName: milestone.rewards.title.name,
     })),
+  },
+
+  extraTeacherCircle: {
+    id: achievementRules.extraTeacherCircle.id,
+    name: achievementRules.extraTeacherCircle.label,
+    requiredTeachersPerRound: achievementRules.extraTeacherCircle.requiredTeachersPerRound,
+    teacherIds: achievementRules.extraTeacherCircle.teacherIds,
+    description: achievementRules.extraTeacherCircle.description,
   },
 };
 
@@ -403,6 +476,78 @@ const flowerCatalog = {
     fairyName: "花水木の鶴妖精",
     fairyAsset: "fairy-companion-hanamizuki-crane.png",
   },
+  yamabuki: {
+    flower: "yamabuki",
+    flowerName: "山吹",
+    flowerAsset: "yamabuki-stamp-stage-05-list.png",
+    fairyId: "fairy_yamabuki_shiba",
+    fairyName: "山吹の柴犬妖精",
+    fairyAsset: "fairy-companion-yamabuki-shiba.png",
+  },
+  rindou: {
+    flower: "rindou",
+    flowerName: "りんどう",
+    flowerAsset: "rindou-stamp-stage-05-list.png",
+    fairyId: "fairy_rindou_bluebird",
+    fairyName: "りんどうの青い鳥妖精",
+    fairyAsset: "fairy-companion-rindou-bluebird.png",
+  },
+  tsukimisou: {
+    flower: "tsukimisou",
+    flowerName: "月見草",
+    flowerAsset: "tsukimisou-stamp-stage-05-list.png",
+    fairyId: "fairy_tsukimisou_dormouse",
+    fairyName: "月見草のヤマネ妖精",
+    fairyAsset: "fairy-companion-tsukimisou-dormouse.png",
+  },
+  kingyosou: {
+    flower: "kingyosou",
+    flowerName: "金魚草",
+    flowerAsset: "kingyosou-stamp-stage-05-list.png",
+    fairyId: "fairy_kingyosou_rabbit",
+    fairyName: "金魚草のうさぎ妖精",
+    fairyAsset: "fairy-companion-kingyosou-rabbit.png",
+  },
+  fujibakama: {
+    flower: "fujibakama",
+    flowerName: "藤袴",
+    flowerAsset: "fujibakama-stamp-stage-05-list.png",
+    fairyId: "fairy_fujibakama_hedgehog",
+    fairyName: "藤袴のハリネズミ妖精",
+    fairyAsset: "fairy-companion-fujibakama-hedgehog.png",
+  },
+  fuyou: {
+    flower: "fuyou",
+    flowerName: "芙蓉",
+    flowerAsset: "fuyou-stamp-stage-05-list.png",
+    fairyId: "fairy_fuyou_white_goat",
+    fairyName: "芙蓉の白山羊妖精",
+    fairyAsset: "fairy-companion-fuyou-white-goat.png",
+  },
+  tsuyukusa: {
+    flower: "tsuyukusa",
+    flowerName: "露草",
+    flowerAsset: "tsuyukusa-stamp-stage-05-list.png",
+    fairyId: "fairy_tsuyukusa_otter",
+    fairyName: "露草のカワウソ妖精",
+    fairyAsset: "fairy-companion-tsuyukusa-otter.png",
+  },
+  kinsenka: {
+    flower: "kinsenka",
+    flowerName: "金盞花",
+    flowerAsset: "kinsenka-stamp-stage-05-list.png",
+    fairyId: "fairy_kinsenka_hamster",
+    fairyName: "金盞花のハムスター妖精",
+    fairyAsset: "fairy-companion-kinsenka-hamster.png",
+  },
+  nanten: {
+    flower: "nanten",
+    flowerName: "南天",
+    flowerAsset: "nanten-stamp-stage-05-list.png",
+    fairyId: "fairy_nanten_tanuki",
+    fairyName: "南天のたぬき妖精",
+    fairyAsset: "fairy-companion-nanten-tanuki.png",
+  },
   asagao: {
     flower: "asagao",
     flowerName: "朝顔",
@@ -467,6 +612,9 @@ const teacherCycleFlowerAssignments = {
   matsumoto: ["sakura", "hagi", "shakuyaku"],
   teacher_extra_01: ["suzuran", "mokuren", "hinageshi"],
   teacher_extra_02: ["shirotsumekusa", "ran", "hanamizuki"],
+  teacher_extra_03: ["yamabuki", "rindou", "tsukimisou"],
+  teacher_extra_04: ["kingyosou", "fujibakama", "fuyou"],
+  teacher_extra_05: ["tsuyukusa", "kinsenka", "nanten"],
 };
 
 const participationStampCycles = [
@@ -570,6 +718,9 @@ const userProgressTemplate = {
       matsumoto: 0,
       teacher_extra_01: 0,
       teacher_extra_02: 0,
+      teacher_extra_03: 0,
+      teacher_extra_04: 0,
+      teacher_extra_05: 0,
     },
 
     teacherCircleRounds: 0,

@@ -7947,6 +7947,27 @@ dd {
   width: 116px;
 }
 
+.library-journal-keeper-button {
+  display: grid;
+  place-items: center;
+  width: 108px;
+  height: 108px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  cursor: zoom-in;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.library-journal-keeper-button:hover,
+.library-journal-keeper-button:focus-visible {
+  outline: none;
+  background: rgba(255, 252, 242, 0.34);
+  box-shadow: 0 0 0 3px rgba(77, 133, 93, 0.14);
+}
+
 .library-journal-book {
   position: relative;
   grid-column: 2;
@@ -8070,6 +8091,11 @@ dd {
   pointer-events: none;
   filter: drop-shadow(0 6px 9px rgba(69, 54, 29, 0.16));
   transform: translate(-8px, 5px) rotate(-2deg);
+}
+
+.library-journal-keeper-button:hover .library-journal-keeper-art,
+.library-journal-keeper-button:focus-visible .library-journal-keeper-art {
+  transform: translate(-8px, 1px) rotate(-2deg) scale(1.04);
 }
 
 .library-journal-records {
@@ -10617,6 +10643,111 @@ body {
   background: url("assets/teacher-matsumoto.jpg") center center / contain no-repeat, #f3efe8 !important;
 }
 
+/* Temporary teacher portrait: detective-style silhouette until real photos are added. */
+.teacher-photo[data-teacher-photo^="extra-"] {
+  background:
+    radial-gradient(circle at 30% 20%, rgba(197, 150, 58, 0.08) 0 8%, transparent 9%),
+    radial-gradient(circle at 76% 22%, rgba(63, 118, 82, 0.07) 0 10%, transparent 11%),
+    linear-gradient(180deg, rgba(255, 253, 247, 0.98), rgba(238, 230, 211, 0.88));
+  box-shadow: inset 0 0 0 8px rgba(255, 250, 240, 0.28);
+}
+
+.teacher-photo[data-teacher-photo^="extra-"] span {
+  display: none;
+}
+
+.teacher-photo[data-teacher-photo^="extra-"]::before {
+  content: "" !important;
+  position: absolute !important;
+  z-index: 1 !important;
+  display: block !important;
+  left: 49% !important;
+  top: 25% !important;
+  bottom: auto !important;
+  width: 52% !important;
+  height: 48% !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background:
+    radial-gradient(ellipse at 56% 42%, rgba(72, 78, 70, 0.34) 0 21%, transparent 22%),
+    radial-gradient(ellipse at 73% 43%, rgba(238, 230, 211, 0.92) 0 6%, transparent 7%),
+    radial-gradient(ellipse at 82% 51%, rgba(72, 78, 70, 0.28) 0 8%, transparent 9%),
+    radial-gradient(ellipse at 49% 64%, rgba(72, 78, 70, 0.26) 0 13%, transparent 14%);
+  box-shadow: none !important;
+  opacity: 0.72;
+  transform: translateX(-50%) !important;
+}
+
+.teacher-photo[data-teacher-photo^="extra-"]::after {
+  content: "" !important;
+  position: absolute !important;
+  z-index: 2 !important;
+  display: block !important;
+  left: 50% !important;
+  top: 23% !important;
+  right: auto !important;
+  bottom: auto !important;
+  width: 70% !important;
+  height: 44% !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background:
+    linear-gradient(180deg, transparent 0 29%, rgba(72, 78, 70, 0.42) 30% 37%, transparent 38% 100%),
+    radial-gradient(ellipse at 42% 29%, rgba(72, 78, 70, 0.42) 0 20%, transparent 21%),
+    radial-gradient(circle at 80% 72%, transparent 0 8%, rgba(72, 78, 70, 0.38) 9% 11%, transparent 12%),
+    linear-gradient(105deg, transparent 0 70%, rgba(72, 78, 70, 0.36) 71% 74%, transparent 75% 100%);
+  background-repeat: no-repeat !important;
+  box-shadow: none !important;
+  opacity: 0.72;
+  transform: translateX(-50%) !important;
+}
+
+.info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) .teacher-photo[data-teacher-photo^="extra-"]::before {
+  content: "" !important;
+  position: absolute !important;
+  z-index: 1 !important;
+  display: block !important;
+  left: 49% !important;
+  top: 25% !important;
+  bottom: auto !important;
+  width: 52% !important;
+  height: 48% !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background:
+    radial-gradient(ellipse at 56% 42%, rgba(72, 78, 70, 0.34) 0 21%, transparent 22%),
+    radial-gradient(ellipse at 73% 43%, rgba(238, 230, 211, 0.92) 0 6%, transparent 7%),
+    radial-gradient(ellipse at 82% 51%, rgba(72, 78, 70, 0.28) 0 8%, transparent 9%),
+    radial-gradient(ellipse at 49% 64%, rgba(72, 78, 70, 0.26) 0 13%, transparent 14%);
+  box-shadow: none !important;
+  opacity: 0.72;
+  transform: translateX(-50%) !important;
+}
+
+.info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) .teacher-photo[data-teacher-photo^="extra-"]::after {
+  content: "" !important;
+  position: absolute !important;
+  z-index: 2 !important;
+  display: block !important;
+  left: 50% !important;
+  top: 23% !important;
+  right: auto !important;
+  bottom: auto !important;
+  width: 70% !important;
+  height: 44% !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background:
+    linear-gradient(180deg, transparent 0 29%, rgba(72, 78, 70, 0.42) 30% 37%, transparent 38% 100%),
+    radial-gradient(ellipse at 42% 29%, rgba(72, 78, 70, 0.42) 0 20%, transparent 21%),
+    radial-gradient(circle at 80% 72%, transparent 0 8%, rgba(72, 78, 70, 0.38) 9% 11%, transparent 12%),
+    linear-gradient(105deg, transparent 0 70%, rgba(72, 78, 70, 0.36) 71% 74%, transparent 75% 100%);
+  background-repeat: no-repeat !important;
+  box-shadow: none !important;
+  opacity: 0.72;
+  transform: translateX(-50%) !important;
+}
+
 /* Fairy visibility trial: enlarge the art and keep the shadow crisp. */
 .next-adventure-card {
   grid-template-columns: minmax(0, 1fr) 92px;
@@ -10953,4 +11084,42 @@ body {
 
 body.is-fairy-viewer-open {
   overflow: hidden;
+}
+
+/* Final placeholder portrait: pale Sherlock-style side profile, hat and pipe only. */
+.teacher-photo[data-teacher-photo^="extra-"],
+.info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) .teacher-photo[data-teacher-photo^="extra-"] {
+  background:
+    radial-gradient(ellipse at 50% 42%, rgba(246, 210, 104, 0.16) 0 12%, transparent 13%),
+    conic-gradient(from 0deg at 50% 45%, transparent 0 7%, rgba(246, 210, 104, 0.11) 8% 10%, transparent 11% 20%, rgba(255, 244, 179, 0.12) 21% 23%, transparent 24% 42%, rgba(246, 210, 104, 0.1) 43% 45%, transparent 46% 100%),
+    radial-gradient(circle at 28% 18%, rgba(197, 150, 58, 0.06) 0 8%, transparent 9%),
+    radial-gradient(circle at 78% 24%, rgba(63, 118, 82, 0.05) 0 11%, transparent 12%),
+    linear-gradient(180deg, rgba(255, 253, 247, 0.99), rgba(240, 233, 217, 0.9)) !important;
+}
+
+.teacher-photo[data-teacher-photo^="extra-"] span,
+.info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) .teacher-photo[data-teacher-photo^="extra-"] span {
+  display: none !important;
+}
+
+.teacher-photo[data-teacher-photo^="extra-"]::before,
+.info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) .teacher-photo[data-teacher-photo^="extra-"]::before {
+  content: "" !important;
+  position: absolute !important;
+  z-index: 1 !important;
+  display: block !important;
+  inset: 18% 17% 18% 17% !important;
+  width: auto !important;
+  height: auto !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: url("assets/teacher-placeholder-apollon-shadow.png?v=apollon-shadow-01") center center / contain no-repeat !important;
+  box-shadow: none !important;
+  opacity: 0.82 !important;
+  transform: none !important;
+}
+
+.teacher-photo[data-teacher-photo^="extra-"]::after,
+.info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) .teacher-photo[data-teacher-photo^="extra-"]::after {
+  display: none !important;
 }

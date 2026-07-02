@@ -84,6 +84,7 @@ const libraryJournalPages = document.querySelector("[data-library-journal-pages]
 const libraryJournalState = document.querySelector("[data-library-journal-state]");
 const libraryJournalPrompt = document.querySelector("[data-library-journal-prompt]");
 const libraryJournalKeeperSpeech = document.querySelector("[data-library-journal-keeper-speech]");
+const libraryJournalKeeperViewerButton = document.querySelector("[data-library-journal-keeper-viewer]");
 const libraryJournalToggle = document.querySelector("[data-library-journal-toggle]");
 const libraryJournalSkip = document.querySelector("[data-library-journal-skip]");
 const libraryJournalNote = document.querySelector("[data-library-journal-note]");
@@ -267,8 +268,16 @@ const ruleTargets = window.teacherStampTargets ?? [];
 const participationRule = window.stampRules?.participation ?? {};
 const teacherLessonRule = window.stampRules?.teacherLesson ?? {};
 const teacherCircleRule = window.stampRules?.teacherCircle ?? {};
+const extraTeacherCircleRule = window.stampRules?.extraTeacherCircle ?? {};
 const teacherTargetById = Object.fromEntries(ruleTargets.map((target) => [target.teacherId, target]));
 const teacherCircleTargetIds = teacherCircleRule.teacherIds ?? ruleTargets.map((target) => target.teacherId);
+const extraTeacherCircleTargetIds = extraTeacherCircleRule.teacherIds ?? [
+  "teacher_extra_01",
+  "teacher_extra_02",
+  "teacher_extra_03",
+  "teacher_extra_04",
+  "teacher_extra_05",
+];
 
 const getTeacherTarget = (teacherKey) => teacherTargetById[teacherKey];
 const getParticipationGoal = () => participationRule.maxCount ?? 10;
@@ -411,6 +420,96 @@ const flowerCatalog = {
     flowerColor: "#f3dce0",
     accentColor: "#c66b7c",
   },
+  yamabuki: {
+    flower: "yamabuki",
+    flowerName: "山吹",
+    flowerAsset: "yamabuki-stamp-stage-05-list.png",
+    fairyId: "fairy_yamabuki_shiba",
+    fairyName: "山吹の柴犬妖精",
+    fairyAsset: "fairy-companion-yamabuki-shiba.png",
+    flowerColor: "#e6b23f",
+    accentColor: "#f6d98b",
+  },
+  rindou: {
+    flower: "rindou",
+    flowerName: "りんどう",
+    flowerAsset: "rindou-stamp-stage-05-list.png",
+    fairyId: "fairy_rindou_bluebird",
+    fairyName: "りんどうの青い鳥妖精",
+    fairyAsset: "fairy-companion-rindou-bluebird.png",
+    flowerColor: "#566bb7",
+    accentColor: "#9fb0e5",
+  },
+  tsukimisou: {
+    flower: "tsukimisou",
+    flowerName: "月見草",
+    flowerAsset: "tsukimisou-stamp-stage-05-list.png",
+    fairyId: "fairy_tsukimisou_dormouse",
+    fairyName: "月見草のヤマネ妖精",
+    fairyAsset: "fairy-companion-tsukimisou-dormouse.png",
+    flowerColor: "#f4e28a",
+    accentColor: "#d7b84e",
+  },
+  kingyosou: {
+    flower: "kingyosou",
+    flowerName: "金魚草",
+    flowerAsset: "kingyosou-stamp-stage-05-list.png",
+    fairyId: "fairy_kingyosou_rabbit",
+    fairyName: "金魚草のうさぎ妖精",
+    fairyAsset: "fairy-companion-kingyosou-rabbit.png",
+    flowerColor: "#e57b74",
+    accentColor: "#f2b37e",
+  },
+  fujibakama: {
+    flower: "fujibakama",
+    flowerName: "藤袴",
+    flowerAsset: "fujibakama-stamp-stage-05-list.png",
+    fairyId: "fairy_fujibakama_hedgehog",
+    fairyName: "藤袴のハリネズミ妖精",
+    fairyAsset: "fairy-companion-fujibakama-hedgehog.png",
+    flowerColor: "#b982c0",
+    accentColor: "#e2bfdc",
+  },
+  fuyou: {
+    flower: "fuyou",
+    flowerName: "芙蓉",
+    flowerAsset: "fuyou-stamp-stage-05-list.png",
+    fairyId: "fairy_fuyou_white_goat",
+    fairyName: "芙蓉の白山羊妖精",
+    fairyAsset: "fairy-companion-fuyou-white-goat.png",
+    flowerColor: "#e7a2b8",
+    accentColor: "#f3d5df",
+  },
+  tsuyukusa: {
+    flower: "tsuyukusa",
+    flowerName: "露草",
+    flowerAsset: "tsuyukusa-stamp-stage-05-list.png",
+    fairyId: "fairy_tsuyukusa_otter",
+    fairyName: "露草のカワウソ妖精",
+    fairyAsset: "fairy-companion-tsuyukusa-otter.png",
+    flowerColor: "#3f7fc5",
+    accentColor: "#90c5ea",
+  },
+  kinsenka: {
+    flower: "kinsenka",
+    flowerName: "金盞花",
+    flowerAsset: "kinsenka-stamp-stage-05-list.png",
+    fairyId: "fairy_kinsenka_hamster",
+    fairyName: "金盞花のハムスター妖精",
+    fairyAsset: "fairy-companion-kinsenka-hamster.png",
+    flowerColor: "#e19a35",
+    accentColor: "#f4c96d",
+  },
+  nanten: {
+    flower: "nanten",
+    flowerName: "南天",
+    flowerAsset: "nanten-stamp-stage-05-list.png",
+    fairyId: "fairy_nanten_tanuki",
+    fairyName: "南天のたぬき妖精",
+    fairyAsset: "fairy-companion-nanten-tanuki.png",
+    flowerColor: "#b9434a",
+    accentColor: "#e4a24c",
+  },
   asagao: {
     flower: "asagao",
     flowerName: "朝顔",
@@ -493,6 +592,9 @@ const teacherCycleFlowerAssignments = {
   matsumoto: ["sakura", "hagi", "shakuyaku"],
   teacher_extra_01: ["suzuran", "mokuren", "hinageshi"],
   teacher_extra_02: ["shirotsumekusa", "ran", "hanamizuki"],
+  teacher_extra_03: ["yamabuki", "rindou", "tsukimisou"],
+  teacher_extra_04: ["kingyosou", "fujibakama", "fuyou"],
+  teacher_extra_05: ["tsuyukusa", "kinsenka", "nanten"],
 };
 
 const getCycleProgress = (count, perCycleGoal, cycles) => {
@@ -688,6 +790,45 @@ const teacherDetails = {
     lesson: "白詰草から始まる花巡りを、落ち着いて積み重ねる指導",
     note: "新しい相性を探したい冒険者へ",
   },
+  teacher_extra_03: {
+    name: "追加先生C",
+    guide: "新しい先生の輪をつなぐ案内人",
+    stampCount: 0,
+    fairy: false,
+    photo: "extra-c",
+    flower: "yamabuki",
+    initial: "追C",
+    completedFirstRound: false,
+    style: "明るい入口から、読みの道筋を一緒に見つける",
+    lesson: "山吹から始まる花巡りを、初めて会う人にもわかりやすく支える指導",
+    note: "新しい先生の輪を育てる冒険者へ",
+  },
+  teacher_extra_04: {
+    name: "追加先生D",
+    guide: "新しい花を咲かせる案内人",
+    stampCount: 0,
+    fairy: false,
+    photo: "extra-d",
+    flower: "kingyosou",
+    initial: "追D",
+    completedFirstRound: false,
+    style: "一手の表情を見ながら、次の発見へそっと導く",
+    lesson: "金魚草から始まる花巡りを、楽しく続けられるように整える指導",
+    note: "新しい出会いを記録したい冒険者へ",
+  },
+  teacher_extra_05: {
+    name: "追加先生E",
+    guide: "新しい輪を見守る案内人",
+    stampCount: 0,
+    fairy: false,
+    photo: "extra-e",
+    flower: "tsuyukusa",
+    initial: "追E",
+    completedFirstRound: false,
+    style: "静かな発見を拾い上げ、次の一手につなげる",
+    lesson: "露草から始まる花巡りを、一人ひとりの歩幅に合わせて進める指導",
+    note: "これから広がる先生の輪を楽しみたい冒険者へ",
+  },
 };
 
 for (const [teacherKey, teacher] of Object.entries(teacherDetails)) {
@@ -835,7 +976,7 @@ const createInitialProgressFromTeacherDetails = () => {
   progress.stamps.teacherLessonCounts = {
     ...progress.stamps.teacherLessonCounts,
     ...Object.fromEntries(
-      Object.entries(teacherDetails).map(([teacherId, teacher]) => [teacherId, normalizeProgressCount(teacher.stampCount)])
+      Object.keys(teacherDetails).map((teacherId) => [teacherId, 0])
     ),
   };
   progress.stamps.teacherCircleRounds = getTeacherCircleRoundsFromCounts(progress.stamps.teacherLessonCounts);
@@ -4444,6 +4585,24 @@ const fairyQuoteByFlower = {
   shakuyaku: "ていねいに重ねた時間が、きれいに咲いたね。",
 };
 
+Object.assign(fairyQuoteByFlower, {
+  suzuran: "小さな音も、ちゃんと次の一手につながっているよ。",
+  mokuren: "静かな形を守ると、読みの道が見えてくるよ。",
+  hinageshi: "今日の記録も、次の花を咲かせる力になるよ。",
+  shirotsumekusa: "対局を見守る目が、やさしく道を照らしているよ。",
+  ran: "じっくり育てた形は、きっと盤面で支えになるよ。",
+  hanamizuki: "羽を広げるように、落ち着いて次へ進もう。",
+  yamabuki: "明るい山吹の道から、新しい先生の輪が始まるよ。",
+  rindou: "静かな青い花が、次の一手をそっと教えてくれるよ。",
+  tsukimisou: "夜の光みたいに、今日の記録もやさしく残っているよ。",
+  kingyosou: "楽しい発見をひとつずつ、金魚草の花に集めていこう。",
+  fujibakama: "小さな足あとも、ちゃんと次の輪につながっているよ。",
+  fuyou: "ふんわり咲いた時間が、新しい出会いを守ってくれるよ。",
+  tsuyukusa: "朝のしずくみたいな一手を、きらりと残しておこう。",
+  kinsenka: "あたたかい花びらが、がんばった記録を包んでいるよ。",
+  nanten: "赤い実のように、よい記録が次の季節へ続いていくよ。",
+});
+
 const companionQuoteById = {
   special_companion_french_bulldog_a: "はじめの一歩\nちゃんと見ていたよ。",
   special_companion_french_bulldog_b: "次の冒険も、いっしょに歩こう。",
@@ -4606,6 +4765,24 @@ const fairyBookBackgrounds = {
   ume: "assets/fairy-bg-camellia.png",
 };
 
+Object.assign(fairyBookBackgrounds, {
+  suzuran: "assets/fairy-bg-meadow.png",
+  mokuren: "assets/fairy-bg-camellia.png",
+  hinageshi: "assets/fairy-bg-meadow.png",
+  shirotsumekusa: "assets/fairy-bg-meadow.png",
+  ran: "assets/fairy-bg-iris.png",
+  hanamizuki: "assets/fairy-bg-camellia.png",
+  yamabuki: "assets/fairy-bg-meadow.png",
+  rindou: "assets/fairy-bg-hydrangea.png",
+  tsukimisou: "assets/fairy-bg-meadow.png",
+  kingyosou: "assets/fairy-bg-camellia.png",
+  fujibakama: "assets/fairy-bg-hydrangea.png",
+  fuyou: "assets/fairy-bg-camellia.png",
+  tsuyukusa: "assets/fairy-bg-hydrangea.png",
+  kinsenka: "assets/fairy-bg-meadow.png",
+  nanten: "assets/fairy-bg-camellia.png",
+});
+
 const getFairyBookBackground = (flower) => fairyBookBackgrounds[flower] ?? fairyBookBackgrounds.cosmos;
 
 const fairyCardFrames = {
@@ -4629,6 +4806,24 @@ const fairyCardFrames = {
   special_next_step: "assets/fairy-card-frame-special-ribbon-v2.png",
   special_wisdom: "assets/fairy-card-frame-special-wisdom-v2.png",
 };
+
+Object.assign(fairyCardFrames, {
+  suzuran: "assets/fairy-card-frame-special-sprout-v2.png",
+  mokuren: "assets/fairy-card-frame-camellia-v2.png",
+  hinageshi: "assets/fairy-card-frame-sunflower-v2.png",
+  shirotsumekusa: "assets/fairy-card-frame-special-sprout-v2.png",
+  ran: "assets/fairy-card-frame-iris-v2.png",
+  hanamizuki: "assets/fairy-card-frame-sakura-v2.png",
+  yamabuki: "assets/fairy-card-frame-sunflower-v2.png",
+  rindou: "assets/fairy-card-frame-iris-v2.png",
+  tsukimisou: "assets/fairy-card-frame-special-wisdom-v2.png",
+  kingyosou: "assets/fairy-card-frame-camellia-v2.png",
+  fujibakama: "assets/fairy-card-frame-hydrangea-v2.png",
+  fuyou: "assets/fairy-card-frame-camellia-v2.png",
+  tsuyukusa: "assets/fairy-card-frame-hydrangea-v2.png",
+  kinsenka: "assets/fairy-card-frame-sunflower-v2.png",
+  nanten: "assets/fairy-card-frame-sakura-v2.png",
+});
 
 const specialCompanionFrameKeys = {
   special_companion_french_bulldog_a: "special_first_step",
@@ -4801,6 +4996,18 @@ const openLibraryOwlViewer = () => {
     companionId: (libraryOwl.getAttribute("src") ?? "").includes("owl-b")
       ? "special_companion_owl_b"
       : "special_companion_owl_a",
+  });
+};
+
+const openLibraryJournalKeeperViewer = () => {
+  openFairyViewer({
+    src: "assets/library-journal-hedgehog-with-book.png",
+    alt: "冒険日誌の記録係",
+    name: "冒険日誌の記録係",
+    status: "書庫で思い出をしまう係",
+    quote: libraryJournalKeeperSpeech?.textContent ?? "今日の記録も、ちゃんとしまっておくね。",
+    type: "special",
+    companionId: "special_companion_owl_a",
   });
 };
 
@@ -5662,7 +5869,12 @@ updateTeacherCards = () => {
     card.classList.toggle("next-teacher", !teacher.completedFirstRound);
 
     const isCircleTeacher = teacherCircleTargetIds.includes(card.dataset.teacher);
-    const teacherGroupLabel = isCircleTeacher ? "先生の輪" : "追加先生枠";
+    const isExtraCircleTeacher = extraTeacherCircleTargetIds.includes(card.dataset.teacher);
+    const teacherGroupLabel = isCircleTeacher
+      ? "先生の輪"
+      : isExtraCircleTeacher
+        ? "新しい先生の輪"
+        : "追加先生枠";
 
     applyFlowerVisual(flower, cycleProgress.cycle);
 
@@ -5676,6 +5888,10 @@ const getNextAdventure = () => {
   const candidates = [];
   const participationCurrent = normalizeProgressCount(userProgress.stamps.participationCount);
   const participationGoal = getParticipationGoal();
+  const currentCircleRounds = getTeacherCircleRoundsFromCounts(userProgress.stamps.teacherLessonCounts);
+  const nextCircleMilestone = (teacherCircleRule.medalMilestones ?? [])
+    .map((milestone) => milestone.rounds)
+    .find((rounds) => rounds > currentCircleRounds);
 
   if (participationCurrent < getParticipationMaxCount()) {
     const cycleIndex = Math.floor(participationCurrent / participationGoal);
@@ -5693,6 +5909,10 @@ const getNextAdventure = () => {
   }
 
   for (const [teacherId, teacher] of Object.entries(teacherDetails)) {
+    if (nextCircleMilestone && !teacherCircleTargetIds.includes(teacherId)) {
+      continue;
+    }
+
     if (teacher.stampCount >= getTeacherMaxCount(teacher)) {
       continue;
     }
@@ -5709,11 +5929,6 @@ const getNextAdventure = () => {
       copy: `${teacher.name}との指導碁で${cycleProgress.cycle.cycleName}を達成できます。`,
     });
   }
-
-  const currentCircleRounds = getTeacherCircleRoundsFromCounts(userProgress.stamps.teacherLessonCounts);
-  const nextCircleMilestone = (teacherCircleRule.medalMilestones ?? [])
-    .map((milestone) => milestone.rounds)
-    .find((rounds) => rounds > currentCircleRounds);
 
   if (nextCircleMilestone) {
     const remaining = teacherCircleTargetIds.reduce(
@@ -6881,6 +7096,7 @@ libraryMedalToggle?.addEventListener("click", toggleLibraryMedalList);
 libraryMedalArtToggle?.addEventListener("click", toggleLibraryMedalList);
 syncLibraryMedalToggle();
 libraryOwlViewerButton?.addEventListener("click", openLibraryOwlViewer);
+libraryJournalKeeperViewerButton?.addEventListener("click", openLibraryJournalKeeperViewer);
 libraryJournalToggle?.addEventListener("click", toggleLibraryJournal);
 syncLibraryJournalToggle();
 libraryJournalSkip?.addEventListener("click", () => setJournalPrompt("わかった。今日もちゃんとしまっておくね。"));

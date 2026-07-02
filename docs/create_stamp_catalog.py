@@ -38,6 +38,31 @@ FLOWERS = [
         ("2巡目　萩", "../assets/hagi-stamp-stage-05-list.png"),
         ("3巡目　芍薬", "../assets/shakuyaku-stamp-stage-05-list.png"),
     ]),
+    ("追加先生A", [
+        ("1巡目　すずらん", "../assets/suzuran-stamp-stage-05-list.png"),
+        ("2巡目　木蓮", "../assets/mokuren-stamp-stage-05-list.png"),
+        ("3巡目　ひなげし", "../assets/hinageshi-stamp-stage-05-list.png"),
+    ]),
+    ("追加先生B", [
+        ("1巡目　白詰草", "../assets/shirotsumekusa-stamp-stage-05-list.png"),
+        ("2巡目　蘭", "../assets/ran-stamp-stage-05-list.png"),
+        ("3巡目　花水木", "../assets/hanamizuki-stamp-stage-05-list.png"),
+    ]),
+    ("追加先生C", [
+        ("1巡目　山吹", "../assets/yamabuki-stamp-stage-05-list.png"),
+        ("2巡目　りんどう", "../assets/rindou-stamp-stage-05-list.png"),
+        ("3巡目　月見草", "../assets/tsukimisou-stamp-stage-05-list.png"),
+    ]),
+    ("追加先生D", [
+        ("1巡目　金魚草", "../assets/kingyosou-stamp-stage-05-list.png"),
+        ("2巡目　藤袴", "../assets/fujibakama-stamp-stage-05-list.png"),
+        ("3巡目　芙蓉", "../assets/fuyou-stamp-stage-05-list.png"),
+    ]),
+    ("追加先生E", [
+        ("1巡目　露草", "../assets/tsuyukusa-stamp-stage-05-list.png"),
+        ("2巡目　金盞花", "../assets/kinsenka-stamp-stage-05-list.png"),
+        ("3巡目　南天", "../assets/nanten-stamp-stage-05-list.png"),
+    ]),
 ]
 
 FAIRIES = [
@@ -70,6 +95,31 @@ FAIRIES = [
         ("1巡目　桜の妖精", "../assets/fairy-companion-sakura-v2.png"),
         ("2巡目　萩のサバトラ猫妖精", "cat-fairies-round2-2026-06-18/hagi-cat-fairy-transparent-candidate.png"),
         ("3巡目　芍薬の文鳥妖精", "animal-fairies-round3-2026-06-18/shakuyaku-java-sparrow-fairy-transparent.png"),
+    ]),
+    ("追加先生A", [
+        ("1巡目　すずらんのネズミ妖精", "../assets/fairy-companion-suzuran-mouse.png"),
+        ("2巡目　木蓮の白猫妖精", "../assets/fairy-companion-mokuren-white-cat.png"),
+        ("3巡目　ひなげしのリス妖精", "../assets/fairy-companion-hinageshi-squirrel.png"),
+    ]),
+    ("追加先生B", [
+        ("1巡目　白詰草のトイプードル妖精", "../assets/fairy-companion-shirotsumekusa-toy-poodle.png"),
+        ("2巡目　蘭の亀妖精", "../assets/fairy-companion-ran-turtle.png"),
+        ("3巡目　花水木の鶴妖精", "../assets/fairy-companion-hanamizuki-crane.png"),
+    ]),
+    ("追加先生C", [
+        ("1巡目　山吹の柴犬妖精", "../assets/fairy-companion-yamabuki-shiba.png"),
+        ("2巡目　りんどうの青い鳥妖精", "../assets/fairy-companion-rindou-bluebird.png"),
+        ("3巡目　月見草のヤマネ妖精", "../assets/fairy-companion-tsukimisou-dormouse.png"),
+    ]),
+    ("追加先生D", [
+        ("1巡目　金魚草のうさぎ妖精", "../assets/fairy-companion-kingyosou-rabbit.png"),
+        ("2巡目　藤袴のハリネズミ妖精", "../assets/fairy-companion-fujibakama-hedgehog.png"),
+        ("3巡目　芙蓉の白山羊妖精", "../assets/fairy-companion-fuyou-white-goat.png"),
+    ]),
+    ("追加先生E", [
+        ("1巡目　露草のカワウソ妖精", "../assets/fairy-companion-tsuyukusa-otter.png"),
+        ("2巡目　金盞花のハムスター妖精", "../assets/fairy-companion-kinsenka-hamster.png"),
+        ("3巡目　南天のたぬき妖精", "../assets/fairy-companion-nanten-tanuki.png"),
     ]),
 ]
 
@@ -130,7 +180,7 @@ def paste_contained(canvas, image_path, box):
 
 
 def make_cycle_sheet(title, rows, output_name):
-    width, height = 1780, 2840
+    width, height = 1780, 160 + len(rows) * 440 + 80
     sheet = Image.new("RGB", (width, height), (251, 247, 238))
     draw = ImageDraw.Draw(sheet)
     draw.text((55, 28), title, fill=(58, 81, 64), font=font(38))
@@ -291,7 +341,7 @@ article small {{ color:#8b651e; font-weight:800; }}
 </style>
 </head>
 <body>
-<header><h1>水曜会スタンプ 完成品一覧</h1><p>花18種・妖精19体（使用中18体＋追加1体）・勲章5種・特別な仲間8体</p></header>
+<header><h1>水曜会スタンプ 完成品一覧</h1><p>花33種・妖精34体（使用中33体＋追加1体）・勲章5種・特別な仲間8体</p></header>
 <main>
 <section><h2>花スタンプ</h2><div class="scroll"><table><thead><tr><th>区分</th><th>1巡目</th><th>2巡目</th><th>3巡目</th></tr></thead><tbody>{table_html(FLOWERS)}</tbody></table></div></section>
 <section><h2>妖精スタンプ</h2><div class="scroll"><table><thead><tr><th>区分</th><th>1巡目</th><th>2巡目</th><th>3巡目</th></tr></thead><tbody>{table_html(FAIRIES)}</tbody></table></div></section>
@@ -306,8 +356,8 @@ html_path = DOCS / "stamp-catalog-2026-06-19.html"
 html_path.write_text(html, encoding="utf-8")
 
 outputs = [
-    make_cycle_sheet("花スタンプ　18種類", FLOWERS, "stamp-catalog-flowers-2026-06-19.png"),
-    make_cycle_sheet("妖精スタンプ　使用中18種類", FAIRIES, "stamp-catalog-fairies-2026-06-19.png"),
+    make_cycle_sheet("花スタンプ　33種類", FLOWERS, "stamp-catalog-flowers-2026-06-19.png"),
+    make_cycle_sheet("妖精スタンプ　使用中33種類", FAIRIES, "stamp-catalog-fairies-2026-06-19.png"),
     make_additional_fairy_sheet(),
     make_medal_sheet(),
     make_special_sheet(),
