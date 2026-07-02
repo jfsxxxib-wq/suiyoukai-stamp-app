@@ -6,7 +6,7 @@
     <meta name="google" content="notranslate">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>冒険記録帳</title>
-    <link rel="stylesheet" href="styles.css?v=20260701-teacher-profile-admin-01">
+    <link rel="stylesheet" href="styles.css?v=20260702-shrine-today-teachers-01">
   </head>
   <body>
     <main class="record-book" aria-label="冒険記録帳">
@@ -203,13 +203,13 @@
                   <span class="flower-guide-action">1巡目を見る</span>
                 </button>
                 <button type="button" class="flower-guide-card" data-flower-guide-target="teacher_extra_01" aria-label="すずらんの追加先生Aスタンプへ移動">
-                  <img src="assets/suisen-stamp-stage-05-list.png" alt="すずらん" loading="eager" decoding="async">
+                  <img src="assets/suzuran-stamp-stage-05-list.png" alt="すずらん" loading="eager" decoding="async">
                   <span class="flower-guide-name">すずらん</span>
                   <span class="flower-guide-meta">追加先生A</span>
                   <span class="flower-guide-action">1巡目を見る</span>
                 </button>
                 <button type="button" class="flower-guide-card" data-flower-guide-target="teacher_extra_02" aria-label="白詰草の追加先生Bスタンプへ移動">
-                  <img src="assets/cosmos-stamp-stage-05-v2.png" alt="白詰草" loading="eager" decoding="async">
+                  <img src="assets/shirotsumekusa-stamp-stage-05-list.png" alt="白詰草" loading="eager" decoding="async">
                   <span class="flower-guide-name">白詰草</span>
                   <span class="flower-guide-meta">追加先生B</span>
                   <span class="flower-guide-action">1巡目を見る</span>
@@ -582,6 +582,27 @@
                 <small class="shrine-form-hint" data-shrine-number-message>例: 8なら 1番から8番までを入れます。個人戦では個人番号として使えます。</small>
               </section>
 
+              <section class="shrine-card" aria-label="先生選択" data-shrine-lesson-only>
+                <div class="shrine-section-heading">
+                  <h3>今日の先生</h3>
+                  <div class="shrine-teacher-heading-actions">
+                    <span data-shrine-teacher-count>0面</span>
+                    <button type="button" data-shrine-teacher-editor-toggle aria-expanded="false" aria-controls="shrine-teacher-editor">参加先生を選ぶ</button>
+                  </div>
+                </div>
+                <div class="shrine-active-teacher-list" data-shrine-active-teachers></div>
+                <label class="shrine-round-count" data-shrine-round-count-wrap>
+                  <span>回数</span>
+                  <select data-shrine-round-count aria-label="組み合わせの回数">
+                    <option value="1">1回</option>
+                    <option value="2">2回</option>
+                    <option value="3" selected>3回</option>
+                    <option value="4">4回</option>
+                  </select>
+                </label>
+                <div class="shrine-teacher-list" id="shrine-teacher-editor" data-shrine-teachers hidden></div>
+              </section>
+
               <section class="shrine-card" aria-label="参加者入力" data-shrine-participant-card>
                 <div class="shrine-section-heading">
                   <h3>参加者</h3>
@@ -676,23 +697,6 @@
                   <span>参加者欄</span>
                   <textarea data-shrine-participants rows="7" placeholder="例&#10;佐藤花子さん 女 3級&#10;鈴木太郎さん 男 1200点&#10;田中一郎さん 2段"></textarea>
                 </label>
-              </section>
-
-              <section class="shrine-card" aria-label="先生選択" data-shrine-lesson-only>
-                <div class="shrine-section-heading">
-                  <h3>今日の先生</h3>
-                  <span data-shrine-teacher-count>0面</span>
-                </div>
-                <label class="shrine-round-count" data-shrine-round-count-wrap>
-                  <span>回数</span>
-                  <select data-shrine-round-count aria-label="組み合わせの回数">
-                    <option value="1">1回</option>
-                    <option value="2">2回</option>
-                    <option value="3" selected>3回</option>
-                    <option value="4">4回</option>
-                  </select>
-                </label>
-                <div class="shrine-teacher-list" data-shrine-teachers></div>
               </section>
 
               <section class="shrine-card shrine-wish-card" aria-label="希望条件">
@@ -1115,8 +1119,8 @@
         status.textContent = "画面の操作が止まりました。Codexにこの表示を見せてください: " + event.message;
       });
     </script>
-    <script src="stamp-rules.js?v=20260702-extra-teachers-01"></script>
-    <script src="script.js?v=20260702-extra-teachers-01"></script>
+    <script src="stamp-rules.js?v=20260702-shrine-today-teachers-01"></script>
+    <script src="script.js?v=20260702-shrine-today-teachers-01"></script>
   </body>
 </html>
 

@@ -161,7 +161,9 @@ const shrineIntro = document.querySelector("[data-shrine-intro]");
 const shrineIntroCaption = document.querySelector("[data-shrine-intro-caption]");
 const shrineIntroSkip = document.querySelector("[data-shrine-intro-skip]");
 const shrineTeacherList = document.querySelector("[data-shrine-teachers]");
+const shrineActiveTeacherList = document.querySelector("[data-shrine-active-teachers]");
 const shrineTeacherCount = document.querySelector("[data-shrine-teacher-count]");
+const shrineTeacherEditorToggle = document.querySelector("[data-shrine-teacher-editor-toggle]");
 const shrineRoundCount = document.querySelector("[data-shrine-round-count]");
 const shrineModeButtons = document.querySelectorAll("[data-shrine-mode]");
 const shrinePathModeButtons = document.querySelectorAll("[data-shrine-path-mode]");
@@ -257,6 +259,7 @@ const backupFormatVersion = 1;
 const adminPasscode = "suiyoukai2026";
 const externalGameRecordFormEnabled = true;
 const participationFormUrl = "https://docs.google.com/forms/d/e/1FAIpQLSdEqwXBhF3jDi-YUizfnNnLDfTzD7QJTK469-xwQwA21Gl_rA/viewform?usp=publish-editor";
+const shrineTodayTeacherStorageKey = "suiyoukai-shrine-today-teachers-v1";
 const shrineRosterStorageKey = "suiyoukai-shrine-roster-v1";
 const shrineRecordStorageKey = "suiyoukai-shrine-records-v1";
 const libraryJournalStorageKey = "suiyoukai-library-journal-v1";
@@ -351,60 +354,60 @@ const flowerCatalog = {
   suzuran: {
     flower: "suzuran",
     flowerName: "すずらん",
-    flowerAsset: "suisen-stamp-stage-05-list.png",
+    flowerAsset: "suzuran-stamp-stage-05-list.png",
     fairyId: "fairy_suzuran_mouse",
     fairyName: "すずらんのネズミ妖精",
-    fairyAsset: "fairy-evolution-stage-01.png",
+    fairyAsset: "fairy-companion-suzuran-mouse.png",
     flowerColor: "#f0f7df",
     accentColor: "#8fb985",
   },
   mokuren: {
     flower: "mokuren",
     flowerName: "木蓮",
-    flowerAsset: "lily-stamp-stage-05-list.png",
+    flowerAsset: "mokuren-stamp-stage-05-list.png",
     fairyId: "fairy_mokuren_white_cat",
     fairyName: "木蓮の白猫妖精",
-    fairyAsset: "fairy-evolution-stage-02.png",
+    fairyAsset: "fairy-companion-mokuren-white-cat.png",
     flowerColor: "#f5e7ef",
     accentColor: "#b985a7",
   },
   hinageshi: {
     flower: "hinageshi",
     flowerName: "ひなげし",
-    flowerAsset: "nadeshiko-stamp-stage-05-list.png",
+    flowerAsset: "hinageshi-stamp-stage-05-list.png",
     fairyId: "fairy_hinageshi_squirrel",
     fairyName: "ひなげしのリス妖精",
-    fairyAsset: "fairy-companion-kikyo-red-squirrel.png",
+    fairyAsset: "fairy-companion-hinageshi-squirrel.png",
     flowerColor: "#f1a1a7",
     accentColor: "#d85f65",
   },
   shirotsumekusa: {
     flower: "shirotsumekusa",
     flowerName: "白詰草",
-    flowerAsset: "cosmos-stamp-stage-05-v2.png",
+    flowerAsset: "shirotsumekusa-stamp-stage-05-list.png",
     fairyId: "fairy_shirotsumekusa_toy_poodle",
     fairyName: "白詰草のトイプードル妖精",
-    fairyAsset: "special-companion-french-bulldog-a.png",
+    fairyAsset: "fairy-companion-shirotsumekusa-toy-poodle.png",
     flowerColor: "#ecf4de",
     accentColor: "#78a768",
   },
   ran: {
     flower: "ran",
     flowerName: "蘭",
-    flowerAsset: "sumire-stamp-stage-05-list.png",
+    flowerAsset: "ran-stamp-stage-05-list.png",
     fairyId: "fairy_ran_turtle",
     fairyName: "蘭の亀妖精",
-    fairyAsset: "fairy-evolution-stage-03.png",
+    fairyAsset: "fairy-companion-ran-turtle.png",
     flowerColor: "#ddc7ef",
     accentColor: "#8e66ba",
   },
   hanamizuki: {
     flower: "hanamizuki",
     flowerName: "花水木",
-    flowerAsset: "sakura-stamp-stage-05-list.png",
+    flowerAsset: "hanamizuki-stamp-stage-05-list.png",
     fairyId: "fairy_hanamizuki_crane",
     fairyName: "花水木の鶴妖精",
-    fairyAsset: "fairy-evolution-stage-04.png",
+    fairyAsset: "fairy-companion-hanamizuki-crane.png",
     flowerColor: "#f3dce0",
     accentColor: "#c66b7c",
   },
@@ -1700,6 +1703,41 @@ const resetAdminTeacherProfileEditor = () => {
   }
 };
 
+const loadShrineTodayTeacherSettings = () => {
+  try {
+    const stored = JSON.parse(localStorage.getItem(shrineTodayTeacherStorageKey) ?? "{}");
+    return stored && typeof stored === "object" && !Array.isArray(stored) ? stored : {};
+  } catch {
+    return {};
+  }
+};
+
+let shrineTodayTeacherSettings = loadShrineTodayTeacherSettings();
+
+const saveShrineTodayTeacherSettings = () => {
+  if (!shrineTeacherList) {
+    return;
+  }
+
+  shrineTodayTeacherSettings = Object.fromEntries(
+    Object.keys(teacherDetails).map((teacherId) => {
+      const input = shrineTeacherList.querySelector(`[data-shrine-teacher="${teacherId}"]`);
+      const boardInput = shrineTeacherList.querySelector(`[data-shrine-teacher-boards="${teacherId}"]`);
+
+      return [teacherId, {
+        active: Boolean(input?.checked),
+        boards: Math.max(1, Math.min(6, Number(boardInput?.value) || 3)),
+      }];
+    })
+  );
+
+  try {
+    localStorage.setItem(shrineTodayTeacherStorageKey, JSON.stringify(shrineTodayTeacherSettings));
+  } catch {
+    // 当日の先生選択が保存できない環境でも、画面上の選択はそのまま使えます。
+  }
+};
+
 const renderShrineTeachers = () => {
   if (!shrineTeacherList) {
     return;
@@ -1718,7 +1756,7 @@ const renderShrineTeachers = () => {
 
     input.type = "checkbox";
     input.value = teacherId;
-    input.checked = true;
+    input.checked = shrineTodayTeacherSettings[teacherId]?.active ?? true;
     input.dataset.shrineTeacher = teacherId;
     boardControl.className = "shrine-board-count";
     boardLabel.textContent = "面数";
@@ -1729,7 +1767,7 @@ const renderShrineTeachers = () => {
       const option = document.createElement("option");
       option.value = String(count);
       option.textContent = `${count}面`;
-      option.selected = count === 3;
+      option.selected = count === (shrineTodayTeacherSettings[teacherId]?.boards ?? 3);
       boardSelect.append(option);
     }
     name.textContent = teacher.name;
@@ -2405,6 +2443,49 @@ const getSelectedShrineTeachers = () => {
     .filter((teacher) => teacher.name);
 };
 
+const renderShrineActiveTeachers = (selectedTeachers = getSelectedShrineTeachers()) => {
+  if (!shrineActiveTeacherList) {
+    return;
+  }
+
+  shrineActiveTeacherList.textContent = "";
+
+  if (selectedTeachers.length === 0) {
+    const empty = document.createElement("p");
+    empty.textContent = "今日来ている先生を選んでください。";
+    shrineActiveTeacherList.append(empty);
+    return;
+  }
+
+  for (const teacher of selectedTeachers) {
+    const cycleProgress = getCurrentTeacherCycleProgress(teacher);
+    const item = document.createElement("article");
+    const flower = document.createElement("span");
+    const flowerIcon = document.createElement("span");
+    const seal = document.createElement("span");
+    const copy = document.createElement("span");
+    const name = document.createElement("strong");
+    const detail = document.createElement("small");
+    const boardBadge = document.createElement("em");
+
+    item.className = "shrine-active-teacher-card";
+    flower.className = "shrine-active-teacher-flower";
+    flowerIcon.className = "shrine-active-teacher-flower-icon";
+    seal.className = "shrine-active-teacher-seal";
+    seal.setAttribute("aria-hidden", "true");
+    boardBadge.className = "shrine-active-teacher-board";
+    name.textContent = teacher.name;
+    detail.textContent = teacher.guide;
+    boardBadge.textContent = `${teacher.boards}面`;
+    applyFlowerVariables(item, cycleProgress.cycle);
+    applyFlowerVisual(flowerIcon, cycleProgress.cycle);
+    flower.append(flowerIcon, seal);
+    copy.append(name, detail);
+    item.append(flower, copy, boardBadge);
+    shrineActiveTeacherList.append(item);
+  }
+};
+
 const updateShrineTeacherCount = () => {
   if (!shrineTeacherCount) {
     return;
@@ -2413,6 +2494,7 @@ const updateShrineTeacherCount = () => {
   const selectedTeachers = getSelectedShrineTeachers();
   const totalBoards = selectedTeachers.reduce((total, teacher) => total + teacher.boards, 0);
   shrineTeacherCount.textContent = `${selectedTeachers.length}人・${totalBoards}面`;
+  renderShrineActiveTeachers(selectedTeachers);
 };
 
 const getShrineRoundCount = () =>
@@ -6176,7 +6258,25 @@ for (const button of mapDestinationButtons) {
   });
 }
 
-shrineTeacherList?.addEventListener("change", updateShrineTeacherCount);
+shrineTeacherEditorToggle?.addEventListener("click", () => {
+  if (!shrineTeacherList) {
+    return;
+  }
+
+  const shouldOpen = shrineTeacherList.hidden;
+  shrineTeacherList.hidden = !shouldOpen;
+  shrineTeacherEditorToggle.setAttribute("aria-expanded", String(shouldOpen));
+  shrineTeacherEditorToggle.textContent = shouldOpen ? "閉じる" : "参加先生を選ぶ";
+});
+
+shrineTeacherList?.addEventListener("change", () => {
+  saveShrineTodayTeacherSettings();
+  updateShrineTeacherCount();
+
+  if (shrineResult?.querySelector(".shrine-round-result")) {
+    renderShrineResult();
+  }
+});
 shrineRoundCount?.addEventListener("change", () => {
   if (shrineResult?.querySelector(".shrine-round-result")) {
     renderShrineResult();
