@@ -5879,7 +5879,9 @@ updateTeacherCards = () => {
     applyFlowerVisual(flower, cycleProgress.cycle);
 
     if (isExtraCircleTeacher) {
-      label.textContent = `観察期間・${getTeacherStampText(teacher)}`;
+      label.textContent = teacher.stampCount > 0
+        ? "観察期間・記録済み"
+        : "観察期間・未記録";
       continue;
     }
 
@@ -6142,15 +6144,19 @@ const updateAdminPanel = () => {
 
   setAdminDraftDirty(isAdminDraftDifferentFromProgress());
 
-  const completedCount = Object.values(adminDraft.teacherLessonCounts).filter((count) => count > 0).length;
+  const completedCount = teacherCircleTargetIds
+    .filter((teacherId) => normalizeProgressCount(adminDraft.teacherLessonCounts[teacherId]) > 0)
+    .length;
   const totalCount = getTeacherCircleRequiredCount();
   const remainingCount = Math.max(0, totalCount - completedCount);
-  const nextTeacher = Object.entries(teacherDetails).find(([teacherId]) => normalizeProgressCount(adminDraft.teacherLessonCounts[teacherId]) === 0);
+  const nextTeacherId = teacherCircleTargetIds
+    .find((teacherId) => normalizeProgressCount(adminDraft.teacherLessonCounts[teacherId]) === 0);
+  const nextTeacher = nextTeacherId ? teacherDetails[nextTeacherId] : null;
   const currentParticipationCount = normalizeProgressCount(adminDraft.participationCount);
   const draftCircleRounds = getAdminDraftTeacherCircleRounds();
 
   adminParticipation.textContent = `参加スタンプ ${currentParticipationCount}回`;
-  adminTeacher.textContent = nextTeacher?.[1].name ?? "全員一巡済み";
+  adminTeacher.textContent = nextTeacher?.name ?? "基本5人は一巡済み";
   adminState.textContent = isAdminDraftDirty ? "未保存" : "保存済み";
   adminSummary.textContent = draftCircleRounds > 0
     ? "先生の輪 一巡判定: 達成"
