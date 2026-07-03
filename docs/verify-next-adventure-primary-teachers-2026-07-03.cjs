@@ -6,7 +6,13 @@ const root = path.resolve(__dirname, "..");
 const appUrl = pathToFileURL(path.join(root, "index.html")).href;
 const progressKey = "suiyoukai-stamp-progress-v1";
 const primaryTeacherIds = ["tsuneishi", "yuki", "koike", "yamashiro", "matsumoto"];
-const extraTeacherIds = ["teacher_extra_01", "teacher_extra_02"];
+const extraTeacherIds = [
+  "teacher_extra_01",
+  "teacher_extra_02",
+  "teacher_extra_03",
+  "teacher_extra_04",
+  "teacher_extra_05",
+];
 
 const assert = (condition, message) => {
   if (!condition) throw new Error(message);
@@ -37,6 +43,19 @@ const saveProgress = async (page, teacherCounts) => {
   try {
     await page.goto(appUrl, { waitUntil: "load" });
 
+    const ruleIds = await page.evaluate(() => ({
+      teacherCircleIds: window.stampRules.teacherCircle.teacherIds,
+      extraTeacherCircleIds: window.stampRules.extraTeacherCircle.teacherIds,
+    }));
+    assert(
+      JSON.stringify(ruleIds.teacherCircleIds) === JSON.stringify(primaryTeacherIds),
+      `先生の輪の対象が基本5人ではありません: ${JSON.stringify(ruleIds.teacherCircleIds)}`
+    );
+    assert(
+      JSON.stringify(ruleIds.extraTeacherCircleIds) === JSON.stringify(extraTeacherIds),
+      `新しい先生の輪の対象が追加先生A-Eではありません: ${JSON.stringify(ruleIds.extraTeacherCircleIds)}`
+    );
+
     await saveProgress(page, Object.fromEntries([
       ...primaryTeacherIds.map((teacherId) => [teacherId, 1]),
       ...extraTeacherIds.map((teacherId) => [teacherId, 4]),
@@ -66,7 +85,7 @@ const saveProgress = async (page, teacherCounts) => {
     assert(extraTeacherIds.includes(extraPhase.teacherId), `基本5人の全巡完了後に追加先生へ進めません: ${extraPhase.teacherId}`);
 
     console.log("ALL OK: next adventure keeps primary teachers first");
-    console.log(JSON.stringify({ primaryPhase, extraPhase }, null, 2));
+    console.log(JSON.stringify({ ruleIds, primaryPhase, extraPhase }, null, 2));
   } finally {
     await browser.close();
   }

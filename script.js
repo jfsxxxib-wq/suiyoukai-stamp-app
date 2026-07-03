@@ -5661,7 +5661,7 @@ const renderOwlLibrary = (achievementResult) => {
   libraryAchievementList.textContent = "";
   for (const record of [
     { label: "花図鑑", value: `${totalFlowerAchievements}/18`, mark: "花", tone: "flower" },
-    { label: "先生の輪", value: `${achievementResult.teacherCircle.currentRounds}巡`, mark: "輪", tone: "medal" },
+    { label: "先生の輪", value: `基本5人 ${achievementResult.teacherCircle.currentRounds}巡`, mark: "輪", tone: "medal" },
     { label: "特別な仲間", value: `${companions.length}/4`, mark: "仲", tone: "companion" },
     { label: "対局記録", value: `${gameRecords.length}局`, mark: "棋", tone: "record" },
   ]) {
@@ -5786,7 +5786,7 @@ const renderProfileAchievementResults = (achievementResult) => {
     {
       label: "先生の輪",
       status: circleRounds > 0 ? `${circleRounds}巡 達成済み` : "未達成",
-      count: "先生5人を各1回",
+      count: "基本5人を各1回",
     },
     {
       label: "特別な仲間",
@@ -5878,6 +5878,11 @@ updateTeacherCards = () => {
 
     applyFlowerVisual(flower, cycleProgress.cycle);
 
+    if (isExtraCircleTeacher) {
+      label.textContent = `観察期間・${getTeacherStampText(teacher)}`;
+      continue;
+    }
+
     label.textContent = teacher.completedFirstRound
       ? `${teacherGroupLabel} 済・${getTeacherStampText(teacher)}`
       : `${teacherGroupLabel} 未・${getTeacherStampText(teacher)}`;
@@ -5919,6 +5924,7 @@ const getNextAdventure = () => {
 
     const cycleProgress = getCurrentTeacherCycleProgress(teacher);
     const remaining = getTeacherGoal(teacher) - cycleProgress.countInCycle;
+    const isExtraTeacherCircleTeacher = extraTeacherCircleTargetIds.includes(teacherId);
 
     candidates.push({
       type: "teacher",
@@ -5926,7 +5932,9 @@ const getNextAdventure = () => {
       priority: 1,
       remaining,
       title: `あと${remaining}回で${cycleProgress.cycle.fairyName}`,
-      copy: `${teacher.name}との指導碁で${cycleProgress.cycle.cycleName}を達成できます。`,
+      copy: isExtraTeacherCircleTeacher
+        ? `${teacher.name}との指導碁で、新しい先生との出会いを記録できます。`
+        : `${teacher.name}との指導碁で${cycleProgress.cycle.cycleName}を達成できます。`,
     });
   }
 

@@ -5876,6 +5876,58 @@ dd {
     rgba(143, 184, 190, 0.72);
 }
 
+.circle-stamp.is-observation {
+  align-content: center;
+  border-color: rgba(93, 143, 195, 0.28);
+  background: linear-gradient(180deg, rgba(247, 252, 255, 0.9), rgba(232, 243, 248, 0.72));
+  color: var(--green);
+}
+
+.circle-stamp.is-observation small {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 900;
+}
+
+.circle-observation-mark {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  border: 2px solid rgba(93, 143, 195, 0.28);
+  border-radius: 50%;
+  background: rgba(255, 252, 244, 0.78);
+}
+
+.circle-observation-mark i {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(93, 143, 195, 0.5);
+}
+
+.circle-observation-mark i:nth-child(1) {
+  transform: translate(-50%, -50%) rotate(-90deg) translateY(-14px);
+}
+
+.circle-observation-mark i:nth-child(2) {
+  transform: translate(-50%, -50%) rotate(-18deg) translateY(-14px);
+}
+
+.circle-observation-mark i:nth-child(3) {
+  transform: translate(-50%, -50%) rotate(54deg) translateY(-14px);
+}
+
+.circle-observation-mark i:nth-child(4) {
+  transform: translate(-50%, -50%) rotate(126deg) translateY(-14px);
+}
+
+.circle-observation-mark i:nth-child(5) {
+  transform: translate(-50%, -50%) rotate(198deg) translateY(-14px);
+}
+
 .circle-medal {
   border: 0;
   border-radius: 0;
@@ -10442,6 +10494,42 @@ body {
 
 .flower-guide-showcase {
   display: grid;
+  gap: 10px;
+}
+
+.flower-guide-group {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid rgba(126, 100, 48, 0.16);
+  border-radius: 8px;
+  background: rgba(255, 252, 244, 0.48);
+}
+
+.flower-guide-group-extra {
+  border-color: rgba(63, 118, 82, 0.22);
+  background: rgba(244, 250, 239, 0.42);
+}
+
+.flower-guide-group-title {
+  margin: 0;
+  color: #3f6048;
+  font-size: 0.82rem;
+  font-weight: 900;
+  line-height: 1.35;
+}
+
+.flower-guide-group-note {
+  margin: -3px 0 0;
+  color: #5f584c;
+  font-size: 0.72rem;
+  font-weight: 800;
+  line-height: 1.45;
+}
+
+.flower-guide-group-grid {
+  display: grid;
   grid-template-columns: repeat(6, minmax(0, 1fr));
   gap: 8px;
 }
@@ -10478,6 +10566,33 @@ body {
   border-radius: 50%;
   background: rgba(255, 252, 244, 0.9);
 
+}
+
+.teacher-list-group {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+  margin-top: 3px;
+  padding: 10px;
+  border: 1px solid rgba(63, 118, 82, 0.18);
+  border-radius: 8px;
+  background: rgba(244, 250, 239, 0.4);
+}
+
+.teacher-list-group h4 {
+  margin: 0;
+  color: #3f6048;
+  font-size: 0.8rem;
+  font-weight: 900;
+  line-height: 1.35;
+}
+
+.teacher-list-group p {
+  margin: -2px 0 2px;
+  color: #5f584c;
+  font-size: 0.76rem;
+  font-weight: 800;
+  line-height: 1.45;
 }
 
 .flower-guide-name {
@@ -10577,8 +10692,15 @@ body {
   }
 
   .flower-guide-showcase {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 11px;
+  }
+
+  .flower-guide-group {
+    padding: 9px;
+  }
+
+  .flower-guide-group-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .flower-guide-showcase img {

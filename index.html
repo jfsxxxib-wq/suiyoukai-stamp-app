@@ -166,72 +166,84 @@
                 <p>花が満開になると、妖精や称号に出会えます。次に育てる花は「次の冒険」が案内します。</p>
               </div>
               <div class="flower-guide-showcase" aria-label="水曜会で育つ花">
-                <button type="button" class="flower-guide-card" data-flower-guide-target="participation" aria-label="コスモスの参加スタンプへ移動">
-                  <img src="assets/cosmos-stamp-stage-05-v2.png" alt="コスモス" loading="eager" decoding="async">
-                  <span class="flower-guide-name">コスモス</span>
-                  <span class="flower-guide-meta">参加スタンプ</span>
-                  <span class="flower-guide-action">1巡目を見る</span>
-                </button>
-                <button type="button" class="flower-guide-card" data-flower-guide-target="tsuneishi" aria-label="菖蒲の常石先生スタンプへ移動">
-                  <img src="assets/iris-stamp-stage-05-list.png" alt="菖蒲" loading="eager" decoding="async">
-                  <span class="flower-guide-name">菖蒲</span>
-                  <span class="flower-guide-meta">常石先生</span>
-                  <span class="flower-guide-action">1巡目を見る</span>
-                </button>
-                <button type="button" class="flower-guide-card" data-flower-guide-target="yuki" aria-label="椿の結城先生スタンプへ移動">
-                  <img src="assets/camellia-stamp-stage-05-list.png" alt="椿" loading="eager" decoding="async">
-                  <span class="flower-guide-name">椿</span>
-                  <span class="flower-guide-meta">結城先生</span>
-                  <span class="flower-guide-action">1巡目を見る</span>
-                </button>
-                <button type="button" class="flower-guide-card" data-flower-guide-target="koike" aria-label="ひまわりの小池先生スタンプへ移動">
-                  <img src="assets/sunflower-stamp-stage-05-list.png" alt="ひまわり" loading="eager" decoding="async">
-                  <span class="flower-guide-name">ひまわり</span>
-                  <span class="flower-guide-meta">小池先生</span>
-                  <span class="flower-guide-action">1巡目を見る</span>
-                </button>
-                <button type="button" class="flower-guide-card" data-flower-guide-target="yamashiro" aria-label="紫陽花の山城先生スタンプへ移動">
-                  <img src="assets/hydrangea-stamp-stage-05-list.png" alt="紫陽花" loading="eager" decoding="async">
-                  <span class="flower-guide-name">紫陽花</span>
-                  <span class="flower-guide-meta">山城先生</span>
-                  <span class="flower-guide-action">1巡目を見る</span>
-                </button>
-                <button type="button" class="flower-guide-card" data-flower-guide-target="matsumoto" aria-label="桜の松本先生スタンプへ移動">
-                  <img src="assets/sakura-stamp-stage-05-list.png" alt="桜" loading="eager" decoding="async">
-                  <span class="flower-guide-name">桜</span>
-                  <span class="flower-guide-meta">松本先生</span>
-                  <span class="flower-guide-action">1巡目を見る</span>
-                </button>
-                <button type="button" class="flower-guide-card" data-flower-guide-target="teacher_extra_01" aria-label="すずらんの追加先生Aスタンプへ移動">
-                  <img src="assets/suzuran-stamp-stage-05-list.png" alt="すずらん" loading="eager" decoding="async">
-                  <span class="flower-guide-name">すずらん</span>
-                  <span class="flower-guide-meta">追加先生A</span>
-                  <span class="flower-guide-action">1巡目を見る</span>
-                </button>
-                <button type="button" class="flower-guide-card" data-flower-guide-target="teacher_extra_02" aria-label="白詰草の追加先生Bスタンプへ移動">
-                  <img src="assets/shirotsumekusa-stamp-stage-05-list.png" alt="白詰草" loading="eager" decoding="async">
-                  <span class="flower-guide-name">白詰草</span>
-                  <span class="flower-guide-meta">追加先生B</span>
-                  <span class="flower-guide-action">1巡目を見る</span>
-                </button>
-                <button type="button" class="flower-guide-card" data-flower-guide-target="teacher_extra_03" aria-label="山吹の追加先生Cスタンプへ移動">
-                  <img src="assets/yamabuki-stamp-stage-05-list.png" alt="山吹" loading="eager" decoding="async">
-                  <span class="flower-guide-name">山吹</span>
-                  <span class="flower-guide-meta">追加先生C</span>
-                  <span class="flower-guide-action">1巡目を見る</span>
-                </button>
-                <button type="button" class="flower-guide-card" data-flower-guide-target="teacher_extra_04" aria-label="金魚草の追加先生Dスタンプへ移動">
-                  <img src="assets/kingyosou-stamp-stage-05-list.png" alt="金魚草" loading="eager" decoding="async">
-                  <span class="flower-guide-name">金魚草</span>
-                  <span class="flower-guide-meta">追加先生D</span>
-                  <span class="flower-guide-action">1巡目を見る</span>
-                </button>
-                <button type="button" class="flower-guide-card" data-flower-guide-target="teacher_extra_05" aria-label="露草の追加先生Eスタンプへ移動">
-                  <img src="assets/tsuyukusa-stamp-stage-05-list.png" alt="露草" loading="eager" decoding="async">
-                  <span class="flower-guide-name">露草</span>
-                  <span class="flower-guide-meta">追加先生E</span>
-                  <span class="flower-guide-action">1巡目を見る</span>
-                </button>
+                <section class="flower-guide-group flower-guide-group-primary" aria-label="水曜会の基本の花">
+                  <h3 class="flower-guide-group-title">水曜会の基本</h3>
+                  <p class="flower-guide-group-note">いつもの参加と5人の先生で育つ花です。</p>
+                  <div class="flower-guide-group-grid">
+                    <button type="button" class="flower-guide-card" data-flower-guide-target="participation" aria-label="コスモスの参加スタンプへ移動">
+                      <img src="assets/cosmos-stamp-stage-05-v2.png" alt="コスモス" loading="eager" decoding="async">
+                      <span class="flower-guide-name">コスモス</span>
+                      <span class="flower-guide-meta">参加スタンプ</span>
+                      <span class="flower-guide-action">1巡目を見る</span>
+                    </button>
+                    <button type="button" class="flower-guide-card" data-flower-guide-target="tsuneishi" aria-label="菖蒲の常石先生スタンプへ移動">
+                      <img src="assets/iris-stamp-stage-05-list.png" alt="菖蒲" loading="eager" decoding="async">
+                      <span class="flower-guide-name">菖蒲</span>
+                      <span class="flower-guide-meta">常石先生</span>
+                      <span class="flower-guide-action">1巡目を見る</span>
+                    </button>
+                    <button type="button" class="flower-guide-card" data-flower-guide-target="yuki" aria-label="椿の結城先生スタンプへ移動">
+                      <img src="assets/camellia-stamp-stage-05-list.png" alt="椿" loading="eager" decoding="async">
+                      <span class="flower-guide-name">椿</span>
+                      <span class="flower-guide-meta">結城先生</span>
+                      <span class="flower-guide-action">1巡目を見る</span>
+                    </button>
+                    <button type="button" class="flower-guide-card" data-flower-guide-target="koike" aria-label="ひまわりの小池先生スタンプへ移動">
+                      <img src="assets/sunflower-stamp-stage-05-list.png" alt="ひまわり" loading="eager" decoding="async">
+                      <span class="flower-guide-name">ひまわり</span>
+                      <span class="flower-guide-meta">小池先生</span>
+                      <span class="flower-guide-action">1巡目を見る</span>
+                    </button>
+                    <button type="button" class="flower-guide-card" data-flower-guide-target="yamashiro" aria-label="紫陽花の山城先生スタンプへ移動">
+                      <img src="assets/hydrangea-stamp-stage-05-list.png" alt="紫陽花" loading="eager" decoding="async">
+                      <span class="flower-guide-name">紫陽花</span>
+                      <span class="flower-guide-meta">山城先生</span>
+                      <span class="flower-guide-action">1巡目を見る</span>
+                    </button>
+                    <button type="button" class="flower-guide-card" data-flower-guide-target="matsumoto" aria-label="桜の松本先生スタンプへ移動">
+                      <img src="assets/sakura-stamp-stage-05-list.png" alt="桜" loading="eager" decoding="async">
+                      <span class="flower-guide-name">桜</span>
+                      <span class="flower-guide-meta">松本先生</span>
+                      <span class="flower-guide-action">1巡目を見る</span>
+                    </button>
+                  </div>
+                </section>
+                <section class="flower-guide-group flower-guide-group-extra" aria-label="新しい先生の輪の花">
+                  <h3 class="flower-guide-group-title">新しい先生の輪</h3>
+                  <p class="flower-guide-group-note">観察期間中です。基本5人の輪とは別に、新しい先生との出会いを記録していきます。</p>
+                  <div class="flower-guide-group-grid">
+                    <button type="button" class="flower-guide-card" data-flower-guide-target="teacher_extra_01" aria-label="すずらんの追加先生Aスタンプへ移動">
+                      <img src="assets/suzuran-stamp-stage-05-list.png" alt="すずらん" loading="eager" decoding="async">
+                      <span class="flower-guide-name">すずらん</span>
+                      <span class="flower-guide-meta">追加先生A</span>
+                      <span class="flower-guide-action">記録を見る</span>
+                    </button>
+                    <button type="button" class="flower-guide-card" data-flower-guide-target="teacher_extra_02" aria-label="白詰草の追加先生Bスタンプへ移動">
+                      <img src="assets/shirotsumekusa-stamp-stage-05-list.png" alt="白詰草" loading="eager" decoding="async">
+                      <span class="flower-guide-name">白詰草</span>
+                      <span class="flower-guide-meta">追加先生B</span>
+                      <span class="flower-guide-action">記録を見る</span>
+                    </button>
+                    <button type="button" class="flower-guide-card" data-flower-guide-target="teacher_extra_03" aria-label="山吹の追加先生Cスタンプへ移動">
+                      <img src="assets/yamabuki-stamp-stage-05-list.png" alt="山吹" loading="eager" decoding="async">
+                      <span class="flower-guide-name">山吹</span>
+                      <span class="flower-guide-meta">追加先生C</span>
+                      <span class="flower-guide-action">記録を見る</span>
+                    </button>
+                    <button type="button" class="flower-guide-card" data-flower-guide-target="teacher_extra_04" aria-label="金魚草の追加先生Dスタンプへ移動">
+                      <img src="assets/kingyosou-stamp-stage-05-list.png" alt="金魚草" loading="eager" decoding="async">
+                      <span class="flower-guide-name">金魚草</span>
+                      <span class="flower-guide-meta">追加先生D</span>
+                      <span class="flower-guide-action">記録を見る</span>
+                    </button>
+                    <button type="button" class="flower-guide-card" data-flower-guide-target="teacher_extra_05" aria-label="露草の追加先生Eスタンプへ移動">
+                      <img src="assets/tsuyukusa-stamp-stage-05-list.png" alt="露草" loading="eager" decoding="async">
+                      <span class="flower-guide-name">露草</span>
+                      <span class="flower-guide-meta">追加先生E</span>
+                      <span class="flower-guide-action">記録を見る</span>
+                    </button>
+                  </div>
+                </section>
               </div>
             </section>
             <h3 class="teacher-guide-heading">先生を選んで花を育てる</h3>
@@ -293,46 +305,50 @@
                   </span>
                   <span class="teacher-card-action">見る&nbsp;›</span>
                 </button>
-                <button type="button" class="teacher-card next-teacher" data-teacher="teacher_extra_01" aria-pressed="false">
-                  <span class="teacher-flower" aria-hidden="true"></span>
-                  <span>
-                    <strong>追加先生A</strong>
-                    <small>追加先生枠・すずらんから始まる花巡り</small>
-                  </span>
-                  <span class="teacher-card-action">見る&nbsp;›</span>
-                </button>
-                <button type="button" class="teacher-card next-teacher" data-teacher="teacher_extra_02" aria-pressed="false">
-                  <span class="teacher-flower" aria-hidden="true"></span>
-                  <span>
-                    <strong>追加先生B</strong>
-                    <small>追加先生枠・白詰草から始まる花巡り</small>
-                  </span>
-                  <span class="teacher-card-action">見る&nbsp;›</span>
-                </button>
-                <button type="button" class="teacher-card next-teacher" data-teacher="teacher_extra_03" aria-pressed="false">
-                  <span class="teacher-flower" aria-hidden="true"></span>
-                  <span>
-                    <strong>追加先生C</strong>
-                    <small>新しい先生の輪・山吹から始まる花巡り</small>
-                  </span>
-                  <span class="teacher-card-action">見る&nbsp;›</span>
-                </button>
-                <button type="button" class="teacher-card next-teacher" data-teacher="teacher_extra_04" aria-pressed="false">
-                  <span class="teacher-flower" aria-hidden="true"></span>
-                  <span>
-                    <strong>追加先生D</strong>
-                    <small>新しい先生の輪・金魚草から始まる花巡り</small>
-                  </span>
-                  <span class="teacher-card-action">見る&nbsp;›</span>
-                </button>
-                <button type="button" class="teacher-card next-teacher" data-teacher="teacher_extra_05" aria-pressed="false">
-                  <span class="teacher-flower" aria-hidden="true"></span>
-                  <span>
-                    <strong>追加先生E</strong>
-                    <small>新しい先生の輪・露草から始まる花巡り</small>
-                  </span>
-                  <span class="teacher-card-action">見る&nbsp;›</span>
-                </button>
+                <section class="teacher-list-group teacher-list-group-extra" aria-label="新しい先生の輪">
+                  <h4>新しい先生の輪</h4>
+                  <p>観察期間中の出会いを、基本5人の輪とは別に残します。</p>
+                  <button type="button" class="teacher-card next-teacher" data-teacher="teacher_extra_01" aria-pressed="false">
+                    <span class="teacher-flower" aria-hidden="true"></span>
+                    <span>
+                      <strong>追加先生A</strong>
+                      <small>新しい先生の輪・すずらんから始まる花巡り</small>
+                    </span>
+                    <span class="teacher-card-action">見る&nbsp;›</span>
+                  </button>
+                  <button type="button" class="teacher-card next-teacher" data-teacher="teacher_extra_02" aria-pressed="false">
+                    <span class="teacher-flower" aria-hidden="true"></span>
+                    <span>
+                      <strong>追加先生B</strong>
+                      <small>新しい先生の輪・白詰草から始まる花巡り</small>
+                    </span>
+                    <span class="teacher-card-action">見る&nbsp;›</span>
+                  </button>
+                  <button type="button" class="teacher-card next-teacher" data-teacher="teacher_extra_03" aria-pressed="false">
+                    <span class="teacher-flower" aria-hidden="true"></span>
+                    <span>
+                      <strong>追加先生C</strong>
+                      <small>新しい先生の輪・山吹から始まる花巡り</small>
+                    </span>
+                    <span class="teacher-card-action">見る&nbsp;›</span>
+                  </button>
+                  <button type="button" class="teacher-card next-teacher" data-teacher="teacher_extra_04" aria-pressed="false">
+                    <span class="teacher-flower" aria-hidden="true"></span>
+                    <span>
+                      <strong>追加先生D</strong>
+                      <small>新しい先生の輪・金魚草から始まる花巡り</small>
+                    </span>
+                    <span class="teacher-card-action">見る&nbsp;›</span>
+                  </button>
+                  <button type="button" class="teacher-card next-teacher" data-teacher="teacher_extra_05" aria-pressed="false">
+                    <span class="teacher-flower" aria-hidden="true"></span>
+                    <span>
+                      <strong>追加先生E</strong>
+                      <small>新しい先生の輪・露草から始まる花巡り</small>
+                    </span>
+                    <span class="teacher-card-action">見る&nbsp;›</span>
+                  </button>
+                </section>
                 <section class="circle-stamps" aria-label="全員の先生と1回対局スタンプ">
                   <div class="circle-stamps-header">
                     <h4>全員の先生と1回対局スタンプ</h4>
@@ -356,11 +372,12 @@
                         </span>
                         <strong>二巡目の輪</strong>
                       </article>
-                      <article class="circle-stamp is-new">
-                        <span class="circle-medal" aria-hidden="true">
+                      <article class="circle-stamp is-observation">
+                        <span class="circle-observation-mark" aria-hidden="true">
                           <i></i><i></i><i></i><i></i><i></i>
                         </span>
-                        <strong>新しい先生</strong>
+                        <strong>新しい先生の記録</strong>
+                        <small>観察期間</small>
                       </article>
                     </div>
                   </div>
