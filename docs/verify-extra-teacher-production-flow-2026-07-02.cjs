@@ -6,7 +6,13 @@ const root = path.resolve(__dirname, "..");
 const appUrl = pathToFileURL(path.join(root, "index.html")).href;
 const progressKey = "suiyoukai-stamp-progress-v1";
 const primaryTeacherIds = ["tsuneishi", "yuki", "koike", "yamashiro", "matsumoto"];
-const extraTeacherIds = ["teacher_extra_01", "teacher_extra_02"];
+const extraTeacherIds = [
+  "teacher_extra_01",
+  "teacher_extra_02",
+  "teacher_extra_03",
+  "teacher_extra_04",
+  "teacher_extra_05",
+];
 
 const assert = (condition, message) => {
   if (!condition) throw new Error(message);
@@ -42,10 +48,10 @@ const assert = (condition, message) => {
     const teacherCards = page.locator(".teacher-card");
     const teacherCardCount = await teacherCards.count();
     const extraTeacherNames = await page
-      .locator('[data-teacher="teacher_extra_01"] strong, [data-teacher="teacher_extra_02"] strong')
+      .locator(extraTeacherIds.map((teacherId) => `[data-teacher="${teacherId}"] strong`).join(", "))
       .allTextContents();
     const extraFlowerCards = page.locator(
-      '[data-flower-guide-target="teacher_extra_01"], [data-flower-guide-target="teacher_extra_02"]'
+      extraTeacherIds.map((teacherId) => `[data-flower-guide-target="${teacherId}"]`).join(", ")
     );
     const extraFlowerCardCount = await extraFlowerCards.count();
     const extraFlowerImages = await extraFlowerCards.locator("img").evaluateAll((images) =>
@@ -72,15 +78,19 @@ const assert = (condition, message) => {
 
     const progress = await page.evaluate((key) => JSON.parse(localStorage.getItem(key)), progressKey);
 
-    assert(teacherCardCount === 7, `先生一覧が7人ではありません: ${teacherCardCount}`);
-    assert(extraTeacherNames.length === 2, `追加先生カードが2人ではありません: ${extraTeacherNames.length}`);
-    assert(extraFlowerCardCount === 2, `花図鑑の追加先生枠が2つではありません: ${extraFlowerCardCount}`);
+    assert(teacherCardCount === 10, `先生一覧が10人ではありません: ${teacherCardCount}`);
+    assert(extraTeacherNames.length === 5, `追加先生カードが5人ではありません: ${extraTeacherNames.length}`);
+    assert(extraFlowerCardCount === 5, `花図鑑の追加先生枠が5つではありません: ${extraFlowerCardCount}`);
     assert(extraFlowerImages.some((src) => src.includes("suzuran-stamp-stage-05-list.png")), "すずらん画像が花図鑑にありません。");
     assert(extraFlowerImages.some((src) => src.includes("shirotsumekusa-stamp-stage-05-list.png")), "白詰草画像が花図鑑にありません。");
+    assert(extraFlowerImages.some((src) => src.includes("yamabuki-stamp-stage-05-list.png")), "山吹画像が花図鑑にありません。");
+    assert(extraFlowerImages.some((src) => src.includes("kingyosou-stamp-stage-05-list.png")), "金魚草画像が花図鑑にありません。");
+    assert(extraFlowerImages.some((src) => src.includes("tsuyukusa-stamp-stage-05-list.png")), "露草画像が花図鑑にありません。");
     assert(extraDetailName.includes("追加先生A"), `追加先生Aの詳細に移動できていません: ${extraDetailName}`);
     assert(extraDetailFlower.includes("suzuran-stamp-stage-05-list.png"), `追加先生Aの詳細花がすずらんではありません: ${extraDetailFlower}`);
-    assert(adminTeacherOptions.some((option) => option.value === "teacher_extra_01"), "運営押印対象に追加先生Aがありません。");
-    assert(adminTeacherOptions.some((option) => option.value === "teacher_extra_02"), "運営押印対象に追加先生Bがありません。");
+    for (const teacherId of extraTeacherIds) {
+      assert(adminTeacherOptions.some((option) => option.value === teacherId), `運営押印対象に${teacherId}がありません。`);
+    }
     assert(progress.stamps.teacherCircleRounds === 1, `先生の輪が基本5人のまま維持されていません: ${progress.stamps.teacherCircleRounds}`);
 
     console.log("ALL OK: extra teacher production flow");
