@@ -4,7 +4,10 @@ const tabs = document.querySelectorAll(".info-tab");
 const panels = document.querySelectorAll(".panel-view");
 const dock = document.querySelector(".info-dock");
 const infoPanel = document.querySelector(".info-panel");
+const infoTabs = document.querySelector(".info-tabs");
 const closeButton = document.querySelector(".close-panel");
+const guidebookButton = document.querySelector(".guidebook-button");
+const adminTab = document.querySelector(".admin-tab");
 const teacherCards = document.querySelectorAll(".teacher-card");
 const teacherLayout = document.querySelector(".teacher-layout");
 const teacherList = document.querySelector(".teacher-list");
@@ -35,6 +38,10 @@ const achievementCloseButtons = document.querySelectorAll("[data-achievement-clo
 const achievementProfileButton = document.querySelector("[data-achievement-profile]");
 const cardStampCurrent = document.querySelector("[data-card-stamp-current]");
 const cardStampGoal = document.querySelector("[data-card-stamp-goal]");
+const currentFlowerImage = document.querySelector("[data-current-flower-image]");
+const currentFlowerName = document.querySelector("[data-current-flower-name]");
+const currentFlowerProgress = document.querySelector("[data-current-flower-progress]");
+const currentFlowerStamps = document.querySelector("[data-current-flower-stamps]");
 const teacherStampRule = document.querySelector("[data-teacher-stamp]")?.parentElement;
 const profileTitle = document.querySelector("[data-profile-title]");
 const profileRank = document.querySelector("[data-profile-rank]");
@@ -47,22 +54,50 @@ const circleBadge = document.querySelector("[data-circle-badge]");
 const profileBadges = document.querySelector(".profile-badges");
 const profileFairyList = document.querySelector("[data-profile-fairy-list]");
 const profileFairies = document.querySelector("[data-profile-fairies]");
+const profileToggleButtons = document.querySelectorAll("[data-profile-toggle]");
+const profileSpecialCompanions = document.querySelector("[data-profile-special-companions]");
+const fairyViewer = document.querySelector("[data-fairy-viewer]");
+const fairyViewerImage = document.querySelector("[data-fairy-viewer-image]");
+const fairyViewerName = document.querySelector("[data-fairy-viewer-name]");
+const fairyViewerStatus = document.querySelector("[data-fairy-viewer-status]");
+const fairyViewerQuote = document.querySelector("[data-fairy-viewer-quote]");
+const fairyViewerCard = document.querySelector(".fairy-viewer-card");
+const fairyViewerCloseButtons = document.querySelectorAll("[data-fairy-viewer-close]");
 const profileSpecialCompanionList = document.querySelector("[data-profile-special-companion-list]");
 const libraryOwl = document.querySelector("[data-library-owl]");
+const libraryOwlViewerButton = document.querySelector("[data-library-owl-viewer]");
 const libraryGuide = document.querySelector("[data-library-guide]");
 const librarySpeech = document.querySelector("[data-library-speech]");
 const libraryCurrentTitle = document.querySelector("[data-library-current-title]");
 const librarySummary = document.querySelector("[data-library-summary]");
 const libraryTitleCount = document.querySelector("[data-library-title-count]");
 const libraryTitleList = document.querySelector("[data-library-title-list]");
+const libraryTitleToggle = document.querySelector("[data-library-title-toggle]");
+const libraryTitleArtToggle = document.querySelector("[data-library-title-art-toggle]");
 const libraryMedalCount = document.querySelector("[data-library-medal-count]");
 const libraryMedalList = document.querySelector("[data-library-medal-list]");
+const libraryMedalToggle = document.querySelector("[data-library-medal-toggle]");
+const libraryMedalArtToggle = document.querySelector("[data-library-medal-art-toggle]");
 const libraryAchievementList = document.querySelector("[data-library-achievement-list]");
+const libraryJournalRecords = document.querySelector("[data-library-journal-records]");
+const libraryJournalPages = document.querySelector("[data-library-journal-pages]");
+const libraryJournalState = document.querySelector("[data-library-journal-state]");
+const libraryJournalPrompt = document.querySelector("[data-library-journal-prompt]");
+const libraryJournalKeeperSpeech = document.querySelector("[data-library-journal-keeper-speech]");
+const libraryJournalKeeperViewerButton = document.querySelector("[data-library-journal-keeper-viewer]");
+const libraryJournalToggle = document.querySelector("[data-library-journal-toggle]");
+const libraryJournalSkip = document.querySelector("[data-library-journal-skip]");
+const libraryJournalNote = document.querySelector("[data-library-journal-note]");
+const libraryJournalNoteForm = document.querySelector("[data-library-journal-note-form]");
+const libraryJournalNoteInput = document.querySelector("[data-library-journal-note-input]");
+const libraryJournalNoteSave = document.querySelector("[data-library-journal-note-save]");
+const participationStamp = document.querySelector(".participation-stamp");
 const participationFlower = document.querySelector(".participation-stamp .stamp-flower");
 const participationFlowerName = document.querySelector("[data-participation-flower-name]");
 const participationCount = document.querySelector("[data-participation-count]");
 const participationStatus = document.querySelector("[data-participation-status]");
 const participationStampButton = document.querySelector("[data-participation-stamp-button]");
+const flowerGuideCards = document.querySelectorAll("[data-flower-guide-target]");
 const circleStamp = document.querySelector("[data-circle-stamp='first']");
 const circleStatus = document.querySelector("[data-circle-status]");
 const roundSummary = document.querySelector("[data-round-summary]");
@@ -97,12 +132,95 @@ const adminRestoreSummary = document.querySelector("[data-admin-restore-summary]
 const adminRestoreInput = document.querySelector("[data-admin-restore-input]");
 const adminRestoreCancel = document.querySelector("[data-admin-restore-cancel]");
 const adminRestoreConfirmButton = document.querySelector("[data-admin-restore-confirm-button]");
+const adminParticipationDate = document.querySelector("[data-admin-participation-date]");
+const adminParticipationName = document.querySelector("[data-admin-participation-name]");
+const adminParticipationApply = document.querySelector("[data-admin-participation-apply]");
+const adminParticipationMessage = document.querySelector("[data-admin-participation-message]");
+const adminGameRecordDateLabel = document.querySelector("[data-admin-game-record-date-label]");
+const adminGameRecordTeacher = document.querySelector("[data-admin-game-record-teacher]");
+const adminGameRecordDate = document.querySelector("[data-admin-game-record-date]");
+const adminGameRecordHandicap = document.querySelector("[data-admin-game-record-handicap]");
+const adminGameRecordResult = document.querySelector("[data-admin-game-record-result]");
+const adminGameRecordApply = document.querySelector("[data-admin-game-record-apply]");
+const adminGameRecordMessage = document.querySelector("[data-admin-game-record-message]");
+const adminTeacherProfileSelect = document.querySelector("[data-admin-teacher-profile-select]");
+const adminTeacherProfileStyle = document.querySelector("[data-admin-teacher-profile-style]");
+const adminTeacherProfileLesson = document.querySelector("[data-admin-teacher-profile-lesson]");
+const adminTeacherProfileNote = document.querySelector("[data-admin-teacher-profile-note]");
+const adminTeacherProfileSave = document.querySelector("[data-admin-teacher-profile-save]");
+const adminTeacherProfileReset = document.querySelector("[data-admin-teacher-profile-reset]");
+const adminTeacherProfileState = document.querySelector("[data-admin-teacher-profile-state]");
+const adminTeacherProfileMessage = document.querySelector("[data-admin-teacher-profile-message]");
 const nextAdventureButton = document.querySelector("[data-next-adventure-button]");
 const nextAdventureTitle = document.querySelector("[data-next-adventure-title]");
 const nextAdventureCopy = document.querySelector("[data-next-adventure-copy]");
 const nextAdventureGuide = document.querySelector("[data-next-adventure-guide]");
 const nextAdventureGuideImage = document.querySelector("[data-next-adventure-guide-image]");
 const nextAdventureGuideSpeech = document.querySelector("[data-next-adventure-guide-speech]");
+const mapDestinationButtons = document.querySelectorAll("[data-map-destination]");
+const shrineIntro = document.querySelector("[data-shrine-intro]");
+const shrineIntroCaption = document.querySelector("[data-shrine-intro-caption]");
+const shrineIntroSkip = document.querySelector("[data-shrine-intro-skip]");
+const shrineTeacherList = document.querySelector("[data-shrine-teachers]");
+const shrineActiveTeacherList = document.querySelector("[data-shrine-active-teachers]");
+const shrineTeacherCount = document.querySelector("[data-shrine-teacher-count]");
+const shrineTeacherEditorToggle = document.querySelector("[data-shrine-teacher-editor-toggle]");
+const shrineRoundCount = document.querySelector("[data-shrine-round-count]");
+const shrineModeButtons = document.querySelectorAll("[data-shrine-mode]");
+const shrinePathModeButtons = document.querySelectorAll("[data-shrine-path-mode]");
+const shrinePathResultButton = document.querySelector("[data-shrine-path-result]");
+const shrineCollapsibleButtons = document.querySelectorAll("[data-shrine-collapsible-toggle]");
+const shrineModeKicker = document.querySelector("[data-shrine-mode-kicker]");
+const shrineModeTitle = document.querySelector("[data-shrine-mode-title]");
+const shrineModeCopy = document.querySelector("[data-shrine-mode-copy]");
+const shrineFoxSpeech = document.querySelector("[data-shrine-fox-speech]");
+const shrineOtterSpeech = document.querySelector("[data-shrine-otter-speech]");
+const shrineLessonOnlyItems = document.querySelectorAll("[data-shrine-lesson-only]");
+const shrineAmateurOnlyItems = document.querySelectorAll("[data-shrine-amateur-only]");
+const shrinePairgoOnlyItems = document.querySelectorAll("[data-shrine-pairgo-only]");
+const shrineNumberEntryCard = document.querySelector(".shrine-number-entry");
+const shrineParticipantCard = document.querySelector("[data-shrine-participant-card]");
+const shrineParticipants = document.querySelector("[data-shrine-participants]");
+const shrineGroupSize = document.querySelector("[data-shrine-group-size]");
+const shrineFixedGroups = document.querySelector("[data-shrine-fixed-groups]");
+const shrineMixedGenderPairs = document.querySelector("[data-shrine-mixed-gender-pairs]");
+const shrineCloseStrengthPairs = document.querySelector("[data-shrine-close-strength-pairs]");
+const shrineBalancedTeamStrength = document.querySelector("[data-shrine-balanced-team-strength]");
+const shrineMatchMethod = document.querySelector("[data-shrine-match-method]");
+const shrineMatchMethodShortcut = document.querySelector("[data-shrine-match-method-shortcut]");
+const shrineNumberCount = document.querySelector("[data-shrine-number-count]");
+const shrineNumberApply = document.querySelector("[data-shrine-number-apply]");
+const shrineNumberMessage = document.querySelector("[data-shrine-number-message]");
+const shrineQuickName = document.querySelector("[data-shrine-quick-name]");
+const shrineQuickGender = document.querySelector("[data-shrine-quick-gender]");
+const shrineQuickStrengthType = document.querySelector("[data-shrine-quick-strength-type]");
+const shrineQuickStrengthValue = document.querySelector("[data-shrine-quick-strength-value]");
+const shrineQuickAdd = document.querySelector("[data-shrine-quick-add]");
+const shrineQuickMessage = document.querySelector("[data-shrine-quick-message]");
+const shrineQuickAddPanel = document.querySelector(".shrine-participant-quick-add");
+const shrineSampleButton = document.querySelector("[data-shrine-sample]");
+const shrineResetButton = document.querySelector("[data-shrine-reset]");
+const shrineRosterToggle = document.querySelector("[data-shrine-roster-toggle]");
+const shrineRosterPanel = document.querySelector("[data-shrine-roster-panel]");
+const shrineRosterList = document.querySelector("[data-shrine-roster-list]");
+const shrineRosterSearch = document.querySelector("[data-shrine-roster-search]");
+const shrineRosterApply = document.querySelector("[data-shrine-roster-apply]");
+const shrineRosterEditToggle = document.querySelector("[data-shrine-roster-edit-toggle]");
+const shrineRosterEditor = document.querySelector("[data-shrine-roster-editor]");
+const shrineRosterEditorText = document.querySelector("[data-shrine-roster-editor-text]");
+const shrineRosterFormName = document.querySelector("[data-shrine-roster-form-name]");
+const shrineRosterFormGender = document.querySelector("[data-shrine-roster-form-gender]");
+const shrineRosterFormStrengthType = document.querySelector("[data-shrine-roster-form-strength-type]");
+const shrineRosterFormStrengthValue = document.querySelector("[data-shrine-roster-form-strength-value]");
+const shrineRosterSave = document.querySelector("[data-shrine-roster-save]");
+const shrineRosterDelete = document.querySelector("[data-shrine-roster-delete]");
+const shrineRosterMessage = document.querySelector("[data-shrine-roster-message]");
+const shrineGenerateButton = document.querySelector("[data-shrine-generate]");
+const shrineResult = document.querySelector("[data-shrine-result]");
+const shrineRecordSave = document.querySelector("[data-shrine-record-save]");
+const shrineRecordClear = document.querySelector("[data-shrine-record-clear]");
+const shrineRecordList = document.querySelector("[data-shrine-record-list]");
+const shrineRecordMessage = document.querySelector("[data-shrine-record-message]");
 const operatorAuthModal = document.querySelector("[data-operator-auth]");
 const operatorAuthTitle = document.querySelector("[data-operator-auth-title]");
 const operatorAuthSummary = document.querySelector("[data-operator-auth-summary]");
@@ -117,6 +235,8 @@ let confirmSaveReadyAt = 0;
 let adminDraft = null;
 let pendingOperatorAction = null;
 let pendingRestoreBackup = null;
+let isShrineIntroPlaying = false;
+let shrineIntroTimerIds = [];
 
 const medalAssets = {
   medal_participation_cosmos_full_bloom: "assets/medal-stage-02.png",
@@ -132,15 +252,32 @@ let isAdminUnlocked = false;
 
 const progressStorageKey = "suiyoukai-stamp-progress-v1";
 const gameRecordsStorageKey = "suiyoukai-game-records-v1";
+const pendingGameRecordsStorageKey = "suiyoukai-pending-game-records-v2";
 const operationHistoryStorageKey = "suiyoukai-operation-history-v1";
+const teacherProfileStorageKey = "suiyoukai-teacher-profiles-v1";
 const backupAppId = "suiyoukai-stamp-adventure";
 const backupFormatVersion = 1;
 const adminPasscode = "suiyoukai2026";
+const externalGameRecordFormEnabled = true;
+const participationFormUrl = "https://docs.google.com/forms/d/e/1FAIpQLSdEqwXBhF3jDi-YUizfnNnLDfTzD7QJTK469-xwQwA21Gl_rA/viewform?usp=publish-editor";
+const shrineTodayTeacherStorageKey = "suiyoukai-shrine-today-teachers-v1";
+const shrineRosterStorageKey = "suiyoukai-shrine-roster-v1";
+const shrineRecordStorageKey = "suiyoukai-shrine-records-v1";
+const libraryJournalStorageKey = "suiyoukai-library-journal-v1";
 const ruleTargets = window.teacherStampTargets ?? [];
 const participationRule = window.stampRules?.participation ?? {};
 const teacherLessonRule = window.stampRules?.teacherLesson ?? {};
 const teacherCircleRule = window.stampRules?.teacherCircle ?? {};
+const extraTeacherCircleRule = window.stampRules?.extraTeacherCircle ?? {};
 const teacherTargetById = Object.fromEntries(ruleTargets.map((target) => [target.teacherId, target]));
+const teacherCircleTargetIds = teacherCircleRule.teacherIds ?? ruleTargets.map((target) => target.teacherId);
+const extraTeacherCircleTargetIds = extraTeacherCircleRule.teacherIds ?? [
+  "teacher_extra_01",
+  "teacher_extra_02",
+  "teacher_extra_03",
+  "teacher_extra_04",
+  "teacher_extra_05",
+];
 
 const getTeacherTarget = (teacherKey) => teacherTargetById[teacherKey];
 const getParticipationGoal = () => participationRule.maxCount ?? 10;
@@ -223,6 +360,156 @@ const flowerCatalog = {
     flowerColor: "#f3e6bd",
     accentColor: "#c78a49",
   },
+  suzuran: {
+    flower: "suzuran",
+    flowerName: "すずらん",
+    flowerAsset: "suzuran-stamp-stage-05-list.png",
+    fairyId: "fairy_suzuran_mouse",
+    fairyName: "すずらんのネズミ妖精",
+    fairyAsset: "fairy-companion-suzuran-mouse.png",
+    flowerColor: "#f0f7df",
+    accentColor: "#8fb985",
+  },
+  mokuren: {
+    flower: "mokuren",
+    flowerName: "木蓮",
+    flowerAsset: "mokuren-stamp-stage-05-list.png",
+    fairyId: "fairy_mokuren_white_cat",
+    fairyName: "木蓮の白猫妖精",
+    fairyAsset: "fairy-companion-mokuren-white-cat.png",
+    flowerColor: "#f5e7ef",
+    accentColor: "#b985a7",
+  },
+  hinageshi: {
+    flower: "hinageshi",
+    flowerName: "ひなげし",
+    flowerAsset: "hinageshi-stamp-stage-05-list.png",
+    fairyId: "fairy_hinageshi_squirrel",
+    fairyName: "ひなげしのリス妖精",
+    fairyAsset: "fairy-companion-hinageshi-squirrel.png",
+    flowerColor: "#f1a1a7",
+    accentColor: "#d85f65",
+  },
+  shirotsumekusa: {
+    flower: "shirotsumekusa",
+    flowerName: "白詰草",
+    flowerAsset: "shirotsumekusa-stamp-stage-05-list.png",
+    fairyId: "fairy_shirotsumekusa_toy_poodle",
+    fairyName: "白詰草のトイプードル妖精",
+    fairyAsset: "fairy-companion-shirotsumekusa-toy-poodle.png",
+    flowerColor: "#ecf4de",
+    accentColor: "#78a768",
+  },
+  ran: {
+    flower: "ran",
+    flowerName: "蘭",
+    flowerAsset: "ran-stamp-stage-05-list.png",
+    fairyId: "fairy_ran_turtle",
+    fairyName: "蘭の亀妖精",
+    fairyAsset: "fairy-companion-ran-turtle.png",
+    flowerColor: "#ddc7ef",
+    accentColor: "#8e66ba",
+  },
+  hanamizuki: {
+    flower: "hanamizuki",
+    flowerName: "花水木",
+    flowerAsset: "hanamizuki-stamp-stage-05-list.png",
+    fairyId: "fairy_hanamizuki_crane",
+    fairyName: "花水木の鶴妖精",
+    fairyAsset: "fairy-companion-hanamizuki-crane.png",
+    flowerColor: "#f3dce0",
+    accentColor: "#c66b7c",
+  },
+  yamabuki: {
+    flower: "yamabuki",
+    flowerName: "山吹",
+    flowerAsset: "yamabuki-stamp-stage-05-list.png",
+    fairyId: "fairy_yamabuki_shiba",
+    fairyName: "山吹の柴犬妖精",
+    fairyAsset: "fairy-companion-yamabuki-shiba.png",
+    flowerColor: "#e6b23f",
+    accentColor: "#f6d98b",
+  },
+  rindou: {
+    flower: "rindou",
+    flowerName: "りんどう",
+    flowerAsset: "rindou-stamp-stage-05-list.png",
+    fairyId: "fairy_rindou_bluebird",
+    fairyName: "りんどうの青い鳥妖精",
+    fairyAsset: "fairy-companion-rindou-bluebird.png",
+    flowerColor: "#566bb7",
+    accentColor: "#9fb0e5",
+  },
+  tsukimisou: {
+    flower: "tsukimisou",
+    flowerName: "月見草",
+    flowerAsset: "tsukimisou-stamp-stage-05-list.png",
+    fairyId: "fairy_tsukimisou_dormouse",
+    fairyName: "月見草のヤマネ妖精",
+    fairyAsset: "fairy-companion-tsukimisou-dormouse.png",
+    flowerColor: "#f4e28a",
+    accentColor: "#d7b84e",
+  },
+  kingyosou: {
+    flower: "kingyosou",
+    flowerName: "金魚草",
+    flowerAsset: "kingyosou-stamp-stage-05-list.png",
+    fairyId: "fairy_kingyosou_rabbit",
+    fairyName: "金魚草のうさぎ妖精",
+    fairyAsset: "fairy-companion-kingyosou-rabbit.png",
+    flowerColor: "#e57b74",
+    accentColor: "#f2b37e",
+  },
+  fujibakama: {
+    flower: "fujibakama",
+    flowerName: "藤袴",
+    flowerAsset: "fujibakama-stamp-stage-05-list.png",
+    fairyId: "fairy_fujibakama_hedgehog",
+    fairyName: "藤袴のハリネズミ妖精",
+    fairyAsset: "fairy-companion-fujibakama-hedgehog.png",
+    flowerColor: "#b982c0",
+    accentColor: "#e2bfdc",
+  },
+  fuyou: {
+    flower: "fuyou",
+    flowerName: "芙蓉",
+    flowerAsset: "fuyou-stamp-stage-05-list.png",
+    fairyId: "fairy_fuyou_white_goat",
+    fairyName: "芙蓉の白山羊妖精",
+    fairyAsset: "fairy-companion-fuyou-white-goat.png",
+    flowerColor: "#e7a2b8",
+    accentColor: "#f3d5df",
+  },
+  tsuyukusa: {
+    flower: "tsuyukusa",
+    flowerName: "露草",
+    flowerAsset: "tsuyukusa-stamp-stage-05-list.png",
+    fairyId: "fairy_tsuyukusa_otter",
+    fairyName: "露草のカワウソ妖精",
+    fairyAsset: "fairy-companion-tsuyukusa-otter.png",
+    flowerColor: "#3f7fc5",
+    accentColor: "#90c5ea",
+  },
+  kinsenka: {
+    flower: "kinsenka",
+    flowerName: "金盞花",
+    flowerAsset: "kinsenka-stamp-stage-05-list.png",
+    fairyId: "fairy_kinsenka_hamster",
+    fairyName: "金盞花のハムスター妖精",
+    fairyAsset: "fairy-companion-kinsenka-hamster.png",
+    flowerColor: "#e19a35",
+    accentColor: "#f4c96d",
+  },
+  nanten: {
+    flower: "nanten",
+    flowerName: "南天",
+    flowerAsset: "nanten-stamp-stage-05-list.png",
+    fairyId: "fairy_nanten_tanuki",
+    fairyName: "南天のたぬき妖精",
+    fairyAsset: "fairy-companion-nanten-tanuki.png",
+    flowerColor: "#b9434a",
+    accentColor: "#e4a24c",
+  },
   asagao: {
     flower: "asagao",
     flowerName: "朝顔",
@@ -303,6 +590,11 @@ const teacherCycleFlowerAssignments = {
   koike: ["sunflower", "asagao", "kikyo"],
   yamashiro: ["hydrangea", "nadeshiko", "suisen"],
   matsumoto: ["sakura", "hagi", "shakuyaku"],
+  teacher_extra_01: ["suzuran", "mokuren", "hinageshi"],
+  teacher_extra_02: ["shirotsumekusa", "ran", "hanamizuki"],
+  teacher_extra_03: ["yamabuki", "rindou", "tsukimisou"],
+  teacher_extra_04: ["kingyosou", "fujibakama", "fuyou"],
+  teacher_extra_05: ["tsuyukusa", "kinsenka", "nanten"],
 };
 
 const getCycleProgress = (count, perCycleGoal, cycles) => {
@@ -472,6 +764,71 @@ const teacherDetails = {
     lesson: "序盤から中盤のつながりをたどり、形が育つ手を探す指導",
     note: "全体の流れをつかみたい冒険者へ",
   },
+  teacher_extra_01: {
+    name: "追加先生A",
+    guide: "新しい花をひらく案内人",
+    stampCount: 0,
+    fairy: false,
+    photo: "extra-a",
+    flower: "suzuran",
+    initial: "追A",
+    completedFirstRound: false,
+    style: "やさしく局面を整え、新しい気づきを見つける",
+    lesson: "すずらんから始まる花巡りを、冒険者の歩幅に合わせて進める指導",
+    note: "新しい先生枠を試したい冒険者へ",
+  },
+  teacher_extra_02: {
+    name: "追加先生B",
+    guide: "新しい道を照らす案内人",
+    stampCount: 0,
+    fairy: false,
+    photo: "extra-b",
+    flower: "shirotsumekusa",
+    initial: "追B",
+    completedFirstRound: false,
+    style: "小さな発見を拾いながら、次の一手へつなげる",
+    lesson: "白詰草から始まる花巡りを、落ち着いて積み重ねる指導",
+    note: "新しい相性を探したい冒険者へ",
+  },
+  teacher_extra_03: {
+    name: "追加先生C",
+    guide: "新しい先生の輪をつなぐ案内人",
+    stampCount: 0,
+    fairy: false,
+    photo: "extra-c",
+    flower: "yamabuki",
+    initial: "追C",
+    completedFirstRound: false,
+    style: "明るい入口から、読みの道筋を一緒に見つける",
+    lesson: "山吹から始まる花巡りを、初めて会う人にもわかりやすく支える指導",
+    note: "新しい先生の輪を育てる冒険者へ",
+  },
+  teacher_extra_04: {
+    name: "追加先生D",
+    guide: "新しい花を咲かせる案内人",
+    stampCount: 0,
+    fairy: false,
+    photo: "extra-d",
+    flower: "kingyosou",
+    initial: "追D",
+    completedFirstRound: false,
+    style: "一手の表情を見ながら、次の発見へそっと導く",
+    lesson: "金魚草から始まる花巡りを、楽しく続けられるように整える指導",
+    note: "新しい出会いを記録したい冒険者へ",
+  },
+  teacher_extra_05: {
+    name: "追加先生E",
+    guide: "新しい輪を見守る案内人",
+    stampCount: 0,
+    fairy: false,
+    photo: "extra-e",
+    flower: "tsuyukusa",
+    initial: "追E",
+    completedFirstRound: false,
+    style: "静かな発見を拾い上げ、次の一手につなげる",
+    lesson: "露草から始まる花巡りを、一人ひとりの歩幅に合わせて進める指導",
+    note: "これから広がる先生の輪を楽しみたい冒険者へ",
+  },
 };
 
 for (const [teacherKey, teacher] of Object.entries(teacherDetails)) {
@@ -506,6 +863,60 @@ for (const [teacherKey, teacher] of Object.entries(teacherDetails)) {
   });
 }
 
+const teacherProfileFields = ["style", "lesson", "note"];
+
+const sanitizeTeacherProfileOverrides = (stored = {}) => {
+  if (!stored || typeof stored !== "object" || Array.isArray(stored)) {
+    return {};
+  }
+
+  return Object.fromEntries(
+    Object.entries(stored)
+      .filter(([teacherId]) => Boolean(teacherDetails[teacherId]))
+      .map(([teacherId, profile]) => {
+        const cleanProfile = {};
+
+        if (profile && typeof profile === "object" && !Array.isArray(profile)) {
+          for (const field of teacherProfileFields) {
+            if (typeof profile[field] === "string") {
+              const text = profile[field].trim().slice(0, 120);
+
+              if (text && text !== teacherDetails[teacherId][field]) {
+                cleanProfile[field] = text;
+              }
+            }
+          }
+        }
+
+        return [teacherId, cleanProfile];
+      })
+      .filter(([, profile]) => Object.keys(profile).length > 0)
+  );
+};
+
+const loadTeacherProfileOverrides = () => {
+  try {
+    return sanitizeTeacherProfileOverrides(JSON.parse(localStorage.getItem(teacherProfileStorageKey) ?? "{}"));
+  } catch {
+    return {};
+  }
+};
+
+let teacherProfileOverrides = loadTeacherProfileOverrides();
+
+const saveTeacherProfileOverrides = () => {
+  try {
+    localStorage.setItem(teacherProfileStorageKey, JSON.stringify(teacherProfileOverrides));
+  } catch {
+    // 紹介文を保存できない環境でも、表示中の画面はそのまま使えます。
+  }
+};
+
+const getTeacherProfile = (teacherId) => ({
+  ...teacherDetails[teacherId],
+  ...(teacherProfileOverrides[teacherId] ?? {}),
+});
+
 const cloneProgressTemplate = () => JSON.parse(JSON.stringify(window.userProgressTemplate ?? {
   schemaVersion: 2,
   stamps: {
@@ -526,6 +937,12 @@ const normalizeProgressCount = (count) => Math.max(0, Number(count) || 0);
 const getStoredParticipationCount = (progress = {}) =>
   progress.stamps?.participationCount ?? progress.participationCount ?? 0;
 
+const getStoredLastParticipationStampDate = (progress = {}) =>
+  progress.stamps?.lastParticipationStampDate ?? progress.lastParticipationStampDate ?? "";
+
+const sanitizeStampDate = (value) =>
+  typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value) ? value : "";
+
 const getStoredTeacherLessonCounts = (progress = {}) =>
   progress.stamps?.teacherLessonCounts ?? progress.teacherLessonCounts ?? {};
 
@@ -542,8 +959,8 @@ const getStoredEarnedCompanions = (progress = {}) =>
   progress.earned?.companions ?? progress.earnedCompanions ?? [];
 
 const getTeacherCircleRoundsFromCounts = (teacherLessonCounts = {}) => {
-  const teacherIds = ruleTargets.length > 0
-    ? ruleTargets.map((target) => target.teacherId)
+  const teacherIds = teacherCircleTargetIds.length > 0
+    ? teacherCircleTargetIds
     : Object.keys(teacherDetails);
 
   if (teacherIds.length === 0) {
@@ -559,7 +976,7 @@ const createInitialProgressFromTeacherDetails = () => {
   progress.stamps.teacherLessonCounts = {
     ...progress.stamps.teacherLessonCounts,
     ...Object.fromEntries(
-      Object.entries(teacherDetails).map(([teacherId, teacher]) => [teacherId, normalizeProgressCount(teacher.stampCount)])
+      Object.keys(teacherDetails).map((teacherId) => [teacherId, 0])
     ),
   };
   progress.stamps.teacherCircleRounds = getTeacherCircleRoundsFromCounts(progress.stamps.teacherLessonCounts);
@@ -587,6 +1004,7 @@ const sanitizeProgress = (progress = {}) => {
         getStoredParticipationCount(progress) ?? template.stamps.participationCount,
         getParticipationMaxCount()
       ),
+      lastParticipationStampDate: sanitizeStampDate(getStoredLastParticipationStampDate(progress)),
       teacherLessonCounts,
       teacherCircleRounds: getTeacherCircleRoundsFromCounts(teacherLessonCounts),
     },
@@ -609,6 +1027,7 @@ const createResetProgress = () => {
     schemaVersion: template.schemaVersion,
     stamps: {
       participationCount: 0,
+      lastParticipationStampDate: "",
       teacherLessonCounts,
       teacherCircleRounds: 0,
     },
@@ -674,6 +1093,82 @@ const saveGameRecords = () => {
   }
 };
 
+const sanitizeLibraryJournalEntry = (entry = {}) => {
+  const text = typeof entry.text === "string" ? entry.text.trim() : "";
+  const createdAt = typeof entry.createdAt === "string" ? entry.createdAt : "";
+
+  if (!text) {
+    return null;
+  }
+
+  return {
+    id: typeof entry.id === "string" && entry.id ? entry.id : `journal-${Date.now()}`,
+    text: text.slice(0, 80),
+    source: typeof entry.source === "string" && entry.source ? entry.source : "manual",
+    createdAt,
+  };
+};
+
+const loadLibraryJournalEntries = () => {
+  try {
+    const storedEntries = JSON.parse(localStorage.getItem(libraryJournalStorageKey) ?? "[]");
+    return Array.isArray(storedEntries)
+      ? storedEntries.map(sanitizeLibraryJournalEntry).filter(Boolean).slice(0, 12)
+      : [];
+  } catch {
+    return [];
+  }
+};
+
+let libraryJournalEntries = loadLibraryJournalEntries();
+
+const saveLibraryJournalEntries = () => {
+  try {
+    localStorage.setItem(libraryJournalStorageKey, JSON.stringify(libraryJournalEntries.slice(0, 12)));
+  } catch {
+    // 思い出メモを保存できない環境でも、他の記録はそのまま使えます。
+  }
+};
+
+const addLibraryJournalEntry = ({ text, source = "manual" }) => {
+  const entry = sanitizeLibraryJournalEntry({
+    id: `journal-${Date.now()}-${libraryJournalEntries.length}`,
+    text,
+    source,
+    createdAt: new Date().toISOString(),
+  });
+
+  if (!entry) {
+    return null;
+  }
+
+  libraryJournalEntries = [
+    entry,
+    ...libraryJournalEntries.filter((item) => item.text !== entry.text),
+  ].slice(0, 12);
+  saveLibraryJournalEntries();
+  return entry;
+};
+
+const loadPendingGameRecords = () => {
+  try {
+    const storedRecords = JSON.parse(localStorage.getItem(pendingGameRecordsStorageKey) ?? "[]");
+    return Array.isArray(storedRecords) ? storedRecords.map(sanitizeGameRecord).filter(Boolean) : [];
+  } catch {
+    return [];
+  }
+};
+
+let pendingGameRecords = loadPendingGameRecords();
+
+const savePendingGameRecords = () => {
+  try {
+    localStorage.setItem(pendingGameRecordsStorageKey, JSON.stringify(pendingGameRecords));
+  } catch {
+    // 確認待ちの記録は保存できない環境でも、この画面を開いている間は保持します。
+  }
+};
+
 const sanitizeOperationHistory = (entry = {}) => {
   const target = typeof entry.target === "string" && entry.target
     ? entry.target
@@ -735,6 +1230,7 @@ const createBackupData = () => ({
   savedAt: new Date().toISOString(),
   progress: cloneJsonData(userProgress),
   operationHistory: cloneJsonData(operationHistory),
+  teacherProfiles: cloneJsonData(teacherProfileOverrides),
 });
 
 const getBackupFilename = (kind = "backup") => {
@@ -791,14 +1287,22 @@ const validateBackupData = (backup) => {
     throw new Error("スタンプ記録の形式が壊れています。");
   }
 
-  for (const teacherId of Object.keys(teacherDetails)) {
-    if (!isValidBackupCount(teacherCounts[teacherId])
-      || teacherCounts[teacherId] > getTeacherMaxCount(teacherDetails[teacherId])) {
+  const sanitizedProgress = sanitizeProgress(progress);
+  const sanitizedTeacherCounts = sanitizedProgress.stamps.teacherLessonCounts;
+
+  for (const [teacherId, count] of Object.entries(teacherCounts)) {
+    const teacher = teacherDetails[teacherId];
+
+    if (!teacher) {
+      continue;
+    }
+
+    if (!isValidBackupCount(count) || count > getTeacherMaxCount(teacher)) {
       throw new Error("先生ごとのスタンプ記録が正しくありません。");
     }
   }
 
-  if (stamps.teacherCircleRounds !== getTeacherCircleRoundsFromCounts(teacherCounts)) {
+  if (sanitizedProgress.stamps.teacherCircleRounds !== getTeacherCircleRoundsFromCounts(sanitizedTeacherCounts)) {
     throw new Error("先生の輪の記録が一致しません。");
   }
 
@@ -818,8 +1322,9 @@ const validateBackupData = (backup) => {
     appId: backupAppId,
     formatVersion: backupFormatVersion,
     savedAt: backup.savedAt,
-    progress: sanitizeProgress(progress),
+    progress: sanitizedProgress,
     operationHistory: backup.operationHistory.map(sanitizeOperationHistory).slice(-50),
+    teacherProfiles: sanitizeTeacherProfileOverrides(backup.teacherProfiles ?? {}),
   };
 };
 
@@ -900,6 +1405,23 @@ const addGameRecord = (teacherId) => {
   return record;
 };
 
+const addPendingGameRecord = (teacherId) => {
+  const draft = getGameRecordDraft();
+  const record = {
+    id: `pending-game-${Date.now()}-${teacherId}`,
+    teacherId,
+    date: draft.date,
+    handicap: draft.handicap,
+    result: draft.result,
+    recordedAt: new Date().toISOString(),
+  };
+
+  pendingGameRecords = pendingGameRecords.filter((item) => item.id !== record.id);
+  pendingGameRecords.push(record);
+  savePendingGameRecords();
+  return record;
+};
+
 const renderTeacherGameRecords = (teacherId) => {
   if (!teacherGameRecordList) {
     return;
@@ -908,14 +1430,31 @@ const renderTeacherGameRecords = (teacherId) => {
   const records = gameRecords
     .filter((record) => record.teacherId === teacherId)
     .sort((a, b) => `${b.date}${b.recordedAt}`.localeCompare(`${a.date}${a.recordedAt}`));
+  const pendingRecords = pendingGameRecords
+    .filter((record) => record.teacherId === teacherId)
+    .sort((a, b) => `${b.date}${b.recordedAt}`.localeCompare(`${a.date}${a.recordedAt}`));
 
   teacherGameRecordList.textContent = "";
-  if (records.length === 0) {
+  if (records.length === 0 && pendingRecords.length === 0) {
     const empty = document.createElement("p");
     empty.className = "game-record-empty";
     empty.textContent = "まだ対局記録はありません";
     teacherGameRecordList.append(empty);
     return;
+  }
+
+  for (const record of pendingRecords) {
+    const item = document.createElement("article");
+    item.className = "teacher-game-record-item is-pending";
+    const date = document.createElement("time");
+    const details = document.createElement("span");
+    const status = document.createElement("small");
+    date.dateTime = record.date;
+    date.textContent = record.date.replaceAll("-", "/");
+    details.textContent = `${record.handicap}・${record.result}`;
+    status.textContent = "運営確認待ち";
+    item.append(date, details, status);
+    teacherGameRecordList.append(item);
   }
 
   for (const record of records) {
@@ -1158,8 +1697,2758 @@ const addParticipationStamp = () => {
     normalizeProgressCount(userProgress.stamps.participationCount) + 1,
     getParticipationMaxCount()
   );
+  userProgress.stamps.lastParticipationStampDate = getTodayForInput();
   syncProgressRewards();
   saveUserProgress();
+};
+
+const populateAdminGameRecordTeachers = () => {
+  if (!adminGameRecordTeacher) {
+    return;
+  }
+
+  adminGameRecordTeacher.textContent = "";
+  for (const [teacherId, teacher] of Object.entries(teacherDetails)) {
+    const option = document.createElement("option");
+    option.value = teacherId;
+    option.textContent = teacher.name;
+    adminGameRecordTeacher.append(option);
+  }
+};
+
+const populateAdminTeacherProfileEditor = () => {
+  if (!adminTeacherProfileSelect) {
+    return;
+  }
+
+  adminTeacherProfileSelect.textContent = "";
+  for (const [teacherId, teacher] of Object.entries(teacherDetails)) {
+    const option = document.createElement("option");
+    option.value = teacherId;
+    option.textContent = teacher.name;
+    adminTeacherProfileSelect.append(option);
+  }
+
+  if (teacherDetails[activeTeacherKey]) {
+    adminTeacherProfileSelect.value = activeTeacherKey;
+  }
+};
+
+const syncAdminTeacherProfileEditor = () => {
+  if (!adminTeacherProfileSelect || !adminTeacherProfileStyle || !adminTeacherProfileLesson || !adminTeacherProfileNote) {
+    return;
+  }
+
+  const teacherId = adminTeacherProfileSelect.value || activeTeacherKey;
+  const profile = getTeacherProfile(teacherId);
+
+  if (!profile) {
+    return;
+  }
+
+  adminTeacherProfileStyle.value = profile.style;
+  adminTeacherProfileLesson.value = profile.lesson;
+  adminTeacherProfileNote.value = profile.note;
+
+  if (adminTeacherProfileState) {
+    adminTeacherProfileState.textContent = teacherProfileOverrides[teacherId] ? "変更あり" : "初期文";
+  }
+
+  if (adminTeacherProfileMessage) {
+    adminTeacherProfileMessage.textContent = "花図鑑の先生紹介に反映されます。";
+  }
+};
+
+const markAdminTeacherProfileDirty = () => {
+  if (adminTeacherProfileState) {
+    adminTeacherProfileState.textContent = "未保存";
+  }
+
+  if (adminTeacherProfileMessage) {
+    adminTeacherProfileMessage.textContent = "保存すると花図鑑の紹介欄に反映されます。";
+  }
+};
+
+const saveAdminTeacherProfileEditor = () => {
+  if (!adminTeacherProfileSelect || !adminTeacherProfileStyle || !adminTeacherProfileLesson || !adminTeacherProfileNote) {
+    return;
+  }
+
+  const teacherId = adminTeacherProfileSelect.value;
+  const teacher = teacherDetails[teacherId];
+
+  if (!teacher) {
+    return;
+  }
+
+  const nextProfile = {};
+  for (const [field, element] of [
+    ["style", adminTeacherProfileStyle],
+    ["lesson", adminTeacherProfileLesson],
+    ["note", adminTeacherProfileNote],
+  ]) {
+    const text = element.value.trim().slice(0, 120) || teacher[field];
+
+    element.value = text;
+    if (text !== teacher[field]) {
+      nextProfile[field] = text;
+    }
+  }
+
+  if (Object.keys(nextProfile).length > 0) {
+    teacherProfileOverrides[teacherId] = nextProfile;
+  } else {
+    delete teacherProfileOverrides[teacherId];
+  }
+
+  saveTeacherProfileOverrides();
+
+  if (teacherId === activeTeacherKey) {
+    renderTeacherDetail(activeTeacherKey);
+  }
+
+  syncAdminTeacherProfileEditor();
+  if (adminTeacherProfileState) {
+    adminTeacherProfileState.textContent = "保存済み";
+  }
+  if (adminTeacherProfileMessage) {
+    adminTeacherProfileMessage.textContent = `${teacher.name} の紹介文を保存しました。`;
+  }
+};
+
+const resetAdminTeacherProfileEditor = () => {
+  if (!adminTeacherProfileSelect) {
+    return;
+  }
+
+  const teacherId = adminTeacherProfileSelect.value;
+  const teacher = teacherDetails[teacherId];
+
+  if (!teacher) {
+    return;
+  }
+
+  delete teacherProfileOverrides[teacherId];
+  saveTeacherProfileOverrides();
+
+  if (teacherId === activeTeacherKey) {
+    renderTeacherDetail(activeTeacherKey);
+  }
+
+  syncAdminTeacherProfileEditor();
+  if (adminTeacherProfileState) {
+    adminTeacherProfileState.textContent = "初期文";
+  }
+  if (adminTeacherProfileMessage) {
+    adminTeacherProfileMessage.textContent = `${teacher.name} の紹介文を初期文に戻しました。`;
+  }
+};
+
+const loadShrineTodayTeacherSettings = () => {
+  try {
+    const stored = JSON.parse(localStorage.getItem(shrineTodayTeacherStorageKey) ?? "{}");
+    return stored && typeof stored === "object" && !Array.isArray(stored) ? stored : {};
+  } catch {
+    return {};
+  }
+};
+
+let shrineTodayTeacherSettings = loadShrineTodayTeacherSettings();
+
+const saveShrineTodayTeacherSettings = () => {
+  if (!shrineTeacherList) {
+    return;
+  }
+
+  shrineTodayTeacherSettings = Object.fromEntries(
+    Object.keys(teacherDetails).map((teacherId) => {
+      const input = shrineTeacherList.querySelector(`[data-shrine-teacher="${teacherId}"]`);
+      const boardInput = shrineTeacherList.querySelector(`[data-shrine-teacher-boards="${teacherId}"]`);
+
+      return [teacherId, {
+        active: Boolean(input?.checked),
+        boards: Math.max(1, Math.min(6, Number(boardInput?.value) || 3)),
+      }];
+    })
+  );
+
+  try {
+    localStorage.setItem(shrineTodayTeacherStorageKey, JSON.stringify(shrineTodayTeacherSettings));
+  } catch {
+    // 当日の先生選択が保存できない環境でも、画面上の選択はそのまま使えます。
+  }
+};
+
+const renderShrineTeachers = () => {
+  if (!shrineTeacherList) {
+    return;
+  }
+
+  shrineTeacherList.textContent = "";
+  for (const [teacherId, teacher] of Object.entries(teacherDetails)) {
+    const label = document.createElement("label");
+    const input = document.createElement("input");
+    const copy = document.createElement("span");
+    const name = document.createElement("strong");
+    const guide = document.createElement("small");
+    const boardControl = document.createElement("span");
+    const boardLabel = document.createElement("span");
+    const boardSelect = document.createElement("select");
+
+    input.type = "checkbox";
+    input.value = teacherId;
+    input.checked = shrineTodayTeacherSettings[teacherId]?.active ?? true;
+    input.dataset.shrineTeacher = teacherId;
+    boardControl.className = "shrine-board-count";
+    boardLabel.textContent = "面数";
+    boardLabel.className = "shrine-board-label";
+    boardSelect.dataset.shrineTeacherBoards = teacherId;
+    boardSelect.setAttribute("aria-label", `${teacher.name} の面数`);
+    for (let count = 1; count <= 6; count += 1) {
+      const option = document.createElement("option");
+      option.value = String(count);
+      option.textContent = `${count}面`;
+      option.selected = count === (shrineTodayTeacherSettings[teacherId]?.boards ?? 3);
+      boardSelect.append(option);
+    }
+    name.textContent = teacher.name;
+    guide.textContent = teacher.guide;
+    copy.append(name, guide);
+    boardControl.append(boardLabel, boardSelect);
+    label.append(input, copy, boardControl);
+    shrineTeacherList.append(label);
+  }
+
+  updateShrineTeacherCount();
+};
+
+const defaultShrineRoster = [
+  "佐藤さん",
+  "鈴木さん",
+  "田中さん",
+  "高橋さん",
+  "伊藤さん",
+  "山本さん",
+  "中村さん",
+  "小林さん",
+  "加藤さん",
+  "吉田さん",
+  "山田さん",
+  "渡辺さん",
+  "青木さん",
+  "石井さん",
+  "上田さん",
+  "遠藤さん",
+  "岡田さん",
+];
+
+const shrineGenderLabel = {
+  male: "男",
+  female: "女",
+};
+
+const normalizeShrineGender = (value) => {
+  const text = String(value ?? "").trim();
+  if (["男", "男性", "男子", "male", "m"].includes(text.toLowerCase())) {
+    return "male";
+  }
+  if (["女", "女性", "女子", "female", "f"].includes(text.toLowerCase())) {
+    return "female";
+  }
+  return "";
+};
+
+const parseShrineStrength = (value) => {
+  const text = String(value ?? "").trim();
+  if (!text) {
+    return { type: "", value: "", score: null };
+  }
+
+  const japaneseNumberMap = {
+    初: 1,
+    一: 1,
+    二: 2,
+    三: 3,
+    四: 4,
+    五: 5,
+    六: 6,
+    七: 7,
+    八: 8,
+    九: 9,
+    十: 10,
+  };
+  const parseJapaneseNumber = (numberText) => {
+    if (!numberText) {
+      return null;
+    }
+    if (japaneseNumberMap[numberText] !== undefined) {
+      return japaneseNumberMap[numberText];
+    }
+    const tenParts = numberText.split("十");
+    if (tenParts.length === 2) {
+      const tens = tenParts[0] ? japaneseNumberMap[tenParts[0]] : 1;
+      const ones = tenParts[1] ? japaneseNumberMap[tenParts[1]] : 0;
+      return tens && ones !== undefined ? tens * 10 + ones : null;
+    }
+    return null;
+  };
+
+  const pointMatch = text.match(/^(-?\d+(?:\.\d+)?)\s*(?:点|pt|point|points)?$/i);
+  if (pointMatch) {
+    const point = Number(pointMatch[1]);
+    return { type: "point", value: String(point), score: point };
+  }
+
+  const danMatch = text.match(/^(\d+|初|[一二三四五六七八九十]+)\s*段$/);
+  if (danMatch) {
+    const rawDan = /^\d+$/.test(danMatch[1]) ? Number(danMatch[1]) : parseJapaneseNumber(danMatch[1]);
+    const dan = Math.max(1, Math.min(9, Number(rawDan) || 1));
+    return { type: "dan", value: String(dan), score: 1000 + dan * 100 };
+  }
+
+  const kyuMatch = text.match(/^(\d+|[一二三四五六七八九十]+)\s*級$/);
+  if (kyuMatch) {
+    const rawKyu = /^\d+$/.test(kyuMatch[1]) ? Number(kyuMatch[1]) : parseJapaneseNumber(kyuMatch[1]);
+    const kyu = Math.max(1, Math.min(30, Number(rawKyu) || 1));
+    return { type: "kyu", value: String(kyu), score: 1000 - kyu * 40 };
+  }
+
+  return { type: "", value: "", score: null };
+};
+
+const normalizeShrineStrength = (strength = {}) => {
+  if (typeof strength === "string" || typeof strength === "number") {
+    return parseShrineStrength(strength);
+  }
+
+  const type = String(strength.type ?? "").trim();
+  const value = String(strength.value ?? "").trim();
+  if (!type || !value) {
+    return parseShrineStrength("");
+  }
+  if (type === "point") {
+    return parseShrineStrength(`${value}点`);
+  }
+  if (type === "dan") {
+    return parseShrineStrength(`${value}段`);
+  }
+  if (type === "kyu") {
+    return parseShrineStrength(`${value}級`);
+  }
+  return parseShrineStrength("");
+};
+
+const formatShrineStrength = (strength = {}) => {
+  const normalized = normalizeShrineStrength(strength);
+  if (!normalized.type || !normalized.value) {
+    return "";
+  }
+  if (normalized.type === "point") {
+    return `${normalized.value}点`;
+  }
+  if (normalized.type === "dan") {
+    return `${normalized.value}段`;
+  }
+  if (normalized.type === "kyu") {
+    return `${normalized.value}級`;
+  }
+  return "";
+};
+
+const parseShrinePersonLine = (value) => {
+  const text = String(value ?? "").trim();
+  const tokens = text.split(/[\s　]+/).filter(Boolean);
+  let gender = "";
+  let strength = parseShrineStrength("");
+  const nameTokens = [];
+
+  for (const token of tokens) {
+    const tokenGender = normalizeShrineGender(token);
+    const tokenStrength = parseShrineStrength(token);
+    if (tokenGender && !gender) {
+      gender = tokenGender;
+    } else if (tokenStrength.type && !strength.type) {
+      strength = tokenStrength;
+    } else {
+      nameTokens.push(token);
+    }
+  }
+
+  const name = nameTokens.join(" ").trim();
+
+  return { name, gender, strength };
+};
+
+const formatShrinePersonLine = (person) => {
+  const name = String(person?.name ?? "").trim();
+  const gender = normalizeShrineGender(person?.gender);
+  const strengthText = formatShrineStrength(person?.strength);
+  return [name, gender ? shrineGenderLabel[gender] : "", strengthText].filter(Boolean).join(" ");
+};
+
+const normalizeRosterNames = (value) => {
+  const rawItems = Array.isArray(value)
+    ? value
+    : String(value ?? "").split(/\r?\n|、|,/);
+  const seen = new Set();
+  const entries = [];
+
+  for (const item of rawItems) {
+    const person = typeof item === "object" && item !== null
+      ? {
+          name: String(item.name ?? "").trim(),
+          gender: normalizeShrineGender(item.gender),
+          strength: normalizeShrineStrength(item.strength),
+        }
+      : parseShrinePersonLine(item);
+
+    if (!person.name || seen.has(person.name)) {
+      continue;
+    }
+
+    seen.add(person.name);
+    entries.push({
+      name: person.name,
+      gender: normalizeShrineGender(person.gender),
+      strength: normalizeShrineStrength(person.strength),
+    });
+  }
+
+  return entries;
+};
+
+const loadShrineRoster = () => {
+  try {
+    const stored = JSON.parse(localStorage.getItem(shrineRosterStorageKey) ?? "[]");
+    const names = normalizeRosterNames(stored);
+    return names.length > 0 ? names : normalizeRosterNames(defaultShrineRoster);
+  } catch {
+    return normalizeRosterNames(defaultShrineRoster);
+  }
+};
+
+let shrineRosterNames = loadShrineRoster();
+let editingShrineRosterName = "";
+let lastSavedShrineRosterName = "";
+
+const saveShrineRoster = () => {
+  try {
+    localStorage.setItem(shrineRosterStorageKey, JSON.stringify(shrineRosterNames));
+  } catch {
+    // 名簿保存が使えない環境でも、当日の入力だけで使えるようにします。
+  }
+};
+
+const setRosterStrengthValueMode = (input, type) => {
+  if (!input) {
+    return;
+  }
+
+  if (type === "point") {
+    input.type = "text";
+    input.removeAttribute("min");
+    input.removeAttribute("step");
+    input.inputMode = "text";
+    input.pattern = "-?[0-9]*";
+    input.placeholder = "0";
+    return;
+  }
+
+  input.type = "text";
+  input.min = "1";
+  input.step = "1";
+  input.inputMode = "numeric";
+  input.pattern = "[0-9]*";
+  input.placeholder = "数字";
+};
+
+const clearShrineRosterForm = () => {
+  editingShrineRosterName = "";
+  if (shrineRosterFormName) {
+    shrineRosterFormName.value = "";
+  }
+  if (shrineRosterFormGender) {
+    shrineRosterFormGender.value = "";
+  }
+  if (shrineRosterFormStrengthType) {
+    shrineRosterFormStrengthType.value = "";
+  }
+  if (shrineRosterFormStrengthValue) {
+    shrineRosterFormStrengthValue.value = "";
+    setRosterStrengthValueMode(shrineRosterFormStrengthValue, "");
+  }
+};
+
+const fillShrineRosterForm = (person = {}) => {
+  const strength = normalizeShrineStrength(person.strength);
+  editingShrineRosterName = String(person.name ?? "").trim();
+  if (shrineRosterFormName) {
+    shrineRosterFormName.value = editingShrineRosterName;
+  }
+  if (shrineRosterFormGender) {
+    shrineRosterFormGender.value = normalizeShrineGender(person.gender);
+  }
+  if (shrineRosterFormStrengthType) {
+    shrineRosterFormStrengthType.value = strength.type;
+  }
+  if (shrineRosterFormStrengthValue) {
+    setRosterStrengthValueMode(shrineRosterFormStrengthValue, strength.type);
+    shrineRosterFormStrengthValue.value = strength.value;
+  }
+};
+
+const renderShrineRoster = () => {
+  if (!shrineRosterList) {
+    return;
+  }
+
+  const query = shrineRosterSearch?.value.trim().toLowerCase() ?? "";
+  const selectedNames = new Set([...shrineRosterList.querySelectorAll("[data-shrine-roster-name]:checked")]
+    .map((input) => input.dataset.shrineRosterName)
+    .filter(Boolean));
+  shrineRosterList.textContent = "";
+  const visibleRosterNames = query
+    ? shrineRosterNames.filter((person) => {
+        const text = [
+          person.name,
+          normalizeShrineGender(person.gender) ? shrineGenderLabel[normalizeShrineGender(person.gender)] : "未設定",
+          formatShrineStrength(person.strength) || "棋力未設定",
+        ].join(" ").toLowerCase();
+        return text.includes(query) || selectedNames.has(person.name);
+      })
+    : shrineRosterNames;
+
+  for (const person of visibleRosterNames) {
+    const row = document.createElement("div");
+    const checkbox = document.createElement("input");
+    const editButton = document.createElement("button");
+    const name = document.createElement("strong");
+    const meta = document.createElement("small");
+
+    checkbox.type = "checkbox";
+    checkbox.value = formatShrinePersonLine(person);
+    checkbox.dataset.shrineRosterName = person.name;
+    checkbox.checked = selectedNames.has(person.name);
+    editButton.type = "button";
+    editButton.dataset.shrineRosterEditName = person.name;
+    name.textContent = person.name;
+    meta.textContent = [
+      normalizeShrineGender(person.gender) ? shrineGenderLabel[normalizeShrineGender(person.gender)] : "未設定",
+      formatShrineStrength(person.strength) || "棋力未設定",
+    ].join("・");
+    editButton.append(name, meta);
+    row.className = "shrine-roster-row";
+    row.dataset.shrineRosterRow = person.name;
+    row.append(checkbox, editButton);
+    shrineRosterList.append(row);
+  }
+  return;
+
+  if (shrineRosterEditorText) {
+    shrineRosterEditorText.value = shrineRosterNames.map(formatShrinePersonLine).join("\n");
+  }
+
+  const updateStrengthValueInput = (input, type) => {
+    if (type === "point") {
+      input.type = "text";
+      input.removeAttribute("min");
+      input.removeAttribute("step");
+      input.inputMode = "text";
+      input.pattern = "-?[0-9]*";
+      input.placeholder = "0";
+      return;
+    }
+
+    input.type = "text";
+    input.min = "1";
+    input.step = "1";
+    input.inputMode = "numeric";
+    input.pattern = "[0-9]*";
+    input.placeholder = "値";
+  };
+
+  for (const person of shrineRosterNames) {
+    const label = document.createElement("label");
+    const checkbox = document.createElement("input");
+    const nameInput = document.createElement("input");
+    const genderSelect = document.createElement("select");
+    const strengthType = document.createElement("select");
+    const strengthValue = document.createElement("input");
+    const strength = normalizeShrineStrength(person.strength);
+    checkbox.type = "checkbox";
+    checkbox.value = formatShrinePersonLine(person);
+    checkbox.dataset.shrineRosterName = person.name;
+    nameInput.type = "text";
+    nameInput.value = person.name;
+    nameInput.dataset.shrineRosterFullName = person.name;
+    nameInput.setAttribute("aria-label", "フルネーム");
+    genderSelect.dataset.shrineRosterGender = person.name;
+    genderSelect.setAttribute("aria-label", `${person.name} の男女`);
+    for (const [value, labelText] of [
+      ["", "未設定"],
+      ["female", "女"],
+      ["male", "男"],
+    ]) {
+      const option = document.createElement("option");
+      option.value = value;
+      option.textContent = labelText;
+      option.selected = person.gender === value;
+      genderSelect.append(option);
+    }
+    strengthType.dataset.shrineRosterStrengthType = person.name;
+    strengthType.setAttribute("aria-label", `${person.name} の棋力方式`);
+    for (const [value, labelText] of [
+      ["", "棋力"],
+      ["point", "点"],
+      ["dan", "段"],
+      ["kyu", "級"],
+    ]) {
+      const option = document.createElement("option");
+      option.value = value;
+      option.textContent = labelText;
+      option.selected = strength.type === value;
+      strengthType.append(option);
+    }
+    strengthValue.type = "text";
+    updateStrengthValueInput(strengthValue, strength.type);
+    strengthValue.value = strength.value;
+    strengthValue.dataset.shrineRosterStrengthValue = person.name;
+    strengthValue.setAttribute("aria-label", `${person.name} の棋力`);
+    label.append(checkbox, nameInput, genderSelect, strengthType, strengthValue);
+    shrineRosterList.append(label);
+  }
+};
+
+const updateShrineRosterStrengthValueInput = (input, type) => {
+  if (!input) {
+    return;
+  }
+
+  if (type === "point") {
+    input.type = "text";
+    input.removeAttribute("min");
+    input.removeAttribute("step");
+    input.inputMode = "text";
+    input.pattern = "-?[0-9]*";
+    input.placeholder = "0";
+    return;
+  }
+
+  input.type = "text";
+  input.min = "1";
+  input.step = "1";
+  input.inputMode = "numeric";
+  input.pattern = "[0-9]*";
+  input.placeholder = "値";
+};
+
+const setShrineRosterMessage = (message) => {
+  if (shrineRosterMessage) {
+    shrineRosterMessage.textContent = message;
+  }
+};
+
+const updateShrineRosterApplyState = () => {
+  if (!shrineRosterApply || !shrineRosterList) {
+    return;
+  }
+
+  const selectedCount = shrineRosterList.querySelectorAll("[data-shrine-roster-name]:checked").length;
+  shrineRosterApply.classList.toggle("has-selection", selectedCount > 0);
+  shrineRosterApply.textContent = selectedCount > 0
+    ? `${selectedCount}人を参加者欄へ入れる`
+    : "選んだ人を参加者欄へ入れる";
+};
+
+const loadShrineRecords = () => {
+  try {
+    const records = JSON.parse(localStorage.getItem(shrineRecordStorageKey) ?? "[]");
+    return Array.isArray(records) ? records.filter((record) => record?.body).slice(0, 12) : [];
+  } catch {
+    return [];
+  }
+};
+
+let shrineRecords = loadShrineRecords();
+let shrineMatchSession = null;
+let latestPairgoGroups = [];
+let shrineAmateurUsesCarriedGroups = false;
+
+const saveShrineRecords = () => {
+  try {
+    localStorage.setItem(shrineRecordStorageKey, JSON.stringify(shrineRecords.slice(0, 12)));
+  } catch {
+    if (shrineRecordMessage) {
+      shrineRecordMessage.textContent = "この端末では記録を保存できませんでした。";
+    }
+  }
+};
+
+const getShrineModeLabel = (mode = getShrineMode()) => ({
+  lesson: "指導碁",
+  amateur: "大会対戦",
+  pairgo: "ペア・団体づくり",
+})[mode] ?? "組み合わせ";
+
+const getShrineRecordPreview = (body = "") => {
+  const hiddenLines = new Set([
+    "結果を確定",
+    "次の回を作る",
+    "必要なら、今の組み合わせを残せます。",
+    "結果を出すと保存できるようになります。",
+  ]);
+  const lines = String(body)
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter((line) => line && !hiddenLines.has(line));
+
+  return lines.slice(0, 3).join(" / ") || "保存した組み合わせです。";
+};
+
+const getShrineRecordJournalText = ({ mode, body = "" }) => {
+  const text = String(body);
+  const championMatch = text.match(/([0-9０-９]+番)[^\n]{0,12}優勝/);
+
+  if (championMatch) {
+    return `今日は大会対戦をして、${championMatch[1]}が優勝しました`;
+  }
+
+  if (mode === "pairgo") {
+    const groupMatch = text.match(/([0-9０-９]+)組/);
+    return groupMatch
+      ? `今日はペア・団体を${groupMatch[1]}組作りました`
+      : "今日はペア・団体づくりをしました";
+  }
+
+  if (mode === "amateur") {
+    return text.includes("スイス方式")
+      ? "今日はスイス方式の大会対戦をしました"
+      : "今日は大会対戦をしました";
+  }
+
+  return "今日は指導碁の組み合わせを作りました";
+};
+
+const renderShrineRecords = () => {
+  if (!shrineRecordList) {
+    return;
+  }
+
+  shrineRecordList.textContent = "";
+  if (shrineRecords.length === 0) {
+    const empty = document.createElement("p");
+    empty.textContent = "まだ残した組み合わせはありません。";
+    shrineRecordList.append(empty);
+    if (shrineRecordClear) {
+      shrineRecordClear.disabled = true;
+    }
+    return;
+  }
+
+  if (shrineRecordClear) {
+    shrineRecordClear.disabled = false;
+  }
+
+  for (const record of shrineRecords) {
+    const article = document.createElement("article");
+    const heading = document.createElement("div");
+    const title = document.createElement("strong");
+    const meta = document.createElement("small");
+    const preview = document.createElement("p");
+    const details = document.createElement("details");
+    const summary = document.createElement("summary");
+    const body = document.createElement("pre");
+
+    article.className = "shrine-record";
+    heading.className = "shrine-record-heading";
+    title.textContent = record.title || "保存した組み合わせ案";
+    meta.textContent = record.createdAt || "";
+    preview.className = "shrine-record-preview";
+    preview.textContent = getShrineRecordPreview(record.body);
+    details.className = "shrine-record-details";
+    summary.textContent = "内容を見る";
+    body.textContent = record.body;
+    heading.append(title, meta);
+    details.append(summary, body);
+    article.append(heading, preview, details);
+    shrineRecordList.append(article);
+  }
+};
+
+const getShrineResultMarkClass = (mark) => ({
+  "〇": "is-win",
+  "×": "is-loss",
+  "△": "is-draw",
+  "休": "is-rest",
+  "・": "is-pending",
+  "—": "is-pending",
+})[mark] ?? "is-pending";
+
+const shrineRecordWaitingMessage = "結果を出すと保存できるようになります。";
+const shrineRecordReadyMessage = "必要なら、今の組み合わせを残せます。";
+
+const updateShrineRecordSaveState = () => {
+  if (!shrineRecordSave || !shrineResult) {
+    return;
+  }
+
+  const canSave = Boolean(shrineResult.querySelector(".shrine-round-result"));
+  shrineRecordSave.disabled = !canSave;
+  if (shrineRecordMessage) {
+    shrineRecordMessage.textContent = canSave ? shrineRecordReadyMessage : shrineRecordWaitingMessage;
+  }
+};
+
+const getShrineParticipantPeople = () => {
+  const rawPeople = (shrineParticipants?.value ?? "")
+    .split(/\r?\n|、|,/)
+    .map(parseShrinePersonLine)
+    .filter((person) => person.name);
+  const seen = new Set();
+  const people = [];
+
+  for (const person of rawPeople) {
+    if (seen.has(person.name)) {
+      continue;
+    }
+    seen.add(person.name);
+    people.push(person);
+  }
+
+  return people;
+};
+
+const getShrineParticipantNames = () => getShrineParticipantPeople().map((person) => person.name);
+
+const getShrineRawParticipantLines = () => (shrineParticipants?.value ?? "")
+  .split(/\r?\n|、|,/)
+  .map((name) => name.trim())
+  .filter(Boolean);
+
+const getShrinePreferMixedGender = () => Boolean(shrineMixedGenderPairs?.checked);
+const getShrinePreferCloseStrength = () => Boolean(shrineCloseStrengthPairs?.checked);
+const getShrinePreferBalancedStrength = () => Boolean(shrineBalancedTeamStrength?.checked);
+
+const getShrineGenderLabel = (gender) => shrineGenderLabel[normalizeShrineGender(gender)] ?? "";
+
+const formatShrineMemberName = (person) => {
+  const genderLabel = getShrineGenderLabel(person.gender);
+  return genderLabel ? `${person.name}（${genderLabel}）` : person.name;
+};
+
+const appendShrineParticipants = (names) => {
+  if (!shrineParticipants) {
+    return [];
+  }
+
+  const existingPeople = getShrineParticipantPeople();
+  const peopleByName = new Map(existingPeople.map((person) => [person.name, { ...person }]));
+
+  for (const name of names) {
+    const person = parseShrinePersonLine(name);
+    if (!person.name) {
+      continue;
+    }
+
+    const existing = peopleByName.get(person.name);
+    peopleByName.set(person.name, {
+      name: person.name,
+      gender: person.gender || existing?.gender || "",
+      strength: normalizeShrineStrength(person.strength).type
+        ? normalizeShrineStrength(person.strength)
+        : normalizeShrineStrength(existing?.strength),
+    });
+  }
+
+  const mergedLines = [...peopleByName.values()].map(formatShrinePersonLine);
+  shrineParticipants.value = mergedLines.join("\n");
+  return [...peopleByName.values()].map((person) => person.name);
+};
+
+const getSelectedShrineTeachers = () => {
+  if (!shrineTeacherList) {
+    return [];
+  }
+
+  return [...shrineTeacherList.querySelectorAll("[data-shrine-teacher]:checked")]
+    .map((input) => {
+      const boardsInput = shrineTeacherList.querySelector(`[data-shrine-teacher-boards="${input.value}"]`);
+      const boards = Math.max(1, Math.min(12, Number(boardsInput?.value) || 1));
+
+      return {
+        id: input.value,
+        boards,
+        ...teacherDetails[input.value],
+      };
+    })
+    .filter((teacher) => teacher.name);
+};
+
+const renderShrineActiveTeachers = (selectedTeachers = getSelectedShrineTeachers()) => {
+  if (!shrineActiveTeacherList) {
+    return;
+  }
+
+  shrineActiveTeacherList.textContent = "";
+
+  if (selectedTeachers.length === 0) {
+    const empty = document.createElement("p");
+    empty.textContent = "今日来ている先生を選んでください。";
+    shrineActiveTeacherList.append(empty);
+    return;
+  }
+
+  for (const teacher of selectedTeachers) {
+    const cycleProgress = getCurrentTeacherCycleProgress(teacher);
+    const item = document.createElement("article");
+    const flower = document.createElement("span");
+    const flowerIcon = document.createElement("span");
+    const seal = document.createElement("span");
+    const copy = document.createElement("span");
+    const name = document.createElement("strong");
+    const detail = document.createElement("small");
+    const boardBadge = document.createElement("em");
+
+    item.className = "shrine-active-teacher-card";
+    flower.className = "shrine-active-teacher-flower";
+    flowerIcon.className = "shrine-active-teacher-flower-icon";
+    seal.className = "shrine-active-teacher-seal";
+    seal.setAttribute("aria-hidden", "true");
+    boardBadge.className = "shrine-active-teacher-board";
+    name.textContent = teacher.name;
+    detail.textContent = teacher.guide;
+    boardBadge.textContent = `${teacher.boards}面`;
+    applyFlowerVariables(item, cycleProgress.cycle);
+    applyFlowerVisual(flowerIcon, cycleProgress.cycle);
+    flower.append(flowerIcon, seal);
+    copy.append(name, detail);
+    item.append(flower, copy, boardBadge);
+    shrineActiveTeacherList.append(item);
+  }
+};
+
+const updateShrineTeacherCount = () => {
+  if (!shrineTeacherCount) {
+    return;
+  }
+
+  const selectedTeachers = getSelectedShrineTeachers();
+  const totalBoards = selectedTeachers.reduce((total, teacher) => total + teacher.boards, 0);
+  shrineTeacherCount.textContent = `${selectedTeachers.length}人・${totalBoards}面`;
+  renderShrineActiveTeachers(selectedTeachers);
+};
+
+const getShrineRoundCount = () =>
+  Math.max(1, Math.min(4, Number(shrineRoundCount?.value) || 1));
+
+const getShrineMode = () =>
+  [...shrineModeButtons].find((button) => button.classList.contains("is-active"))?.dataset.shrineMode ?? "lesson";
+
+const shrineModeSpeech = {
+  lesson: {
+    fox: "今日はどんな\nご縁を結ぶ？",
+    otter: "石の準備\nできてるよ！",
+  },
+  amateur: {
+    fox: "よい対戦のご縁を結びましょう。",
+    otter: "対戦札を並べておきました！",
+  },
+  pairgo: {
+    fox: "ペアと団体のご縁を整えましょう。",
+    otter: "番号札もできてるよ！",
+  },
+};
+
+const updateShrineGuideSpeech = (mode = getShrineMode()) => {
+  const speech = shrineModeSpeech[mode] ?? shrineModeSpeech.lesson;
+
+  if (shrineFoxSpeech) {
+    shrineFoxSpeech.textContent = speech.fox;
+  }
+  if (shrineOtterSpeech) {
+    shrineOtterSpeech.textContent = speech.otter;
+  }
+};
+
+const updateShrineParticipantInputVisibility = (mode = getShrineMode()) => {
+  const shouldHideCarriedInputs = mode === "amateur" && shrineAmateurUsesCarriedGroups;
+
+  if (shrineNumberEntryCard) {
+    shrineNumberEntryCard.hidden = shouldHideCarriedInputs || mode !== "amateur";
+  }
+  if (shrineParticipantCard) {
+    shrineParticipantCard.hidden = shouldHideCarriedInputs;
+  }
+  if (shrineQuickAddPanel) {
+    shrineQuickAddPanel.hidden = shouldHideCarriedInputs;
+  }
+};
+
+const getShrineCollapsiblePanel = (button) => {
+  const key = button?.dataset.shrineCollapsibleToggle;
+  return key ? document.querySelector(`[data-shrine-collapsible="${key}"]`) : null;
+};
+
+const getShrineCollapsibleLabel = (key, isOpen) => {
+  const labels = {
+    "pairgo-settings": isOpen ? "細かい設定を閉じる" : "細かい設定を開く",
+    wishes: isOpen ? "希望条件を閉じる" : "希望条件を開く",
+  };
+  return labels[key] ?? (isOpen ? "閉じる" : "開く");
+};
+
+const syncShrineCollapsibleButton = (button) => {
+  const panel = getShrineCollapsiblePanel(button);
+  const key = button?.dataset.shrineCollapsibleToggle;
+
+  if (!button || !panel || !key) {
+    return;
+  }
+
+  const isOpen = !panel.hidden;
+  button.textContent = getShrineCollapsibleLabel(key, isOpen);
+  button.setAttribute("aria-expanded", String(isOpen));
+};
+
+const toggleShrineCollapsiblePanel = (button) => {
+  const panel = getShrineCollapsiblePanel(button);
+
+  if (!panel) {
+    return;
+  }
+
+  panel.hidden = !panel.hidden;
+  syncShrineCollapsibleButton(button);
+};
+
+const updateShrineMode = (mode = getShrineMode()) => {
+  const isAmateur = mode === "amateur";
+  const isPairgo = mode === "pairgo";
+
+  for (const button of shrineModeButtons) {
+    const isSelected = button.dataset.shrineMode === mode;
+    button.classList.toggle("is-active", isSelected);
+    button.setAttribute("aria-pressed", String(isSelected));
+  }
+
+  for (const button of shrinePathModeButtons) {
+    const isSelected = button.dataset.shrinePathMode === mode;
+    button.classList.toggle("is-active", isSelected);
+    button.setAttribute("aria-pressed", String(isSelected));
+  }
+
+  for (const item of shrineLessonOnlyItems) {
+    item.hidden = isAmateur || isPairgo;
+  }
+
+  for (const item of shrineAmateurOnlyItems) {
+    item.hidden = !isAmateur;
+  }
+
+  for (const item of shrinePairgoOnlyItems) {
+    item.hidden = !isPairgo;
+  }
+
+  if (shrineModeKicker) {
+    shrineModeKicker.textContent = isPairgo
+      ? "ペア・団体プリセット"
+      : isAmateur
+        ? "大会対戦プリセット"
+        : "水曜会プリセット";
+  }
+  if (shrineModeTitle) {
+    shrineModeTitle.textContent = isPairgo
+      ? "ペア・団体を作って番号を付ける"
+      : isAmateur
+        ? "個人や組番号で大会対戦を作る"
+        : "先生ごとの多面打ちで組み合わせ";
+  }
+  if (shrineModeCopy) {
+    shrineModeCopy.textContent = isPairgo
+      ? "決まっている組を先に使い、当日の人をペアや団体にして番号を出します。"
+      : isAmateur
+        ? "個人名やペア・団体番号から、一対一の対戦組み合わせを出します。"
+        : "先生ごとに面数と回数を決め、指導碁の組み合わせを出します。";
+  }
+
+  updateShrineGuideSpeech(mode);
+  updateShrineParticipantInputVisibility(mode);
+};
+
+const enterShrinePanel = () => {
+  renderShrineTeachers();
+  updateShrineGuideSpeech();
+  showPanel("shrine");
+};
+
+const clearShrineIntroTimers = () => {
+  for (const timerId of shrineIntroTimerIds) {
+    window.clearTimeout(timerId);
+  }
+  shrineIntroTimerIds = [];
+};
+
+const finishShrineIntro = () => {
+  clearShrineIntroTimers();
+  enterShrinePanel();
+  if (shrineIntro) {
+    shrineIntro.classList.remove("is-playing");
+    shrineIntro.hidden = true;
+  }
+  isShrineIntroPlaying = false;
+};
+
+const openShrineWithIntro = () => {
+  if (isShrineIntroPlaying) {
+    return;
+  }
+
+  const prefersReducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
+  if (!shrineIntro || prefersReducedMotion) {
+    enterShrinePanel();
+    return;
+  }
+
+  clearShrineIntroTimers();
+  isShrineIntroPlaying = true;
+  enterShrinePanel();
+  shrineIntro.hidden = false;
+  shrineIntro.classList.remove("is-playing");
+  shrineIntro.offsetHeight;
+  shrineIntro.classList.add("is-playing");
+  if (shrineIntroCaption) {
+    shrineIntroCaption.textContent = "参道の入口に立ちます";
+  }
+
+  const introCaptions = [
+    { at: 750, text: "狐の巫女が鳥居へ案内します" },
+    { at: 1850, text: "赤い鳥居へ向かって進みます" },
+    { at: 2850, text: "二人の狐の間を、ゆっくりくぐります" },
+    { at: 4700, text: "神社の奥でラッコが待っています" },
+    { at: 6350, text: "ご縁を結ぶ準備ができました" },
+    { at: 7400, text: "組み合わせ神社へ入ります" },
+  ];
+
+  for (const caption of introCaptions) {
+    const timerId = window.setTimeout(() => {
+      if (shrineIntroCaption && isShrineIntroPlaying) {
+        shrineIntroCaption.textContent = caption.text;
+      }
+    }, caption.at);
+    shrineIntroTimerIds.push(timerId);
+  }
+
+  shrineIntroTimerIds.push(window.setTimeout(finishShrineIntro, 8100));
+};
+
+const renderLessonShrineResult = (participants, roundCount) => {
+  const selectedTeachers = getSelectedShrineTeachers();
+
+  if (selectedTeachers.length === 0) {
+    const empty = document.createElement("p");
+    empty.textContent = "今日来ている先生を1人以上選んでください。";
+    shrineResult.append(empty);
+    return;
+  }
+
+  const maxBoards = Math.max(...selectedTeachers.map((teacher) => teacher.boards));
+  const slots = [];
+  for (let boardNumber = 1; boardNumber <= maxBoards; boardNumber += 1) {
+    for (const teacher of selectedTeachers) {
+      if (teacher.boards >= boardNumber) {
+        slots.push({ teacher, boardNumber });
+      }
+    }
+  }
+  const roundResults = [];
+  let totalMatchedCount = 0;
+  let totalWaitingCount = 0;
+
+  for (let roundIndex = 0; roundIndex < roundCount; roundIndex += 1) {
+    const rotatedParticipants = participants.map((_, index) => participants[(index + roundIndex * slots.length) % participants.length]);
+    const matchedCount = Math.min(rotatedParticipants.length, slots.length);
+    const waiting = rotatedParticipants.slice(matchedCount);
+    const assignments = selectedTeachers.map((teacher) => ({ teacher, participants: [] }));
+
+    for (let index = 0; index < matchedCount; index += 1) {
+      const slot = slots[index];
+      const group = assignments.find((item) => item.teacher.id === slot.teacher.id);
+      group?.participants.push({
+        name: rotatedParticipants[index],
+        boardNumber: slot.boardNumber,
+      });
+    }
+
+    roundResults.push({
+      roundNumber: roundIndex + 1,
+      matchedCount,
+      waiting,
+      assignments,
+    });
+    totalMatchedCount += matchedCount;
+    totalWaitingCount += waiting.length;
+  }
+
+  const heading = document.createElement("div");
+  const title = document.createElement("strong");
+  const oracle = document.createElement("p");
+
+  heading.className = "shrine-result-heading";
+  title.textContent = "今日の組み合わせ";
+  oracle.textContent = totalWaitingCount > 0
+    ? `${roundCount}回分で${totalMatchedCount}面を組みました。待機が出る回があります。`
+    : `${roundCount}回分で${totalMatchedCount}面を組みました。`;
+  heading.append(title, oracle);
+
+  shrineResult.append(heading);
+  const recordNote = document.createElement("p");
+  const recordNoteStart = document.createElement("span");
+  const recordNoteText = document.createElement("span");
+  const recordNoteEnd = document.createElement("span");
+  recordNote.className = "shrine-result-note";
+  recordNoteStart.className = "shrine-result-note-flower";
+  recordNoteEnd.className = "shrine-result-note-flower";
+  recordNoteText.className = "shrine-result-note-text";
+  recordNoteStart.textContent = "✿";
+  recordNoteText.textContent = "花図鑑へ記入してください";
+  recordNoteEnd.textContent = "✿";
+  recordNote.append(recordNoteStart, recordNoteText, recordNoteEnd);
+  shrineResult.append(recordNote);
+
+  for (const round of roundResults) {
+    const roundBlock = document.createElement("article");
+    const roundTitle = document.createElement("h3");
+    const groups = document.createElement("div");
+
+    roundBlock.className = "shrine-round-result";
+    roundTitle.textContent = `${round.roundNumber}回目`;
+    groups.className = "shrine-result-groups";
+
+    for (const group of round.assignments.filter((item) => item.participants.length > 0)) {
+      const teacherBlock = document.createElement("article");
+      const teacherName = document.createElement("strong");
+      const teacherMeta = document.createElement("small");
+      const list = document.createElement("ol");
+
+      teacherBlock.className = "shrine-teacher-result";
+      teacherName.textContent = group.teacher.name;
+      teacherMeta.textContent = `${group.participants.length}/${group.teacher.boards}面`;
+
+      for (const participant of group.participants) {
+        const item = document.createElement("li");
+        const order = document.createElement("span");
+        const participantName = document.createElement("strong");
+        order.textContent = `${participant.boardNumber}面`;
+        participantName.textContent = participant.name;
+        item.append(order, participantName);
+        list.append(item);
+      }
+
+      teacherBlock.append(teacherName, teacherMeta, list);
+      groups.append(teacherBlock);
+    }
+
+    roundBlock.append(roundTitle, groups);
+
+    if (round.waiting.length > 0) {
+      const waitBox = document.createElement("div");
+      const waitTitle = document.createElement("strong");
+      const waitNames = document.createElement("span");
+      waitBox.className = "shrine-waiting";
+      waitTitle.textContent = "待機";
+      waitNames.textContent = round.waiting.join("、");
+      waitBox.append(waitTitle, waitNames);
+      roundBlock.append(waitBox);
+    }
+
+    shrineResult.append(roundBlock);
+  }
+};
+
+const createAmateurRound = (names, roundIndex) => {
+  const players = names.length % 2 === 0 ? [...names] : [...names, null];
+  const fixed = players[0];
+  let rotating = players.slice(1);
+
+  for (let index = 0; index < roundIndex; index += 1) {
+    rotating = [rotating.at(-1), ...rotating.slice(0, -1)];
+  }
+
+  const arranged = [fixed, ...rotating];
+  const pairs = [];
+  let waiting = null;
+
+  for (let index = 0; index < arranged.length / 2; index += 1) {
+    const left = arranged[index];
+    const right = arranged[arranged.length - 1 - index];
+
+    if (!left || !right) {
+      waiting = left || right;
+      continue;
+    }
+
+    pairs.push([left, right]);
+  }
+
+  return { pairs, waiting };
+};
+
+const getShrineMatchMethod = () =>
+  shrineMatchMethodShortcut?.value || shrineMatchMethod?.value || "shuffle";
+
+const syncShrineMatchMethodControls = (value = getShrineMatchMethod()) => {
+  if (shrineMatchMethod && shrineMatchMethod.value !== value) {
+    shrineMatchMethod.value = value;
+  }
+  if (shrineMatchMethodShortcut && shrineMatchMethodShortcut.value !== value) {
+    shrineMatchMethodShortcut.value = value;
+  }
+};
+
+const setShrineMatchMethod = (value = "shuffle") => {
+  syncShrineMatchMethodControls(value);
+  shrineMatchSession = null;
+};
+
+const getShrineMatchMethodLabel = (method = getShrineMatchMethod()) => ({
+  shuffle: "交流戦・遊びイベント",
+  tournament: "トーナメント初回",
+  swiss: "スイス方式初回",
+})[method] ?? "交流戦・遊びイベント";
+
+const getShrineSessionMethodLabel = (method = getShrineMatchMethod()) => ({
+  shuffle: "交流戦・遊びイベント",
+  tournament: "トーナメント方式",
+  swiss: "スイス方式",
+})[method] ?? "交流戦・遊びイベント";
+
+const getSwissRoundLimit = (entryCount) =>
+  Math.max(1, Math.ceil(Math.log2(Math.max(2, entryCount))));
+
+const getShrineRoundLabel = (roundNumber, method = shrineMatchSession?.method) =>
+  method === "swiss" ? `${roundNumber}回戦` : `${roundNumber}回目`;
+
+const canAdvanceShrineMatchSession = () => {
+  if (!shrineMatchSession) {
+    return false;
+  }
+
+  const latestRound = shrineMatchSession.rounds.at(-1);
+  if (!latestRound?.pairs.length) {
+    return false;
+  }
+
+  if (shrineMatchSession.method === "swiss") {
+    if (latestRound.pairs.some((pair) => !pair.result)) {
+      return false;
+    }
+    return shrineMatchSession.rounds.length < getSwissRoundLimit(shrineMatchSession.entries.length);
+  }
+
+  if (shrineMatchSession.method === "tournament") {
+    if (latestRound.pairs.some((pair) => !pair.result)) {
+      return false;
+    }
+
+    const advancingCount = latestRound.pairs.reduce((total, pair) => {
+      if (pair.result === "draw") {
+        return total + 2;
+      }
+      return pair.result ? total + 1 : total;
+    }, getShrineRoundWaitingEntries(latestRound).length);
+
+    return advancingCount > 1;
+  }
+
+  return true;
+};
+
+const normalizeShrineNumber = (value) =>
+  Number(String(value).replace(/[０-９]/g, (char) => String.fromCharCode(char.charCodeAt(0) - 0xfee0)));
+
+const parseShrineNumberedEntry = (name) => {
+  const match = String(name).trim().match(/^(\d+|[０-９]+)\s*番(?:\s*(.*))?$/);
+  if (!match) {
+    return null;
+  }
+
+  return {
+    number: normalizeShrineNumber(match[1]),
+    entryName: match[2]?.trim() || "ペア・団体・個人",
+  };
+};
+
+const normalizeShrineEntry = (name, index, assignedNumber = index + 1) => {
+  const numberedEntry = parseShrineNumberedEntry(name);
+  const entryNumber = numberedEntry?.number || assignedNumber;
+  const entryName = numberedEntry?.entryName || name;
+  const numberLabel = `${entryNumber}番`;
+  const label = numberedEntry && entryName === "ペア・団体・個人"
+    ? numberLabel
+    : `${numberLabel} ${entryName}`;
+
+  return {
+    id: `entry-${entryNumber}-${index + 1}-${name}`,
+    number: entryNumber,
+    raw: name,
+    numberLabel,
+    entryName,
+    label,
+    score: 0,
+  };
+};
+
+const createShrineEntries = (participants) => {
+  const usedNumbers = new Set(participants
+    .map(parseShrineNumberedEntry)
+    .filter(Boolean)
+    .map((entry) => entry.number));
+  let nextNumber = 1;
+
+  return participants.map((name, index) => {
+    if (parseShrineNumberedEntry(name)) {
+      return normalizeShrineEntry(name, index);
+    }
+
+    while (usedNumbers.has(nextNumber)) {
+      nextNumber += 1;
+    }
+
+    const entry = normalizeShrineEntry(name, index, nextNumber);
+    usedNumbers.add(nextNumber);
+    nextNumber += 1;
+    return entry;
+  });
+};
+
+const createEntryRound = (entries, roundIndex = 0) => {
+  const players = entries.length % 2 === 0 ? [...entries] : [...entries, null];
+  const fixed = players[0];
+  let rotating = players.slice(1);
+
+  for (let index = 0; index < roundIndex; index += 1) {
+    rotating = [rotating.at(-1), ...rotating.slice(0, -1)];
+  }
+
+  const arranged = [fixed, ...rotating];
+  const pairs = [];
+  let waiting = null;
+
+  for (let index = 0; index < arranged.length / 2; index += 1) {
+    const left = arranged[index];
+    const right = arranged[arranged.length - 1 - index];
+
+    if (!left || !right) {
+      waiting = left || right;
+      continue;
+    }
+
+    pairs.push({ left, right, result: "" });
+  }
+
+  return { pairs, waiting };
+};
+
+const createAdjacentEntryRound = (entries) => {
+  const pairs = [];
+  let waiting = null;
+
+  for (let index = 0; index < entries.length; index += 2) {
+    const left = entries[index];
+    const right = entries[index + 1];
+
+    if (!right) {
+      waiting = left;
+      continue;
+    }
+
+    pairs.push({ left, right, result: "" });
+  }
+
+  return { pairs, waiting };
+};
+
+const getShrineRoundWaitingEntries = (round) => {
+  if (Array.isArray(round?.waitingEntries)) {
+    return round.waitingEntries.filter(Boolean);
+  }
+  return round?.waiting ? [round.waiting] : [];
+};
+
+const createShrineRound = ({ pairs, waitingEntries = [], advanceSlots = null }) => ({
+  pairs,
+  waiting: waitingEntries[0] || null,
+  waitingEntries,
+  ...(advanceSlots ? { advanceSlots } : {}),
+});
+
+const isShrinePowerOfTwo = (value) => value > 0 && (value & (value - 1)) === 0;
+
+const createShrineTournamentInitialRound = (entries) => {
+  if (entries.length <= 1) {
+    return createShrineRound({
+      pairs: [],
+      waitingEntries: [...entries],
+      advanceSlots: entries.length ? [{ type: "waiting", index: 0 }] : [],
+    });
+  }
+
+  let contestants = [...entries];
+  const waitingEntries = [];
+  const startsWithWaiting = entries.length % 2 === 1;
+  const endsWithWaiting = entries.length > 2
+    && entries.length % 2 === 0
+    && !isShrinePowerOfTwo(entries.length);
+
+  if (startsWithWaiting) {
+    waitingEntries.push(entries[0]);
+    contestants = entries.slice(1);
+  } else if (endsWithWaiting) {
+    waitingEntries.push(entries[0], entries.at(-1));
+    contestants = entries.slice(1, -1);
+  }
+
+  const pairs = [];
+  for (let index = 0; index < contestants.length; index += 2) {
+    const left = contestants[index];
+    const right = contestants[index + 1];
+    if (!right) {
+      waitingEntries.push(left);
+      continue;
+    }
+    pairs.push({ left, right, result: "" });
+  }
+
+  const advanceSlots = [];
+  if (startsWithWaiting || endsWithWaiting) {
+    advanceSlots.push({ type: "waiting", index: 0 });
+  }
+  for (let index = 0; index < pairs.length; index += 1) {
+    advanceSlots.push({ type: "pair", index });
+  }
+  if (endsWithWaiting && waitingEntries[1]) {
+    advanceSlots.push({ type: "waiting", index: 1 });
+  }
+
+  return createShrineRound({ pairs, waitingEntries, advanceSlots });
+};
+
+const createShrineMatchSession = (entries, method) => {
+  const sessionEntries = entries.map((entry) => ({ ...entry, score: 0 }));
+  const firstRound = method === "tournament"
+    ? createShrineTournamentInitialRound(sessionEntries)
+    : createEntryRound(sessionEntries, 0);
+
+  return {
+    method,
+    entries: sessionEntries,
+    rounds: [{
+      roundNumber: 1,
+      ...firstRound,
+    }],
+    message: "",
+  };
+};
+
+const renderShrineEntryList = (entries) => {
+  const entryBlock = document.createElement("article");
+  const entryTitle = document.createElement("h3");
+  const entryList = document.createElement("ol");
+  const numberOnly = entries.every((entry) => entry.entryName === "ペア・団体・個人");
+
+  entryBlock.className = "shrine-round-result is-entry-list";
+  entryTitle.textContent = "出場番号";
+  entryList.className = numberOnly ? "shrine-entry-list is-number-only" : "shrine-entry-list";
+
+  for (const entry of entries) {
+    const item = document.createElement("li");
+    const number = document.createElement("span");
+    const name = document.createElement("strong");
+    const hasName = entry.entryName !== "ペア・団体・個人";
+    item.className = hasName ? "" : "is-number-only";
+    number.textContent = entry.numberLabel;
+    name.textContent = hasName ? entry.entryName : "";
+    item.append(number);
+    if (hasName) {
+      item.append(name);
+    }
+    entryList.append(item);
+  }
+
+  entryBlock.append(entryTitle, entryList);
+  shrineResult.append(entryBlock);
+};
+
+const syncVisibleShrineMatchResults = () => {
+  if (!shrineMatchSession || !shrineResult) {
+    return;
+  }
+
+  for (const input of shrineResult.querySelectorAll("[data-shrine-match-result]")) {
+    const roundIndex = Number(input.dataset.roundIndex);
+    const matchIndex = Number(input.dataset.matchIndex);
+    const pair = shrineMatchSession.rounds[roundIndex]?.pairs[matchIndex];
+    if (pair) {
+      pair.result = input.value;
+    }
+  }
+};
+
+const getShrineEntryRoundMark = (entry, round) => {
+  if (getShrineRoundWaitingEntries(round).some((waiting) => waiting.id === entry.id)) {
+    return { mark: "休", score: 1 };
+  }
+
+  const pair = round.pairs.find((item) => item.left.id === entry.id || item.right.id === entry.id);
+  if (!pair) {
+    return { mark: "・", score: 0 };
+  }
+  if (!pair.result) {
+    return { mark: "—", score: 0 };
+  }
+  if (pair.result === "draw") {
+    return { mark: "△", score: 0.5 };
+  }
+
+  const isLeft = pair.left.id === entry.id;
+  const isWin = (pair.result === "left" && isLeft) || (pair.result === "right" && !isLeft);
+  return { mark: isWin ? "〇" : "×", score: isWin ? 1 : 0 };
+};
+
+const getShrinePairWinner = (pair) => {
+  if (!pair?.result || pair.result === "draw") {
+    return null;
+  }
+  return pair.result === "left" ? pair.left : pair.right;
+};
+
+const getShrineTournamentAdvancingEntries = (round, { preview = false, applyScores = false } = {}) => {
+  const waitingEntries = getShrineRoundWaitingEntries(round);
+  const slots = round.advanceSlots || [
+    ...round.pairs.map((_, index) => ({ type: "pair", index })),
+    ...waitingEntries.map((_, index) => ({ type: "waiting", index })),
+  ];
+  const entries = [];
+  let previewIndex = 1;
+
+  for (const slot of slots) {
+    if (slot.type === "waiting") {
+      const waiting = waitingEntries[slot.index];
+      if (waiting) {
+        if (applyScores) {
+          waiting.score += 1;
+        }
+        entries.push(waiting);
+      }
+      continue;
+    }
+
+    const pair = round.pairs[slot.index];
+    if (!pair) {
+      continue;
+    }
+
+    if (pair.result === "left") {
+      if (applyScores) {
+        pair.left.score += 1;
+      }
+      entries.push(pair.left);
+    } else if (pair.result === "right") {
+      if (applyScores) {
+        pair.right.score += 1;
+      }
+      entries.push(pair.right);
+    } else if (pair.result === "draw") {
+      if (applyScores) {
+        pair.left.score += 0.5;
+        pair.right.score += 0.5;
+      }
+      if (shrineMatchSession?.method === "tournament") {
+        entries.push(pair.left, pair.right);
+      }
+    } else if (preview) {
+      entries.push(createShrineTournamentPreviewEntry(previewIndex));
+      previewIndex += 1;
+    }
+  }
+
+  return entries;
+};
+
+const createShrineTournamentPreviewEntry = (index) => ({
+  id: `preview-${index}`,
+  numberLabel: "?",
+  entryName: "勝者",
+});
+
+const getShrineTournamentEntryName = (entry) =>
+  entry.entryName === "ペア・団体・個人" ? "" : entry.entryName;
+
+const getShrineTournamentRoundLabel = (roundNumber, finalRoundNumber) =>
+  roundNumber === finalRoundNumber ? "決勝戦" : `${roundNumber}回戦`;
+
+const createShrineTournamentMatchElement = (pair, { preview = false, waiting = false, final = false } = {}) => {
+  const match = document.createElement("article");
+  const winner = getShrinePairWinner(pair);
+  const winnerChip = document.createElement("span");
+
+  match.className = [
+    "shrine-tournament-match",
+    winner ? "has-winner" : "",
+    preview ? "is-preview" : "",
+    waiting ? "is-waiting" : "",
+    final ? "is-final" : "",
+  ].filter(Boolean).join(" ");
+  winnerChip.className = "shrine-tournament-winner";
+  winnerChip.textContent = waiting ? "休" : winner ? winner.numberLabel.replace("番", "") : "?";
+
+  if (waiting) {
+    const player = document.createElement("span");
+    const number = document.createElement("em");
+    const name = document.createElement("strong");
+    player.className = "shrine-tournament-player is-winner";
+    number.textContent = pair.left.numberLabel.replace("番", "");
+    name.textContent = getShrineTournamentEntryName(pair.left);
+    player.append(number, name);
+    match.append(winnerChip, player);
+    return match;
+  }
+
+  const branch = document.createElement("span");
+  const contenders = document.createElement("div");
+  branch.className = "shrine-tournament-branch";
+  contenders.className = "shrine-tournament-contenders";
+
+  for (const side of [pair.left, pair.right]) {
+    const player = document.createElement("span");
+    const number = document.createElement("em");
+    const name = document.createElement("strong");
+    const isWinner = winner?.id === side.id;
+    player.className = [
+      "shrine-tournament-player",
+      isWinner ? "is-winner" : "",
+      winner && !isWinner ? "is-loser" : "",
+      side.id?.startsWith("preview-") ? "is-placeholder" : "",
+    ].filter(Boolean).join(" ");
+    number.textContent = side.numberLabel.replace("番", "");
+    name.textContent = getShrineTournamentEntryName(side);
+    player.append(number, name);
+    contenders.append(player);
+  }
+
+  match.append(winnerChip, branch, contenders);
+  return match;
+};
+
+const renderShrineTournamentPreviewRound = (latestRound, finalRoundNumber) => {
+  if (!latestRound || latestRound.pairs.length <= 1) {
+    return null;
+  }
+
+  const advancing = getShrineTournamentAdvancingEntries(latestRound, { preview: true });
+
+  if (advancing.length <= 1) {
+    return null;
+  }
+
+  const column = document.createElement("section");
+  const heading = document.createElement("strong");
+  const matches = document.createElement("div");
+  column.className = "shrine-tournament-round is-preview";
+  heading.textContent = getShrineTournamentRoundLabel(latestRound.roundNumber + 1, finalRoundNumber);
+  matches.className = "shrine-tournament-matches";
+  column.append(heading, matches);
+
+  for (let index = 0; index < advancing.length; index += 2) {
+    const left = advancing[index];
+    const right = advancing[index + 1];
+    if (!right) {
+      matches.append(createShrineTournamentMatchElement({ left }, { preview: true, waiting: true }));
+      continue;
+    }
+    matches.append(createShrineTournamentMatchElement({ left, right, result: "" }, { preview: true }));
+  }
+
+  return column;
+};
+
+const createShrineTournamentPreviewRoundFromEntries = (entries, roundNumber) => ({
+  roundNumber,
+  isPreview: true,
+  ...createAdjacentEntryRound(entries),
+});
+
+const getShrineTournamentDisplayRounds = () => {
+  const rounds = [...shrineMatchSession.rounds];
+  let latestRound = rounds.at(-1);
+  let guard = 0;
+
+  while (latestRound && guard < 8) {
+    const advancing = getShrineTournamentAdvancingEntries(latestRound, { preview: true });
+    if (advancing.length <= 1) {
+      break;
+    }
+
+    const previewRound = createShrineTournamentPreviewRoundFromEntries(advancing, rounds.length + 1);
+    rounds.push(previewRound);
+    latestRound = previewRound;
+    guard += 1;
+  }
+
+  return rounds;
+};
+
+const appendShrineTournamentSideColumn = (side, round, pairs) => {
+  const column = document.createElement("section");
+  const heading = document.createElement("strong");
+  const matches = document.createElement("div");
+
+  column.className = [
+    "shrine-tournament-round",
+    "is-large",
+    side === "right" ? "is-right-side" : "is-left-side",
+    round.isPreview ? "is-preview" : "",
+  ].filter(Boolean).join(" ");
+  heading.textContent = getShrineTournamentRoundLabel(round.roundNumber, getShrineTournamentDisplayRounds().at(-1)?.roundNumber ?? round.roundNumber);
+  matches.className = "shrine-tournament-matches";
+  column.append(heading, matches);
+
+  for (const pair of pairs) {
+    const match = createShrineTournamentMatchElement(pair, { preview: Boolean(round.isPreview) });
+    match.classList.add("is-large", side === "right" ? "is-right-side" : "is-left-side");
+    matches.append(match);
+  }
+
+  return column;
+};
+
+const renderShrineLargeTournamentBracket = () => {
+  if (!isShrinePowerOfTwo(shrineMatchSession.entries.length) || shrineMatchSession.entries.length < 8) {
+    return null;
+  }
+
+  const rounds = getShrineTournamentDisplayRounds();
+  const finalRoundNumber = rounds.at(-1)?.roundNumber ?? 1;
+  if (!rounds.some((round) => round.pairs.length > 0)) {
+    return null;
+  }
+
+  const bracket = document.createElement("div");
+  bracket.className = "shrine-tournament-bracket is-large is-upright";
+
+  for (const round of [...rounds].reverse()) {
+    const column = document.createElement("section");
+    const heading = document.createElement("strong");
+    const matches = document.createElement("div");
+
+    column.className = [
+      "shrine-tournament-round",
+      "is-large",
+      "is-upright-round",
+      round.isPreview ? "is-preview" : "",
+    ].filter(Boolean).join(" ");
+    heading.textContent = getShrineTournamentRoundLabel(round.roundNumber, finalRoundNumber);
+    matches.className = "shrine-tournament-matches";
+    column.append(heading, matches);
+
+    for (const pair of round.pairs) {
+      const match = createShrineTournamentMatchElement(pair, {
+        preview: Boolean(round.isPreview),
+        final: round.roundNumber === finalRoundNumber,
+      });
+      match.classList.add("is-large");
+      matches.append(match);
+    }
+
+    bracket.append(column);
+  }
+
+  return bracket;
+};
+
+const renderShrineTournamentBracket = () => {
+  if (!shrineMatchSession || shrineMatchSession.method !== "tournament") {
+    return null;
+  }
+
+  const largeBracket = renderShrineLargeTournamentBracket();
+  if (largeBracket) {
+    return largeBracket;
+  }
+
+  const bracket = document.createElement("div");
+  const displayRounds = getShrineTournamentDisplayRounds();
+  const finalRoundNumber = displayRounds.at(-1)?.roundNumber ?? shrineMatchSession.rounds.at(-1)?.roundNumber ?? 1;
+  bracket.className = "shrine-tournament-bracket";
+
+  for (const round of shrineMatchSession.rounds) {
+    const column = document.createElement("section");
+    const heading = document.createElement("strong");
+    const matches = document.createElement("div");
+
+    column.className = "shrine-tournament-round";
+    heading.textContent = getShrineTournamentRoundLabel(round.roundNumber, finalRoundNumber);
+    matches.className = "shrine-tournament-matches";
+    column.append(heading, matches);
+
+    for (const [index, pair] of round.pairs.entries()) {
+      const match = document.createElement("article");
+      const winner = getShrinePairWinner(pair);
+      const winnerChip = document.createElement("span");
+      const branch = document.createElement("span");
+      const contenders = document.createElement("div");
+
+      match.className = [
+        "shrine-tournament-match",
+        winner ? "has-winner" : "",
+        round.roundNumber === finalRoundNumber ? "is-final" : "",
+      ].filter(Boolean).join(" ");
+      winnerChip.className = "shrine-tournament-winner";
+      winnerChip.textContent = winner ? winner.numberLabel.replace("番", "") : "?";
+      branch.className = "shrine-tournament-branch";
+      contenders.className = "shrine-tournament-contenders";
+
+      for (const side of [pair.left, pair.right]) {
+        const player = document.createElement("span");
+        const number = document.createElement("em");
+        const name = document.createElement("strong");
+        player.className = winner?.id === side.id
+          ? "shrine-tournament-player is-winner"
+          : winner
+            ? "shrine-tournament-player is-loser"
+            : "shrine-tournament-player";
+        number.textContent = side.numberLabel.replace("番", "");
+        name.textContent = getShrineTournamentEntryName(side);
+        player.append(number, name);
+        contenders.append(player);
+      }
+
+      match.append(winnerChip, branch, contenders);
+      matches.append(match);
+    }
+
+    const primaryWaiting = round.waiting;
+    for (const waitingEntry of getShrineRoundWaitingEntries(round)) {
+      const waiting = document.createElement("article");
+      const player = document.createElement("span");
+      const number = document.createElement("em");
+      const name = document.createElement("strong");
+      const winnerChip = document.createElement("span");
+
+      round.waiting = waitingEntry;
+      waiting.className = "shrine-tournament-match is-waiting";
+      player.className = "shrine-tournament-player is-winner";
+      number.textContent = round.waiting.numberLabel.replace("番", "");
+      name.textContent = getShrineTournamentEntryName(round.waiting);
+      winnerChip.className = "shrine-tournament-winner";
+      winnerChip.textContent = "休";
+      player.append(number, name);
+      waiting.append(winnerChip, player);
+      matches.append(waiting);
+    }
+    round.waiting = primaryWaiting;
+
+    bracket.append(column);
+  }
+
+  const previewRound = renderShrineTournamentPreviewRound(shrineMatchSession.rounds.at(-1), finalRoundNumber);
+  if (previewRound) {
+    bracket.append(previewRound);
+  }
+
+  return bracket;
+};
+
+const renderShrineMatchSummary = () => {
+  if (!shrineMatchSession || !shrineResult || shrineMatchSession.method === "shuffle") {
+    return;
+  }
+
+  const summaryBlock = document.createElement("article");
+  const title = document.createElement("h3");
+  const lead = document.createElement("p");
+  const list = document.createElement("ol");
+  const entrySummaries = shrineMatchSession.entries.map((entry) => {
+    const roundMarks = shrineMatchSession.rounds.map((round) => getShrineEntryRoundMark(entry, round));
+    const score = roundMarks.reduce((total, item) => total + item.score, 0);
+    return {
+      entry,
+      score,
+      marks: roundMarks.map((item) => item.mark),
+    };
+  }).sort((a, b) => b.score - a.score || a.entry.number - b.entry.number);
+
+  summaryBlock.className = "shrine-round-result shrine-match-summary";
+  title.textContent = shrineMatchSession.method === "swiss" ? "スイス方式の途中表" : "トーナメント表の結果";
+  lead.textContent = shrineMatchSession.method === "swiss"
+    ? `${getSwissRoundLimit(shrineMatchSession.entries.length)}回戦まで行います。〇 勝ち / × 負け / △ 引き分け / 休 待機`
+    : "勝ち上がりを番号で表示します。結果を入れると次の回へ進めます。";
+  list.className = "shrine-match-summary-list";
+
+  const tournamentBracket = renderShrineTournamentBracket();
+  if (tournamentBracket) {
+    summaryBlock.append(title, lead, tournamentBracket);
+  } else {
+    summaryBlock.append(title, lead);
+  }
+
+  for (const [index, summary] of entrySummaries.entries()) {
+    const item = document.createElement("li");
+    const rank = document.createElement("span");
+    const name = document.createElement("strong");
+    const marks = document.createElement("span");
+    const score = document.createElement("em");
+
+    rank.textContent = `${index + 1}`;
+    name.textContent = summary.entry.label;
+    marks.className = "shrine-match-marks";
+    for (const mark of summary.marks) {
+      const markChip = document.createElement("span");
+      markChip.className = `shrine-match-mark ${getShrineResultMarkClass(mark)}`;
+      markChip.textContent = mark;
+      marks.append(markChip);
+    }
+    score.textContent = `${summary.score}点`;
+    item.append(rank, name, marks, score);
+    list.append(item);
+  }
+
+  summaryBlock.append(list);
+  shrineResult.append(summaryBlock);
+};
+
+const renderShrineMatchRound = (round, { interactive = false } = {}) => {
+  const roundBlock = document.createElement("article");
+  const roundTitle = document.createElement("h3");
+  const list = document.createElement("ol");
+
+  roundBlock.className = interactive
+    ? "shrine-round-result is-amateur has-results"
+    : "shrine-round-result is-amateur";
+  const finalRoundNumber = shrineMatchSession?.method === "tournament"
+    ? getShrineTournamentDisplayRounds().at(-1)?.roundNumber ?? round.roundNumber
+    : round.roundNumber;
+  roundTitle.textContent = shrineMatchSession?.method === "tournament"
+    ? getShrineTournamentRoundLabel(round.roundNumber, finalRoundNumber)
+    : getShrineRoundLabel(round.roundNumber);
+  list.className = "shrine-pair-list";
+
+  for (const [index, pair] of round.pairs.entries()) {
+    const item = document.createElement("li");
+    const order = document.createElement("span");
+    const left = document.createElement("strong");
+    const versus = document.createElement("small");
+    const right = document.createElement("strong");
+
+    order.textContent = `${index + 1}局`;
+    left.textContent = pair.left.label;
+    versus.textContent = "対";
+    right.textContent = pair.right.label;
+    item.append(order, left, versus, right);
+
+    if (interactive) {
+      const result = document.createElement("select");
+      result.dataset.shrineMatchResult = "true";
+      result.dataset.roundIndex = String(round.roundNumber - 1);
+      result.dataset.matchIndex = String(index);
+      result.setAttribute("aria-label", `${getShrineRoundLabel(round.roundNumber)} ${index + 1}局の結果`);
+      result.innerHTML = `
+        <option value="">結果</option>
+        <option value="left">${pair.left.numberLabel}勝ち</option>
+        <option value="right">${pair.right.numberLabel}勝ち</option>
+        <option value="draw">引き分け</option>
+      `;
+      result.value = pair.result || "";
+      item.append(result);
+    } else if (pair.result) {
+      const resultText = document.createElement("em");
+      resultText.className = "shrine-match-result-text";
+      resultText.textContent = ({
+        left: `${pair.left.numberLabel}勝ち`,
+        right: `${pair.right.numberLabel}勝ち`,
+        draw: "引き分け",
+      })[pair.result] ?? "";
+      item.append(resultText);
+    }
+
+    list.append(item);
+  }
+
+  roundBlock.append(roundTitle, list);
+
+  const waitingEntries = getShrineRoundWaitingEntries(round);
+  if (waitingEntries.length) {
+    const waitBox = document.createElement("div");
+    const waitTitle = document.createElement("strong");
+    const waitNames = document.createElement("span");
+    waitBox.className = "shrine-waiting";
+    waitTitle.textContent = "待機";
+    waitNames.textContent = waitingEntries.map((entry) => entry.label).join("、");
+    waitBox.append(waitTitle, waitNames);
+    roundBlock.append(waitBox);
+  }
+
+  shrineResult.append(roundBlock);
+};
+
+const renderShrineMatchSession = () => {
+  if (!shrineMatchSession) {
+    return;
+  }
+
+  const heading = document.createElement("div");
+  const title = document.createElement("strong");
+  const oracle = document.createElement("p");
+  const latestRound = shrineMatchSession.rounds.at(-1);
+  const totalPairs = shrineMatchSession.rounds.reduce((total, round) => total + round.pairs.length, 0);
+  const canAdvance = canAdvanceShrineMatchSession();
+
+  heading.className = "shrine-result-heading";
+  title.textContent = "大会対戦の組み合わせ";
+  oracle.textContent = `${getShrineSessionMethodLabel(shrineMatchSession.method)}として${totalPairs}局を組みました。`;
+  heading.append(title, oracle);
+  shrineResult.append(heading);
+
+  renderShrineEntryList(shrineMatchSession.entries);
+  renderShrineMatchSummary();
+
+  for (const round of shrineMatchSession.rounds) {
+    renderShrineMatchRound(round, { interactive: round === latestRound && latestRound?.pairs.some((pair) => !pair.result) });
+  }
+
+  if (shrineMatchSession.message) {
+    const message = document.createElement("p");
+    message.textContent = shrineMatchSession.message;
+    shrineResult.append(message);
+  }
+
+  if (canAdvance) {
+    const actions = document.createElement("div");
+    const nextButton = document.createElement("button");
+    actions.className = "shrine-next-round-actions";
+    nextButton.type = "button";
+    nextButton.dataset.shrineNextRound = "true";
+    nextButton.textContent = shrineMatchSession.method === "swiss"
+      ? `${latestRound.roundNumber + 1}回戦を作る`
+      : "次の回を作る";
+    actions.append(nextButton);
+    shrineResult.append(actions);
+  } else if (latestRound?.pairs.some((pair) => !pair.result)) {
+    const actions = document.createElement("div");
+    const nextButton = document.createElement("button");
+    actions.className = "shrine-next-round-actions";
+    nextButton.type = "button";
+    nextButton.dataset.shrineNextRound = "true";
+    nextButton.textContent = "結果を確定";
+    actions.append(nextButton);
+    shrineResult.append(actions);
+  } else if (shrineMatchSession.method === "swiss" && !shrineMatchSession.message.includes("終了")) {
+    const done = document.createElement("p");
+    done.textContent = `${getSwissRoundLimit(shrineMatchSession.entries.length)}回戦まで組みました。スイス方式はここで終了です。`;
+    shrineResult.append(done);
+  }
+};
+
+const renderAmateurShrineResult = (participants) => {
+  if (participants.length < 2) {
+    const empty = document.createElement("p");
+    empty.textContent = "大会対戦には、参加者または組番号を2つ以上入れてください。";
+    shrineResult.append(empty);
+    return;
+  }
+
+  const entries = createShrineEntries(participants);
+  const matchMethod = getShrineMatchMethod();
+  if (matchMethod !== "shuffle") {
+    const currentSignature = participants.join("\n");
+    if (
+      !shrineMatchSession ||
+      shrineMatchSession.method !== matchMethod ||
+      shrineMatchSession.signature !== currentSignature
+    ) {
+      shrineMatchSession = createShrineMatchSession(entries, matchMethod);
+      shrineMatchSession.signature = currentSignature;
+    }
+    renderShrineMatchSession();
+    return;
+  }
+
+  shrineMatchSession = null;
+  const effectiveRoundCount = 1;
+  const heading = document.createElement("div");
+  const title = document.createElement("strong");
+  const oracle = document.createElement("p");
+  const totalPairs = Math.floor(entries.length / 2) * effectiveRoundCount;
+
+  heading.className = "shrine-result-heading";
+  title.textContent = "大会対戦の組み合わせ";
+  oracle.textContent = entries.length % 2 === 0
+    ? `${getShrineMatchMethodLabel(matchMethod)}として${totalPairs}局を組みました。`
+    : `${getShrineMatchMethodLabel(matchMethod)}として${totalPairs}局を組みました。奇数のため待機があります。`;
+  heading.append(title, oracle);
+  shrineResult.append(heading);
+
+  renderShrineEntryList(entries);
+
+  for (let roundIndex = 0; roundIndex < effectiveRoundCount; roundIndex += 1) {
+    const round = createAmateurRound(entries.map((entry) => entry.label), roundIndex);
+    const roundBlock = document.createElement("article");
+    const roundTitle = document.createElement("h3");
+    const list = document.createElement("ol");
+
+    roundBlock.className = "shrine-round-result is-amateur";
+    roundTitle.textContent = matchMethod === "shuffle"
+      ? `${roundIndex + 1}回目`
+      : "初回組み合わせ";
+    list.className = "shrine-pair-list";
+
+    for (const [index, pair] of round.pairs.entries()) {
+      const item = document.createElement("li");
+      const order = document.createElement("span");
+      const left = document.createElement("strong");
+      const versus = document.createElement("small");
+      const right = document.createElement("strong");
+      order.textContent = `${index + 1}局`;
+      left.textContent = pair[0];
+      versus.textContent = "対";
+      right.textContent = pair[1];
+      item.append(order, left, versus, right);
+      list.append(item);
+    }
+
+    roundBlock.append(roundTitle, list);
+
+    if (round.waiting) {
+      const waitBox = document.createElement("div");
+      const waitTitle = document.createElement("strong");
+      const waitNames = document.createElement("span");
+      waitBox.className = "shrine-waiting";
+      waitTitle.textContent = "待機";
+      waitNames.textContent = round.waiting;
+      waitBox.append(waitTitle, waitNames);
+      roundBlock.append(waitBox);
+    }
+
+    shrineResult.append(roundBlock);
+  }
+
+};
+
+const applyShrineMatchResultsAndAdvance = () => {
+  if (!shrineMatchSession || !shrineResult) {
+    return;
+  }
+
+  const latestRound = shrineMatchSession.rounds.at(-1);
+  if (!latestRound) {
+    return;
+  }
+
+  const resultInputs = [...shrineResult.querySelectorAll("[data-shrine-match-result]")];
+  if (resultInputs.some((input) => !input.value)) {
+    shrineMatchSession.message = "すべての対戦結果を選んでから、次の回を作ってください。";
+    shrineResult.textContent = "";
+    renderShrineMatchSession();
+    return;
+  }
+
+  for (const input of resultInputs) {
+    const matchIndex = Number(input.dataset.matchIndex);
+    const pair = latestRound.pairs[matchIndex];
+    if (pair) {
+      pair.result = input.value;
+    }
+  }
+
+  if (!canAdvanceShrineMatchSession()) {
+    shrineMatchSession.message = shrineMatchSession.method === "swiss"
+      ? `${getSwissRoundLimit(shrineMatchSession.entries.length)}回戦まで結果を入れました。スイス方式はここで終了です。`
+      : "結果を入れました。";
+    shrineResult.textContent = "";
+    renderShrineMatchSession();
+    return;
+  }
+
+  let nextEntries = [];
+  if (shrineMatchSession.method === "tournament") {
+    nextEntries = getShrineTournamentAdvancingEntries(latestRound, { applyScores: true });
+  } else {
+    for (const pair of latestRound.pairs) {
+      if (pair.result === "left") {
+        pair.left.score += 1;
+        nextEntries.push(pair.left);
+      } else if (pair.result === "right") {
+        pair.right.score += 1;
+        nextEntries.push(pair.right);
+      } else if (pair.result === "draw") {
+        pair.left.score += 0.5;
+        pair.right.score += 0.5;
+      }
+    }
+
+    for (const waitingEntry of getShrineRoundWaitingEntries(latestRound)) {
+      waitingEntry.score += 1;
+      nextEntries.push(waitingEntry);
+    }
+  }
+
+  if (shrineMatchSession.method === "tournament") {
+    if (nextEntries.length <= 1) {
+      shrineMatchSession.message = nextEntries[0]
+        ? `${nextEntries[0].label} が勝ち残りました。`
+        : "次へ進む人がいません。";
+      shrineResult.textContent = "";
+      renderShrineMatchSession();
+      return;
+    }
+
+    shrineMatchSession.rounds.push({
+      roundNumber: shrineMatchSession.rounds.length + 1,
+      ...createAdjacentEntryRound(nextEntries),
+    });
+    shrineMatchSession.message = "勝った人で次の回を作りました。";
+  } else {
+    const rankedEntries = [...shrineMatchSession.entries]
+      .sort((a, b) => b.score - a.score || a.number - b.number);
+
+    shrineMatchSession.rounds.push({
+      roundNumber: shrineMatchSession.rounds.length + 1,
+      ...createAdjacentEntryRound(rankedEntries),
+    });
+    shrineMatchSession.message = latestRound.waiting
+      ? "成績が近い人同士で次の回を作りました。待機は1点として扱います。"
+      : "成績が近い人同士で次の回を作りました。";
+  }
+
+  shrineResult.textContent = "";
+  renderShrineMatchSession();
+  updateShrineRecordSaveState();
+};
+
+const splitShrineGroupLine = (line) =>
+  line
+    .split(/[、,，・/／\s]+/)
+    .map((name) => name.trim())
+    .filter(Boolean);
+
+const getShrineGroupSize = () =>
+  Math.max(2, Math.min(15, Number(shrineGroupSize?.value) || 2));
+
+const getShrineFixedGroups = () => {
+  const seen = new Set();
+
+  return (shrineFixedGroups?.value ?? "")
+    .split(/\r?\n/)
+    .map((line) => splitShrineGroupLine(line))
+    .filter((group) => group.length >= 2)
+    .map((group) => group.filter((name) => {
+      if (seen.has(name)) {
+        return false;
+      }
+      seen.add(name);
+      return true;
+    }))
+    .filter((group) => group.length >= 2);
+};
+
+const arrangePairgoFreeMembers = (freePeople, groupSize) => {
+  const strengthScore = (person) => normalizeShrineStrength(person.strength).score;
+  const knownStrengthPeople = freePeople.filter((person) => strengthScore(person) !== null);
+  const unknownStrengthPeople = freePeople.filter((person) => strengthScore(person) === null);
+  const byStrength = [...knownStrengthPeople].sort((a, b) => strengthScore(a) - strengthScore(b));
+
+  if (getShrinePreferBalancedStrength() && groupSize > 2 && knownStrengthPeople.length >= groupSize) {
+    const groups = Array.from({ length: Math.ceil(freePeople.length / groupSize) }, () => []);
+    const sorted = [...knownStrengthPeople].sort((a, b) => strengthScore(b) - strengthScore(a));
+    sorted.forEach((person, index) => {
+      const cycle = Math.floor(index / groups.length);
+      const offset = index % groups.length;
+      const targetIndex = cycle % 2 === 0 ? offset : groups.length - 1 - offset;
+      groups[targetIndex].push(person);
+    });
+    return groups.flat().concat(unknownStrengthPeople).map((person) => person.name);
+  }
+
+  const femalePeople = freePeople.filter((person) => person.gender === "female");
+  const malePeople = freePeople.filter((person) => person.gender === "male");
+  const unknownPeople = freePeople.filter((person) => !person.gender);
+
+  if (!getShrinePreferMixedGender() && getShrinePreferCloseStrength() && groupSize === 2 && knownStrengthPeople.length > 0) {
+    return byStrength.concat(unknownStrengthPeople).map((person) => person.name);
+  }
+
+  if (!getShrinePreferMixedGender()) {
+    return freePeople.map((person) => person.name);
+  }
+
+  if (groupSize !== 2) {
+    const ordered = getShrinePreferCloseStrength()
+      ? [...femalePeople, ...malePeople].sort((a, b) => (strengthScore(a) ?? 0) - (strengthScore(b) ?? 0))
+      : [...femalePeople, ...malePeople];
+    return [...ordered, ...unknownPeople].map((person) => person.name);
+  }
+
+  const arranged = [];
+  const femaleQueue = getShrinePreferCloseStrength()
+    ? [...femalePeople].sort((a, b) => (strengthScore(a) ?? 0) - (strengthScore(b) ?? 0))
+    : [...femalePeople];
+  const maleQueue = [...malePeople];
+
+  while (femaleQueue.length > 0 && maleQueue.length > 0) {
+    const female = femaleQueue.shift();
+    let maleIndex = 0;
+    if (getShrinePreferCloseStrength() && strengthScore(female) !== null) {
+      let bestDiff = Infinity;
+      for (let index = 0; index < maleQueue.length; index += 1) {
+        const diff = Math.abs((strengthScore(maleQueue[index]) ?? strengthScore(female)) - strengthScore(female));
+        if (diff < bestDiff) {
+          bestDiff = diff;
+          maleIndex = index;
+        }
+      }
+    }
+    const [male] = maleQueue.splice(maleIndex, 1);
+    arranged.push(female.name, male.name);
+  }
+
+  arranged.push(
+    ...femaleQueue.map((person) => person.name),
+    ...maleQueue.map((person) => person.name),
+    ...unknownPeople.map((person) => person.name)
+  );
+
+  return arranged;
+};
+
+const createPairgoGroups = (participants) => {
+  const groupSize = getShrineGroupSize();
+  const fixedGroups = getShrineFixedGroups();
+  const fixedMembers = new Set(fixedGroups.flat());
+  const freePeople = getShrineParticipantPeople().filter((person) => !fixedMembers.has(person.name));
+  const freeMembers = arrangePairgoFreeMembers(freePeople, groupSize);
+  const groups = fixedGroups.map((members, index) => ({
+    number: index + 1,
+    type: "決定済み",
+    members,
+  }));
+  const waiting = [];
+
+  for (let index = 0; index < freeMembers.length; index += groupSize) {
+    const members = freeMembers.slice(index, index + groupSize);
+
+    if (members.length < groupSize) {
+      waiting.push(...members);
+      continue;
+    }
+
+    groups.push({
+      number: groups.length + 1,
+      type: "当日組",
+      members,
+    });
+  }
+
+  return { groupSize, groups, waiting, fixedGroups };
+};
+
+const renderPairgoShrineResult = (participants) => {
+  const { groupSize, groups, waiting, fixedGroups } = createPairgoGroups(participants);
+  latestPairgoGroups = groups;
+
+  if (participants.length < 2 && fixedGroups.length === 0) {
+    latestPairgoGroups = [];
+    const empty = document.createElement("p");
+    empty.textContent = "ペア・団体づくりには、参加者を2人以上入れてください。";
+    shrineResult.append(empty);
+    return;
+  }
+
+  const heading = document.createElement("div");
+  const title = document.createElement("strong");
+  const oracle = document.createElement("p");
+
+  heading.className = "shrine-result-heading";
+  title.textContent = "ペア・団体づくりの結果";
+  oracle.textContent = groups.length > 0
+    ? `${groups.length}組に番号を付けました。大会対戦タブでは、この番号を参加者として使えます。`
+    : `${groupSize}人組を作るには人数が足りません。控えを確認してください。`;
+  heading.append(title, oracle);
+  shrineResult.append(heading);
+
+  if (getShrinePreferMixedGender()) {
+    const genderNote = document.createElement("p");
+    genderNote.textContent = "男女の記録がある人は、男女の組を優先して並べました。";
+    shrineResult.append(genderNote);
+  }
+  if (getShrinePreferCloseStrength() || getShrinePreferBalancedStrength()) {
+    const strengthNote = document.createElement("p");
+    strengthNote.textContent = getShrinePreferBalancedStrength()
+      ? "棋力の記録がある人は、全チームの平均棋力が近くなるように並べました。"
+      : "棋力の記録がある人は、棋力が近い組を優先しました。";
+    shrineResult.append(strengthNote);
+  }
+
+  if (groups.length > 0) {
+    const roundBlock = document.createElement("article");
+    const roundTitle = document.createElement("h3");
+    const list = document.createElement("ol");
+
+    roundBlock.className = "shrine-round-result is-pairgo";
+    roundTitle.textContent = "出場単位";
+    list.className = "shrine-pairgo-list is-groups";
+
+    for (const group of groups) {
+      const item = document.createElement("li");
+      const order = document.createElement("span");
+      const members = document.createElement("strong");
+      const type = document.createElement("small");
+
+      order.textContent = `${group.number}番`;
+      members.textContent = group.members.join("・");
+      type.textContent = group.type;
+      item.append(order, members, type);
+      list.append(item);
+    }
+
+    roundBlock.append(roundTitle, list);
+    shrineResult.append(roundBlock);
+  }
+
+  if (waiting.length > 0) {
+    const waitBox = document.createElement("div");
+    const waitTitle = document.createElement("strong");
+    const waitNames = document.createElement("span");
+    waitBox.className = "shrine-waiting";
+    waitTitle.textContent = "控え";
+    waitNames.textContent = waiting.join("、");
+    waitBox.append(waitTitle, waitNames);
+    shrineResult.append(waitBox);
+  }
+
+  if (groups.length > 0) {
+    const note = document.createElement("p");
+    const actions = document.createElement("div");
+    const nextButton = document.createElement("button");
+    note.textContent = `${groups.map((group) => `${group.number}番`).join("、")} を使って、組同士の代表トーナメントへ進めます。`;
+    actions.className = "shrine-next-round-actions";
+    nextButton.type = "button";
+    nextButton.dataset.shrineUsePairgoGroups = "true";
+    nextButton.textContent = "この番号で代表トーナメントへ進む";
+    actions.append(nextButton);
+    shrineResult.append(note);
+    shrineResult.append(actions);
+  }
+};
+
+const renderShrineResult = () => {
+  if (!shrineResult) {
+    return;
+  }
+
+  const participants = getShrineParticipantNames();
+  const roundCount = getShrineRoundCount();
+  const mode = getShrineMode();
+  shrineResult.textContent = "";
+
+  if (participants.length === 0 && !(mode === "pairgo" && getShrineFixedGroups().length > 0)) {
+    const empty = document.createElement("p");
+    empty.textContent = "参加者のお名前を入れてください。";
+    shrineResult.append(empty);
+    updateShrineRecordSaveState();
+    return;
+  }
+
+  if (mode === "amateur") {
+    renderAmateurShrineResult(participants);
+    updateShrineRecordSaveState();
+    return;
+  }
+
+  if (mode === "pairgo") {
+    renderPairgoShrineResult(participants);
+    updateShrineRecordSaveState();
+    return;
+  }
+
+  renderLessonShrineResult(participants, roundCount);
+  updateShrineRecordSaveState();
+};
+
+const carryPairgoGroupsToAmateurParticipants = ({ force = false } = {}) => {
+  if (!shrineParticipants || latestPairgoGroups.length === 0) {
+    shrineAmateurUsesCarriedGroups = false;
+    updateShrineParticipantInputVisibility("amateur");
+    return false;
+  }
+
+  if (!force && shrineParticipants.value.trim()) {
+    shrineAmateurUsesCarriedGroups = false;
+    updateShrineParticipantInputVisibility("amateur");
+    return false;
+  }
+
+  shrineParticipants.value = latestPairgoGroups.map((group) => `${group.number}番`).join("\n");
+  setShrineMatchMethod("tournament");
+  shrineAmateurUsesCarriedGroups = true;
+  updateShrineParticipantInputVisibility("amateur");
+  if (shrineNumberMessage) {
+    shrineNumberMessage.textContent = `${latestPairgoGroups.length}組を代表トーナメントへ引き継ぎました。`;
+  }
+  return true;
+};
+
+const getAdminGameRecordDraft = () => ({
+  teacherId: adminGameRecordTeacher?.value || activeTeacherKey,
+  date: adminGameRecordDate?.value || getTodayForInput(),
+  handicap: adminGameRecordHandicap?.value || "互先",
+  result: adminGameRecordResult?.value || "記録なし",
+});
+
+const updateAdminGameRecordApply = () => {
+  if (!adminGameRecordApply || !adminGameRecordMessage) {
+    return;
+  }
+
+  if (adminGameRecordDate && !adminGameRecordDate.value) {
+    adminGameRecordDate.value = getTodayForInput();
+  }
+
+  const today = getTodayForInput();
+  const todayLabel = new Date(`${today}T00:00:00`).toLocaleDateString("ja-JP", {
+    month: "numeric",
+    day: "numeric",
+    weekday: "short",
+  });
+  const draft = getAdminGameRecordDraft();
+  const teacher = teacherDetails[draft.teacherId];
+  const currentCount = teacher
+    ? normalizeProgressCount(userProgress.stamps.teacherLessonCounts[draft.teacherId])
+    : 0;
+  const isMaxAchieved = teacher ? currentCount >= getTeacherMaxCount(teacher) : true;
+
+  if (adminGameRecordDateLabel) {
+    adminGameRecordDateLabel.textContent = `本日 ${todayLabel}`;
+  }
+
+  adminGameRecordApply.disabled = !teacher || isMaxAchieved;
+  adminGameRecordApply.textContent = isMaxAchieved
+    ? "この先生は達成済み"
+    : "対局記録と先生スタンプを反映";
+  adminGameRecordMessage.textContent = isMaxAchieved
+    ? "この先生の花スタンプはすべて達成済みです。"
+    : "フォーム回答を確認してから押してください。";
+};
+
+const applyGameRecordFromAdmin = () => {
+  const draft = getAdminGameRecordDraft();
+  const teacher = teacherDetails[draft.teacherId];
+
+  if (!teacher) {
+    updateAdminGameRecordApply();
+    return;
+  }
+
+  const before = normalizeProgressCount(userProgress.stamps.teacherLessonCounts[draft.teacherId]);
+  if (before >= getTeacherMaxCount(teacher)) {
+    updateAdminGameRecordApply();
+    return;
+  }
+
+  gameRecords.push({
+    id: `game-admin-${Date.now()}-${draft.teacherId}`,
+    teacherId: draft.teacherId,
+    date: draft.date,
+    handicap: draft.handicap,
+    result: draft.result,
+    recordedAt: new Date().toISOString(),
+  });
+  saveGameRecords();
+
+  userProgress.stamps.teacherLessonCounts[draft.teacherId] = clampProgressCount(before + 1, getTeacherMaxCount(teacher));
+  userProgress.stamps.teacherCircleRounds = getTeacherCircleRoundsFromCounts(userProgress.stamps.teacherLessonCounts);
+  syncTeacherDetailsFromProgress();
+  syncProgressRewards();
+  saveUserProgress();
+  appendOperationHistory({
+    type: "teacher_stamp",
+    target: `${teacher.name} 対局記録`,
+    before,
+    after: normalizeProgressCount(userProgress.stamps.teacherLessonCounts[draft.teacherId]),
+  });
+  syncAdminDraftFromProgress();
+  renderTeacherGameRecords(activeTeacherKey);
+  updateParticipationStampCard();
+  updateTeacherCards();
+  updateRoundProgress();
+  updateProfileCard();
+  updateAdminPanel();
+
+  if (adminGameRecordMessage) {
+    adminGameRecordMessage.textContent = `${teacher.name} の対局記録と先生スタンプを反映しました。`;
+  }
+};
+
+const updateAdminParticipationApply = () => {
+  if (!adminParticipationDate || !adminParticipationApply || !adminParticipationMessage) {
+    return;
+  }
+
+  const today = getTodayForInput();
+  const todayLabel = new Date(`${today}T00:00:00`).toLocaleDateString("ja-JP", {
+    month: "numeric",
+    day: "numeric",
+    weekday: "short",
+  });
+  const isStampedToday = userProgress.stamps.lastParticipationStampDate === today;
+  const currentCount = normalizeProgressCount(userProgress.stamps.participationCount);
+  const isMaxAchieved = currentCount >= getParticipationMaxCount();
+
+  adminParticipationDate.textContent = `本日 ${todayLabel}`;
+  adminParticipationApply.disabled = isStampedToday || isMaxAchieved;
+  adminParticipationApply.textContent = isStampedToday
+    ? "本日は反映済み"
+    : isMaxAchieved
+      ? "参加スタンプ達成済み"
+      : "今日の参加スタンプを反映";
+
+  if (isStampedToday) {
+    adminParticipationMessage.textContent = "今日はすでに参加スタンプを反映しています。";
+  } else if (isMaxAchieved) {
+    adminParticipationMessage.textContent = "参加スタンプはすべて達成済みです。";
+  } else {
+    adminParticipationMessage.textContent = "フォーム回答を確認してから押してください。";
+  }
+};
+
+const applyTodayParticipationStampFromAdmin = () => {
+  if (userProgress.stamps.lastParticipationStampDate === getTodayForInput()) {
+    updateAdminParticipationApply();
+    return;
+  }
+
+  const before = normalizeProgressCount(userProgress.stamps.participationCount);
+  if (before >= getParticipationMaxCount()) {
+    updateAdminParticipationApply();
+    return;
+  }
+
+  const participantName = adminParticipationName?.value.trim() || "参加者";
+  addParticipationStamp();
+  appendOperationHistory({
+    type: "participation_stamp",
+    target: `${participantName} 参加スタンプ`,
+    before,
+    after: normalizeProgressCount(userProgress.stamps.participationCount),
+  });
+  syncAdminDraftFromProgress();
+  updateParticipationStampCard();
+  updateTeacherCards();
+  updateRoundProgress();
+  updateProfileCard();
+  updateAdminPanel();
+  if (adminParticipationMessage) {
+    adminParticipationMessage.textContent = `${participantName} さんの本日分を反映しました。`;
+  }
 };
 
 const getAdminDraftChanges = () => {
@@ -1244,7 +4533,7 @@ const showPanel = (target) => {
 };
 
 const getCompletedFirstRoundCount = () =>
-  Object.values(teacherDetails).filter((teacher) => teacher.completedFirstRound).length;
+  teacherCircleTargetIds.filter((teacherId) => teacherDetails[teacherId]?.completedFirstRound).length;
 
 const hasFirstRoundMedal = () => getCompletedFirstRoundCount() >= getTeacherCircleRequiredCount();
 
@@ -1280,6 +4569,47 @@ const updateTeacherStampRuleNote = (teacher) => {
   teacherStampRule.append(note);
 };
 
+const fairyQuoteByFlower = {
+  cosmos: "はじめての花が咲いたね！",
+  fuji: "ゆっくり伸びた時間も、ちゃんと花になるよ。",
+  kinmokusei: "小さな香りみたいに、記録はあとから届くよ。",
+  lotus: "静かな一手が、水面に輪を広げているよ。",
+  sumire: "小さく咲いても、ちゃんと見つけてもらえるよ。",
+  botan: "大きく咲く日は、少しずつ近づいているよ。",
+  lily: "まっすぐな気持ちが、今日の花を支えているよ。",
+  asagao: "朝のひかりみたいに、新しい一局が始まるよ。",
+  kikyo: "落ち着いて進めば、次の道しるべが見えてくるよ。",
+  nadeshiko: "やさしい強さで、また一歩進めたね。",
+  suisen: "足もとの春を、ちゃんと見つけたね。",
+  hagi: "風にゆれる日も、旅はちゃんと続いているよ。",
+  shakuyaku: "ていねいに重ねた時間が、きれいに咲いたね。",
+};
+
+Object.assign(fairyQuoteByFlower, {
+  suzuran: "小さな音も、ちゃんと次の一手につながっているよ。",
+  mokuren: "静かな形を守ると、読みの道が見えてくるよ。",
+  hinageshi: "今日の記録も、次の花を咲かせる力になるよ。",
+  shirotsumekusa: "対局を見守る目が、やさしく道を照らしているよ。",
+  ran: "じっくり育てた形は、きっと盤面で支えになるよ。",
+  hanamizuki: "羽を広げるように、落ち着いて次へ進もう。",
+  yamabuki: "明るい山吹の道から、新しい先生の輪が始まるよ。",
+  rindou: "静かな青い花が、次の一手をそっと教えてくれるよ。",
+  tsukimisou: "夜の光みたいに、今日の記録もやさしく残っているよ。",
+  kingyosou: "楽しい発見をひとつずつ、金魚草の花に集めていこう。",
+  fujibakama: "小さな足あとも、ちゃんと次の輪につながっているよ。",
+  fuyou: "ふんわり咲いた時間が、新しい出会いを守ってくれるよ。",
+  tsuyukusa: "朝のしずくみたいな一手を、きらりと残しておこう。",
+  kinsenka: "あたたかい花びらが、がんばった記録を包んでいるよ。",
+  nanten: "赤い実のように、よい記録が次の季節へ続いていくよ。",
+});
+
+const companionQuoteById = {
+  special_companion_french_bulldog_a: "はじめの一歩\nちゃんと見ていたよ。",
+  special_companion_french_bulldog_b: "次の冒険も、いっしょに歩こう。",
+  special_companion_owl_a: "記録は未来への宝物だよ。",
+  special_companion_owl_b: "先生の輪をめぐった旅\nしっかり刻まれているよ。",
+};
+
 const getFairyDisplayData = (fairyData = {}, teacher = null) => {
   const flower = fairyData.flower ?? teacher?.flower ?? "cosmos";
   const flowerName = fairyData.flowerName ?? teacher?.flowerName ?? "花";
@@ -1288,7 +4618,9 @@ const getFairyDisplayData = (fairyData = {}, teacher = null) => {
   const src = fairyAsset ? `assets/${fairyAsset}` : fallbackFairy.src;
   const label = fairyData.name ?? fairyData.fairyName ?? fallbackFairy.label ?? `${flowerName}の妖精達成`;
 
-  return { src, label, flower, flowerName };
+  const quote = fairyData.quote ?? fairyQuoteByFlower[flower] ?? `${flowerName}の花、きれいに咲いたね。`;
+
+  return { src, label, flower, flowerName, quote };
 };
 
 const getCompletedTeacherCycleProgress = (teacher) => {
@@ -1321,6 +4653,37 @@ const getAchievementFairy = (teacher, cycleProgress = getCompletedTeacherCyclePr
 const getCurrentTeacherCycleProgress = (teacher) =>
   getCycleProgress(teacher.stampCount, getTeacherGoal(teacher), teacher.flowerCycles);
 
+const updateCurrentFlowerCard = (teacher, cycleProgress) => {
+  if (!currentFlowerImage || !currentFlowerName || !currentFlowerProgress) {
+    return;
+  }
+
+  const goal = getTeacherGoal(teacher);
+  const flowerName = cycleProgress.cycle.flowerName ?? "花";
+  const cycleName = cycleProgress.cycle.cycleName ?? `${cycleProgress.cycleNumber}巡目`;
+  const remaining = Math.max(0, goal - cycleProgress.countInCycle);
+  const flowerAsset = cycleProgress.cycle.flowerAsset;
+
+  currentFlowerImage.src = flowerAsset ? `assets/${flowerAsset}` : "assets/cosmos-stamp-stage-05-v2.png";
+  currentFlowerImage.alt = flowerName;
+  currentFlowerImage.closest(".current-flower-card")?.style.setProperty("--current-flower-stamp-image", `url("${currentFlowerImage.src}")`);
+  currentFlowerName.textContent = `${flowerName}の花 ${cycleName}`;
+  currentFlowerProgress.textContent = remaining === 0
+    ? `${goal}/${goal}回 満開です`
+    : `${cycleProgress.countInCycle}/${goal}回 あと${remaining}回で満開`;
+
+  if (currentFlowerStamps) {
+    currentFlowerStamps.textContent = "";
+
+    for (let index = 1; index <= goal; index += 1) {
+      const stamp = document.createElement("i");
+      stamp.className = index <= cycleProgress.countInCycle ? "is-filled" : "";
+      stamp.setAttribute("aria-hidden", "true");
+      currentFlowerStamps.append(stamp);
+    }
+  }
+};
+
 const getTotalTeacherStampCount = () =>
   Object.values(teacherDetails).reduce((total, teacher) => total + teacher.stampCount, 0);
 
@@ -1334,6 +4697,13 @@ const getCurrentProgressForEvaluation = () => userProgress;
 const getCurrentAchievementResult = () =>
   window.achievementEvaluators.evaluateAllAchievements(getCurrentProgressForEvaluation());
 
+const hasParticipationStampToday = () =>
+  userProgress.stamps.lastParticipationStampDate === getTodayForInput();
+
+const openParticipationForm = () => {
+  window.open(participationFormUrl, "_blank", "noopener,noreferrer");
+};
+
 const updateParticipationStampCard = () => {
   if (!participationCount || !participationStatus || !participationStampButton) {
     return;
@@ -1343,6 +4713,8 @@ const updateParticipationStampCard = () => {
   const goal = getParticipationGoal();
   const cycleProgress = getCycleProgress(currentCount, goal, participationFlowerCycles);
   const isFirstAchievementAchieved = currentCount >= goal;
+  const isMaxAchieved = currentCount >= cycleProgress.maxCount;
+  const isStampedToday = hasParticipationStampToday();
 
   if (participationFlowerName) {
     participationFlowerName.textContent = cycleProgress.cycle.flowerName;
@@ -1351,11 +4723,504 @@ const updateParticipationStampCard = () => {
   applyFlowerVisual(participationFlower, cycleProgress.cycle);
 
   participationCount.textContent = `${cycleProgress.countInCycle}/${goal}回`;
-  participationStatus.textContent = isFirstAchievementAchieved
-    ? `${cycleProgress.cycleNumber}巡目 ${cycleProgress.cycle.flowerName}`
-    : `あと${Math.max(0, goal - cycleProgress.countInCycle)}回`;
-  participationStampButton.textContent = currentCount >= cycleProgress.maxCount ? "参加スタンプ達成済み" : "運営確認して参加スタンプを押す";
-  participationStampButton.disabled = currentCount >= cycleProgress.maxCount;
+  participationStatus.textContent = isStampedToday
+    ? "本日は押印済み"
+    : isFirstAchievementAchieved
+      ? `${cycleProgress.cycleNumber}巡目 ${cycleProgress.cycle.flowerName}`
+      : `あと${Math.max(0, goal - cycleProgress.countInCycle)}回`;
+  participationStampButton.textContent = isMaxAchieved
+    ? "参加スタンプ達成済み"
+    : "参加フォームを開く";
+  participationStampButton.disabled = isMaxAchieved;
+};
+
+const getAssetPath = (asset) => {
+  if (!asset) {
+    return "";
+  }
+
+  return asset.startsWith("assets/") ? asset : `assets/${asset}`;
+};
+
+const fairyBookBackgrounds = {
+  cosmos: "assets/fairy-bg-cosmos.png",
+  fuji: "assets/fairy-bg-hydrangea.png",
+  kinmokusei: "assets/fairy-bg-meadow.png",
+  iris: "assets/fairy-bg-iris.png",
+  lotus: "assets/fairy-bg-iris.png",
+  sumire: "assets/fairy-bg-hydrangea.png",
+  camellia: "assets/fairy-bg-camellia.png",
+  botan: "assets/fairy-bg-camellia.png",
+  lily: "assets/fairy-bg-meadow.png",
+  sunflower: "assets/fairy-bg-meadow.png",
+  asagao: "assets/fairy-bg-hydrangea.png",
+  kikyo: "assets/fairy-bg-hydrangea.png",
+  hydrangea: "assets/fairy-bg-hydrangea.png",
+  nadeshiko: "assets/fairy-bg-camellia.png",
+  suisen: "assets/fairy-bg-meadow.png",
+  sakura: "assets/fairy-bg-camellia.png",
+  hagi: "assets/fairy-bg-hydrangea.png",
+  shakuyaku: "assets/fairy-bg-camellia.png",
+  dahlia: "assets/fairy-bg-camellia.png",
+  ume: "assets/fairy-bg-camellia.png",
+};
+
+Object.assign(fairyBookBackgrounds, {
+  suzuran: "assets/fairy-bg-meadow.png",
+  mokuren: "assets/fairy-bg-camellia.png",
+  hinageshi: "assets/fairy-bg-meadow.png",
+  shirotsumekusa: "assets/fairy-bg-meadow.png",
+  ran: "assets/fairy-bg-iris.png",
+  hanamizuki: "assets/fairy-bg-camellia.png",
+  yamabuki: "assets/fairy-bg-meadow.png",
+  rindou: "assets/fairy-bg-hydrangea.png",
+  tsukimisou: "assets/fairy-bg-meadow.png",
+  kingyosou: "assets/fairy-bg-camellia.png",
+  fujibakama: "assets/fairy-bg-hydrangea.png",
+  fuyou: "assets/fairy-bg-camellia.png",
+  tsuyukusa: "assets/fairy-bg-hydrangea.png",
+  kinsenka: "assets/fairy-bg-meadow.png",
+  nanten: "assets/fairy-bg-camellia.png",
+});
+
+const getFairyBookBackground = (flower) => fairyBookBackgrounds[flower] ?? fairyBookBackgrounds.cosmos;
+
+const fairyCardFrames = {
+  cosmos: "assets/fairy-card-frame-cosmos-v2.png",
+  iris: "assets/fairy-card-frame-iris-v2.png",
+  lotus: "assets/fairy-card-frame-iris-v2.png",
+  sumire: "assets/fairy-card-frame-iris-v2.png",
+  camellia: "assets/fairy-card-frame-camellia-v2.png",
+  botan: "assets/fairy-card-frame-camellia-v2.png",
+  lily: "assets/fairy-card-frame-camellia-v2.png",
+  sunflower: "assets/fairy-card-frame-sunflower-v2.png",
+  asagao: "assets/fairy-card-frame-sunflower-v2.png",
+  kikyo: "assets/fairy-card-frame-sunflower-v2.png",
+  hydrangea: "assets/fairy-card-frame-hydrangea-v2.png",
+  nadeshiko: "assets/fairy-card-frame-hydrangea-v2.png",
+  suisen: "assets/fairy-card-frame-hydrangea-v2.png",
+  sakura: "assets/fairy-card-frame-sakura-v2.png",
+  hagi: "assets/fairy-card-frame-sakura-v2.png",
+  shakuyaku: "assets/fairy-card-frame-sakura-v2.png",
+  special_first_step: "assets/fairy-card-frame-special-sprout-v2.png",
+  special_next_step: "assets/fairy-card-frame-special-ribbon-v2.png",
+  special_wisdom: "assets/fairy-card-frame-special-wisdom-v2.png",
+};
+
+Object.assign(fairyCardFrames, {
+  suzuran: "assets/fairy-card-frame-special-sprout-v2.png",
+  mokuren: "assets/fairy-card-frame-camellia-v2.png",
+  hinageshi: "assets/fairy-card-frame-sunflower-v2.png",
+  shirotsumekusa: "assets/fairy-card-frame-special-sprout-v2.png",
+  ran: "assets/fairy-card-frame-iris-v2.png",
+  hanamizuki: "assets/fairy-card-frame-sakura-v2.png",
+  yamabuki: "assets/fairy-card-frame-sunflower-v2.png",
+  rindou: "assets/fairy-card-frame-iris-v2.png",
+  tsukimisou: "assets/fairy-card-frame-special-wisdom-v2.png",
+  kingyosou: "assets/fairy-card-frame-camellia-v2.png",
+  fujibakama: "assets/fairy-card-frame-hydrangea-v2.png",
+  fuyou: "assets/fairy-card-frame-camellia-v2.png",
+  tsuyukusa: "assets/fairy-card-frame-hydrangea-v2.png",
+  kinsenka: "assets/fairy-card-frame-sunflower-v2.png",
+  nanten: "assets/fairy-card-frame-sakura-v2.png",
+});
+
+const specialCompanionFrameKeys = {
+  special_companion_french_bulldog_a: "special_first_step",
+  special_companion_french_bulldog_b: "special_next_step",
+  special_companion_owl_a: "special_wisdom",
+  special_companion_owl_b: "special_wisdom",
+};
+
+const getFairyCardFrame = ({ type = "fairy", flower = "", companionId = "" } = {}) => {
+  if (type === "special") {
+    return fairyCardFrames[specialCompanionFrameKeys[companionId] ?? "special_first_step"];
+  }
+
+  return fairyCardFrames[flower] ?? fairyCardFrames.cosmos;
+};
+
+const openFairyViewer = ({ src, alt, name, status, quote = "", type = "fairy", flower = "", background = "", companionId = "" }) => {
+  if (!fairyViewer || !fairyViewerImage || !fairyViewerName || !fairyViewerStatus) {
+    return;
+  }
+
+  fairyViewerImage.src = src;
+  fairyViewerImage.alt = alt;
+  fairyViewerName.textContent = name;
+  if (fairyViewerQuote) {
+    fairyViewerQuote.textContent = quote;
+    fairyViewerQuote.hidden = !quote;
+  }
+  fairyViewerStatus.textContent = status;
+  fairyViewer.dataset.viewerType = type;
+  fairyViewer.dataset.viewerFlower = flower;
+  const flowerDetail = flowerCatalog[flower];
+  if (flowerDetail) {
+    fairyViewerCard?.style.setProperty("--viewer-flower-color", flowerDetail.flowerColor);
+    fairyViewerCard?.style.setProperty("--viewer-flower-accent", flowerDetail.accentColor);
+  } else {
+    fairyViewerCard?.style.removeProperty("--viewer-flower-color");
+    fairyViewerCard?.style.removeProperty("--viewer-flower-accent");
+  }
+  const bookBackground = background || (type === "title-book" ? getFairyBookBackground(flower) : "");
+  if (bookBackground) {
+    fairyViewerCard?.style.setProperty("--viewer-book-bg", `url("${bookBackground}")`);
+  } else {
+    fairyViewerCard?.style.removeProperty("--viewer-book-bg");
+  }
+  const frame = (type === "fairy" || type === "special") ? getFairyCardFrame({ type, flower, companionId }) : "";
+  if (frame) {
+    fairyViewerCard?.style.setProperty("--viewer-frame", `url("${frame}")`);
+  } else {
+    fairyViewerCard?.style.removeProperty("--viewer-frame");
+  }
+  fairyViewerCard?.classList.toggle("is-special-companion", type === "special");
+  fairyViewerCard?.classList.toggle("is-medal-viewer", type === "medal");
+  fairyViewerCard?.classList.toggle("is-title-book-viewer", type === "title-book");
+  fairyViewer.hidden = false;
+  document.body.classList.add("is-fairy-viewer-open");
+};
+
+const closeFairyViewer = () => {
+  if (!fairyViewer) {
+    return;
+  }
+
+  fairyViewer.hidden = true;
+  fairyViewer.dataset.viewerType = "";
+  fairyViewer.dataset.viewerFlower = "";
+  fairyViewerCard?.classList.remove("is-special-companion", "is-medal-viewer", "is-title-book-viewer");
+  fairyViewerCard?.style.removeProperty("--viewer-flower-color");
+  fairyViewerCard?.style.removeProperty("--viewer-flower-accent");
+  fairyViewerCard?.style.removeProperty("--viewer-book-bg");
+  fairyViewerCard?.style.removeProperty("--viewer-frame");
+  document.body.classList.remove("is-fairy-viewer-open");
+};
+
+const getTitleBookDetail = (title, achievementResult) => {
+  const participationCycle = achievementResult.participation?.achievedCycles
+    ?.find((cycle) => cycle.rewards?.title?.id === title.id);
+
+  if (participationCycle) {
+    return {
+      flower: participationCycle.flower,
+      flowerName: participationCycle.flowerName,
+      fairyName: participationCycle.fairyName,
+      fairyAsset: participationCycle.fairyAsset,
+      condition: `参加スタンプ ${participationCycle.requiredCount}回`,
+      message: `${participationCycle.flowerName}の花畑で出会いました。`,
+    };
+  }
+
+  for (const teacher of achievementResult.teacherFairy?.teachers ?? []) {
+    const cycle = teacher.cycles?.find((teacherCycle) => teacherCycle.rewards?.title?.id === title.id);
+    if (cycle) {
+      return {
+        flower: cycle.flower,
+        flowerName: cycle.flowerName,
+        fairyName: cycle.fairyName,
+        fairyAsset: cycle.fairyAsset,
+        condition: `${teacher.teacherName} / ${cycle.cycleName}`,
+        message: `${cycle.flowerName}の花畑で出会いました。`,
+      };
+    }
+  }
+
+  const latestFairy = achievementResult.earnedFairies?.at(-1);
+  return {
+    flower: latestFairy?.flower ?? "cosmos",
+    flowerName: latestFairy?.flowerName ?? "花",
+    fairyName: latestFairy?.name ?? "書庫の妖精",
+    fairyAsset: latestFairy?.fairyAsset ?? "fairy-apollon-flower-style.png",
+    condition: "旅の記録から収蔵",
+    message: "集めた記録が、図鑑の本になりました。",
+  };
+};
+
+const openTitleBookViewer = (title, achievementResult) => {
+  const detail = getTitleBookDetail(title, achievementResult);
+
+  openFairyViewer({
+    src: getAssetPath(detail.fairyAsset),
+    alt: detail.fairyName,
+    name: title.name,
+    status: `${detail.flowerName}の図鑑 / ${detail.condition}`,
+    quote: detail.message,
+    type: "title-book",
+    flower: detail.flower,
+    background: getFairyBookBackground(detail.flower),
+  });
+};
+
+const getMedalViewerDetail = (medal, achievementResult) => {
+  const participationCycle = achievementResult.participation?.achievedCycles
+    ?.find((cycle) => cycle.rewards?.medal?.id === medal.id);
+
+  if (participationCycle) {
+    return {
+      condition: `参加スタンプ ${participationCycle.requiredCount}回`,
+      message: `${participationCycle.flowerName}が満開になった記念です。`,
+    };
+  }
+
+  const circleMilestone = achievementResult.teacherCircle?.achievedMilestones
+    ?.find((milestone) => milestone.earnedMedal?.id === medal.id);
+
+  if (circleMilestone) {
+    return {
+      condition: `先生の輪 ${circleMilestone.requiredRounds}巡達成`,
+      message: `${circleMilestone.requiredRounds}巡分の歩みが、勲章になりました。`,
+    };
+  }
+
+  return {
+    condition: "達成記録から収蔵",
+    message: "ここまで歩いた証です。",
+  };
+};
+
+const openLibraryOwlViewer = () => {
+  if (!libraryOwl) {
+    return;
+  }
+
+  const speech = librarySpeech?.textContent?.replace(/[「」]/g, "") ?? "";
+  openFairyViewer({
+    src: libraryOwl.getAttribute("src") ?? "assets/special-companion-owl-a.png",
+    alt: libraryOwl.alt || "フクロウの書庫番",
+    name: libraryOwl.alt || "フクロウの書庫番",
+    status: libraryGuide?.textContent ?? "書庫の見守り役",
+    quote: speech,
+    type: "special",
+    companionId: (libraryOwl.getAttribute("src") ?? "").includes("owl-b")
+      ? "special_companion_owl_b"
+      : "special_companion_owl_a",
+  });
+};
+
+const openLibraryJournalKeeperViewer = () => {
+  openFairyViewer({
+    src: "assets/library-journal-hedgehog-with-book.png",
+    alt: "冒険日誌の記録係",
+    name: "冒険日誌の記録係",
+    status: "書庫で思い出をしまう係",
+    quote: libraryJournalKeeperSpeech?.textContent ?? "今日の記録も、ちゃんとしまっておくね。",
+    type: "special",
+    companionId: "special_companion_owl_a",
+  });
+};
+
+const syncProfileToggleButton = (button, target) => {
+  const isCollapsed = target.classList.contains("is-collapsed");
+  button.textContent = isCollapsed ? "開く" : "閉じる";
+  button.setAttribute("aria-expanded", String(!isCollapsed));
+};
+
+const toggleProfileSection = (button) => {
+  const target = document.querySelector(`[data-profile-collapsible="${button.dataset.profileToggle}"]`);
+
+  if (!target) {
+    return;
+  }
+
+  target.classList.toggle("is-collapsed");
+  syncProfileToggleButton(button, target);
+};
+
+const syncProfileToggleButtons = () => {
+  for (const button of profileToggleButtons) {
+    const target = document.querySelector(`[data-profile-collapsible="${button.dataset.profileToggle}"]`);
+
+    if (target) {
+      syncProfileToggleButton(button, target);
+    }
+  }
+};
+
+const syncLibraryTitleToggle = () => {
+  if (!libraryTitleToggle || !libraryTitleList) {
+    return;
+  }
+
+  const isCollapsed = libraryTitleList.classList.contains("is-collapsed");
+  libraryTitleToggle.textContent = isCollapsed ? "開く" : "閉じる";
+  libraryTitleToggle.setAttribute("aria-expanded", String(!isCollapsed));
+  libraryTitleArtToggle?.setAttribute("aria-expanded", String(!isCollapsed));
+  libraryTitleArtToggle?.setAttribute("aria-label", isCollapsed ? "称号の書架を開く" : "称号の書架を閉じる");
+};
+
+const toggleLibraryTitleList = () => {
+  if (!libraryTitleList) {
+    return;
+  }
+
+  libraryTitleList.classList.toggle("is-collapsed");
+  syncLibraryTitleToggle();
+};
+
+const syncLibraryMedalToggle = () => {
+  if (!libraryMedalToggle || !libraryMedalList) {
+    return;
+  }
+
+  const isCollapsed = libraryMedalList.classList.contains("is-collapsed");
+  libraryMedalToggle.textContent = isCollapsed ? "開く" : "閉じる";
+  libraryMedalToggle.setAttribute("aria-expanded", String(!isCollapsed));
+  libraryMedalArtToggle?.setAttribute("aria-expanded", String(!isCollapsed));
+  libraryMedalArtToggle?.setAttribute("aria-label", isCollapsed ? "勲章の棚を開く" : "勲章の棚を閉じる");
+};
+
+const toggleLibraryMedalList = () => {
+  if (!libraryMedalList) {
+    return;
+  }
+
+  libraryMedalList.classList.toggle("is-collapsed");
+  syncLibraryMedalToggle();
+};
+
+const syncLibraryJournalToggle = () => {
+  if (!libraryJournalToggle || !libraryJournalRecords) {
+    return;
+  }
+
+  const isCollapsed = libraryJournalRecords.classList.contains("is-collapsed");
+  libraryJournalToggle.setAttribute("aria-expanded", String(!isCollapsed));
+  libraryJournalToggle.setAttribute("aria-label", isCollapsed ? "冒険日誌を開く" : "冒険日誌を閉じる");
+  if (libraryJournalState) {
+    libraryJournalState.textContent = isCollapsed ? "ひらく" : "とじる";
+  }
+};
+
+const libraryJournalKeeperMessages = [
+  "思い出が増えてきたね。",
+  "今日も記録しておいたよ。",
+  "書かなくても大丈夫だよ。",
+  "しまっておきたい日だね。",
+  "あとでまた読もうね。",
+];
+
+let lastLibraryJournalKeeperMessage = "";
+
+const updateLibraryJournalKeeperSpeech = () => {
+  if (!libraryJournalKeeperSpeech || libraryJournalKeeperMessages.length === 0) {
+    return;
+  }
+
+  const candidates = libraryJournalKeeperMessages.filter((message) => message !== lastLibraryJournalKeeperMessage);
+  const messages = candidates.length > 0 ? candidates : libraryJournalKeeperMessages;
+  const nextMessage = messages[Math.floor(Math.random() * messages.length)];
+  lastLibraryJournalKeeperMessage = nextMessage;
+  libraryJournalKeeperSpeech.textContent = nextMessage;
+};
+
+const toggleLibraryJournal = () => {
+  if (!libraryJournalRecords) {
+    return;
+  }
+
+  libraryJournalRecords.classList.toggle("is-collapsed");
+  libraryJournalPrompt?.closest(".library-journal-prompt")?.classList.toggle("is-collapsed");
+  libraryJournalKeeperSpeech?.classList.toggle("is-collapsed", libraryJournalRecords.classList.contains("is-collapsed"));
+  syncLibraryJournalToggle();
+  if (!libraryJournalRecords.classList.contains("is-collapsed")) {
+    updateLibraryJournalKeeperSpeech();
+  }
+};
+
+const createProfileFairyItem = ({ src, alt, nameText, statusText, quoteText = "", flower = "", categoryText, cycleNames = [], cycleFairies = [] }) => {
+  const item = document.createElement("button");
+  item.type = "button";
+  item.className = "profile-fairy-item";
+  item.setAttribute("aria-label", `${nameText}を大きく見る`);
+
+  const image = document.createElement("img");
+  image.src = src;
+  image.alt = alt;
+
+  const copy = document.createElement("div");
+  copy.className = "profile-fairy-copy";
+
+  const name = document.createElement("strong");
+  name.textContent = nameText;
+  copy.append(name);
+
+  if (categoryText) {
+    const category = document.createElement("span");
+    category.className = "profile-fairy-meta";
+    category.textContent = categoryText;
+    copy.append(category);
+  }
+
+  if (cycleNames.length > 0) {
+    const cycles = document.createElement("div");
+    cycles.className = "profile-fairy-cycles";
+
+    const cyclesLabel = document.createElement("span");
+    cyclesLabel.className = "profile-fairy-cycles-label";
+    cyclesLabel.textContent = "咲いた花";
+    cycles.append(cyclesLabel);
+
+    for (const cycleName of cycleNames) {
+      const cycle = document.createElement("span");
+      cycle.className = "profile-fairy-cycle";
+      cycle.textContent = `🌸 ${cycleName}`;
+      cycles.append(cycle);
+    }
+
+    copy.append(cycles);
+  }
+
+  if (cycleFairies.length > 1) {
+    const fairyLine = document.createElement("div");
+    fairyLine.className = "profile-fairy-cycle-images";
+
+    for (const cycleFairy of cycleFairies) {
+      const thumb = document.createElement("img");
+      thumb.src = cycleFairy.src;
+      thumb.alt = cycleFairy.alt;
+      thumb.title = `${cycleFairy.cycleName}の妖精を見る`;
+      thumb.dataset.fairyCycleThumb = "";
+      thumb.dataset.viewerSrc = cycleFairy.src;
+      thumb.dataset.viewerAlt = cycleFairy.alt;
+      thumb.dataset.viewerName = cycleFairy.alt;
+      thumb.dataset.viewerStatus = `${categoryText ? `${categoryText} / ` : ""}${cycleFairy.cycleName} 達成済み`;
+      thumb.dataset.viewerQuote = cycleFairy.quote ?? quoteText;
+      thumb.dataset.viewerFlower = cycleFairy.flower ?? flower;
+      fairyLine.append(thumb);
+    }
+
+    copy.append(fairyLine);
+  }
+
+  if (cycleNames.length === 0) {
+    const status = document.createElement("span");
+    status.className = "profile-fairy-meta";
+    status.textContent = statusText;
+    copy.append(status);
+  }
+
+  item.append(image, copy);
+  item.addEventListener("click", (event) => {
+    const thumb = event.target.closest("[data-fairy-cycle-thumb]");
+
+    if (thumb) {
+      openFairyViewer({
+        src: thumb.dataset.viewerSrc,
+        alt: thumb.dataset.viewerAlt,
+        name: thumb.dataset.viewerName,
+        status: thumb.dataset.viewerStatus,
+        quote: thumb.dataset.viewerQuote,
+        flower: thumb.dataset.viewerFlower,
+      });
+      return;
+    }
+
+    openFairyViewer({ src, alt, name: nameText, status: statusText, quote: quoteText, flower });
+  });
+
+  return item;
 };
 
 const renderProfileFairies = () => {
@@ -1375,25 +5240,95 @@ const renderProfileFairies = () => {
   }
 
   for (const teacher of earnedFairies) {
-    const fairy = getAchievementFairy(teacher);
-    const item = document.createElement("article");
-    item.className = "profile-fairy-item";
+    const cycleProgress = getCompletedTeacherCycleProgress(teacher);
+    const fairy = getAchievementFairy(teacher, cycleProgress);
+    const cycleName = cycleProgress.cycleName ?? `${cycleProgress.cycleNumber}巡目`;
+    const statusText = `${teacher.name} 指導碁スタンプ / 咲いた花: ${cycleName}`;
 
-    const image = document.createElement("img");
-    image.src = fairy.src;
-    image.alt = fairy.label;
-
-    const copy = document.createElement("div");
-    const name = document.createElement("strong");
-    const status = document.createElement("span");
-
-    name.textContent = fairy.label;
-    status.textContent = `${teacher.name} ${getTeacherGoal(teacher)}/${getTeacherGoal(teacher)}`;
-
-    copy.append(name, status);
-    item.append(image, copy);
-    profileFairyList.append(item);
+    profileFairyList.append(createProfileFairyItem({
+      src: fairy.src,
+      alt: fairy.label,
+      nameText: fairy.label,
+      statusText,
+      quoteText: fairy.quote,
+      flower: cycleProgress.cycle.flower,
+      categoryText: `${teacher.name} / 指導碁スタンプ`,
+      cycleNames: [cycleName],
+      cycleFairies: [{ src: fairy.src, alt: fairy.label, cycleName, quote: fairy.quote, flower: cycleProgress.cycle.flower }],
+    }));
   }
+};
+
+const getFairyProfileGroupKey = (earnedFairy) => {
+  if (earnedFairy.teacherId) {
+    return `teacher:${earnedFairy.teacherId}`;
+  }
+
+  if (earnedFairy.teacherName === "参加スタンプ" || earnedFairy.teacherId === null) {
+    return "participation";
+  }
+
+  return earnedFairy.id ?? earnedFairy.name;
+};
+
+const getFairyProfileCycleName = (earnedFairy) =>
+  earnedFairy.cycleName ?? (earnedFairy.cycleNumber ? `${earnedFairy.cycleNumber}巡目` : "1巡目");
+
+const getFairyProfileCategoryText = (earnedFairy) => {
+  if (earnedFairy.teacherId) {
+    return `${earnedFairy.teacherName} / 指導碁スタンプ`;
+  }
+
+  if (earnedFairy.teacherName === "参加スタンプ" || earnedFairy.teacherId === null) {
+    return "参加スタンプ";
+  }
+
+  return earnedFairy.teacherName ?? "獲得記録";
+};
+
+const groupEarnedFairiesForProfile = (earnedFairies) => {
+  const groups = new Map();
+
+  for (const earnedFairy of earnedFairies) {
+    const key = getFairyProfileGroupKey(earnedFairy);
+    const cycleNumber = earnedFairy.cycleNumber ?? 1;
+    const cycleName = getFairyProfileCycleName(earnedFairy);
+    const group = groups.get(key) ?? {
+      representative: earnedFairy,
+      categoryText: getFairyProfileCategoryText(earnedFairy),
+      cycles: new Map(),
+    };
+
+    if ((group.representative.cycleNumber ?? 1) > cycleNumber) {
+      group.representative = earnedFairy;
+    }
+
+    if (!group.cycles.has(cycleNumber)) {
+      const teacher = earnedFairy.teacherId ? teacherDetails[earnedFairy.teacherId] : null;
+      const fairy = getFairyDisplayData(earnedFairy, teacher);
+      group.cycles.set(cycleNumber, {
+        cycleName,
+        src: fairy.src,
+        alt: fairy.label,
+        quote: fairy.quote,
+        flower: earnedFairy.flower ?? teacher?.flower,
+      });
+    }
+
+    groups.set(key, group);
+  }
+
+  return [...groups.values()].map((group) => {
+    const cycleFairies = [...group.cycles.entries()]
+      .sort(([a], [b]) => a - b)
+      .map(([, cycle]) => cycle);
+
+    return {
+      ...group,
+      cycleFairies,
+      cycleNames: cycleFairies.map((cycle) => cycle.cycleName),
+    };
+  });
 };
 
 const renderProfileFairiesFromResult = (achievementResult) => {
@@ -1411,26 +5346,26 @@ const renderProfileFairiesFromResult = (achievementResult) => {
     return;
   }
 
-  for (const earnedFairy of achievementResult.earnedFairies) {
+  const fairyGroups = groupEarnedFairiesForProfile(achievementResult.earnedFairies);
+
+  for (const group of fairyGroups) {
+    const earnedFairy = group.representative;
     const teacher = earnedFairy.teacherId ? teacherDetails[earnedFairy.teacherId] : null;
     const fairy = getFairyDisplayData(earnedFairy, teacher);
-    const item = document.createElement("article");
-    item.className = "profile-fairy-item";
+    const cycleText = group.cycleNames.join(" / ");
+    const statusText = `${group.categoryText} / 咲いた花: ${cycleText}`;
 
-    const image = document.createElement("img");
-    image.src = fairy.src;
-    image.alt = earnedFairy.name;
-
-    const copy = document.createElement("div");
-    const name = document.createElement("strong");
-    const status = document.createElement("span");
-
-    name.textContent = earnedFairy.name;
-    status.textContent = `${earnedFairy.teacherName} ${earnedFairy.cycleName ?? ""} 達成済み`;
-
-    copy.append(name, status);
-    item.append(image, copy);
-    profileFairyList.append(item);
+    profileFairyList.append(createProfileFairyItem({
+      src: fairy.src,
+      alt: fairy.label,
+      nameText: fairy.label,
+      statusText,
+      quoteText: fairy.quote,
+      flower: earnedFairy.flower ?? teacher?.flower,
+      categoryText: group.categoryText,
+      cycleNames: group.cycleNames,
+      cycleFairies: group.cycleFairies,
+    }));
   }
 };
 
@@ -1451,8 +5386,10 @@ const renderProfileSpecialCompanions = (achievementResult) => {
   }
 
   for (const companion of earnedCompanions) {
-    const item = document.createElement("article");
+    const item = document.createElement("button");
+    item.type = "button";
     item.className = "profile-special-companion-item";
+    item.setAttribute("aria-label", `${companion.name}を大きく見る`);
 
     const image = document.createElement("img");
     image.src = `assets/${companion.asset}`;
@@ -1460,20 +5397,29 @@ const renderProfileSpecialCompanions = (achievementResult) => {
 
     const copy = document.createElement("div");
     const name = document.createElement("strong");
-    const character = document.createElement("span");
     const status = document.createElement("small");
 
     name.textContent = companion.name;
-    character.textContent = companion.character;
     status.textContent = companion.description;
 
-    copy.append(name, character, status);
+    copy.append(name, status);
     item.append(image, copy);
+    item.addEventListener("click", () => {
+      openFairyViewer({
+        src: `assets/${companion.asset}`,
+        alt: companion.name,
+        name: companion.name,
+        status: companion.description,
+        quote: companionQuoteById[companion.id] ?? "今日の記録も、旅の宝物だよ。",
+        type: "special",
+        companionId: companion.id,
+      });
+    });
     profileSpecialCompanionList.append(item);
   }
 };
 
-const renderLibraryCollection = (list, items, emptyMessage, kind) => {
+const renderLibraryCollection = (list, items, emptyMessage, kind, achievementResult) => {
   if (!list) {
     return;
   }
@@ -1488,8 +5434,16 @@ const renderLibraryCollection = (list, items, emptyMessage, kind) => {
   }
 
   for (const item of items) {
-    const entry = document.createElement("article");
+    const isInteractiveItem = kind === "title" || kind === "medal";
+    const entry = document.createElement(isInteractiveItem ? "button" : "article");
     entry.className = `library-collection-item is-${kind}`;
+    if (isInteractiveItem) {
+      entry.type = "button";
+      entry.setAttribute("aria-label", kind === "title" ? `${item.name}の図鑑を開く` : `${item.name}を大きく見る`);
+    }
+    if (kind === "medal") {
+      entry.classList.add(`is-${item.id.replaceAll("_", "-")}`);
+    }
     const medalAsset = kind === "medal" ? getMedalAsset(item.id) : null;
     const mark = document.createElement(medalAsset ? "img" : "span");
     const copy = document.createElement("div");
@@ -1507,12 +5461,160 @@ const renderLibraryCollection = (list, items, emptyMessage, kind) => {
     status.textContent = kind === "medal" ? "勲章棚に収蔵" : "称号の書架に収蔵";
     copy.append(name, status);
     entry.append(mark, copy);
+    if (kind === "title") {
+      entry.addEventListener("click", () => {
+        entry.classList.add("is-opening-book");
+        window.setTimeout(() => entry.classList.remove("is-opening-book"), 420);
+        window.setTimeout(() => openTitleBookViewer(item, achievementResult), 150);
+      });
+    }
+    if (kind === "medal" && medalAsset) {
+      entry.addEventListener("click", () => {
+        const medalDetail = getMedalViewerDetail(item, achievementResult);
+        openFairyViewer({
+          src: medalAsset,
+          alt: item.name,
+          name: item.name,
+          status: medalDetail.condition,
+          quote: medalDetail.message,
+          type: "medal",
+        });
+      });
+    }
     list.append(entry);
+  }
+
+  if (kind === "medal" && items.length % 2 === 1) {
+    const emptyCase = document.createElement("article");
+    emptyCase.className = "library-collection-item is-medal is-empty-case";
+    emptyCase.setAttribute("aria-hidden", "true");
+    const mark = document.createElement("span");
+    const copy = document.createElement("div");
+    const label = document.createElement("strong");
+    const status = document.createElement("small");
+    label.textContent = "次の展示を準備中";
+    status.textContent = "空の展示スペース";
+    copy.append(label, status);
+    emptyCase.append(mark, copy);
+    list.append(emptyCase);
   }
 };
 
+const createAdventureJournalRecord = (text, source = "achievement") => ({
+  text,
+  source,
+});
+
+const getAdventureJournalRecords = (achievementResult) => {
+  const records = [];
+  const latestFairy = achievementResult.earnedFairies?.at(-1);
+  const latestMedal = achievementResult.earnedMedals?.at(-1);
+  const latestTitle = achievementResult.earnedTitles?.at(-1);
+  const latestCompanion = achievementResult.earnedCompanions?.at(-1);
+
+  if (latestFairy) {
+    records.push(createAdventureJournalRecord(`🌸 ${latestFairy.flowerName ?? "花"}の妖精と出会いました`));
+  }
+  if (latestMedal) {
+    records.push(createAdventureJournalRecord(`🏅 ${latestMedal.name}を収めました`));
+  }
+  if (latestTitle) {
+    records.push(createAdventureJournalRecord(`📖 ${latestTitle.name}の本が増えました`));
+  }
+  if (latestCompanion) {
+    records.push(createAdventureJournalRecord(`🦊 ${latestCompanion.name}が仲間になりました`));
+  }
+  if (gameRecords.length > 0) {
+    records.push(createAdventureJournalRecord(`⚫ 対局記録が${gameRecords.length}局になりました`));
+  }
+  for (const entry of libraryJournalEntries.slice(0, 3)) {
+    const mark = entry.source === "shrine" ? "⛩" : "✎";
+    records.push(createAdventureJournalRecord(`${mark} ${entry.text}`, entry.source));
+  }
+
+  if (records.length === 0) {
+    records.push(createAdventureJournalRecord("最初の記録を準備しています"));
+  }
+
+  return records.slice(0, 4);
+};
+
+const renderAdventureJournalPreview = (achievementResult) => {
+  if (!libraryJournalRecords || !libraryJournalPages || !libraryJournalPrompt) {
+    return;
+  }
+
+  const records = getAdventureJournalRecords(achievementResult);
+  const pageCount = Math.max(
+    1,
+    Math.min(
+      99,
+      achievementResult.earnedFairies.length
+        + achievementResult.earnedMedals.length
+        + achievementResult.earnedTitles.length
+        + (achievementResult.earnedCompanions?.length ?? 0)
+        + gameRecords.length
+        + libraryJournalEntries.length
+    )
+  );
+
+  libraryJournalRecords.textContent = "";
+  for (const record of records) {
+    const item = document.createElement("li");
+    const entry = typeof record === "string" ? createAdventureJournalRecord(record) : record;
+    item.className = `is-journal-${entry.source}`;
+    item.textContent = entry.text;
+    libraryJournalRecords.append(item);
+  }
+
+  libraryJournalPages.textContent = `${pageCount}頁`;
+  libraryJournalPrompt.textContent = pageCount > 1
+    ? "今日の思い出、しまっておく？"
+    : "最初の思い出、しまっておく？";
+};
+
+const setJournalPrompt = (message) => {
+  if (libraryJournalPrompt) {
+    libraryJournalPrompt.textContent = message;
+  }
+};
+
+const handleLibraryJournalNote = () => {
+  if (!libraryJournalNoteForm || !libraryJournalNoteInput) {
+    setJournalPrompt("ひとこと欄を開けませんでした。");
+    return;
+  }
+
+  libraryJournalNoteForm.hidden = false;
+  libraryJournalNoteInput.focus();
+  setJournalPrompt("短いひとことを、ここにしまえます。");
+};
+
+const saveLibraryJournalNote = () => {
+  const note = libraryJournalNoteInput?.value ?? "";
+  const entry = addLibraryJournalEntry({
+    text: note,
+    source: "manual",
+  });
+
+  if (!entry) {
+    setJournalPrompt("ひとことを入れると、ここにしまえます。");
+    return;
+  }
+
+  if (libraryJournalNoteInput) {
+    libraryJournalNoteInput.value = "";
+  }
+  if (libraryJournalNoteForm) {
+    libraryJournalNoteForm.hidden = true;
+  }
+  renderAdventureJournalPreview(getCurrentAchievementResult());
+  updateLibraryJournalKeeperSpeech();
+  setJournalPrompt("ひとことをしまいました。");
+};
+
 const renderOwlLibrary = (achievementResult) => {
-  if (!libraryCurrentTitle) {
+  if (!libraryCurrentTitle || !librarySummary || !libraryTitleCount || !libraryMedalCount || !libraryOwl || !libraryGuide || !librarySpeech) {
     return;
   }
 
@@ -1533,40 +5635,45 @@ const renderOwlLibrary = (achievementResult) => {
     ? "assets/special-companion-owl-b.png"
     : "assets/special-companion-owl-a.png";
   libraryOwl.alt = hasWiseOwl ? "達成を知る賢者" : "知恵の見守り役";
+  libraryOwlViewerButton?.setAttribute("aria-label", `${libraryOwl.alt}を大きく見る`);
   libraryGuide.textContent = hasWiseOwl
     ? "達成を知る賢者が、積み重ねた旅の証を見守っています。"
     : "知恵の見守り役が、旅の記録を大切に収めています。";
 
   librarySpeech.textContent = totalFlowerAchievements >= 18
-    ? "「立派な冒険記録になりました。」"
+    ? "「見事な記録です」"
     : achievementResult.teacherCircle.currentRounds >= 1
-      ? "「よく学び、よく歩みましたね。」"
+      ? "「よく学びましたね」"
       : medals.length >= 3
-        ? "「旅の証を大切に収めました。」"
+        ? "「証を収めました」"
         : totalFlowerAchievements >= 2
-          ? "「花の記録が集まっています。」"
+          ? "「花が集まりました」"
           : titles.length >= 1
-            ? "「新しい書が加わりました。」"
+            ? "「書が増えました」"
             : totalStampCount >= 1
-              ? "「旅の最初の一頁ですね。」"
+              ? "「一頁目です」"
               : "「ようこそ書庫へ。」";
 
-  renderLibraryCollection(libraryTitleList, titles, "まだ収められた称号はありません", "title");
-  renderLibraryCollection(libraryMedalList, medals, "まだ収められた勲章はありません", "medal");
+  renderLibraryCollection(libraryTitleList, titles, "まだ収められた称号はありません", "title", achievementResult);
+  renderLibraryCollection(libraryMedalList, medals, "まだ収められた勲章はありません", "medal", achievementResult);
+  renderAdventureJournalPreview(achievementResult);
 
   libraryAchievementList.textContent = "";
   for (const record of [
-    { label: "花と妖精", value: `${totalFlowerAchievements}/18` },
-    { label: "先生の輪", value: `${achievementResult.teacherCircle.currentRounds}巡` },
-    { label: "特別な仲間", value: `${companions.length}/4` },
-    { label: "対局記録", value: `${gameRecords.length}局` },
+    { label: "花図鑑", value: `${totalFlowerAchievements}/18`, mark: "花", tone: "flower" },
+    { label: "先生の輪", value: `基本5人 ${achievementResult.teacherCircle.currentRounds}巡`, mark: "輪", tone: "medal" },
+    { label: "特別な仲間", value: `${companions.length}/4`, mark: "仲", tone: "companion" },
+    { label: "対局記録", value: `${gameRecords.length}局`, mark: "棋", tone: "record" },
   ]) {
     const row = document.createElement("article");
+    row.className = `is-${record.tone}`;
+    const mark = document.createElement("i");
     const label = document.createElement("span");
     const value = document.createElement("strong");
+    mark.setAttribute("aria-hidden", "true");
     label.textContent = record.label;
     value.textContent = record.value;
-    row.append(label, value);
+    row.append(mark, label, value);
     libraryAchievementList.append(row);
   }
 };
@@ -1617,15 +5724,31 @@ const ensureProfileAchievementResults = () => {
   section.dataset.profileAchievementResults = "";
   section.setAttribute("aria-label", "達成判定結果");
 
+  const header = document.createElement("div");
+  header.className = "profile-section-header";
+
   const heading = document.createElement("p");
   heading.textContent = "達成判定結果";
 
-  const list = document.createElement("div");
-  list.className = "profile-achievement-list";
-  list.dataset.profileAchievementList = "";
+  const toggleButton = document.createElement("button");
+  toggleButton.type = "button";
+  toggleButton.className = "profile-toggle-button";
+  toggleButton.dataset.profileToggle = "achievements";
+  toggleButton.setAttribute("aria-expanded", "false");
+  toggleButton.setAttribute("aria-controls", "profile-achievement-list");
+  toggleButton.textContent = "開く";
+  toggleButton.addEventListener("click", () => toggleProfileSection(toggleButton));
 
-  section.append(heading, list);
-  profileFairies.after(section);
+  const list = document.createElement("div");
+  list.className = "profile-achievement-list is-collapsed";
+  list.id = "profile-achievement-list";
+  list.dataset.profileAchievementList = "";
+  list.dataset.profileCollapsible = "achievements";
+
+  header.append(heading, toggleButton);
+  section.append(header, list);
+  (profileSpecialCompanions ?? profileFairies).after(section);
+  syncProfileToggleButton(toggleButton, list);
 
   return section;
 };
@@ -1663,7 +5786,7 @@ const renderProfileAchievementResults = (achievementResult) => {
     {
       label: "先生の輪",
       status: circleRounds > 0 ? `${circleRounds}巡 達成済み` : "未達成",
-      count: "先生5人を各1回",
+      count: "基本5人を各1回",
     },
     {
       label: "特別な仲間",
@@ -1745,11 +5868,24 @@ updateTeacherCards = () => {
     card.classList.toggle("is-recorded", teacher.completedFirstRound);
     card.classList.toggle("next-teacher", !teacher.completedFirstRound);
 
+    const isCircleTeacher = teacherCircleTargetIds.includes(card.dataset.teacher);
+    const isExtraCircleTeacher = extraTeacherCircleTargetIds.includes(card.dataset.teacher);
+    const teacherGroupLabel = isCircleTeacher
+      ? "先生の輪"
+      : isExtraCircleTeacher
+        ? "新しい先生の輪"
+        : "追加先生枠";
+
     applyFlowerVisual(flower, cycleProgress.cycle);
 
+    if (isExtraCircleTeacher) {
+      label.textContent = `観察期間・${getTeacherStampText(teacher)}`;
+      continue;
+    }
+
     label.textContent = teacher.completedFirstRound
-      ? `先生の輪 済・${getTeacherStampText(teacher)}`
-      : `先生の輪 未・${getTeacherStampText(teacher)}`;
+      ? `${teacherGroupLabel} 済・${getTeacherStampText(teacher)}`
+      : `${teacherGroupLabel} 未・${getTeacherStampText(teacher)}`;
   }
 };
 
@@ -1757,6 +5893,10 @@ const getNextAdventure = () => {
   const candidates = [];
   const participationCurrent = normalizeProgressCount(userProgress.stamps.participationCount);
   const participationGoal = getParticipationGoal();
+  const currentCircleRounds = getTeacherCircleRoundsFromCounts(userProgress.stamps.teacherLessonCounts);
+  const nextCircleMilestone = (teacherCircleRule.medalMilestones ?? [])
+    .map((milestone) => milestone.rounds)
+    .find((rounds) => rounds > currentCircleRounds);
 
   if (participationCurrent < getParticipationMaxCount()) {
     const cycleIndex = Math.floor(participationCurrent / participationGoal);
@@ -1774,12 +5914,17 @@ const getNextAdventure = () => {
   }
 
   for (const [teacherId, teacher] of Object.entries(teacherDetails)) {
+    if (nextCircleMilestone && !teacherCircleTargetIds.includes(teacherId)) {
+      continue;
+    }
+
     if (teacher.stampCount >= getTeacherMaxCount(teacher)) {
       continue;
     }
 
     const cycleProgress = getCurrentTeacherCycleProgress(teacher);
     const remaining = getTeacherGoal(teacher) - cycleProgress.countInCycle;
+    const isExtraTeacherCircleTeacher = extraTeacherCircleTargetIds.includes(teacherId);
 
     candidates.push({
       type: "teacher",
@@ -1787,17 +5932,14 @@ const getNextAdventure = () => {
       priority: 1,
       remaining,
       title: `あと${remaining}回で${cycleProgress.cycle.fairyName}`,
-      copy: `${teacher.name}との指導碁で${cycleProgress.cycle.cycleName}を達成できます。`,
+      copy: isExtraTeacherCircleTeacher
+        ? `${teacher.name}との指導碁で、新しい先生との出会いを記録できます。`
+        : `${teacher.name}との指導碁で${cycleProgress.cycle.cycleName}を達成できます。`,
     });
   }
 
-  const currentCircleRounds = getTeacherCircleRoundsFromCounts(userProgress.stamps.teacherLessonCounts);
-  const nextCircleMilestone = (teacherCircleRule.medalMilestones ?? [])
-    .map((milestone) => milestone.rounds)
-    .find((rounds) => rounds > currentCircleRounds);
-
   if (nextCircleMilestone) {
-    const remaining = Object.keys(teacherDetails).reduce(
+    const remaining = teacherCircleTargetIds.reduce(
       (total, teacherId) => total + Math.max(0, nextCircleMilestone - normalizeProgressCount(userProgress.stamps.teacherLessonCounts[teacherId])),
       0
     );
@@ -2021,6 +6163,8 @@ const updateAdminPanel = () => {
   adminStampButton.disabled = !isAdminDraftDirty;
   renderAdminAdjustments();
   renderAdminHistory();
+  updateAdminParticipationApply();
+  updateAdminGameRecordApply();
 };
 
 const isTeacherCycleAchievementCount = (count, teacher) => {
@@ -2036,13 +6180,23 @@ const setRecordPhase = (phase, teacher) => {
   teacherDetail.dataset.recordPhase = phase;
 
   flowConfirmStep.classList.toggle("is-active", phase === "confirm");
-  flowConfirmStep.classList.toggle("is-complete", phase === "done" || phase === "achievement");
-  flowDoneStep.classList.toggle("is-complete", phase === "done" || phase === "achievement");
+  flowConfirmStep.classList.toggle("is-complete", phase === "submitted" || phase === "done" || phase === "achievement");
+  flowDoneStep.classList.toggle("is-complete", phase === "submitted" || phase === "done" || phase === "achievement");
   inlineFairyAchievement.hidden = true;
   fairyAchievement.hidden = phase !== "achievement";
   gameRecordForm.hidden = phase !== "confirm";
   confirmCard.hidden = teacher.stampCount >= getTeacherMaxCount(teacher) && phase !== "done";
   confirmCard.classList.toggle("is-achievement-preview", phase === "confirm" && isTeacherCycleAchievementCount(teacher.stampCount + 1, teacher));
+
+  if (externalGameRecordFormEnabled && phase !== "done" && phase !== "achievement") {
+    gameRecordForm.hidden = true;
+    confirmCard.hidden = true;
+    completeTeacherButton.hidden = true;
+    flowMessage.textContent = teacher.stampCount >= getTeacherMaxCount(teacher)
+      ? "この先生の花スタンプはすべて達成済みです。"
+      : "対局後はフォーム送信だけで大丈夫です。運営確認後にスタンプへ反映します。";
+    return;
+  }
 
   if (teacher.stampCount >= getTeacherMaxCount(teacher) && phase !== "done" && phase !== "achievement") {
     completeTeacherButton.textContent = "全ての花スタンプ達成済み";
@@ -2069,17 +6223,17 @@ const setRecordPhase = (phase, teacher) => {
       const nextCount = teacher.stampCount + 1;
       const nextCycleNumber = Math.ceil(nextCount / getTeacherGoal(teacher));
 
-      confirmLabel.textContent = `${nextCycleNumber}巡目の達成確認`;
+      confirmLabel.textContent = `${nextCycleNumber}巡目の達成前チェック`;
       updateGameRecordConfirmation();
-      completeTeacherButton.textContent = "3. 運営確認へ進み妖精スタンプを開く";
-      flowMessage.textContent = "巡の最後の1回です。運営認証後、この1件だけを保存して妖精を表示します。";
+      completeTeacherButton.textContent = "3. 記録を確認待ちにする";
+      flowMessage.textContent = "ここまでは下書きです。反映は運営さんの確認後です。";
       return;
     }
 
-    confirmLabel.textContent = "保存する対局記録";
+    confirmLabel.textContent = "確認待ちにする対局記録";
     updateGameRecordConfirmation();
-    completeTeacherButton.textContent = "3. 運営確認へ進みスタンプを押す";
-    flowMessage.textContent = "対局記録を確認してください。次の運営認証が通った時だけ保存します。";
+    completeTeacherButton.textContent = "3. 記録を確認待ちにする";
+    flowMessage.textContent = "ここまでは下書きです。反映は運営さんの確認後です。";
     return;
   }
 
@@ -2089,6 +6243,15 @@ const setRecordPhase = (phase, teacher) => {
     flowMessage.textContent = hasFirstRoundMedal()
       ? "一巡目の輪を達成しました。冒険者カードに新しい勲章が反映されています。"
       : "スタンプを反映しました。続けて未記録の先生を選べます。";
+    return;
+  }
+
+  if (phase === "submitted") {
+    confirmLabel.textContent = "運営確認待ち";
+    updateGameRecordConfirmation();
+    confirmEffect.textContent = "運営さんの確認後に、対局記録とスタンプへ反映されます。";
+    completeTeacherButton.textContent = "先生一覧に戻る";
+    flowMessage.textContent = "対局記録を確認待ちにしました。当日の押印は不要です。";
     return;
   }
 
@@ -2130,6 +6293,7 @@ const setRecordPhase = (phase, teacher) => {
 
 const renderTeacherDetail = (teacherKey) => {
   const teacher = teacherDetails[teacherKey];
+  const profile = getTeacherProfile(teacherKey);
   const cycleProgress = getCurrentTeacherCycleProgress(teacher);
   const isAllCyclesComplete = teacher.stampCount >= getTeacherMaxCount(teacher);
 
@@ -2140,6 +6304,7 @@ const renderTeacherDetail = (teacherKey) => {
   updateTeacherStampRuleNote(teacher);
   cardStampCurrent.textContent = String(cycleProgress.countInCycle);
   cardStampGoal.textContent = String(getTeacherGoal(teacher));
+  updateCurrentFlowerCard(teacher, cycleProgress);
   const photoCard = document.querySelector(".teacher-photo-card");
   photoCard.dataset.bloomCount = String(cycleProgress.countInCycle);
   photoCard.dataset.fairy = String(teacher.fairy);
@@ -2147,9 +6312,9 @@ const renderTeacherDetail = (teacherKey) => {
   applyFlowerVariables(photoCard, cycleProgress.cycle);
   document.querySelector("[data-teacher-photo]").dataset.teacherPhoto = teacher.photo;
   document.querySelector("[data-photo-initial]").textContent = teacher.initial;
-  document.querySelector("[data-teacher-style]").textContent = teacher.style;
-  document.querySelector("[data-teacher-lesson]").textContent = teacher.lesson;
-  document.querySelector("[data-teacher-note]").textContent = teacher.note;
+  document.querySelector("[data-teacher-style]").textContent = profile.style;
+  document.querySelector("[data-teacher-lesson]").textContent = profile.lesson;
+  document.querySelector("[data-teacher-note]").textContent = profile.note;
   renderTeacherGameRecords(teacherKey);
   const isCycleAchievementPreview = !isAllCyclesComplete && isTeacherCycleAchievementCount(teacher.stampCount + 1, teacher);
   const nextCycleNumber = Math.ceil((teacher.stampCount + 1) / getTeacherGoal(teacher));
@@ -2246,24 +6411,673 @@ closeButton.addEventListener("click", () => {
   }
 });
 
+const openTeacherDetailFromCard = (card) => {
+  if (!card) {
+    return;
+  }
+
+  for (const item of teacherCards) {
+    const isSelected = item === card;
+    item.classList.toggle("is-selected", isSelected);
+    item.setAttribute("aria-pressed", String(isSelected));
+  }
+
+  renderTeacherDetail(card.dataset.teacher);
+
+  teacherLayout.dataset.teacherMode = "detail";
+  dock.classList.add("is-detail-open");
+  teacherList.classList.remove("is-active");
+  teacherList.hidden = true;
+  teacherDetail.classList.add("is-active");
+  teacherDetail.hidden = false;
+  teacherDetail.scrollIntoView({ behavior: "smooth", block: "start" });
+};
+
+const showFlowerGuideArrival = (targetElement, message) => {
+  if (!targetElement) {
+    return;
+  }
+
+  targetElement.dataset.flowerGuideArrival = message;
+  targetElement.classList.remove("is-flower-guide-arrival");
+  targetElement.offsetHeight;
+  targetElement.classList.add("is-flower-guide-arrival");
+  window.setTimeout(() => {
+    targetElement.classList.remove("is-flower-guide-arrival");
+    delete targetElement.dataset.flowerGuideArrival;
+  }, 2600);
+};
+
 for (const card of teacherCards) {
   card.addEventListener("click", () => {
-    for (const item of teacherCards) {
-      const isSelected = item === card;
-      item.classList.toggle("is-selected", isSelected);
-      item.setAttribute("aria-pressed", String(isSelected));
-    }
-
-    renderTeacherDetail(card.dataset.teacher);
-
-    teacherLayout.dataset.teacherMode = "detail";
-    dock.classList.add("is-detail-open");
-    teacherList.classList.remove("is-active");
-    teacherList.hidden = true;
-    teacherDetail.classList.add("is-active");
-    teacherDetail.hidden = false;
+    openTeacherDetailFromCard(card);
   });
 }
+
+for (const flowerCard of flowerGuideCards) {
+  flowerCard.addEventListener("click", () => {
+    const target = flowerCard.dataset.flowerGuideTarget;
+    const flowerName = flowerCard.querySelector(".flower-guide-name")?.textContent ?? "花";
+    const flowerMeta = flowerCard.querySelector(".flower-guide-meta")?.textContent ?? "";
+
+    if (target === "participation") {
+      openParticipationForm();
+      return;
+    }
+
+    openTeacherDetailFromCard(document.querySelector(`.teacher-card[data-teacher="${target}"]`));
+    showFlowerGuideArrival(teacherDetail, `${flowerName}は${flowerMeta}の1巡目の花です`);
+  });
+}
+
+for (const button of mapDestinationButtons) {
+  button.addEventListener("click", () => {
+    if (button.dataset.mapDestination === "participation") {
+      openParticipationForm();
+      return;
+    }
+
+    openShrineWithIntro();
+  });
+}
+
+shrineTeacherEditorToggle?.addEventListener("click", () => {
+  if (!shrineTeacherList) {
+    return;
+  }
+
+  const shouldOpen = shrineTeacherList.hidden;
+  shrineTeacherList.hidden = !shouldOpen;
+  shrineTeacherEditorToggle.setAttribute("aria-expanded", String(shouldOpen));
+  shrineTeacherEditorToggle.textContent = shouldOpen ? "閉じる" : "参加先生を選ぶ";
+});
+
+shrineTeacherList?.addEventListener("change", () => {
+  saveShrineTodayTeacherSettings();
+  updateShrineTeacherCount();
+
+  if (shrineResult?.querySelector(".shrine-round-result")) {
+    renderShrineResult();
+  }
+});
+shrineRoundCount?.addEventListener("change", () => {
+  if (shrineResult?.querySelector(".shrine-round-result")) {
+    renderShrineResult();
+  }
+});
+
+for (const button of shrineModeButtons) {
+  button.addEventListener("click", () => {
+    shrineMatchSession = null;
+    const nextMode = button.dataset.shrineMode;
+    if (nextMode !== "amateur" || latestPairgoGroups.length === 0) {
+      shrineAmateurUsesCarriedGroups = false;
+    }
+    updateShrineMode(nextMode);
+    const carriedGroups = nextMode === "amateur" && carryPairgoGroupsToAmateurParticipants({ force: true });
+    if (carriedGroups) {
+      renderShrineResult();
+      return;
+    }
+    if (shrineResult) {
+      shrineResult.textContent = "";
+      const empty = document.createElement("p");
+      empty.textContent = "参加者を入れて「組み合わせを出す」を押してください。";
+      shrineResult.append(empty);
+      updateShrineRecordSaveState();
+    }
+  });
+}
+
+shrineRosterToggle?.addEventListener("click", () => {
+  if (!shrineRosterPanel || !shrineRosterToggle) {
+    return;
+  }
+
+  const willOpen = shrineRosterPanel.hidden;
+  shrineRosterPanel.hidden = !willOpen;
+  if (!willOpen) {
+    shrineRosterPanel.classList.remove("is-editing");
+    if (shrineRosterEditor) {
+      shrineRosterEditor.hidden = true;
+    }
+    shrineRosterEditToggle?.setAttribute("aria-expanded", "false");
+  }
+  shrineRosterToggle.setAttribute("aria-expanded", String(willOpen));
+  shrineRosterToggle.textContent = willOpen ? "よく来る人を閉じる" : "よく来る人を開く";
+  shrineRosterEditToggle.textContent = willOpen ? "登録欄を閉じる" : "登録する";
+  if (willOpen) {
+    renderShrineRoster();
+    updateShrineRosterApplyState();
+    setShrineRosterMessage("来ている人にチェックしてください。");
+  }
+});
+
+shrineRosterEditToggle?.addEventListener("click", () => {
+  if (!shrineRosterEditor || !shrineRosterEditToggle) {
+    return;
+  }
+
+  const willOpen = shrineRosterEditor.hidden;
+  shrineRosterEditor.hidden = !willOpen;
+  shrineRosterPanel?.classList.toggle("is-editing", willOpen);
+  shrineRosterEditToggle.setAttribute("aria-expanded", String(willOpen));
+  shrineRosterEditToggle.textContent = willOpen ? "編集を閉じる" : "名簿を編集";
+  if (willOpen) {
+    clearShrineRosterForm();
+    setShrineRosterMessage("上の欄に入れて登録できます。下の名前をタップすると直せます。");
+    shrineRosterFormName?.focus();
+  }
+  if (willOpen && shrineRosterEditorText) {
+    shrineRosterEditorText.value = shrineRosterNames.map(formatShrinePersonLine).join("\n");
+  }
+});
+
+shrineRosterSave?.addEventListener("click", () => {
+  if (shrineRosterFormName) {
+    const name = shrineRosterFormName.value.trim();
+    if (!name) {
+      setShrineRosterMessage("名前を入れてから登録してください。");
+      shrineRosterFormName.focus();
+      return;
+    }
+
+    const nextPerson = {
+      name,
+      gender: normalizeShrineGender(shrineRosterFormGender?.value),
+      strength: normalizeShrineStrength({
+        type: shrineRosterFormStrengthType?.value,
+        value: shrineRosterFormStrengthValue?.value,
+      }),
+    };
+    lastSavedShrineRosterName = name;
+    const withoutCurrent = shrineRosterNames.filter((person) =>
+      person.name !== editingShrineRosterName && person.name !== name
+    );
+    shrineRosterNames = normalizeRosterNames([...withoutCurrent, nextPerson]);
+    saveShrineRoster();
+    renderShrineRoster();
+    clearShrineRosterForm();
+    updateShrineRosterApplyState();
+    setShrineRosterMessage(`${name} をよく来る人に登録しました。`);
+    return;
+  }
+
+  shrineRosterNames = normalizeRosterNames(shrineRosterEditorText?.value ?? "");
+  saveShrineRoster();
+  renderShrineRoster();
+  if (shrineRosterEditor) {
+    shrineRosterEditor.hidden = true;
+  }
+  shrineRosterPanel?.classList.remove("is-editing");
+  shrineRosterEditToggle?.setAttribute("aria-expanded", "false");
+  updateShrineRosterApplyState();
+  setShrineRosterMessage(`名簿を${shrineRosterNames.length}人で保存しました。`);
+});
+
+shrineRosterSave?.addEventListener("click", () => {
+  setShrineRosterMessage(`名簿を${shrineRosterNames.length}人で保存しました。来ている人にチェックしてください。`);
+});
+
+shrineRosterDelete?.addEventListener("click", () => {
+  if (!editingShrineRosterName) {
+    clearShrineRosterForm();
+    setShrineRosterMessage("入力欄を空にしました。");
+    return;
+  }
+
+  const deletedName = editingShrineRosterName;
+  shrineRosterNames = shrineRosterNames.filter((person) => person.name !== deletedName);
+  saveShrineRoster();
+  renderShrineRoster();
+  clearShrineRosterForm();
+  updateShrineRosterApplyState();
+  setShrineRosterMessage(`${deletedName} をよく来る人から消しました。`);
+});
+
+shrineRosterSave?.addEventListener("click", () => {
+  if (shrineRosterFormName) {
+    const savedName = lastSavedShrineRosterName || shrineRosterFormName.value.trim() || "名簿";
+    setShrineRosterMessage(`${savedName} を登録しました。来ている人にチェックしてください。`);
+  }
+});
+
+shrineRosterFormStrengthType?.addEventListener("change", () => {
+  setRosterStrengthValueMode(shrineRosterFormStrengthValue, shrineRosterFormStrengthType.value);
+});
+
+shrineRosterList?.addEventListener("click", (event) => {
+  const button = event.target instanceof HTMLElement
+    ? event.target.closest("[data-shrine-roster-edit-name]")
+    : null;
+  if (!button) {
+    return;
+  }
+
+  const person = shrineRosterNames.find((item) => item.name === button.dataset.shrineRosterEditName);
+  if (!person) {
+    return;
+  }
+
+  if (shrineRosterEditor) {
+    shrineRosterEditor.hidden = false;
+  }
+  shrineRosterPanel?.classList.add("is-editing");
+  shrineRosterEditToggle?.setAttribute("aria-expanded", "true");
+  fillShrineRosterForm(person);
+  setShrineRosterMessage(`${person.name} の内容を上の欄で直せます。`);
+  shrineRosterFormName?.focus();
+});
+
+const syncShrineRosterRow = (target) => {
+  if (!(target instanceof HTMLElement) || !target.matches("[data-shrine-roster-gender], [data-shrine-roster-strength-type], [data-shrine-roster-strength-value], [data-shrine-roster-full-name]")) {
+    return;
+  }
+
+  const row = target.closest("label");
+  const checkbox = row?.querySelector("[data-shrine-roster-name]");
+  const originalName = checkbox?.dataset.shrineRosterName;
+  const nameInput = row?.querySelector("[data-shrine-roster-full-name]");
+  const genderSelect = row?.querySelector("[data-shrine-roster-gender]");
+  const strengthType = row?.querySelector("[data-shrine-roster-strength-type]");
+  const strengthValue = row?.querySelector("[data-shrine-roster-strength-value]");
+  const nextName = nameInput?.value.trim() || originalName;
+
+  updateShrineRosterStrengthValueInput(strengthValue, strengthType?.value);
+
+  shrineRosterNames = shrineRosterNames.map((person) => person.name === originalName
+    ? {
+        name: nextName,
+        gender: normalizeShrineGender(genderSelect?.value),
+        strength: normalizeShrineStrength({
+          type: strengthType?.value,
+          value: strengthValue?.value,
+        }),
+      }
+    : person);
+  saveShrineRoster();
+
+  const updatedPerson = shrineRosterNames.find((person) => person.name === nextName);
+  if (checkbox && updatedPerson) {
+    checkbox.dataset.shrineRosterName = updatedPerson.name;
+    checkbox.value = formatShrinePersonLine(updatedPerson);
+  }
+  if (nameInput && updatedPerson) {
+    nameInput.dataset.shrineRosterFullName = updatedPerson.name;
+  }
+  const nextGenderSelect = row?.querySelector("[data-shrine-roster-gender]");
+  const nextStrengthType = row?.querySelector("[data-shrine-roster-strength-type]");
+  const nextStrengthValue = row?.querySelector("[data-shrine-roster-strength-value]");
+  if (nextGenderSelect && updatedPerson) {
+    nextGenderSelect.dataset.shrineRosterGender = updatedPerson.name;
+  }
+  if (nextStrengthType && updatedPerson) {
+    nextStrengthType.dataset.shrineRosterStrengthType = updatedPerson.name;
+  }
+  if (nextStrengthValue && updatedPerson) {
+    nextStrengthValue.dataset.shrineRosterStrengthValue = updatedPerson.name;
+  }
+  setShrineRosterMessage("名簿の記録を保存しました。");
+};
+
+shrineRosterList?.addEventListener("change", (event) => {
+  syncShrineRosterRow(event.target);
+  updateShrineRosterApplyState();
+});
+
+shrineRosterList?.addEventListener("input", (event) => {
+  syncShrineRosterRow(event.target);
+});
+
+shrineRosterSearch?.addEventListener("input", () => {
+  renderShrineRoster();
+  updateShrineRosterApplyState();
+});
+
+shrineRosterApply?.addEventListener("click", () => {
+  if (!shrineParticipants || !shrineRosterList) {
+    return;
+  }
+
+  const selectedNames = [...shrineRosterList.querySelectorAll("[data-shrine-roster-name]:checked")]
+    .map((input) => input.value);
+  const beforeCount = getShrineParticipantNames().length;
+  const mergedNames = appendShrineParticipants(selectedNames);
+  const addedCount = Math.max(0, mergedNames.length - beforeCount);
+
+  setShrineRosterMessage(selectedNames.length > 0
+    ? `${addedCount}人を参加者欄へ足しました。`
+    : "来ている人をチェックしてください。");
+
+  if (selectedNames.length > 0) {
+    for (const checkbox of shrineRosterList.querySelectorAll("[data-shrine-roster-name]:checked")) {
+      checkbox.checked = false;
+    }
+    updateShrineRosterApplyState();
+  }
+});
+
+shrineSampleButton?.addEventListener("click", () => {
+  if (!shrineParticipants) {
+    return;
+  }
+
+  const lessonSample = [
+    "佐藤さん",
+    "鈴木さん",
+    "田中さん",
+    "高橋さん",
+    "伊藤さん",
+    "山本さん",
+    "中村さん",
+    "小林さん",
+    "加藤さん",
+    "吉田さん",
+    "山田さん",
+    "渡辺さん",
+  ];
+  const amateurSample = [
+    "1番",
+    "2番",
+    "3番",
+    "4番",
+    "5番",
+    "6番",
+    "青木さん",
+    "石井さん",
+  ];
+  const pairgoSample = [
+    "春子さん 女 3級",
+    "秋人さん 男 2級",
+    "夏美さん 女 1200点",
+    "冬馬さん 男 1250点",
+    "朝子さん 女 5級",
+    "昼夫さん 男 4級",
+    "夕子さん 女 1段",
+    "夜一さん 男 1段",
+    "星乃さん 女 2段",
+    "月野さん 1300点",
+  ];
+  const sampleByMode = {
+    amateur: amateurSample,
+    pairgo: pairgoSample,
+    lesson: lessonSample,
+  };
+
+  const mode = getShrineMode();
+  if (mode === "pairgo") {
+    if (shrineGroupSize) {
+      shrineGroupSize.value = "2";
+    }
+    if (shrineFixedGroups) {
+      shrineFixedGroups.value = [
+        "春子さん・秋人さん",
+        "夏美さん・冬馬さん",
+      ].join("\n");
+    }
+    shrineParticipants.value = [
+      "朝子さん 女 5級",
+      "昼夫さん 男 4級",
+      "夕子さん 女 1段",
+      "夜一さん 男 1段",
+      "星乃さん 女 2段",
+      "月野さん 1300点",
+    ].join("\n");
+    renderShrineResult();
+    return;
+  }
+
+  if (shrineFixedGroups) {
+    shrineFixedGroups.value = "";
+  }
+  shrineParticipants.value = (sampleByMode[mode] ?? lessonSample).join("\n");
+  renderShrineResult();
+});
+
+shrineQuickAdd?.addEventListener("click", () => {
+  if (!shrineParticipants || !shrineQuickName) {
+    return;
+  }
+
+  const name = shrineQuickName.value.trim();
+  if (!name) {
+    if (shrineQuickMessage) {
+      shrineQuickMessage.textContent = "名前を入れてから追加してください。";
+    }
+    shrineQuickName.focus();
+    return;
+  }
+
+  const existingNames = new Set(getShrineParticipantPeople().map((person) => person.name));
+  if (existingNames.has(name)) {
+    if (shrineQuickMessage) {
+      shrineQuickMessage.textContent = `${name} はすでに参加者欄に入っています。`;
+    }
+    return;
+  }
+
+  const personLine = formatShrinePersonLine({
+    name,
+    gender: shrineQuickGender?.value,
+    strength: {
+      type: shrineQuickStrengthType?.value,
+      value: shrineQuickStrengthValue?.value,
+    },
+  });
+  const currentLines = shrineParticipants.value
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+
+  shrineParticipants.value = [...currentLines, personLine].join("\n");
+  shrineQuickName.value = "";
+  if (shrineQuickGender) {
+    shrineQuickGender.value = "";
+  }
+  if (shrineQuickStrengthType) {
+    shrineQuickStrengthType.value = "";
+  }
+  if (shrineQuickStrengthValue) {
+    shrineQuickStrengthValue.value = "";
+  }
+  if (shrineQuickMessage) {
+    shrineQuickMessage.textContent = `${name} を参加者欄へ追加しました。`;
+  }
+  shrineQuickName.focus();
+  renderShrineResult();
+});
+
+shrineResetButton?.addEventListener("click", () => {
+  if (shrineParticipants) {
+    shrineParticipants.value = "";
+  }
+  if (shrineFixedGroups) {
+    shrineFixedGroups.value = "";
+  }
+  if (shrineResult) {
+    shrineResult.textContent = "";
+    const empty = document.createElement("p");
+    empty.textContent = "参加者を入れて「組み合わせを出す」を押してください。";
+    shrineResult.append(empty);
+  }
+  if (shrineNumberMessage) {
+    shrineNumberMessage.textContent = "例: 8なら 1番から8番までを入れます。個人戦では個人番号として使えます。";
+  }
+  if (shrineQuickName) {
+    shrineQuickName.value = "";
+  }
+  if (shrineQuickGender) {
+    shrineQuickGender.value = "";
+  }
+  if (shrineQuickStrengthType) {
+    shrineQuickStrengthType.value = "";
+  }
+  if (shrineQuickStrengthValue) {
+    shrineQuickStrengthValue.value = "";
+  }
+  if (shrineQuickMessage) {
+    shrineQuickMessage.textContent = "名前を入れて追加してください。";
+  }
+  for (const checkbox of shrineRosterList?.querySelectorAll("[data-shrine-roster-name]:checked") ?? []) {
+    checkbox.checked = false;
+  }
+  updateShrineRosterApplyState();
+  shrineMatchSession = null;
+  latestPairgoGroups = [];
+  shrineAmateurUsesCarriedGroups = false;
+  updateShrineParticipantInputVisibility();
+  setShrineRosterMessage("入力をリセットしました。名簿はそのまま残っています。");
+  updateShrineRecordSaveState();
+});
+
+shrineGenerateButton?.addEventListener("click", renderShrineResult);
+for (const button of shrineCollapsibleButtons) {
+  syncShrineCollapsibleButton(button);
+  button.addEventListener("click", () => toggleShrineCollapsiblePanel(button));
+}
+for (const button of shrinePathModeButtons) {
+  button.addEventListener("click", () => {
+    const nextMode = button.dataset.shrinePathMode;
+    if (nextMode !== "amateur" || latestPairgoGroups.length === 0) {
+      shrineAmateurUsesCarriedGroups = false;
+    }
+    updateShrineMode(nextMode);
+    if (nextMode === "amateur") {
+      carryPairgoGroupsToAmateurParticipants({ force: true });
+    }
+    renderShrineResult();
+  });
+}
+shrinePathResultButton?.addEventListener("click", () => {
+  if (!shrineResult) {
+    return;
+  }
+  syncVisibleShrineMatchResults();
+  renderShrineResult();
+  shrineResult.scrollIntoView({ behavior: "smooth", block: "start" });
+});
+shrineResult?.addEventListener("click", (event) => {
+  if (event.target instanceof HTMLElement && event.target.matches("[data-shrine-next-round]")) {
+    applyShrineMatchResultsAndAdvance();
+  }
+  if (event.target instanceof HTMLElement && event.target.matches("[data-shrine-use-pairgo-groups]")) {
+    shrineMatchSession = null;
+    updateShrineMode("amateur");
+    carryPairgoGroupsToAmateurParticipants({ force: true });
+    renderShrineResult();
+  }
+});
+shrineIntroSkip?.addEventListener("click", () => {
+  if (isShrineIntroPlaying) {
+    finishShrineIntro();
+  }
+});
+shrineGroupSize?.addEventListener("change", () => {
+  if (getShrineMode() === "pairgo") {
+    renderShrineResult();
+  }
+});
+shrineFixedGroups?.addEventListener("input", () => {
+  if (getShrineMode() === "pairgo") {
+    renderShrineResult();
+  }
+});
+const handleShrineMatchMethodChange = (event) => {
+  const nextMethod = event.target?.value || getShrineMatchMethod();
+  syncShrineMatchMethodControls(nextMethod);
+  shrineMatchSession = null;
+  if (getShrineMode() === "amateur") {
+    renderShrineResult();
+  }
+};
+shrineMatchMethod?.addEventListener("change", handleShrineMatchMethodChange);
+shrineMatchMethodShortcut?.addEventListener("change", handleShrineMatchMethodChange);
+shrineMixedGenderPairs?.addEventListener("change", () => {
+  if (getShrineMode() === "pairgo") {
+    renderShrineResult();
+  }
+});
+shrineCloseStrengthPairs?.addEventListener("change", () => {
+  if (getShrineMode() === "pairgo") {
+    renderShrineResult();
+  }
+});
+shrineBalancedTeamStrength?.addEventListener("change", () => {
+  if (getShrineMode() === "pairgo") {
+    renderShrineResult();
+  }
+});
+shrineNumberApply?.addEventListener("click", () => {
+  if (!shrineParticipants || !shrineNumberCount) {
+    return;
+  }
+
+  const count = Math.max(2, Math.min(200, Number(shrineNumberCount.value) || 2));
+  shrineNumberCount.value = String(count);
+  const numberNames = Array.from({ length: count }, (_, index) => `${index + 1}番`);
+  const beforeCount = getShrineParticipantNames().length;
+  const mergedNames = appendShrineParticipants(numberNames);
+  const addedCount = Math.max(0, mergedNames.length - beforeCount);
+
+  if (shrineNumberMessage) {
+    shrineNumberMessage.textContent = addedCount > 0
+      ? `1番から${count}番までを参加者欄へ足しました。名前と番号の両方を使えます。`
+      : `1番から${count}番までは、すでに参加者欄に入っています。`;
+  }
+
+  renderShrineResult();
+});
+
+shrineRecordSave?.addEventListener("click", () => {
+  if (!shrineResult?.querySelector(".shrine-round-result")) {
+    updateShrineRecordSaveState();
+    return;
+  }
+
+  const mode = getShrineMode();
+  const createdAt = new Date().toLocaleString("ja-JP", {
+    month: "numeric",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+  const body = shrineResult.innerText.trim();
+
+  shrineRecords = [{
+    id: `shrine-${Date.now()}`,
+    title: `${getShrineModeLabel(mode)}の組み合わせ`,
+    mode,
+    createdAt,
+    body,
+  }, ...shrineRecords].slice(0, 12);
+  saveShrineRecords();
+  renderShrineRecords();
+  addLibraryJournalEntry({
+    text: getShrineRecordJournalText({ mode, body }),
+    source: "shrine",
+  });
+  updateProfileCard();
+  updateLibraryJournalKeeperSpeech();
+  if (shrineRecordMessage) {
+    shrineRecordMessage.textContent = "今の組み合わせを書庫の日誌にも残しました。";
+  }
+});
+
+shrineRecordClear?.addEventListener("click", () => {
+  if (shrineRecords.length === 0) {
+    renderShrineRecords();
+    return;
+  }
+  if (!window.confirm("保存した組み合わせをすべて空にしますか？")) {
+    return;
+  }
+  shrineRecords = [];
+  saveShrineRecords();
+  renderShrineRecords();
+  if (shrineRecordMessage) {
+    shrineRecordMessage.textContent = "保存した組み合わせを空にしました。";
+  }
+});
 
 backToList.addEventListener("click", showTeacherList);
 
@@ -2273,11 +7087,118 @@ for (const closeButton of achievementCloseButtons) {
   });
 }
 
+for (const closeButton of fairyViewerCloseButtons) {
+  closeButton.addEventListener("click", closeFairyViewer);
+}
+
+for (const button of profileToggleButtons) {
+  button.addEventListener("click", () => toggleProfileSection(button));
+}
+
+syncProfileToggleButtons();
+
+libraryTitleToggle?.addEventListener("click", toggleLibraryTitleList);
+libraryTitleArtToggle?.addEventListener("click", toggleLibraryTitleList);
+syncLibraryTitleToggle();
+libraryMedalToggle?.addEventListener("click", toggleLibraryMedalList);
+libraryMedalArtToggle?.addEventListener("click", toggleLibraryMedalList);
+syncLibraryMedalToggle();
+libraryOwlViewerButton?.addEventListener("click", openLibraryOwlViewer);
+libraryJournalKeeperViewerButton?.addEventListener("click", openLibraryJournalKeeperViewer);
+libraryJournalToggle?.addEventListener("click", toggleLibraryJournal);
+syncLibraryJournalToggle();
+libraryJournalSkip?.addEventListener("click", () => setJournalPrompt("わかった。今日もちゃんとしまっておくね。"));
+libraryJournalNote?.addEventListener("click", handleLibraryJournalNote);
+libraryJournalNoteSave?.addEventListener("click", saveLibraryJournalNote);
+libraryJournalNoteInput?.addEventListener("keydown", (event) => {
+  if (event.key === "Enter") {
+    event.preventDefault();
+    saveLibraryJournalNote();
+  }
+});
+
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && fairyViewer && !fairyViewer.hidden) {
+    closeFairyViewer();
+  }
+});
+
 achievementProfileButton.addEventListener("click", () => {
   fairyAchievement.hidden = true;
   updateProfileCard();
   showPanel("profile");
 });
+
+let adminEntryTimer = null;
+let adminEntryTapCount = 0;
+let adminEntryTapResetTimer = null;
+const adminEntryHash = "#admin";
+
+const clearAdminEntryTimer = () => {
+  if (!adminEntryTimer) {
+    return;
+  }
+
+  window.clearTimeout(adminEntryTimer);
+  adminEntryTimer = null;
+};
+
+const openAdminEntry = () => {
+  clearAdminEntryTimer();
+  window.clearTimeout(adminEntryTapResetTimer);
+  adminEntryTapCount = 0;
+  if (adminTab) {
+    adminTab.hidden = false;
+  }
+  infoTabs?.classList.add("is-admin-available");
+  lockAdminPanel();
+  showPanel("admin");
+  adminPasscodeMessage.textContent = "運営用パスコードを入力してください。";
+  adminPasscodeInput?.focus();
+};
+
+const syncAdminDirectEntry = () => {
+  const shouldShow = window.location.hash === adminEntryHash;
+  if (adminTab) {
+    adminTab.hidden = !shouldShow;
+  }
+  infoTabs?.classList.toggle("is-admin-available", shouldShow);
+};
+
+guidebookButton?.addEventListener("pointerdown", () => {
+  clearAdminEntryTimer();
+  adminEntryTimer = window.setTimeout(openAdminEntry, 1200);
+});
+
+for (const eventName of ["pointerup", "pointerleave", "pointercancel", "blur"]) {
+  guidebookButton?.addEventListener(eventName, clearAdminEntryTimer);
+}
+
+guidebookButton?.addEventListener("click", () => {
+  if (window.location.hash === adminEntryHash) {
+    openAdminEntry();
+    return;
+  }
+
+  window.clearTimeout(adminEntryTapResetTimer);
+  adminEntryTapCount += 1;
+
+  if (adminEntryTapCount >= 3) {
+    if (adminTab) {
+      adminTab.hidden = false;
+      adminTab.focus();
+    }
+    infoTabs?.classList.add("is-admin-available");
+    return;
+  }
+
+  adminEntryTapResetTimer = window.setTimeout(() => {
+    adminEntryTapCount = 0;
+  }, 1800);
+});
+
+window.addEventListener("hashchange", syncAdminDirectEntry);
+syncAdminDirectEntry();
 
 nextAdventureButton.addEventListener("click", () => {
   if (nextAdventureButton.dataset.adventureType === "complete") {
@@ -2319,25 +7240,31 @@ for (const input of [gameRecordDate, gameRecordHandicap, gameRecordResult]) {
 }
 
 participationStampButton.addEventListener("click", () => {
-  const before = normalizeProgressCount(userProgress.stamps.participationCount);
-  const after = Math.min(getParticipationMaxCount(), before + 1);
-
-  openOperatorAuth({
-    title: "参加スタンプを押印",
-    summary: `参加スタンプを ${before}回 → ${after}回 にします。`,
-    action: () => {
-      addParticipationStamp();
-      appendOperationHistory({ type: "participation_stamp", target: "参加スタンプ", before, after });
-      syncAdminDraftFromProgress();
-      updateParticipationStampCard();
-      updateProfileCard();
-      updateAdminPanel();
-    },
-  });
+  openParticipationForm();
 });
+
+adminParticipationApply?.addEventListener("click", applyTodayParticipationStampFromAdmin);
+adminGameRecordApply?.addEventListener("click", applyGameRecordFromAdmin);
+adminTeacherProfileSelect?.addEventListener("change", syncAdminTeacherProfileEditor);
+adminTeacherProfileSave?.addEventListener("click", saveAdminTeacherProfileEditor);
+adminTeacherProfileReset?.addEventListener("click", resetAdminTeacherProfileEditor);
+
+for (const input of [adminGameRecordTeacher, adminGameRecordDate, adminGameRecordHandicap, adminGameRecordResult]) {
+  input?.addEventListener("input", updateAdminGameRecordApply);
+  input?.addEventListener("change", updateAdminGameRecordApply);
+}
+
+for (const input of [adminTeacherProfileStyle, adminTeacherProfileLesson, adminTeacherProfileNote]) {
+  input?.addEventListener("input", markAdminTeacherProfileDirty);
+}
 
 completeTeacherButton.addEventListener("click", () => {
   const teacher = teacherDetails[activeTeacherKey];
+
+  if (recordPhase === "submitted") {
+    showTeacherList();
+    return;
+  }
 
   if (recordPhase === "done" || recordPhase === "achievement") {
     updateProfileCard();
@@ -2349,14 +7276,9 @@ completeTeacherButton.addEventListener("click", () => {
     if (Date.now() < confirmSaveReadyAt) {
       return;
     }
-    const teacherKey = activeTeacherKey;
-    const draft = getGameRecordDraft();
-    const nextCount = Math.min(getTeacherMaxCount(teacher), teacher.stampCount + 1);
-    openOperatorAuth({
-      title: `${teacher.name}の指導碁を押印`,
-      summary: `${draft.date}・${draft.handicap}・${draft.result}／スタンプ ${teacher.stampCount}回 → ${nextCount}回`,
-      action: () => completeTeacherStamp(teacherKey),
-    });
+    addPendingGameRecord(activeTeacherKey);
+    renderTeacherGameRecords(activeTeacherKey);
+    setRecordPhase("submitted", teacher);
     return;
   }
 
@@ -2468,6 +7390,8 @@ adminRestoreConfirmButton.addEventListener("click", () => {
     downloadBackupData(createBackupData(), "before-restore");
     userProgress = sanitizeProgress(restoreBackup.progress);
     operationHistory = restoreBackup.operationHistory.map(sanitizeOperationHistory).filter(Boolean).slice(-50);
+    teacherProfileOverrides = sanitizeTeacherProfileOverrides(restoreBackup.teacherProfiles ?? {});
+    saveTeacherProfileOverrides();
     syncTeacherDetailsFromProgress();
     syncProgressRewards();
     saveUserProgress();
@@ -2478,6 +7402,7 @@ adminRestoreConfirmButton.addEventListener("click", () => {
       after: getTotalStampCount(),
     });
     syncAdminDraftFromProgress();
+    syncAdminTeacherProfileEditor();
     updateParticipationStampCard();
     renderTeacherDetail(activeTeacherKey);
     updateTeacherCards();
@@ -2539,6 +7464,15 @@ updateParticipationStampCard();
 updateTeacherCards();
 updateRoundProgress();
 updateProfileCard();
+populateAdminGameRecordTeachers();
+populateAdminTeacherProfileEditor();
+syncAdminTeacherProfileEditor();
+renderShrineTeachers();
+renderShrineRoster();
+renderShrineRecords();
+updateShrineMode();
+updateShrineRecordSaveState();
+updateLibraryJournalKeeperSpeech();
 updateAdminPanel();
 updateAdminLockState();
 

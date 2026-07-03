@@ -7,10 +7,13 @@ const root = path.resolve(__dirname, "..");
 const appUrl = pathToFileURL(path.join(root, "index.html")).href;
 const outputDir = path.join(__dirname, "backup-restore-check-2026-06-19");
 const backupPath = path.join(outputDir, "test-backup.json");
+const oldBackupPath = path.join(outputDir, "test-old-backup-missing-extra-teachers.json");
 const beforeRestorePath = path.join(outputDir, "test-before-restore.json");
+const beforeOldRestorePath = path.join(outputDir, "test-before-old-restore.json");
 const progressKey = "suiyoukai-stamp-progress-v1";
 const historyKey = "suiyoukai-operation-history-v1";
 const teacherIds = ["tsuneishi", "yuki", "koike", "yamashiro", "matsumoto"];
+const extraTeacherIds = ["teacher_extra_01", "teacher_extra_02"];
 
 fs.mkdirSync(outputDir, { recursive: true });
 
@@ -19,6 +22,10 @@ const assert = (condition, message) => {
 };
 
 const unlockAdmin = async (page) => {
+  await page.evaluate(() => {
+    window.location.hash = "#admin";
+    window.dispatchEvent(new HashChangeEvent("hashchange"));
+  });
   await page.locator('[data-panel="admin"]').click();
   await page.locator("[data-admin-passcode-input]").fill("suiyoukai2026");
   await page.locator("[data-admin-passcode-button]").click();
@@ -71,6 +78,11 @@ const unlockAdmin = async (page) => {
     await download.saveAs(backupPath);
     const backupText = fs.readFileSync(backupPath, "utf8");
     const backup = JSON.parse(backupText);
+    const oldBackup = JSON.parse(JSON.stringify(backup));
+    for (const teacherId of extraTeacherIds) {
+      delete oldBackup.progress.stamps.teacherLessonCounts[teacherId];
+    }
+    fs.writeFileSync(oldBackupPath, JSON.stringify(oldBackup, null, 2), "utf8");
     assert(backup.appId === "suiyoukai-stamp-adventure" && backup.formatVersion === 1, "識別子または版番号がありません。");
     assert(backup.progress && Array.isArray(backup.operationHistory) && backup.savedAt, "必要なバックアップ項目が不足しています。");
     assert(!backupText.includes("suiyoukai2026") && !backupText.includes("みずの しずく"), "パスコードまたは個人情報が含まれています。");
@@ -128,6 +140,22 @@ const unlockAdmin = async (page) => {
     assert(restored.history.at(-1)?.type === "restore", "復元操作が履歴に追加されません。");
     assert(await page.locator("[data-admin-lock-card]").isVisible(), "復元後に自動再ロックされません。");
     checks.push("進捗と履歴を同じ状態へ復元して再ロック");
+
+    await page.locator("[data-admin-passcode-input]").fill("suiyoukai2026");
+    await page.locator("[data-admin-passcode-button]").click();
+    await page.locator("[data-admin-backup-file]").setInputFiles(oldBackupPath);
+    await page.locator("[data-admin-restore-confirm]").waitFor({ state: "visible" });
+    await page.locator("[data-admin-restore-input]").fill("復元");
+    const oldRestoreDownloadPromise = page.waitForEvent("download");
+    await page.locator("[data-admin-restore-confirm-button]").click();
+    const oldRestoreDownload = await oldRestoreDownloadPromise;
+    await oldRestoreDownload.saveAs(beforeOldRestorePath);
+    const oldRestored = await page.evaluate((key) => JSON.parse(localStorage.getItem(key)), progressKey);
+    for (const teacherId of extraTeacherIds) {
+      assert(oldRestored.stamps.teacherLessonCounts[teacherId] === 0, `${teacherId} が0回で補完されません。`);
+    }
+    assert(oldRestored.stamps.teacherCircleRounds === 1, "旧バックアップ復元後に基本5人の先生の輪が後退しました。");
+    checks.push("旧バックアップの不足先生IDを0回で補完し、基本5人の輪を維持");
 
     await page.locator("[data-admin-passcode-input]").fill("suiyoukai2026");
     await page.locator("[data-admin-passcode-button]").click();

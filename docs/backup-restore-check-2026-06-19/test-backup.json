@@ -1,17 +1,20 @@
 {
   "appId": "suiyoukai-stamp-adventure",
   "formatVersion": 1,
-  "savedAt": "2026-06-19T10:04:39.898Z",
+  "savedAt": "2026-07-02T13:45:04.958Z",
   "progress": {
     "schemaVersion": 2,
     "stamps": {
       "participationCount": 10,
+      "lastParticipationStampDate": "",
       "teacherLessonCounts": {
         "tsuneishi": 5,
         "yuki": 1,
         "koike": 2,
         "yamashiro": 3,
-        "matsumoto": 4
+        "matsumoto": 4,
+        "teacher_extra_01": 0,
+        "teacher_extra_02": 0
       },
       "teacherCircleRounds": 1
     },
@@ -115,5 +118,6 @@
       "after": 10,
       "recordedAt": "2026-06-19T00:00:00.000Z"
     }
-  ]
+  ],
+  "teacherProfiles": {}
 }

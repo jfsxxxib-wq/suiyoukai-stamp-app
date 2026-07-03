@@ -1,0 +1,121 @@
+{
+  "appId": "suiyoukai-stamp-adventure",
+  "formatVersion": 1,
+  "savedAt": "2026-07-02T13:45:04.958Z",
+  "progress": {
+    "schemaVersion": 2,
+    "stamps": {
+      "participationCount": 10,
+      "lastParticipationStampDate": "",
+      "teacherLessonCounts": {
+        "tsuneishi": 5,
+        "yuki": 1,
+        "koike": 2,
+        "yamashiro": 3,
+        "matsumoto": 4
+      },
+      "teacherCircleRounds": 1
+    },
+    "earned": {
+      "fairies": [
+        {
+          "id": "fairy_cosmos",
+          "name": "コスモスの妖精",
+          "teacherId": null,
+          "teacherName": "参加スタンプ",
+          "cycleNumber": 1,
+          "cycleName": "1巡目",
+          "requiredCount": 10,
+          "flower": "cosmos",
+          "flowerName": "コスモス",
+          "fairyAsset": "fairy-apollon-flower-style.png"
+        },
+        {
+          "id": "fairy_iris_1",
+          "name": "菖蒲の妖精",
+          "teacherId": "tsuneishi",
+          "teacherName": "常石 隆志 六段",
+          "cycleNumber": 1,
+          "cycleName": "1巡目",
+          "requiredCount": 5,
+          "flower": "iris",
+          "flowerName": "菖蒲",
+          "fairyAsset": "fairy-companion-iris-v2.png"
+        }
+      ],
+      "medals": [
+        {
+          "id": "medal_participation_cosmos_full_bloom",
+          "name": "コスモス満開勲章"
+        },
+        {
+          "id": "medal_teacher_circle_round_1",
+          "name": "先生の輪 一巡勲章"
+        }
+      ],
+      "titles": [
+        {
+          "id": "title_cosmos_full_bloom_friend",
+          "name": "コスモス満開の友"
+        },
+        {
+          "id": "title_iris_fairy_friend",
+          "name": "菖蒲の妖精と出会った人"
+        },
+        {
+          "id": "title_teacher_circle_round_1",
+          "name": "先生の輪をひらいた旅人"
+        }
+      ],
+      "companions": [
+        {
+          "id": "special_companion_french_bulldog_a",
+          "character": "フレンチブルドッグA",
+          "name": "はじめの一歩",
+          "description": "初スタンプ獲得",
+          "asset": "special-companion-french-bulldog-a.png",
+          "condition": "first_stamp",
+          "isAchieved": true
+        },
+        {
+          "id": "special_companion_french_bulldog_b",
+          "character": "フレンチブルドッグB",
+          "name": "挑戦する冒険者",
+          "description": "参加スタンプ1回＋指導碁スタンプ1回",
+          "asset": "special-companion-french-bulldog-b.png",
+          "condition": "participation_and_lesson",
+          "isAchieved": true
+        },
+        {
+          "id": "special_companion_owl_a",
+          "character": "フクロウA",
+          "name": "知恵の見守り役",
+          "description": "初めて称号または勲章を獲得",
+          "asset": "special-companion-owl-a.png",
+          "condition": "first_reward",
+          "isAchieved": true
+        },
+        {
+          "id": "special_companion_owl_b",
+          "character": "フクロウB",
+          "name": "達成を知る賢者",
+          "description": "先生の輪 一巡達成",
+          "asset": "special-companion-owl-b.png",
+          "condition": "teacher_circle_round_one",
+          "isAchieved": true
+        }
+      ]
+    }
+  },
+  "operationHistory": [
+    {
+      "id": "operation-test",
+      "type": "participation_stamp",
+      "target": "参加スタンプ",
+      "before": 9,
+      "after": 10,
+      "recordedAt": "2026-06-19T00:00:00.000Z"
+    }
+  ],
+  "teacherProfiles": {}
+}
