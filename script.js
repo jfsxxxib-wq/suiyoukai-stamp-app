@@ -26,6 +26,7 @@ const gameRecordDate = document.querySelector("[data-game-record-date]");
 const gameRecordHandicap = document.querySelector("[data-game-record-handicap]");
 const gameRecordResult = document.querySelector("[data-game-record-result]");
 const teacherGameRecordList = document.querySelector("[data-teacher-game-record-list]");
+const teacherEventFirstNote = document.querySelector("[data-teacher-event-first-note]");
 const inlineFairyAchievement = document.querySelector("[data-fairy-achievement]");
 const fairyAchievement = document.querySelector("[data-achievement-modal]");
 const achievementKicker = fairyAchievement.querySelector(".achievement-modal-kicker");
@@ -48,6 +49,10 @@ const profileRank = document.querySelector("[data-profile-rank]");
 const profileMedal = document.querySelector("[data-profile-medal]");
 const profileMedalIcon = document.querySelector("[data-profile-medal-icon]");
 const totalStamps = document.querySelector("[data-total-stamps]");
+const profileLatestStamp = document.querySelector("[data-profile-latest-stamp]");
+const profileLatestStampCopy = document.querySelector("[data-profile-latest-stamp-copy]");
+const profileLatestTeacherFlowers = document.querySelectorAll("[data-profile-latest-teacher-flower]");
+const profileTodayParticipationMark = document.querySelector("[data-profile-today-participation-mark]");
 const profileGuideProgress = document.querySelector("[data-profile-guide-progress]");
 const profileGuideProgressTrack = document.querySelector("[data-profile-guide-progress-track]");
 const circleBadge = document.querySelector("[data-circle-badge]");
@@ -143,6 +148,13 @@ const adminGameRecordHandicap = document.querySelector("[data-admin-game-record-
 const adminGameRecordResult = document.querySelector("[data-admin-game-record-result]");
 const adminGameRecordApply = document.querySelector("[data-admin-game-record-apply]");
 const adminGameRecordMessage = document.querySelector("[data-admin-game-record-message]");
+const adminShowProfileButton = document.querySelector("[data-admin-show-profile]");
+const adminUndoGameRecordButton = document.querySelector("[data-admin-undo-game-record]");
+const adminStampQrCreateButton = document.querySelector("[data-admin-stamp-qr-create]");
+const adminStampQr = document.querySelector("[data-admin-stamp-qr]");
+const adminStampQrImage = document.querySelector("[data-admin-stamp-qr-image]");
+const adminStampQrLink = document.querySelector("[data-admin-stamp-qr-link]");
+const adminStampQrMessage = document.querySelector("[data-admin-stamp-qr-message]");
 const adminTeacherProfileSelect = document.querySelector("[data-admin-teacher-profile-select]");
 const adminTeacherProfileStyle = document.querySelector("[data-admin-teacher-profile-style]");
 const adminTeacherProfileLesson = document.querySelector("[data-admin-teacher-profile-lesson]");
@@ -233,6 +245,9 @@ let activeTeacherKey = "tsuneishi";
 let recordPhase = "ready";
 let confirmSaveReadyAt = 0;
 let adminDraft = null;
+let latestTeacherStampReflection = null;
+let todayTeacherStampReflections = [];
+let adminGameRecordApplyCooldownUntil = 0;
 let pendingOperatorAction = null;
 let pendingRestoreBackup = null;
 let isShrineIntroPlaying = false;
@@ -254,6 +269,8 @@ const progressStorageKey = "suiyoukai-stamp-progress-v1";
 const gameRecordsStorageKey = "suiyoukai-game-records-v1";
 const pendingGameRecordsStorageKey = "suiyoukai-pending-game-records-v2";
 const operationHistoryStorageKey = "suiyoukai-operation-history-v1";
+const stampQrAppliedStorageKey = "suiyoukai-stamp-qr-applied-v1";
+const todayTeacherStampReflectionStorageKey = "suiyoukai-today-teacher-stamps-v1";
 const teacherProfileStorageKey = "suiyoukai-teacher-profiles-v1";
 const backupAppId = "suiyoukai-stamp-adventure";
 const backupFormatVersion = 1;
@@ -1220,6 +1237,519 @@ const appendOperationHistory = ({ type, target, before, after }) => {
   });
   operationHistory = operationHistory.slice(-50);
   saveOperationHistory();
+};
+
+const loadAppliedStampQrIds = () => {
+  try {
+    const storedIds = JSON.parse(localStorage.getItem(stampQrAppliedStorageKey) ?? "[]");
+    return new Set(Array.isArray(storedIds) ? storedIds.filter((id) => typeof id === "string") : []);
+  } catch {
+    return new Set();
+  }
+};
+
+let appliedStampQrIds = loadAppliedStampQrIds();
+
+const saveAppliedStampQrIds = () => {
+  try {
+    localStorage.setItem(stampQrAppliedStorageKey, JSON.stringify([...appliedStampQrIds].slice(-200)));
+  } catch {
+    // QRの二重読み取り防止は保存できない環境でも、開いている間は保持します。
+  }
+};
+
+const qrHandicapValues = ["記録なし", "互先", "先", "先逆コミ6.5目", "2子", "3子", "4子", "5子", "6子", "7子", "8子", "9子"];
+const qrResultValues = ["記録なし", "勝ち", "負け", "持碁"];
+
+const encodeQrValue = (value, values) => Math.max(0, values.indexOf(value));
+
+const decodeQrValue = (value, values) => values[Number(value)] ?? values[0];
+
+const encodeStampPayload = (payload) => {
+  const bytes = new TextEncoder().encode(JSON.stringify(payload));
+  let binary = "";
+  for (const byte of bytes) {
+    binary += String.fromCharCode(byte);
+  }
+  return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
+};
+
+const decodeStampPayload = (encodedPayload) => {
+  const base64 = encodedPayload.replace(/-/g, "+").replace(/_/g, "/");
+  const padded = base64.padEnd(Math.ceil(base64.length / 4) * 4, "=");
+  const binary = atob(padded);
+  const bytes = Uint8Array.from(binary, (char) => char.charCodeAt(0));
+  return JSON.parse(new TextDecoder().decode(bytes));
+};
+
+const normalizeQrDate = (value) => {
+  if (typeof value !== "string") {
+    return getTodayForInput();
+  }
+
+  const normalized = value.trim().replace(/\//g, "-");
+  if (/^\d{4}-\d{1,2}-\d{1,2}$/.test(normalized)) {
+    const [year, month, day] = normalized.split("-");
+    return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+  }
+
+  return getTodayForInput();
+};
+
+const mobilePreviewOrigin = "http://192.168.128.168:4184";
+
+const getStampQrBaseUrl = () => {
+  const isLocalOnlyHost = window.location.hostname === "127.0.0.1" || window.location.hostname === "localhost";
+  const origin = isLocalOnlyHost ? mobilePreviewOrigin : window.location.origin;
+
+  return `${origin}${window.location.pathname}`;
+};
+
+const createStampApplyUrl = (payload) => {
+  const stampData = encodeStampPayload({
+    type: "teacher_stamp",
+    id: payload.id,
+    teacherId: payload.teacherId,
+    date: normalizeQrDate(payload.date),
+    handicap: payload.handicap,
+    result: payload.result,
+  });
+
+  return `${getStampQrBaseUrl()}?stamp=${stampData}`;
+};
+
+const createQrGeneratorPolynomial = (degree) => {
+  const exp = new Array(512);
+  const log = new Array(256).fill(0);
+  let value = 1;
+
+  for (let index = 0; index < 255; index += 1) {
+    exp[index] = value;
+    log[value] = index;
+    value <<= 1;
+    if (value & 0x100) {
+      value ^= 0x11d;
+    }
+  }
+  for (let index = 255; index < 512; index += 1) {
+    exp[index] = exp[index - 255];
+  }
+
+  const multiply = (left, right) => (left === 0 || right === 0 ? 0 : exp[log[left] + log[right]]);
+  let polynomial = [1];
+  for (let index = 0; index < degree; index += 1) {
+    const next = new Array(polynomial.length + 1).fill(0);
+    for (let term = 0; term < polynomial.length; term += 1) {
+      next[term] ^= polynomial[term];
+      next[term + 1] ^= multiply(polynomial[term], exp[index]);
+    }
+    polynomial = next;
+  }
+
+  return { polynomial, multiply };
+};
+
+const createQrErrorCorrection = (dataCodewords, degree) => {
+  const { polynomial, multiply } = createQrGeneratorPolynomial(degree);
+  const remainder = new Array(degree).fill(0);
+
+  for (const codeword of dataCodewords) {
+    const factor = codeword ^ remainder.shift();
+    remainder.push(0);
+    for (let index = 0; index < degree; index += 1) {
+      remainder[index] ^= multiply(polynomial[index + 1], factor);
+    }
+  }
+
+  return remainder;
+};
+
+const createQrFormatBits = (mask) => {
+  let data = (1 << 3) | mask;
+  let bits = data << 10;
+  const generator = 0x537;
+
+  for (let shift = 14; shift >= 10; shift -= 1) {
+    if ((bits >> shift) & 1) {
+      bits ^= generator << (shift - 10);
+    }
+  }
+
+  return ((data << 10) | bits) ^ 0x5412;
+};
+
+const createQrCodeDataUrl = (text) => {
+  const version = 5;
+  const size = 17 + version * 4;
+  const dataCodewordCount = 108;
+  const errorCodewordCount = 26;
+  const modules = Array.from({ length: size }, () => new Array(size).fill(false));
+  const reserved = Array.from({ length: size }, () => new Array(size).fill(false));
+  const setModule = (row, col, dark, isReserved = true) => {
+    if (row < 0 || col < 0 || row >= size || col >= size) {
+      return;
+    }
+    modules[row][col] = dark;
+    reserved[row][col] = isReserved;
+  };
+  const drawFinder = (row, col) => {
+    for (let dy = -1; dy <= 7; dy += 1) {
+      for (let dx = -1; dx <= 7; dx += 1) {
+        const y = row + dy;
+        const x = col + dx;
+        const inFinder = dx >= 0 && dx <= 6 && dy >= 0 && dy <= 6;
+        const dark = inFinder && (dx === 0 || dx === 6 || dy === 0 || dy === 6 || (dx >= 2 && dx <= 4 && dy >= 2 && dy <= 4));
+        setModule(y, x, dark);
+      }
+    }
+  };
+  const drawAlignment = (centerRow, centerCol) => {
+    for (let dy = -2; dy <= 2; dy += 1) {
+      for (let dx = -2; dx <= 2; dx += 1) {
+        const distance = Math.max(Math.abs(dx), Math.abs(dy));
+        setModule(centerRow + dy, centerCol + dx, distance !== 1);
+      }
+    }
+  };
+
+  drawFinder(0, 0);
+  drawFinder(0, size - 7);
+  drawFinder(size - 7, 0);
+  drawAlignment(30, 30);
+  for (let index = 8; index < size - 8; index += 1) {
+    setModule(6, index, index % 2 === 0);
+    setModule(index, 6, index % 2 === 0);
+  }
+  setModule((4 * version) + 9, 8, true);
+
+  const bytes = [...text].map((char) => char.charCodeAt(0));
+  const bits = [0, 1, 0, 0];
+  for (let bit = 7; bit >= 0; bit -= 1) {
+    bits.push((bytes.length >> bit) & 1);
+  }
+  for (const byte of bytes) {
+    for (let bit = 7; bit >= 0; bit -= 1) {
+      bits.push((byte >> bit) & 1);
+    }
+  }
+  const capacityBits = dataCodewordCount * 8;
+  for (let index = 0; index < 4 && bits.length < capacityBits; index += 1) {
+    bits.push(0);
+  }
+  while (bits.length % 8 !== 0) {
+    bits.push(0);
+  }
+  const dataCodewords = [];
+  for (let index = 0; index < bits.length; index += 8) {
+    dataCodewords.push(Number.parseInt(bits.slice(index, index + 8).join(""), 2));
+  }
+  for (let pad = 0; dataCodewords.length < dataCodewordCount; pad += 1) {
+    dataCodewords.push(pad % 2 === 0 ? 0xec : 0x11);
+  }
+  const allCodewords = [...dataCodewords, ...createQrErrorCorrection(dataCodewords, errorCodewordCount)];
+  const allBits = allCodewords.flatMap((codeword) => {
+    const codewordBits = [];
+    for (let bit = 7; bit >= 0; bit -= 1) {
+      codewordBits.push((codeword >> bit) & 1);
+    }
+    return codewordBits;
+  });
+
+  let bitIndex = 0;
+  let upward = true;
+  for (let col = size - 1; col > 0; col -= 2) {
+    if (col === 6) {
+      col -= 1;
+    }
+    for (let rowStep = 0; rowStep < size; rowStep += 1) {
+      const row = upward ? size - 1 - rowStep : rowStep;
+      for (let offset = 0; offset < 2; offset += 1) {
+        const x = col - offset;
+        if (reserved[row][x]) {
+          continue;
+        }
+        const mask = (row + x) % 2 === 0;
+        modules[row][x] = Boolean((allBits[bitIndex] ?? 0) ^ mask);
+        bitIndex += 1;
+      }
+    }
+    upward = !upward;
+  }
+
+  const formatBits = createQrFormatBits(0);
+  for (let index = 0; index <= 5; index += 1) {
+    setModule(8, index, Boolean((formatBits >> index) & 1));
+  }
+  setModule(8, 7, Boolean((formatBits >> 6) & 1));
+  setModule(8, 8, Boolean((formatBits >> 7) & 1));
+  setModule(7, 8, Boolean((formatBits >> 8) & 1));
+  for (let index = 9; index < 15; index += 1) {
+    setModule(14 - index, 8, Boolean((formatBits >> index) & 1));
+  }
+  for (let index = 0; index < 8; index += 1) {
+    setModule(size - 1 - index, 8, Boolean((formatBits >> index) & 1));
+  }
+  for (let index = 8; index < 15; index += 1) {
+    setModule(8, size - 15 + index, Boolean((formatBits >> index) & 1));
+  }
+
+  const quiet = 4;
+  const viewBoxSize = size + quiet * 2;
+  const darkModules = [];
+  for (let row = 0; row < size; row += 1) {
+    for (let col = 0; col < size; col += 1) {
+      if (modules[row][col]) {
+        darkModules.push(`<rect x="${col + quiet}" y="${row + quiet}" width="1" height="1"/>`);
+      }
+    }
+  }
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${viewBoxSize} ${viewBoxSize}" shape-rendering="crispEdges"><rect width="100%" height="100%" fill="#fff"/><g fill="#111">${darkModules.join("")}</g></svg>`;
+
+  return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+};
+
+const getStampPayloadFromLocation = () => {
+  const hash = window.location.hash || "";
+  const searchParams = new URLSearchParams(window.location.search);
+  const queryStamp = searchParams.get("stamp");
+  const encodedValue = queryStamp || hash.match(/^#apply-stamp=([^&]+)/)?.[1] || "";
+
+  if (encodedValue) {
+    try {
+      const payload = decodeStampPayload(encodedValue);
+
+      return {
+        type: payload.type,
+        id: payload.id,
+        teacherId: payload.teacherId,
+        date: normalizeQrDate(payload.date),
+        handicap: typeof payload.handicap === "string" ? payload.handicap : "互先",
+        result: typeof payload.result === "string" ? payload.result : "記録なし",
+      };
+    } catch {
+      return null;
+    }
+  }
+
+  const compactValue = hash.match(/^#s=([^&]+)/)?.[1] || "";
+  if (compactValue) {
+    const [id, teacherId, date, handicapCode, resultCode] = compactValue.split(".").map(decodeURIComponent);
+
+    return {
+      type: "teacher_stamp",
+      id,
+      teacherId,
+      date: normalizeQrDate(date),
+      handicap: decodeQrValue(handicapCode, qrHandicapValues),
+      result: decodeQrValue(resultCode, qrResultValues),
+    };
+  }
+
+  return null;
+};
+
+const buildTeacherStampReflection = ({ gameRecordId, teacherId, before, after }) => {
+  const teacher = teacherDetails[teacherId];
+
+  return {
+    gameRecordId,
+    teacherId,
+    teacherName: teacher.name,
+    flowerName: teacher.flowerName ?? "花",
+    flowerAsset: teacher.flowerAsset ?? "cosmos-stamp-stage-05-v2.png",
+    before,
+    after,
+    goal: getTeacherGoal(teacher),
+  };
+};
+
+const sanitizeTodayTeacherStampReflection = (reflection = {}) => {
+  const teacherId = typeof reflection.teacherId === "string" ? reflection.teacherId : "";
+  const date = normalizeQrDate(reflection.date);
+  const teacher = teacherDetails[teacherId];
+
+  if (!teacher || date !== getTodayForInput()) {
+    return null;
+  }
+
+  return buildTeacherStampReflection({
+    gameRecordId: typeof reflection.gameRecordId === "string" ? reflection.gameRecordId : `game-today-${teacherId}-${date}`,
+    teacherId,
+    before: normalizeProgressCount(reflection.before),
+    after: normalizeProgressCount(reflection.after),
+  });
+};
+
+const loadTodayTeacherStampReflections = () => {
+  try {
+    const storedReflections = JSON.parse(localStorage.getItem(todayTeacherStampReflectionStorageKey) ?? "[]");
+    const fromStorage = Array.isArray(storedReflections)
+      ? storedReflections.map(sanitizeTodayTeacherStampReflection).filter(Boolean).slice(-3)
+      : [];
+    const today = getTodayForInput();
+    const fromGameRecords = gameRecords
+      .filter((record) => record.date === today && teacherDetails[record.teacherId])
+      .slice(-3)
+      .map((record) => {
+        const after = normalizeProgressCount(userProgress.stamps.teacherLessonCounts[record.teacherId]);
+
+        return buildTeacherStampReflection({
+          gameRecordId: record.id,
+          teacherId: record.teacherId,
+          before: Math.max(0, after - 1),
+          after,
+        });
+      });
+    const mergedById = new Map();
+
+    for (const reflection of [...fromGameRecords, ...fromStorage]) {
+      mergedById.set(reflection.gameRecordId, reflection);
+    }
+
+    return [...mergedById.values()].slice(-3);
+  } catch {
+    return [];
+  }
+};
+
+const saveTodayTeacherStampReflections = () => {
+  try {
+    const today = getTodayForInput();
+    const storedReflections = todayTeacherStampReflections.map((reflection) => ({
+      gameRecordId: reflection.gameRecordId,
+      teacherId: reflection.teacherId,
+      before: reflection.before,
+      after: reflection.after,
+      date: today,
+    }));
+    localStorage.setItem(todayTeacherStampReflectionStorageKey, JSON.stringify(storedReflections.slice(-3)));
+  } catch {
+    // 今日の表示用メモは保存できない環境でも、開いている間は保持します。
+  }
+};
+
+todayTeacherStampReflections = loadTodayTeacherStampReflections();
+latestTeacherStampReflection = todayTeacherStampReflections.at(-1) ?? null;
+
+const showProfileTodayRecord = () => {
+  showPanel("profile");
+  window.setTimeout(() => profileLatestStamp?.scrollIntoView({ behavior: "smooth", block: "center" }), 0);
+};
+
+const refreshAfterTeacherStampChange = (teacherId) => {
+  userProgress.stamps.teacherCircleRounds = getTeacherCircleRoundsFromCounts(userProgress.stamps.teacherLessonCounts);
+  syncTeacherDetailsFromProgress();
+  syncProgressRewards();
+  saveUserProgress();
+  syncAdminDraftFromProgress();
+  renderTeacherGameRecords(teacherId);
+  updateParticipationStampCard();
+  updateTeacherCards();
+  updateRoundProgress();
+  updateProfileCard();
+  updateAdminPanel();
+};
+
+const applyTeacherStampPayload = (payload = {}) => {
+  const recordDate = normalizeQrDate(payload.date);
+  const teacherId = typeof payload.teacherId === "string" ? payload.teacherId : "";
+  const handicap = typeof payload.handicap === "string" && payload.handicap ? payload.handicap : "互先";
+  const result = typeof payload.result === "string" && payload.result ? payload.result : "記録なし";
+  const stampId = typeof payload.id === "string" && payload.id
+    ? payload.id
+    : `qr-${teacherId}-${recordDate}-${encodeQrValue(handicap, qrHandicapValues)}-${encodeQrValue(result, qrResultValues)}`;
+  const teacher = teacherDetails[teacherId];
+
+  if (!teacher || !/^\d{4}-\d{2}-\d{2}$/.test(recordDate)) {
+    return { ok: false, reason: "invalid", payload: { ...payload, teacherId, date: recordDate } };
+  }
+
+  const currentCount = normalizeProgressCount(userProgress.stamps.teacherLessonCounts[teacherId]);
+  if (appliedStampQrIds.has(stampId)) {
+    const after = currentCount;
+    const before = Math.max(0, after - 1);
+    latestTeacherStampReflection = buildTeacherStampReflection({
+      gameRecordId: `game-qr-${stampId}`,
+      teacherId,
+      before,
+      after,
+    });
+    todayTeacherStampReflections = [latestTeacherStampReflection].slice(-3);
+    saveTodayTeacherStampReflections();
+    updateProfileCard();
+    showProfileTodayRecord();
+    return { ok: true, reason: "already_applied" };
+  }
+
+  if (currentCount >= getTeacherMaxCount(teacher)) {
+    return { ok: false, reason: "max" };
+  }
+
+  const gameRecordId = `game-qr-${stampId}`;
+  const before = currentCount;
+  userProgress.stamps.teacherLessonCounts[teacherId] = clampProgressCount(before + 1, getTeacherMaxCount(teacher));
+  const after = normalizeProgressCount(userProgress.stamps.teacherLessonCounts[teacherId]);
+
+  gameRecords.push({
+    id: gameRecordId,
+    teacherId,
+    date: recordDate,
+    handicap,
+    result,
+    recordedAt: new Date().toISOString(),
+  });
+  saveGameRecords();
+
+  latestTeacherStampReflection = buildTeacherStampReflection({
+    gameRecordId,
+    teacherId,
+    before,
+    after,
+  });
+  todayTeacherStampReflections = [...todayTeacherStampReflections, latestTeacherStampReflection].slice(-3);
+  saveTodayTeacherStampReflections();
+  appliedStampQrIds.add(stampId);
+  saveAppliedStampQrIds();
+  appendOperationHistory({
+    type: "teacher_stamp",
+    target: `${teacher.name} QR反映`,
+    before,
+    after,
+  });
+  refreshAfterTeacherStampChange(teacherId);
+  showProfileTodayRecord();
+  return { ok: true, reason: "applied" };
+};
+
+const applyStampQrFromLocation = () => {
+  const payload = getStampPayloadFromLocation();
+  if (!payload) {
+    return false;
+  }
+
+  const result = applyTeacherStampPayload(payload);
+  if (window.history?.replaceState) {
+    window.history.replaceState(null, "", getStampQrBaseUrl());
+  }
+
+  if (!result.ok) {
+    showPanel("profile");
+    latestTeacherStampReflection = null;
+    todayTeacherStampReflections = [];
+    if (profileLatestStamp) {
+      profileLatestStamp.hidden = false;
+    }
+    if (profileLatestStampCopy) {
+      profileLatestStampCopy.textContent = result.reason === "max"
+        ? "この先生のスタンプはすでに達成済みです。"
+        : result.reason === "invalid"
+          ? `QRを開きましたが、先生または日付を読み取れませんでした。先生:${result.payload?.teacherId ?? "不明"} 日付:${result.payload?.date ?? "不明"}`
+          : "QRを開きましたが、先生スタンプを反映できませんでした。新しいQRを作り直してください。";
+    }
+    window.setTimeout(() => profileLatestStamp?.scrollIntoView({ behavior: "smooth", block: "center" }), 0);
+  }
+
+  return result.ok;
 };
 
 const cloneJsonData = (value) => JSON.parse(JSON.stringify(value));
@@ -4304,6 +4834,43 @@ const getAdminGameRecordDraft = () => ({
   result: adminGameRecordResult?.value || "記録なし",
 });
 
+const clearAdminStampQr = () => {
+  if (adminStampQr) {
+    adminStampQr.hidden = true;
+  }
+  if (adminStampQrImage) {
+    adminStampQrImage.removeAttribute("src");
+  }
+  if (adminStampQrLink) {
+    adminStampQrLink.href = "#";
+  }
+};
+
+const createAdminStampQr = () => {
+  const draft = getAdminGameRecordDraft();
+  const teacher = teacherDetails[draft.teacherId];
+
+  if (!teacher || !adminStampQr || !adminStampQrImage || !adminStampQrLink || !adminStampQrMessage) {
+    return;
+  }
+
+  const payload = {
+    type: "teacher_stamp",
+    id: `qr-${Date.now()}-${draft.teacherId}-${Math.random().toString(36).slice(2, 8)}`,
+    teacherId: draft.teacherId,
+    date: draft.date,
+    handicap: draft.handicap,
+    result: draft.result,
+  };
+  const applyUrl = createStampApplyUrl(payload);
+  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=16&data=${encodeURIComponent(applyUrl)}`;
+
+  adminStampQr.hidden = false;
+  adminStampQrImage.src = qrUrl;
+  adminStampQrLink.href = applyUrl;
+  adminStampQrMessage.textContent = `${teacher.name} の先生スタンプを本人スマホへ反映します。同じQRをもう一度読んでも二重には増えません。`;
+};
+
 const updateAdminGameRecordApply = () => {
   if (!adminGameRecordApply || !adminGameRecordMessage) {
     return;
@@ -4325,18 +4892,32 @@ const updateAdminGameRecordApply = () => {
     ? normalizeProgressCount(userProgress.stamps.teacherLessonCounts[draft.teacherId])
     : 0;
   const isMaxAchieved = teacher ? currentCount >= getTeacherMaxCount(teacher) : true;
+  const isCoolingDown = Date.now() < adminGameRecordApplyCooldownUntil;
 
   if (adminGameRecordDateLabel) {
     adminGameRecordDateLabel.textContent = `本日 ${todayLabel}`;
   }
 
-  adminGameRecordApply.disabled = !teacher || isMaxAchieved;
-  adminGameRecordApply.textContent = isMaxAchieved
+  if (adminStampQrCreateButton) {
+    adminStampQrCreateButton.disabled = !teacher;
+  }
+  adminGameRecordApply.disabled = !teacher || isMaxAchieved || isCoolingDown;
+  adminGameRecordApply.textContent = isCoolingDown
+    ? "反映しました"
+    : isMaxAchieved
     ? "この先生は達成済み"
     : "対局記録と先生スタンプを反映";
   adminGameRecordMessage.textContent = isMaxAchieved
     ? "この先生の花スタンプはすべて達成済みです。"
-    : "フォーム回答を確認してから押してください。";
+    : isCoolingDown
+      ? "反映直後です。二重押し防止のため少し待っています。"
+      : "別画面でフォーム回答を確認してから押してください。";
+  if (adminShowProfileButton) {
+    adminShowProfileButton.hidden = !latestTeacherStampReflection;
+  }
+  if (adminUndoGameRecordButton) {
+    adminUndoGameRecordButton.hidden = !latestTeacherStampReflection;
+  }
 };
 
 const applyGameRecordFromAdmin = () => {
@@ -4354,8 +4935,9 @@ const applyGameRecordFromAdmin = () => {
     return;
   }
 
+  const gameRecordId = `game-admin-${Date.now()}-${draft.teacherId}`;
   gameRecords.push({
-    id: `game-admin-${Date.now()}-${draft.teacherId}`,
+    id: gameRecordId,
     teacherId: draft.teacherId,
     date: draft.date,
     handicap: draft.handicap,
@@ -4365,6 +4947,19 @@ const applyGameRecordFromAdmin = () => {
   saveGameRecords();
 
   userProgress.stamps.teacherLessonCounts[draft.teacherId] = clampProgressCount(before + 1, getTeacherMaxCount(teacher));
+  const after = normalizeProgressCount(userProgress.stamps.teacherLessonCounts[draft.teacherId]);
+  latestTeacherStampReflection = {
+    gameRecordId,
+    teacherId: draft.teacherId,
+    teacherName: teacher.name,
+    flowerName: teacher.flowerName ?? "花",
+    flowerAsset: teacher.flowerAsset ?? "cosmos-stamp-stage-05-v2.png",
+    before,
+    after,
+    goal: getTeacherGoal(teacher),
+  };
+  todayTeacherStampReflections = [...todayTeacherStampReflections, latestTeacherStampReflection].slice(-3);
+  saveTodayTeacherStampReflections();
   userProgress.stamps.teacherCircleRounds = getTeacherCircleRoundsFromCounts(userProgress.stamps.teacherLessonCounts);
   syncTeacherDetailsFromProgress();
   syncProgressRewards();
@@ -4373,7 +4968,70 @@ const applyGameRecordFromAdmin = () => {
     type: "teacher_stamp",
     target: `${teacher.name} 対局記録`,
     before,
-    after: normalizeProgressCount(userProgress.stamps.teacherLessonCounts[draft.teacherId]),
+    after,
+  });
+  syncAdminDraftFromProgress();
+  renderTeacherGameRecords(activeTeacherKey);
+  updateParticipationStampCard();
+  updateTeacherCards();
+  updateRoundProgress();
+  updateProfileCard();
+  updateAdminPanel();
+  adminGameRecordApplyCooldownUntil = Date.now() + 1200;
+  updateAdminGameRecordApply();
+  window.setTimeout(updateAdminGameRecordApply, 1250);
+
+  if (adminGameRecordMessage) {
+    adminGameRecordMessage.textContent = `${teacher.name} の今日の指導碁を記録しました。参加者には冒険者カードを見せてください。`;
+  }
+  if (adminShowProfileButton) {
+    adminShowProfileButton.hidden = false;
+  }
+  if (adminUndoGameRecordButton) {
+    adminUndoGameRecordButton.hidden = false;
+  }
+};
+
+const undoLatestGameRecordFromAdmin = () => {
+  const reflection = latestTeacherStampReflection;
+
+  if (!reflection?.teacherId) {
+    updateAdminGameRecordApply();
+    return;
+  }
+
+  const teacher = teacherDetails[reflection.teacherId];
+  if (!teacher) {
+    latestTeacherStampReflection = null;
+    todayTeacherStampReflections = [];
+    saveTodayTeacherStampReflections();
+    updateAdminGameRecordApply();
+    updateProfileCard();
+    return;
+  }
+
+  const before = normalizeProgressCount(userProgress.stamps.teacherLessonCounts[reflection.teacherId]);
+  const after = clampProgressCount(reflection.before, getTeacherMaxCount(teacher));
+  userProgress.stamps.teacherLessonCounts[reflection.teacherId] = after;
+  userProgress.stamps.teacherCircleRounds = getTeacherCircleRoundsFromCounts(userProgress.stamps.teacherLessonCounts);
+
+  if (reflection.gameRecordId) {
+    gameRecords = gameRecords.filter((record) => record.id !== reflection.gameRecordId);
+    saveGameRecords();
+  }
+
+  todayTeacherStampReflections = todayTeacherStampReflections.filter((item) => item.gameRecordId !== reflection.gameRecordId);
+  latestTeacherStampReflection = todayTeacherStampReflections.at(-1) ?? null;
+  saveTodayTeacherStampReflections();
+  adminGameRecordApplyCooldownUntil = 0;
+  syncTeacherDetailsFromProgress();
+  syncProgressRewards();
+  saveUserProgress();
+  appendOperationHistory({
+    type: "decrement",
+    target: `${teacher.name} 先生スタンプ取り消し`,
+    before,
+    after,
   });
   syncAdminDraftFromProgress();
   renderTeacherGameRecords(activeTeacherKey);
@@ -4384,7 +5042,13 @@ const applyGameRecordFromAdmin = () => {
   updateAdminPanel();
 
   if (adminGameRecordMessage) {
-    adminGameRecordMessage.textContent = `${teacher.name} の対局記録と先生スタンプを反映しました。`;
+    adminGameRecordMessage.textContent = `${teacher.name} の直前の先生スタンプを取り消しました。`;
+  }
+  if (adminShowProfileButton) {
+    adminShowProfileButton.hidden = !latestTeacherStampReflection;
+  }
+  if (adminUndoGameRecordButton) {
+    adminUndoGameRecordButton.hidden = !latestTeacherStampReflection;
   }
 };
 
@@ -4416,7 +5080,7 @@ const updateAdminParticipationApply = () => {
   } else if (isMaxAchieved) {
     adminParticipationMessage.textContent = "参加スタンプはすべて達成済みです。";
   } else {
-    adminParticipationMessage.textContent = "フォーム回答を確認してから押してください。";
+    adminParticipationMessage.textContent = "別画面でフォーム回答を確認してから押してください。";
   }
 };
 
@@ -4481,6 +5145,10 @@ const applyAdminDraftToProgress = () => {
     return;
   }
 
+  latestTeacherStampReflection = null;
+  todayTeacherStampReflections = [];
+  saveTodayTeacherStampReflections();
+  adminGameRecordApplyCooldownUntil = 0;
   userProgress.stamps.participationCount = clampProgressCount(adminDraft.participationCount, getParticipationMaxCount());
   userProgress.stamps.teacherLessonCounts = Object.fromEntries(
     Object.entries(teacherDetails).map(([teacherId, teacher]) => [
@@ -4496,6 +5164,16 @@ const applyAdminDraftToProgress = () => {
 };
 
 const resetUserProgress = () => {
+  latestTeacherStampReflection = null;
+  todayTeacherStampReflections = [];
+  saveTodayTeacherStampReflections();
+  gameRecords = [];
+  saveGameRecords();
+  pendingGameRecords = [];
+  savePendingGameRecords();
+  appliedStampQrIds = new Set();
+  saveAppliedStampQrIds();
+  adminGameRecordApplyCooldownUntil = 0;
   userProgress = sanitizeProgress(createResetProgress());
   syncTeacherDetailsFromProgress();
   syncProgressRewards();
@@ -6015,6 +6693,45 @@ const updateProfileCard = () => {
   const latestMedal = achievementResult.earnedMedals.at(-1);
 
   totalStamps.textContent = `スタンプ ${getTotalStampCount()}`;
+  if (!latestTeacherStampReflection && todayTeacherStampReflections.length === 0) {
+    todayTeacherStampReflections = loadTodayTeacherStampReflections();
+    latestTeacherStampReflection = todayTeacherStampReflections.at(-1) ?? null;
+  }
+  const hasTodayTeacherStamp = todayTeacherStampReflections.length > 0;
+  if (profileLatestStamp) {
+    profileLatestStamp.hidden = !hasTodayTeacherStamp;
+  }
+  if (profileTodayParticipationMark) {
+    profileTodayParticipationMark.textContent = userProgress.stamps.lastParticipationStampDate === getTodayForInput() ? "🌸" : "－";
+  }
+  if (latestTeacherStampReflection && profileLatestStampCopy) {
+    profileLatestStampCopy.textContent = todayTeacherStampReflections.length > 1
+      ? `今日の指導碁スタンプが${todayTeacherStampReflections.length}つ入りました。`
+      : `先生スタンプが ${latestTeacherStampReflection.before}/${latestTeacherStampReflection.goal} から ${latestTeacherStampReflection.after}/${latestTeacherStampReflection.goal} に増えました。`;
+  }
+  if (profileLatestTeacherFlowers.length > 0) {
+    profileLatestTeacherFlowers.forEach((button, index) => {
+      const reflection = todayTeacherStampReflections[index];
+      button.textContent = "";
+      button.classList.toggle("is-empty", !reflection);
+      button.dataset.teacherId = reflection?.teacherId ?? "";
+
+      if (!reflection) {
+        const slotNumber = document.createElement("span");
+        slotNumber.className = "profile-today-record-slot-number";
+        slotNumber.textContent = String(index + 1);
+        button.append(slotNumber);
+        button.setAttribute("aria-label", `${index + 1}つ目の指導碁スタンプ枠`);
+        return;
+      }
+
+      const image = document.createElement("img");
+      image.src = `assets/${reflection.flowerAsset}`;
+      image.alt = reflection.flowerName;
+      button.append(image);
+      button.setAttribute("aria-label", `${reflection.teacherName}の${reflection.flowerName}を花図鑑で見る`);
+    });
+  }
   if (profileGuideProgress) {
     profileGuideProgress.textContent = `${achievedFlowerCount}/${flowerTotal}`;
   }
@@ -6200,7 +6917,7 @@ const setRecordPhase = (phase, teacher) => {
     completeTeacherButton.hidden = true;
     flowMessage.textContent = teacher.stampCount >= getTeacherMaxCount(teacher)
       ? "この先生の花スタンプはすべて達成済みです。"
-      : "対局後はフォーム送信だけで大丈夫です。運営確認後にスタンプへ反映します。";
+      : "フォーム送信後はホームから水曜会アプリを開き直します。運営確認後、QRで今日の記録へ反映します。";
     return;
   }
 
@@ -6244,11 +6961,11 @@ const setRecordPhase = (phase, teacher) => {
   }
 
   if (phase === "done") {
-    confirmEffect.textContent = "指導後スタンプを反映しました。";
+    confirmEffect.textContent = "今日の指導碁を記録しました。";
     completeTeacherButton.textContent = "冒険者カードを見る";
     flowMessage.textContent = hasFirstRoundMedal()
       ? "一巡目の輪を達成しました。冒険者カードに新しい勲章が反映されています。"
-      : "スタンプを反映しました。続けて未記録の先生を選べます。";
+      : "花がひとつ育ち、冒険者カードに残りました。";
     return;
   }
 
@@ -6321,6 +7038,11 @@ const renderTeacherDetail = (teacherKey) => {
   document.querySelector("[data-teacher-style]").textContent = profile.style;
   document.querySelector("[data-teacher-lesson]").textContent = profile.lesson;
   document.querySelector("[data-teacher-note]").textContent = profile.note;
+  if (teacherEventFirstNote) {
+    teacherEventFirstNote.textContent = teacher.stampCount === 0
+      ? `フォーム送信後はホームから水曜会アプリを開き直します。QR反映後、${teacher.name}の花が0/${getTeacherGoal(teacher)}から1/${getTeacherGoal(teacher)}に育ちます。`
+      : `フォーム送信後はホームから水曜会アプリを開き直します。QR反映後、${teacher.name}の花スタンプが冒険者カードへ残ります。`;
+  }
   renderTeacherGameRecords(teacherKey);
   const isCycleAchievementPreview = !isAllCyclesComplete && isTeacherCycleAchievementCount(teacher.stampCount + 1, teacher);
   const nextCycleNumber = Math.ceil((teacher.stampCount + 1) / getTeacherGoal(teacher));
@@ -7204,6 +7926,7 @@ guidebookButton?.addEventListener("click", () => {
 });
 
 window.addEventListener("hashchange", syncAdminDirectEntry);
+window.addEventListener("hashchange", applyStampQrFromLocation);
 syncAdminDirectEntry();
 
 nextAdventureButton.addEventListener("click", () => {
@@ -7251,13 +7974,40 @@ participationStampButton.addEventListener("click", () => {
 
 adminParticipationApply?.addEventListener("click", applyTodayParticipationStampFromAdmin);
 adminGameRecordApply?.addEventListener("click", applyGameRecordFromAdmin);
+adminStampQrCreateButton?.addEventListener("click", createAdminStampQr);
+adminUndoGameRecordButton?.addEventListener("click", undoLatestGameRecordFromAdmin);
+adminShowProfileButton?.addEventListener("click", () => {
+  showPanel("profile");
+  window.setTimeout(() => profileLatestStamp?.scrollIntoView({ behavior: "smooth", block: "center" }), 0);
+});
+for (const profileLatestTeacherFlower of profileLatestTeacherFlowers) {
+  profileLatestTeacherFlower.addEventListener("click", () => {
+    const teacherId = profileLatestTeacherFlower.dataset.teacherId;
+    if (!teacherId) {
+      return;
+    }
+
+    showPanel("field-guide");
+    const teacherCard = document.querySelector(`.teacher-card[data-teacher="${teacherId}"]`);
+    if (teacherCard) {
+      openTeacherDetailFromCard(teacherCard);
+    }
+  });
+}
+
 adminTeacherProfileSelect?.addEventListener("change", syncAdminTeacherProfileEditor);
 adminTeacherProfileSave?.addEventListener("click", saveAdminTeacherProfileEditor);
 adminTeacherProfileReset?.addEventListener("click", resetAdminTeacherProfileEditor);
 
 for (const input of [adminGameRecordTeacher, adminGameRecordDate, adminGameRecordHandicap, adminGameRecordResult]) {
-  input?.addEventListener("input", updateAdminGameRecordApply);
-  input?.addEventListener("change", updateAdminGameRecordApply);
+  input?.addEventListener("input", () => {
+    clearAdminStampQr();
+    updateAdminGameRecordApply();
+  });
+  input?.addEventListener("change", () => {
+    clearAdminStampQr();
+    updateAdminGameRecordApply();
+  });
 }
 
 for (const input of [adminTeacherProfileStyle, adminTeacherProfileLesson, adminTeacherProfileNote]) {
@@ -7481,6 +8231,7 @@ updateShrineRecordSaveState();
 updateLibraryJournalKeeperSpeech();
 updateAdminPanel();
 updateAdminLockState();
+applyStampQrFromLocation();
 
 const appLoadStatus = document.querySelector("[data-app-load-status]");
 if (appLoadStatus) {

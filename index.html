@@ -6,7 +6,7 @@
     <meta name="google" content="notranslate">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>冒険記録帳</title>
-    <link rel="stylesheet" href="styles.css?v=20260702-shrine-today-teachers-01">
+    <link rel="stylesheet" href="styles.css?v=20260704-stamp-qr-09">
   </head>
   <body>
     <main class="record-book" aria-label="冒険記録帳">
@@ -126,6 +126,32 @@
                     <span class="guide-progress-track" aria-hidden="true">
                       <span data-profile-guide-progress-track style="width: 0%"></span>
                     </span>
+                  </dd>
+                </div>
+                <div class="profile-today-record" data-profile-latest-stamp hidden>
+                  <dt>今日の記録</dt>
+                  <dd>
+                    <div class="profile-today-record-row">
+                      <span>参加スタンプ</span>
+                      <span class="profile-today-record-flower">
+                        <span class="profile-today-record-mark" data-profile-today-participation-mark>🌸</span>
+                      </span>
+                    </div>
+                    <div class="profile-today-record-row">
+                      <span>指導碁スタンプ</span>
+                      <div class="profile-today-record-stamp-sheet" data-profile-latest-teacher-stamp-sheet aria-label="今日の指導碁スタンプ台紙">
+                        <button type="button" class="profile-today-record-flower is-empty" data-profile-latest-teacher-flower aria-label="1つ目の指導碁スタンプ">
+                          <span class="profile-today-record-slot-number">1</span>
+                        </button>
+                        <button type="button" class="profile-today-record-flower is-empty" data-profile-latest-teacher-flower aria-label="2つ目の指導碁スタンプ">
+                          <span class="profile-today-record-slot-number">2</span>
+                        </button>
+                        <button type="button" class="profile-today-record-flower is-empty" data-profile-latest-teacher-flower aria-label="3つ目の指導碁スタンプ">
+                          <span class="profile-today-record-slot-number">3</span>
+                        </button>
+                      </div>
+                    </div>
+                    <small data-profile-latest-stamp-copy>先生スタンプが 0/5 から 1/5 に増えました。</small>
                   </dd>
                 </div>
               </dl>
@@ -253,7 +279,7 @@
               <span class="participation-stamp-copy">
                 <small>参加スタンプ</small>
                 <strong data-participation-flower-name>コスモス</strong>
-                <em>フォーム送信後、運営確認で反映します</em>
+                <em>フォーム送信後はホームから水曜会アプリを開き直します</em>
                 <span class="participation-stamp-count" data-participation-count>0/10回</span>
                 <span class="participation-stamp-status" data-participation-status>まだ未達成</span>
               </span>
@@ -486,9 +512,12 @@
                       href="https://docs.google.com/forms/d/e/1FAIpQLSegoLkRkzQTTsj90BbVBdUOzocBhzh452_XsQ183cFLve9Glw/viewform?usp=dialog"
                       target="_blank"
                       rel="noopener noreferrer"
-                    >対局記録フォームを開く（送信後は戻るボタンで戻ってください）</a>
+                    >対局記録フォームを開く</a>
+                    <p class="event-first-note" data-teacher-event-first-note>
+                      運営反映後、この先生カードと冒険者カードに今日の指導碁が残ります。
+                    </p>
                     <button type="button" class="complete-teacher" hidden>2. 対局記録を入力</button>
-                    <p data-flow-message>対局後はフォーム送信だけで大丈夫です。運営確認後にスタンプへ反映します。</p>
+                    <p data-flow-message>フォーム送信後はホームから水曜会アプリを開き直します。運営確認後、QRで今日の記録へ反映します。</p>
                   </div>
                 </div>
                 <section class="teacher-game-records" data-teacher-game-records aria-label="保存した対局記録">
@@ -973,7 +1002,10 @@
                   href="https://docs.google.com/forms/d/e/1FAIpQLSdEqwXBhF3jDi-YUizfnNnLDfTzD7QJTK469-xwQwA21Gl_rA/viewform?usp=publish-editor"
                   target="_blank"
                   rel="noopener noreferrer"
-                >参加フォームを開く</a>
+                >参加者用フォームを開く</a>
+                <p class="admin-form-confirm-note">
+                  回答確認はGoogleフォームの回答画面、または回答スプレッドシートで見ます。ここでは確認した名前を入力して反映します。
+                </p>
                 <label class="admin-participation-name">
                   <span>お名前</span>
                   <input type="text" data-admin-participation-name aria-label="参加者のお名前" autocomplete="off" placeholder="フォームの名前を入力">
@@ -992,7 +1024,10 @@
                   href="https://docs.google.com/forms/d/e/1FAIpQLSegoLkRkzQTTsj90BbVBdUOzocBhzh452_XsQ183cFLve9Glw/viewform?usp=dialog"
                   target="_blank"
                   rel="noopener noreferrer"
-                >対局記録フォームを開く</a>
+                >参加者用 対局記録フォームを開く</a>
+                <p class="admin-form-confirm-note">
+                  回答確認はGoogleフォームの回答画面、または回答スプレッドシートで見ます。ここでは確認した内容を選んでQRを作ります。
+                </p>
                 <div class="admin-game-record-grid">
                   <label>
                     <span>先生</span>
@@ -1029,6 +1064,15 @@
                   </label>
                 </div>
                 <button type="button" data-admin-game-record-apply>対局記録と先生スタンプを反映</button>
+                <button type="button" class="admin-stamp-qr-button" data-admin-stamp-qr-create>反映用QRを作る</button>
+                <div class="admin-stamp-qr" data-admin-stamp-qr hidden aria-live="polite">
+                  <strong>本人スマホ用QR</strong>
+                  <img data-admin-stamp-qr-image alt="先生スタンプ反映用QRコード">
+                  <a data-admin-stamp-qr-link href="#" target="_blank" rel="noopener noreferrer">読み取り用リンクを開く</a>
+                  <small data-admin-stamp-qr-message>本人のスマホで読み取ると、今日の記録に先生スタンプが入ります。</small>
+                </div>
+                <button type="button" class="admin-show-profile-button" data-admin-show-profile hidden>冒険者カードを見る</button>
+                <button type="button" class="admin-undo-game-record-button" data-admin-undo-game-record hidden>直前の先生スタンプを取り消す</button>
                 <small data-admin-game-record-message>フォーム回答を確認してから押してください。</small>
               </section>
 
@@ -1181,7 +1225,7 @@
       });
     </script>
     <script src="stamp-rules.js?v=20260702-shrine-today-teachers-01"></script>
-    <script src="script.js?v=20260702-shrine-today-teachers-01"></script>
+    <script src="script.js?v=20260704-stamp-qr-09"></script>
   </body>
 </html>
 

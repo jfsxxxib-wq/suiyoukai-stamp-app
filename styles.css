@@ -3957,6 +3957,103 @@ dd {
   font-size: clamp(1.06rem, 3.5vw, 1.45rem);
 }
 
+.profile-list > .profile-today-record {
+  grid-template-columns: 1fr;
+  gap: 8px;
+  padding: 13px 12px;
+  border: 1px solid rgba(197, 150, 58, 0.38);
+  border-radius: 8px;
+  background:
+    linear-gradient(90deg, rgba(197, 150, 58, 0.18), rgba(63, 118, 82, 0.08)),
+    rgba(255, 250, 240, 0.88);
+}
+
+.profile-today-record[hidden] {
+  display: none;
+}
+
+.profile-today-record dt {
+  color: #6e531e;
+  font-size: 0.72rem;
+  font-weight: 900;
+}
+
+.profile-today-record dd {
+  display: grid;
+  gap: 8px;
+}
+
+.profile-today-record-row {
+  display: grid;
+  grid-template-columns: minmax(112px, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+  min-height: 54px;
+  padding: 7px 8px 7px 10px;
+  border: 1px solid rgba(75, 55, 36, 0.1);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.44);
+}
+
+.profile-today-record-row > span:first-child {
+  color: var(--ink);
+  font-size: 0.84rem;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.profile-today-record-flower {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid rgba(197, 150, 58, 0.3);
+  border-radius: 50%;
+  background: rgba(255, 250, 240, 0.9);
+}
+
+.profile-today-record-stamp-sheet {
+  display: grid;
+  grid-template-columns: repeat(3, 44px);
+  gap: 5px;
+  align-items: center;
+}
+
+button.profile-today-record-flower {
+  padding: 0;
+  cursor: pointer;
+}
+
+.profile-today-record-flower img {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+}
+
+.profile-today-record-flower.is-empty {
+  border-style: dashed;
+  background: rgba(255, 255, 255, 0.5);
+  color: rgba(75, 55, 36, 0.34);
+}
+
+.profile-today-record-slot-number {
+  color: rgba(75, 55, 36, 0.42);
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
+.profile-today-record-mark {
+  font-size: 1.45rem;
+  line-height: 1;
+}
+
+.profile-today-record small {
+  color: #4f6d48;
+  font-size: 0.76rem;
+  font-weight: 900;
+  line-height: 1.45;
+}
+
 .profile-list > .profile-medal-entry {
   grid-template-columns: 1fr;
 }
@@ -4640,6 +4737,18 @@ dd {
   outline: none;
 }
 
+.admin-form-confirm-note {
+  margin: 0;
+  padding: 9px 10px;
+  border: 1px solid rgba(142, 86, 66, 0.18);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.66);
+  color: #6b5134;
+  font-size: 0.74rem;
+  font-weight: 800;
+  line-height: 1.5;
+}
+
 .admin-teacher-profile-actions {
   display: grid;
   gap: 8px;
@@ -4654,6 +4763,9 @@ dd {
 
 .admin-participation-apply button,
 .admin-game-record-apply button,
+.admin-show-profile-button,
+.admin-undo-game-record-button,
+.admin-stamp-qr-button,
 .admin-teacher-profile-actions button {
   min-height: 46px;
   border: 1px solid rgba(63, 118, 82, 0.38);
@@ -4669,9 +4781,86 @@ dd {
 
 .admin-participation-apply button:disabled,
 .admin-game-record-apply button:disabled,
+.admin-show-profile-button:disabled,
+.admin-undo-game-record-button:disabled,
+.admin-stamp-qr-button:disabled,
 .admin-teacher-profile-actions button:disabled {
   cursor: default;
   opacity: 0.62;
+}
+
+.admin-stamp-qr-button {
+  border-color: rgba(46, 108, 148, 0.36);
+  background:
+    linear-gradient(90deg, rgba(46, 108, 148, 0.16), rgba(63, 118, 82, 0.08)),
+    rgba(255, 255, 255, 0.9);
+  color: #2c5c78;
+}
+
+.admin-stamp-qr {
+  display: grid;
+  justify-items: center;
+  gap: 9px;
+  padding: 12px;
+  border: 1px solid rgba(46, 108, 148, 0.24);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.78);
+  text-align: center;
+}
+
+.admin-stamp-qr[hidden] {
+  display: none;
+}
+
+.admin-stamp-qr strong {
+  color: #2c5c78;
+  font-size: 0.86rem;
+}
+
+.admin-stamp-qr img {
+  width: min(240px, 100%);
+  aspect-ratio: 1;
+  border: 8px solid rgba(255, 255, 255, 0.95);
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 8px 18px rgba(75, 55, 36, 0.12);
+}
+
+.admin-stamp-qr a {
+  display: grid;
+  place-items: center;
+  min-height: 40px;
+  width: 100%;
+  border: 1px solid rgba(46, 108, 148, 0.26);
+  border-radius: 8px;
+  color: #2c5c78;
+  font-size: 0.82rem;
+  font-weight: 900;
+  text-decoration: none;
+}
+
+.admin-show-profile-button {
+  border-color: rgba(197, 150, 58, 0.46);
+  background:
+    linear-gradient(90deg, rgba(197, 150, 58, 0.2), rgba(63, 118, 82, 0.08)),
+    rgba(255, 250, 240, 0.9);
+  color: #6e531e;
+}
+
+.admin-show-profile-button[hidden] {
+  display: none;
+}
+
+.admin-undo-game-record-button {
+  border-color: rgba(142, 86, 66, 0.42);
+  background:
+    linear-gradient(90deg, rgba(142, 86, 66, 0.14), transparent 52%),
+    rgba(255, 250, 240, 0.9);
+  color: #7a4c37;
+}
+
+.admin-undo-game-record-button[hidden] {
+  display: none;
 }
 
 .admin-participation-apply small,
@@ -6338,6 +6527,18 @@ dd {
 .google-form-link:focus-visible {
   border-color: rgba(63, 118, 82, 0.5);
   outline: none;
+}
+
+.event-first-note {
+  margin: 0;
+  padding: 9px 10px;
+  border: 1px solid rgba(197, 150, 58, 0.28);
+  border-radius: 8px;
+  background: rgba(255, 250, 240, 0.62);
+  color: #6b5134;
+  font-size: 0.74rem;
+  font-weight: 800;
+  line-height: 1.45;
 }
 
 .complete-teacher:hover,
