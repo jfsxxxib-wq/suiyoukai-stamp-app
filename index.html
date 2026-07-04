@@ -984,14 +984,10 @@
                 </div>
               </dl>
 
-              <section class="admin-adjustments" aria-label="スタンプ数の調整">
-                <div class="admin-adjustments-header">
-                  <strong>スタンプ数を調整</strong>
-                  <span data-admin-draft-state>保存済み</span>
-                </div>
-                <div class="admin-adjustment-list" data-admin-adjustment-list></div>
-              </section>
-
+              <div class="admin-section-heading">
+                <strong>今日よく使う</strong>
+                <span>受付と指導碁の反映</span>
+              </div>
               <section class="admin-participation-apply" aria-label="参加スタンプ反映">
                 <div class="admin-adjustments-header">
                   <strong>参加フォーム確認</strong>
@@ -1012,11 +1008,18 @@
                 </label>
                 <button type="button" data-admin-participation-apply>今日の参加スタンプを反映</button>
                 <small data-admin-participation-message>フォーム回答を確認してから押してください。</small>
+                <button type="button" class="admin-stamp-qr-button" data-admin-participation-qr-create>受付用 参加QRを作る</button>
+                <div class="admin-stamp-qr" data-admin-participation-qr hidden aria-live="polite">
+                  <strong>受付用 参加QR</strong>
+                  <img data-admin-participation-qr-image alt="参加スタンプ反映用QRコード">
+                  <a data-admin-participation-qr-link href="#" target="_blank" rel="noopener noreferrer">読み取り用リンクを開く</a>
+                  <small data-admin-participation-qr-message>受付後に本人スマホで読み取ると、今日の参加スタンプが1つ入ります。</small>
+                </div>
               </section>
 
               <section class="admin-game-record-apply" aria-label="対局記録フォーム反映">
                 <div class="admin-adjustments-header">
-                  <strong>対局記録フォーム確認</strong>
+                  <strong>指導碁スタンプQR</strong>
                   <span data-admin-game-record-date-label>本日</span>
                 </div>
                 <a
@@ -1026,7 +1029,7 @@
                   rel="noopener noreferrer"
                 >参加者用 対局記録フォームを開く</a>
                 <p class="admin-form-confirm-note">
-                  回答確認はGoogleフォームの回答画面、または回答スプレッドシートで見ます。ここでは確認した内容を選んでQRを作ります。
+                  回答確認はGoogleフォームの回答画面、または回答スプレッドシートで見ます。本人スマホへ入れる時は、確認した内容を選んでQRを作ります。
                 </p>
                 <div class="admin-game-record-grid">
                   <label>
@@ -1063,70 +1066,106 @@
                     </select>
                   </label>
                 </div>
-                <button type="button" data-admin-game-record-apply>対局記録と先生スタンプを反映</button>
-                <button type="button" class="admin-stamp-qr-button" data-admin-stamp-qr-create>反映用QRを作る</button>
+                <button type="button" class="admin-stamp-qr-button" data-admin-stamp-qr-create>本人スマホに入れるQRを作る</button>
                 <div class="admin-stamp-qr" data-admin-stamp-qr hidden aria-live="polite">
                   <strong>本人スマホ用QR</strong>
                   <img data-admin-stamp-qr-image alt="先生スタンプ反映用QRコード">
                   <a data-admin-stamp-qr-link href="#" target="_blank" rel="noopener noreferrer">読み取り用リンクを開く</a>
                   <small data-admin-stamp-qr-message>本人のスマホで読み取ると、今日の記録に先生スタンプが入ります。</small>
                 </div>
+                <button type="button" class="admin-stamp-qr-button" data-admin-fixed-teacher-qr-create>先生ごとの固定QRを作る</button>
+                <div class="admin-fixed-teacher-qr" data-admin-fixed-teacher-qr hidden aria-live="polite">
+                  <strong>今日の先生別QR</strong>
+                  <p>先生席や受付に置く用です。本人スマホで読んだ先生のスタンプが1つ入ります。</p>
+                  <div class="admin-fixed-teacher-qr-list" data-admin-fixed-teacher-qr-list></div>
+                  <small>同じスマホで同じ先生QRをもう一度読んでも、二重には増えません。</small>
+                </div>
+                <div class="admin-secondary-action">
+                  <strong>この端末だけで確認する時</strong>
+                  <button type="button" data-admin-game-record-apply>この端末で確認反映</button>
+                </div>
                 <button type="button" class="admin-show-profile-button" data-admin-show-profile hidden>冒険者カードを見る</button>
                 <button type="button" class="admin-undo-game-record-button" data-admin-undo-game-record hidden>直前の先生スタンプを取り消す</button>
-                <small data-admin-game-record-message>フォーム回答を確認してから押してください。</small>
+                <small data-admin-game-record-message>本人スマホへ入れる時は、QRを作って読み取ってもらいます。</small>
               </section>
 
-              <section class="admin-teacher-profile-editor" aria-label="先生紹介の編集">
-                <div class="admin-adjustments-header">
-                  <strong>先生紹介を編集</strong>
-                  <span data-admin-teacher-profile-state>保存済み</span>
+              <div class="admin-section-heading admin-section-heading-secondary">
+                <div>
+                  <strong>間違えた時・調整する時</strong>
+                  <span>通常は閉じたままで大丈夫</span>
                 </div>
-                <label>
-                  <span>先生</span>
-                  <select data-admin-teacher-profile-select aria-label="紹介文を編集する先生"></select>
-                </label>
-                <label>
-                  <span>棋風</span>
-                  <textarea data-admin-teacher-profile-style rows="2" aria-label="棋風の紹介文"></textarea>
-                </label>
-                <label>
-                  <span>レッスン</span>
-                  <textarea data-admin-teacher-profile-lesson rows="2" aria-label="レッスンの紹介文"></textarea>
-                </label>
-                <label>
-                  <span>おすすめ</span>
-                  <textarea data-admin-teacher-profile-note rows="2" aria-label="おすすめの紹介文"></textarea>
-                </label>
-                <div class="admin-teacher-profile-actions">
-                  <button type="button" data-admin-teacher-profile-save>紹介文を保存</button>
-                  <button type="button" data-admin-teacher-profile-reset>初期文に戻す</button>
-                </div>
-                <small data-admin-teacher-profile-message>花図鑑の先生紹介に反映されます。</small>
-              </section>
+                <button type="button" class="admin-section-toggle" data-admin-trouble-toggle aria-expanded="true">閉じる</button>
+              </div>
+              <div class="admin-collapsible-group" data-admin-trouble-panel>
+                <section class="admin-adjustments" aria-label="スタンプ数の調整">
+                  <div class="admin-adjustments-header">
+                    <strong>スタンプ数を調整</strong>
+                    <span data-admin-draft-state>保存済み</span>
+                  </div>
+                  <div class="admin-adjustment-list" data-admin-adjustment-list></div>
+                </section>
 
-              <section class="admin-history" aria-label="直近の操作履歴">
-                <div class="admin-adjustments-header">
-                  <strong>直近の操作履歴</strong>
-                  <span>最新10件</span>
-                </div>
-                <div class="admin-history-list" data-admin-history-list>
-                  <p>まだ押印履歴はありません。</p>
-                </div>
-              </section>
+                <section class="admin-history" aria-label="直近の操作履歴">
+                  <div class="admin-adjustments-header">
+                    <strong>直近の操作履歴</strong>
+                    <span>最新10件</span>
+                  </div>
+                  <div class="admin-history-list" data-admin-history-list>
+                    <p>まだ押印履歴はありません。</p>
+                  </div>
+                </section>
+              </div>
 
-              <section class="admin-backup" aria-label="バックアップと復元">
-                <div class="admin-adjustments-header">
-                  <strong>バックアップ・復元</strong>
-                  <span>端末ファイル</span>
+              <div class="admin-section-heading admin-section-heading-secondary">
+                <div>
+                  <strong>設定・保管</strong>
+                  <span>準備や終了後に使う</span>
                 </div>
-                <p>スタンプ、獲得済み報酬、操作履歴を小さなファイルに保存します。</p>
-                <div class="admin-backup-actions">
-                  <button type="button" data-admin-backup-save>バックアップを保存</button>
-                  <button type="button" data-admin-backup-select>バックアップから復元</button>
-                  <input type="file" accept="application/json,.json" data-admin-backup-file hidden>
-                </div>
-                <small data-admin-backup-message>パスコードや個人情報は保存しません。</small>
-              </section>
+                <button type="button" class="admin-section-toggle" data-admin-settings-toggle aria-expanded="true">閉じる</button>
+              </div>
+              <div class="admin-collapsible-group" data-admin-settings-panel>
+                <section class="admin-teacher-profile-editor" aria-label="先生紹介の編集">
+                  <div class="admin-adjustments-header">
+                    <strong>先生紹介を編集</strong>
+                    <span data-admin-teacher-profile-state>保存済み</span>
+                  </div>
+                  <label>
+                    <span>先生</span>
+                    <select data-admin-teacher-profile-select aria-label="紹介文を編集する先生"></select>
+                  </label>
+                  <label>
+                    <span>棋風</span>
+                    <textarea data-admin-teacher-profile-style rows="2" aria-label="棋風の紹介文"></textarea>
+                  </label>
+                  <label>
+                    <span>レッスン</span>
+                    <textarea data-admin-teacher-profile-lesson rows="2" aria-label="レッスンの紹介文"></textarea>
+                  </label>
+                  <label>
+                    <span>おすすめ</span>
+                    <textarea data-admin-teacher-profile-note rows="2" aria-label="おすすめの紹介文"></textarea>
+                  </label>
+                  <div class="admin-teacher-profile-actions">
+                    <button type="button" data-admin-teacher-profile-save>紹介文を保存</button>
+                    <button type="button" data-admin-teacher-profile-reset>初期文に戻す</button>
+                  </div>
+                  <small data-admin-teacher-profile-message>花図鑑の先生紹介に反映されます。</small>
+                </section>
+
+                <section class="admin-backup" aria-label="バックアップと復元">
+                  <div class="admin-adjustments-header">
+                    <strong>バックアップ・復元</strong>
+                    <span>端末ファイル</span>
+                  </div>
+                  <p>スタンプ、獲得済み報酬、操作履歴、先生紹介を小さなファイルに保存します。</p>
+                  <div class="admin-backup-actions">
+                    <button type="button" data-admin-backup-save>バックアップを保存</button>
+                    <button type="button" data-admin-backup-select>バックアップから復元</button>
+                    <input type="file" accept="application/json,.json" data-admin-backup-file hidden>
+                  </div>
+                  <small data-admin-backup-message>パスコード、個人情報、対局記録の明細は保存しません。</small>
+                </section>
+              </div>
 
               <section class="admin-restore-confirm" data-admin-restore-confirm hidden aria-label="バックアップ復元確認">
                 <h3>復元する内容を確認</h3>
@@ -1143,8 +1182,8 @@
               </section>
 
               <div class="admin-actions">
-                <button type="button" class="admin-stamp-button" data-admin-save-button>確定して保存</button>
-                <button type="button" class="admin-reset-button" data-admin-reset-button>記録をリセット</button>
+                <button type="button" class="admin-stamp-button" data-admin-save-button>手動調整を保存</button>
+                <button type="button" class="admin-reset-button" data-admin-reset-button>すべての記録をリセット</button>
               </div>
               <section class="admin-reset-confirm" data-admin-reset-confirm hidden aria-label="記録リセット確認">
                 <p>実行するには「リセット」と入力してください。</p>

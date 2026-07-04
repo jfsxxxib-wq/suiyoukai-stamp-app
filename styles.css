@@ -3961,6 +3961,7 @@ dd {
   grid-template-columns: 1fr;
   gap: 8px;
   padding: 13px 12px;
+  scroll-margin-top: 78px;
   border: 1px solid rgba(197, 150, 58, 0.38);
   border-radius: 8px;
   background:
@@ -4621,6 +4622,59 @@ button.profile-today-record-flower {
   gap: 10px;
 }
 
+.admin-section-heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 3px;
+  margin-top: 4px;
+  padding: 8px 2px 2px;
+}
+
+.admin-section-heading > div {
+  display: grid;
+  gap: 3px;
+}
+
+.admin-section-heading strong {
+  color: var(--green);
+  font-size: 0.96rem;
+  font-weight: 900;
+}
+
+.admin-section-heading span {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.admin-section-heading-secondary {
+  margin-top: 10px;
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
+}
+
+.admin-section-toggle {
+  min-height: 36px;
+  min-width: 72px;
+  border: 1px solid rgba(63, 118, 82, 0.26);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.72);
+  color: var(--green);
+  font-size: 0.78rem;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.admin-collapsible-group {
+  display: grid;
+  gap: 10px;
+}
+
+.admin-collapsible-group[hidden] {
+  display: none;
+}
+
 .admin-adjustments {
   display: grid;
   gap: 10px;
@@ -4797,6 +4851,21 @@ button.profile-today-record-flower {
   color: #2c5c78;
 }
 
+.admin-secondary-action {
+  display: grid;
+  gap: 7px;
+  padding: 10px;
+  border: 1px dashed rgba(75, 55, 36, 0.18);
+  border-radius: 8px;
+  background: rgba(255, 250, 240, 0.48);
+}
+
+.admin-secondary-action strong {
+  color: var(--muted);
+  font-size: 0.74rem;
+  font-weight: 900;
+}
+
 .admin-stamp-qr {
   display: grid;
   justify-items: center;
@@ -4835,6 +4904,76 @@ button.profile-today-record-flower {
   border-radius: 8px;
   color: #2c5c78;
   font-size: 0.82rem;
+  font-weight: 900;
+  text-decoration: none;
+}
+
+.admin-fixed-teacher-qr {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid rgba(46, 108, 148, 0.24);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.78);
+}
+
+.admin-fixed-teacher-qr[hidden] {
+  display: none;
+}
+
+.admin-fixed-teacher-qr > strong {
+  color: #2c5c78;
+  font-size: 0.9rem;
+}
+
+.admin-fixed-teacher-qr p,
+.admin-fixed-teacher-qr small {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 800;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.admin-fixed-teacher-qr-list {
+  display: grid;
+  gap: 10px;
+}
+
+.admin-fixed-teacher-qr-item {
+  display: grid;
+  gap: 8px;
+  justify-items: center;
+  padding: 10px;
+  border: 1px solid rgba(75, 55, 36, 0.12);
+  border-radius: 8px;
+  background: rgba(255, 250, 240, 0.62);
+  text-align: center;
+}
+
+.admin-fixed-teacher-qr-item strong {
+  color: var(--ink);
+  font-size: 0.86rem;
+}
+
+.admin-fixed-teacher-qr-item img {
+  width: min(190px, 100%);
+  aspect-ratio: 1;
+  border: 8px solid rgba(255, 255, 255, 0.95);
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 8px 18px rgba(75, 55, 36, 0.12);
+}
+
+.admin-fixed-teacher-qr-item a {
+  display: grid;
+  place-items: center;
+  min-height: 38px;
+  width: 100%;
+  border: 1px solid rgba(46, 108, 148, 0.24);
+  border-radius: 8px;
+  color: #2c5c78;
+  font-size: 0.78rem;
   font-weight: 900;
   text-decoration: none;
 }

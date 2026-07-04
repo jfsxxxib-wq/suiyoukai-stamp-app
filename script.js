@@ -128,6 +128,10 @@ const adminParticipation = document.querySelector("[data-admin-participation]");
 const adminNote = document.querySelector("[data-admin-note]");
 const adminResult = document.querySelector("[data-admin-result]");
 const adminHistoryList = document.querySelector("[data-admin-history-list]");
+const adminTroubleToggle = document.querySelector("[data-admin-trouble-toggle]");
+const adminTroublePanel = document.querySelector("[data-admin-trouble-panel]");
+const adminSettingsToggle = document.querySelector("[data-admin-settings-toggle]");
+const adminSettingsPanel = document.querySelector("[data-admin-settings-panel]");
 const adminBackupSaveButton = document.querySelector("[data-admin-backup-save]");
 const adminBackupSelectButton = document.querySelector("[data-admin-backup-select]");
 const adminBackupFileInput = document.querySelector("[data-admin-backup-file]");
@@ -141,6 +145,11 @@ const adminParticipationDate = document.querySelector("[data-admin-participation
 const adminParticipationName = document.querySelector("[data-admin-participation-name]");
 const adminParticipationApply = document.querySelector("[data-admin-participation-apply]");
 const adminParticipationMessage = document.querySelector("[data-admin-participation-message]");
+const adminParticipationQrCreateButton = document.querySelector("[data-admin-participation-qr-create]");
+const adminParticipationQr = document.querySelector("[data-admin-participation-qr]");
+const adminParticipationQrImage = document.querySelector("[data-admin-participation-qr-image]");
+const adminParticipationQrLink = document.querySelector("[data-admin-participation-qr-link]");
+const adminParticipationQrMessage = document.querySelector("[data-admin-participation-qr-message]");
 const adminGameRecordDateLabel = document.querySelector("[data-admin-game-record-date-label]");
 const adminGameRecordTeacher = document.querySelector("[data-admin-game-record-teacher]");
 const adminGameRecordDate = document.querySelector("[data-admin-game-record-date]");
@@ -155,6 +164,9 @@ const adminStampQr = document.querySelector("[data-admin-stamp-qr]");
 const adminStampQrImage = document.querySelector("[data-admin-stamp-qr-image]");
 const adminStampQrLink = document.querySelector("[data-admin-stamp-qr-link]");
 const adminStampQrMessage = document.querySelector("[data-admin-stamp-qr-message]");
+const adminFixedTeacherQrCreateButton = document.querySelector("[data-admin-fixed-teacher-qr-create]");
+const adminFixedTeacherQr = document.querySelector("[data-admin-fixed-teacher-qr]");
+const adminFixedTeacherQrList = document.querySelector("[data-admin-fixed-teacher-qr-list]");
 const adminTeacherProfileSelect = document.querySelector("[data-admin-teacher-profile-select]");
 const adminTeacherProfileStyle = document.querySelector("[data-admin-teacher-profile-style]");
 const adminTeacherProfileLesson = document.querySelector("[data-admin-teacher-profile-lesson]");
@@ -1306,14 +1318,12 @@ const getStampQrBaseUrl = () => {
 };
 
 const createStampApplyUrl = (payload) => {
-  const stampData = encodeStampPayload({
-    type: "teacher_stamp",
-    id: payload.id,
-    teacherId: payload.teacherId,
+  const normalizedPayload = {
+    ...payload,
+    type: payload.type ?? "teacher_stamp",
     date: normalizeQrDate(payload.date),
-    handicap: payload.handicap,
-    result: payload.result,
-  });
+  };
+  const stampData = encodeStampPayload(normalizedPayload);
 
   return `${getStampQrBaseUrl()}?stamp=${stampData}`;
 };
@@ -1633,7 +1643,49 @@ latestTeacherStampReflection = todayTeacherStampReflections.at(-1) ?? null;
 
 const showProfileTodayRecord = () => {
   showPanel("profile");
-  window.setTimeout(() => profileLatestStamp?.scrollIntoView({ behavior: "smooth", block: "center" }), 0);
+  window.setTimeout(() => profileLatestStamp?.scrollIntoView({ behavior: "smooth", block: "start" }), 0);
+};
+
+const applyParticipationStampPayload = (payload = {}) => {
+  const recordDate = normalizeQrDate(payload.date);
+  const stampId = typeof payload.id === "string" && payload.id
+    ? payload.id
+    : `participation-${recordDate}`;
+  const today = getTodayForInput();
+  const before = normalizeProgressCount(userProgress.stamps.participationCount);
+
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(recordDate) || recordDate !== today) {
+    return { ok: false, reason: "invalid", payload: { ...payload, date: recordDate } };
+  }
+
+  if (userProgress.stamps.lastParticipationStampDate === recordDate || appliedStampQrIds.has(stampId)) {
+    updateParticipationStampCard();
+    updateProfileCard();
+    showProfileTodayRecord();
+    return { ok: true, reason: "already_applied" };
+  }
+
+  if (before >= getParticipationMaxCount()) {
+    return { ok: false, reason: "max" };
+  }
+
+  addParticipationStamp();
+  appliedStampQrIds.add(stampId);
+  saveAppliedStampQrIds();
+  appendOperationHistory({
+    type: "participation_stamp",
+    target: "受付QR 参加スタンプ",
+    before,
+    after: normalizeProgressCount(userProgress.stamps.participationCount),
+  });
+  syncAdminDraftFromProgress();
+  updateParticipationStampCard();
+  updateTeacherCards();
+  updateRoundProgress();
+  updateProfileCard();
+  updateAdminPanel();
+  showProfileTodayRecord();
+  return { ok: true, reason: "applied" };
 };
 
 const refreshAfterTeacherStampChange = (teacherId) => {
@@ -1666,16 +1718,10 @@ const applyTeacherStampPayload = (payload = {}) => {
 
   const currentCount = normalizeProgressCount(userProgress.stamps.teacherLessonCounts[teacherId]);
   if (appliedStampQrIds.has(stampId)) {
-    const after = currentCount;
-    const before = Math.max(0, after - 1);
-    latestTeacherStampReflection = buildTeacherStampReflection({
-      gameRecordId: `game-qr-${stampId}`,
-      teacherId,
-      before,
-      after,
-    });
-    todayTeacherStampReflections = [latestTeacherStampReflection].slice(-3);
-    saveTodayTeacherStampReflections();
+    if (!latestTeacherStampReflection && todayTeacherStampReflections.length === 0) {
+      todayTeacherStampReflections = loadTodayTeacherStampReflections();
+      latestTeacherStampReflection = todayTeacherStampReflections.at(-1) ?? null;
+    }
     updateProfileCard();
     showProfileTodayRecord();
     return { ok: true, reason: "already_applied" };
@@ -1727,7 +1773,9 @@ const applyStampQrFromLocation = () => {
     return false;
   }
 
-  const result = applyTeacherStampPayload(payload);
+  const result = payload.type === "participation_stamp"
+    ? applyParticipationStampPayload(payload)
+    : applyTeacherStampPayload(payload);
   if (window.history?.replaceState) {
     window.history.replaceState(null, "", getStampQrBaseUrl());
   }
@@ -1746,7 +1794,7 @@ const applyStampQrFromLocation = () => {
           ? `QRを開きましたが、先生または日付を読み取れませんでした。先生:${result.payload?.teacherId ?? "不明"} 日付:${result.payload?.date ?? "不明"}`
           : "QRを開きましたが、先生スタンプを反映できませんでした。新しいQRを作り直してください。";
     }
-    window.setTimeout(() => profileLatestStamp?.scrollIntoView({ behavior: "smooth", block: "center" }), 0);
+    window.setTimeout(() => profileLatestStamp?.scrollIntoView({ behavior: "smooth", block: "start" }), 0);
   }
 
   return result.ok;
@@ -2204,6 +2252,26 @@ const unlockAdminPanel = () => {
   adminPasscodeMessage.textContent = "解除しました。";
   updateAdminLockState();
   updateAdminPanel();
+};
+
+const setAdminTroublePanelExpanded = (isExpanded) => {
+  if (!adminTroubleToggle || !adminTroublePanel) {
+    return;
+  }
+
+  adminTroublePanel.hidden = !isExpanded;
+  adminTroubleToggle.textContent = isExpanded ? "閉じる" : "開く";
+  adminTroubleToggle.setAttribute("aria-expanded", String(isExpanded));
+};
+
+const setAdminSettingsPanelExpanded = (isExpanded) => {
+  if (!adminSettingsToggle || !adminSettingsPanel) {
+    return;
+  }
+
+  adminSettingsPanel.hidden = !isExpanded;
+  adminSettingsToggle.textContent = isExpanded ? "閉じる" : "開く";
+  adminSettingsToggle.setAttribute("aria-expanded", String(isExpanded));
 };
 
 const setAdminDraftCount = (type, id, nextCount) => {
@@ -4846,6 +4914,70 @@ const clearAdminStampQr = () => {
   }
 };
 
+const createQrImageUrl = (applyUrl) =>
+  `https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=16&data=${encodeURIComponent(applyUrl)}`;
+
+const createAdminParticipationQr = () => {
+  if (!adminParticipationQr || !adminParticipationQrImage || !adminParticipationQrLink || !adminParticipationQrMessage) {
+    return;
+  }
+
+  const today = getTodayForInput();
+  const payload = {
+    type: "participation_stamp",
+    id: `participation-${today}`,
+    date: today,
+  };
+  const applyUrl = createStampApplyUrl(payload);
+
+  adminParticipationQr.hidden = false;
+  adminParticipationQrImage.src = createQrImageUrl(applyUrl);
+  adminParticipationQrLink.href = applyUrl;
+  adminParticipationQrMessage.textContent = "受付後に本人スマホで読み取ると、今日の参加スタンプが1つ入ります。同じ日にもう一度読んでも二重には増えません。";
+};
+
+const createAdminFixedTeacherQrs = () => {
+  if (!adminFixedTeacherQr || !adminFixedTeacherQrList) {
+    return;
+  }
+
+  const today = getTodayForInput();
+  adminFixedTeacherQrList.textContent = "";
+
+  for (const [teacherId, teacher] of Object.entries(teacherDetails)) {
+    const payload = {
+      type: "teacher_stamp",
+      id: `teacher-fixed-${today}-${teacherId}`,
+      teacherId,
+      date: today,
+      handicap: "記録なし",
+      result: "記録なし",
+    };
+    const applyUrl = createStampApplyUrl(payload);
+
+    const item = document.createElement("article");
+    item.className = "admin-fixed-teacher-qr-item";
+
+    const title = document.createElement("strong");
+    title.textContent = teacher.name;
+
+    const image = document.createElement("img");
+    image.src = createQrImageUrl(applyUrl);
+    image.alt = `${teacher.name} 先生スタンプQRコード`;
+
+    const link = document.createElement("a");
+    link.href = applyUrl;
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    link.textContent = "読み取り用リンクを開く";
+
+    item.append(title, image, link);
+    adminFixedTeacherQrList.append(item);
+  }
+
+  adminFixedTeacherQr.hidden = false;
+};
+
 const createAdminStampQr = () => {
   const draft = getAdminGameRecordDraft();
   const teacher = teacherDetails[draft.teacherId];
@@ -4863,7 +4995,7 @@ const createAdminStampQr = () => {
     result: draft.result,
   };
   const applyUrl = createStampApplyUrl(payload);
-  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=16&data=${encodeURIComponent(applyUrl)}`;
+  const qrUrl = createQrImageUrl(applyUrl);
 
   adminStampQr.hidden = false;
   adminStampQrImage.src = qrUrl;
@@ -4912,6 +5044,17 @@ const updateAdminGameRecordApply = () => {
     : isCoolingDown
       ? "反映直後です。二重押し防止のため少し待っています。"
       : "別画面でフォーム回答を確認してから押してください。";
+  adminGameRecordApply.textContent = isCoolingDown
+    ? "確認反映しました"
+    : isMaxAchieved
+    ? "この先生は達成済み"
+    : "この端末で確認反映";
+  adminGameRecordMessage.textContent = isMaxAchieved
+    ? "この先生の花スタンプはすべて達成済みです。"
+    : isCoolingDown
+      ? "反映直後です。二重押し防止のため少し待っています。"
+      : "本人スマホへ入れる時は、上のQRを作って読み取ってもらいます。";
+
   if (adminShowProfileButton) {
     adminShowProfileButton.hidden = !latestTeacherStampReflection;
   }
@@ -6697,9 +6840,11 @@ const updateProfileCard = () => {
     todayTeacherStampReflections = loadTodayTeacherStampReflections();
     latestTeacherStampReflection = todayTeacherStampReflections.at(-1) ?? null;
   }
+  const hasTodayParticipationStamp = userProgress.stamps.lastParticipationStampDate === getTodayForInput();
   const hasTodayTeacherStamp = todayTeacherStampReflections.length > 0;
+  const hasTodayRecord = hasTodayParticipationStamp || hasTodayTeacherStamp;
   if (profileLatestStamp) {
-    profileLatestStamp.hidden = !hasTodayTeacherStamp;
+    profileLatestStamp.hidden = !hasTodayRecord;
   }
   if (profileTodayParticipationMark) {
     profileTodayParticipationMark.textContent = userProgress.stamps.lastParticipationStampDate === getTodayForInput() ? "🌸" : "－";
@@ -6708,6 +6853,9 @@ const updateProfileCard = () => {
     profileLatestStampCopy.textContent = todayTeacherStampReflections.length > 1
       ? `今日の指導碁スタンプが${todayTeacherStampReflections.length}つ入りました。`
       : `先生スタンプが ${latestTeacherStampReflection.before}/${latestTeacherStampReflection.goal} から ${latestTeacherStampReflection.after}/${latestTeacherStampReflection.goal} に増えました。`;
+  }
+  if (!latestTeacherStampReflection && profileLatestStampCopy) {
+    profileLatestStampCopy.textContent = hasTodayParticipationStamp ? "今日の参加スタンプが入りました。" : "";
   }
   if (profileLatestTeacherFlowers.length > 0) {
     profileLatestTeacherFlowers.forEach((button, index) => {
@@ -7973,9 +8121,17 @@ participationStampButton.addEventListener("click", () => {
 });
 
 adminParticipationApply?.addEventListener("click", applyTodayParticipationStampFromAdmin);
+adminParticipationQrCreateButton?.addEventListener("click", createAdminParticipationQr);
 adminGameRecordApply?.addEventListener("click", applyGameRecordFromAdmin);
 adminStampQrCreateButton?.addEventListener("click", createAdminStampQr);
+adminFixedTeacherQrCreateButton?.addEventListener("click", createAdminFixedTeacherQrs);
 adminUndoGameRecordButton?.addEventListener("click", undoLatestGameRecordFromAdmin);
+adminTroubleToggle?.addEventListener("click", () => {
+  setAdminTroublePanelExpanded(adminTroublePanel?.hidden === true);
+});
+adminSettingsToggle?.addEventListener("click", () => {
+  setAdminSettingsPanelExpanded(adminSettingsPanel?.hidden === true);
+});
 adminShowProfileButton?.addEventListener("click", () => {
   showPanel("profile");
   window.setTimeout(() => profileLatestStamp?.scrollIntoView({ behavior: "smooth", block: "center" }), 0);
