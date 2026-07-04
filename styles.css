@@ -4956,6 +4956,103 @@ button.profile-today-record-flower {
   font-size: 0.86rem;
 }
 
+.admin-fixed-teacher-qr-actions {
+  display: grid;
+  gap: 8px;
+}
+
+.admin-fixed-teacher-qr-print {
+  min-height: 42px;
+  border: 1px solid rgba(46, 108, 148, 0.32);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #2c5c78;
+  font-size: 0.86rem;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.admin-fixed-teacher-qr-print[hidden] {
+  display: none;
+}
+
+body.is-admin-qr-print-preview {
+  background: #f7f4ec;
+}
+
+body.is-admin-qr-print-preview .record-book > :not(.info-dock) {
+  display: none;
+}
+
+body.is-admin-qr-print-preview .info-dock,
+body.is-admin-qr-print-preview .info-panel,
+body.is-admin-qr-print-preview .panel-view[data-view="admin"],
+body.is-admin-qr-print-preview .admin-card,
+body.is-admin-qr-print-preview .admin-game-record-apply,
+body.is-admin-qr-print-preview .admin-fixed-teacher-qr {
+  display: block;
+  position: static;
+  width: auto;
+  max-width: none;
+  height: auto;
+  min-height: 0;
+  overflow: visible;
+  border: 0;
+  box-shadow: none;
+  background: transparent;
+}
+
+body.is-admin-qr-print-preview .info-tabs,
+body.is-admin-qr-print-preview .panel-view[data-view="admin"] > :not(.admin-card),
+body.is-admin-qr-print-preview .admin-card > :not(.admin-game-record-apply),
+body.is-admin-qr-print-preview .admin-game-record-apply > :not(.admin-fixed-teacher-qr),
+body.is-admin-qr-print-preview .admin-fixed-teacher-qr > p,
+body.is-admin-qr-print-preview .admin-fixed-teacher-qr > small,
+body.is-admin-qr-print-preview .admin-fixed-teacher-qr-item a {
+  display: none;
+}
+
+body.is-admin-qr-print-preview .admin-fixed-teacher-qr > .admin-fixed-teacher-qr-print-help {
+  display: block;
+  margin: 0 0 14px;
+  color: #315f42;
+  font-size: 0.9rem;
+  font-weight: 900;
+  line-height: 1.55;
+  text-align: center;
+}
+
+body.is-admin-qr-print-preview .record-book {
+  width: min(920px, 100%);
+  margin: 0 auto;
+  padding: 20px;
+}
+
+body.is-admin-qr-print-preview .admin-fixed-teacher-qr > strong {
+  display: block;
+  margin-bottom: 14px;
+  color: #111;
+  font-size: 1.35rem;
+  text-align: center;
+}
+
+body.is-admin-qr-print-preview .admin-fixed-teacher-qr-list {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+body.is-admin-qr-print-preview .admin-fixed-teacher-qr-item {
+  background: #fff;
+}
+
+body.is-admin-qr-print-preview .admin-fixed-teacher-qr-item strong {
+  font-size: 1.08rem;
+}
+
+body.is-admin-qr-print-preview .admin-fixed-teacher-qr-item img {
+  width: min(260px, 100%);
+}
+
 .admin-fixed-teacher-qr-item img {
   width: min(190px, 100%);
   aspect-ratio: 1;
@@ -4996,6 +5093,80 @@ button.profile-today-record-flower {
     linear-gradient(90deg, rgba(142, 86, 66, 0.14), transparent 52%),
     rgba(255, 250, 240, 0.9);
   color: #7a4c37;
+}
+
+@media print {
+  @page {
+    size: A4;
+    margin: 10mm;
+  }
+
+  body * {
+    visibility: hidden;
+  }
+
+  .admin-fixed-teacher-qr,
+  .admin-fixed-teacher-qr * {
+    visibility: visible;
+  }
+
+  .admin-fixed-teacher-qr {
+    position: absolute;
+    inset: 0;
+    display: block;
+    padding: 0;
+    border: 0;
+    background: #fff;
+    color: #111;
+  }
+
+  .admin-fixed-teacher-qr > strong {
+    display: block;
+    margin: 0 0 5mm;
+    color: #111;
+    font-size: 18pt;
+    text-align: center;
+  }
+
+  .admin-fixed-teacher-qr > p,
+  .admin-fixed-teacher-qr > small,
+  .admin-fixed-teacher-qr-print,
+  .admin-fixed-teacher-qr-item a {
+    display: none;
+  }
+
+  .admin-fixed-teacher-qr-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 7mm;
+  }
+
+  .admin-fixed-teacher-qr-item {
+    break-inside: avoid;
+    page-break-inside: avoid;
+    gap: 3mm;
+    padding: 5mm;
+    border: 1px solid #bbb;
+    border-radius: 0;
+    background: #fff;
+  }
+
+  .admin-fixed-teacher-qr-item strong {
+    color: #111;
+    font-size: 15pt;
+  }
+
+  .admin-fixed-teacher-qr-item small {
+    color: #333;
+    font-size: 9pt;
+  }
+
+  .admin-fixed-teacher-qr-item img {
+    width: 56mm;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
 }
 
 .admin-undo-game-record-button[hidden] {

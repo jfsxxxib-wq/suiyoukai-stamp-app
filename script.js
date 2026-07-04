@@ -167,6 +167,9 @@ const adminStampQrMessage = document.querySelector("[data-admin-stamp-qr-message
 const adminFixedTeacherQrCreateButton = document.querySelector("[data-admin-fixed-teacher-qr-create]");
 const adminFixedTeacherQr = document.querySelector("[data-admin-fixed-teacher-qr]");
 const adminFixedTeacherQrList = document.querySelector("[data-admin-fixed-teacher-qr-list]");
+const adminFixedTeacherQrPrintButton = document.querySelector("[data-admin-fixed-teacher-qr-print]");
+const adminFixedTeacherQrPdfButton = document.querySelector("[data-admin-fixed-teacher-qr-pdf]");
+const adminFixedTeacherQrPreviewCloseButton = document.querySelector("[data-admin-fixed-teacher-qr-preview-close]");
 const adminTeacherProfileSelect = document.querySelector("[data-admin-teacher-profile-select]");
 const adminTeacherProfileStyle = document.querySelector("[data-admin-teacher-profile-style]");
 const adminTeacherProfileLesson = document.querySelector("[data-admin-teacher-profile-lesson]");
@@ -4961,6 +4964,9 @@ const createAdminFixedTeacherQrs = () => {
     const title = document.createElement("strong");
     title.textContent = teacher.name;
 
+    const label = document.createElement("small");
+    label.textContent = `${today.replaceAll("-", "/")} 指導碁スタンプ`;
+
     const image = document.createElement("img");
     image.src = createQrImageUrl(applyUrl);
     image.alt = `${teacher.name} 先生スタンプQRコード`;
@@ -4971,11 +4977,201 @@ const createAdminFixedTeacherQrs = () => {
     link.rel = "noopener noreferrer";
     link.textContent = "読み取り用リンクを開く";
 
-    item.append(title, image, link);
+    item.append(title, label, image, link);
     adminFixedTeacherQrList.append(item);
   }
 
   adminFixedTeacherQr.hidden = false;
+};
+
+const setAdminFixedTeacherQrPrintPreview = (isPreview) => {
+  document.body.classList.toggle("is-admin-qr-print-preview", isPreview);
+  if (adminFixedTeacherQrPrintButton) {
+    adminFixedTeacherQrPrintButton.textContent = isPreview ? "印刷画面を開く" : "印刷用に表示する";
+  }
+  if (adminFixedTeacherQrPreviewCloseButton) {
+    adminFixedTeacherQrPreviewCloseButton.hidden = !isPreview;
+  }
+  if (adminFixedTeacherQrPrintButton) {
+    adminFixedTeacherQrPrintButton.textContent = isPreview ? "印刷画面を開く / Ctrl+P" : "印刷用に表示する";
+  }
+  if (isPreview) {
+    adminFixedTeacherQr?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+};
+
+const escapePrintableText = (value) =>
+  String(value ?? "").replace(/[&<>"']/g, (character) => {
+    const entities = {
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;",
+    };
+    return entities[character];
+  });
+
+const openAdminFixedTeacherQrPdfPage = () => {
+  if (!adminFixedTeacherQrList) {
+    return;
+  }
+
+  if (adminFixedTeacherQrList.children.length === 0) {
+    createAdminFixedTeacherQrs();
+  }
+
+  const cards = Array.from(adminFixedTeacherQrList.querySelectorAll(".admin-fixed-teacher-qr-item"))
+    .map((item) => {
+      const title = item.querySelector("strong")?.textContent ?? "";
+      const label = item.querySelector("small")?.textContent ?? "";
+      const image = item.querySelector("img")?.src ?? "";
+      return { title, label, image };
+    })
+    .filter((card) => card.title && card.image);
+
+  if (cards.length === 0) {
+    return;
+  }
+
+  const cardsHtml = cards
+    .map(
+      (card) => `
+        <article class="qr-card">
+          <h2>${escapePrintableText(card.title)}</h2>
+          <p>${escapePrintableText(card.label)}</p>
+          <img src="${escapePrintableText(card.image)}" alt="${escapePrintableText(card.title)} QR">
+        </article>`,
+    )
+    .join("");
+
+  const printableHtml = `<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>今日の先生別QR</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: #f8f4e9;
+      color: #2f2d28;
+      font-family: "Yu Gothic", "Hiragino Sans", Meiryo, sans-serif;
+    }
+    main {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+    h1 {
+      margin: 0 0 10px;
+      font-size: 26px;
+      line-height: 1.3;
+      text-align: center;
+    }
+    .lead {
+      margin: 0 auto 18px;
+      max-width: 680px;
+      color: #5f6956;
+      font-size: 14px;
+      line-height: 1.8;
+      text-align: center;
+    }
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin: 0 0 18px;
+    }
+    button {
+      min-height: 46px;
+      padding: 0 22px;
+      border: 1px solid #b8ccb7;
+      border-radius: 8px;
+      background: #fffdf7;
+      color: #357457;
+      font: inherit;
+      font-weight: 700;
+    }
+    .print-note {
+      display: none;
+      margin: -4px auto 18px;
+      max-width: 680px;
+      color: #6c5d44;
+      font-size: 14px;
+      line-height: 1.7;
+      text-align: center;
+    }
+    .print-note.is-visible {
+      display: block;
+    }
+    .qr-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+    .qr-card {
+      break-inside: avoid;
+      page-break-inside: avoid;
+      border: 1px solid #ded6c5;
+      border-radius: 8px;
+      background: #fffdf7;
+      padding: 14px;
+      text-align: center;
+    }
+    .qr-card h2 {
+      margin: 0 0 6px;
+      font-size: 18px;
+      line-height: 1.3;
+    }
+    .qr-card p {
+      margin: 0 0 10px;
+      color: #746b5c;
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .qr-card img {
+      display: block;
+      width: min(100%, 58mm);
+      margin: 0 auto;
+      border-radius: 6px;
+      background: #ffffff;
+    }
+    @media print {
+      body { background: #ffffff; }
+      main { max-width: none; padding: 8mm; }
+      .actions, .lead, .print-note { display: none; }
+      h1 { margin-bottom: 8mm; font-size: 20pt; }
+      .qr-grid { grid-template-columns: repeat(2, 1fr); gap: 6mm; }
+      .qr-card { border-color: #d7d0c2; padding: 5mm; }
+      .qr-card img { width: 54mm; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>今日の先生別QR</h1>
+    <p class="lead">この画面を印刷、またはPDF保存してネットプリントへ共有できます。スマホではブラウザの共有ボタンから保存や送信を選びます。</p>
+    <div class="actions">
+      <button type="button" onclick="document.querySelector('.print-note')?.classList.add('is-visible'); window.print()">印刷・PDF保存</button>
+      <button type="button" onclick="window.location.href = window.location.origin + '/#admin'">管理画面に戻る</button>
+    </div>
+    <p class="print-note">印刷画面が開かない時は、パソコンでは Ctrl+P、スマホではブラウザの共有ボタンやメニューから印刷・PDF保存を選んでください。</p>
+    <section class="qr-grid">${cardsHtml}</section>
+  </main>
+</body>
+</html>`;
+
+  const printableUrl = URL.createObjectURL(new Blob([printableHtml], { type: "text/html;charset=utf-8" }));
+  const printablePage = window.open(printableUrl, "_blank", "noopener,noreferrer");
+  if (!printablePage) {
+    URL.revokeObjectURL(printableUrl);
+    setAdminFixedTeacherQrPrintPreview(true);
+    return;
+  }
+  window.setTimeout(() => URL.revokeObjectURL(printableUrl), 60000);
 };
 
 const createAdminStampQr = () => {
@@ -8125,6 +8321,18 @@ adminParticipationQrCreateButton?.addEventListener("click", createAdminParticipa
 adminGameRecordApply?.addEventListener("click", applyGameRecordFromAdmin);
 adminStampQrCreateButton?.addEventListener("click", createAdminStampQr);
 adminFixedTeacherQrCreateButton?.addEventListener("click", createAdminFixedTeacherQrs);
+adminFixedTeacherQrPrintButton?.addEventListener("click", () => {
+  if (!document.body.classList.contains("is-admin-qr-print-preview")) {
+    setAdminFixedTeacherQrPrintPreview(true);
+    return;
+  }
+
+  window.print();
+});
+adminFixedTeacherQrPdfButton?.addEventListener("click", openAdminFixedTeacherQrPdfPage);
+adminFixedTeacherQrPreviewCloseButton?.addEventListener("click", () => {
+  setAdminFixedTeacherQrPrintPreview(false);
+});
 adminUndoGameRecordButton?.addEventListener("click", undoLatestGameRecordFromAdmin);
 adminTroubleToggle?.addEventListener("click", () => {
   setAdminTroublePanelExpanded(adminTroublePanel?.hidden === true);
