@@ -1,4 +1,4 @@
-const { chromium } = require("playwright");
+﻿const { chromium } = require("playwright");
 const fs = require("fs");
 const path = require("path");
 const { pathToFileURL } = require("url");
@@ -37,7 +37,7 @@ const seed = async (page, value) => {
 
 const authenticateOperator = async (page) => {
   await page.locator("[data-operator-auth]").waitFor({ state: "visible" });
-  await page.locator("[data-operator-auth-input]").fill("suiyoukai2026");
+  await page.locator("[data-operator-auth-input]").fill("運営端末で設定したパスコード");
   await page.locator("[data-operator-auth-confirm]").click();
 };
 
@@ -290,3 +290,4 @@ try {
   console.error(error);
   process.exitCode = 1;
 });
+

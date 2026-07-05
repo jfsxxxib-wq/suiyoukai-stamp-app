@@ -1,4 +1,4 @@
-const { chromium } = require("playwright");
+﻿const { chromium } = require("playwright");
 const fs = require("fs");
 const path = require("path");
 const { pathToFileURL } = require("url");
@@ -56,7 +56,7 @@ const assert = (condition, label) => {
     assert(await page.locator(".admin-card").isHidden(), "誤ったパスコードで解除されました。");
     checks.push("誤ったパスコードでは解除しない");
 
-    await page.locator("[data-admin-passcode-input]").fill("suiyoukai2026");
+    await page.locator("[data-admin-passcode-input]").fill("運営端末で設定したパスコード");
     await page.locator("[data-admin-passcode-button]").click();
     assert(await page.locator(".admin-card").isVisible(), "正しいパスコードで解除できません。");
     checks.push("正しいパスコードで解除");
@@ -80,7 +80,7 @@ const assert = (condition, label) => {
     assert(await page.locator(".admin-card").isHidden(), "再訪時に管理UIが開いたままです。");
     checks.push("管理画面を離れると自動再ロック");
 
-    await page.locator("[data-admin-passcode-input]").fill("suiyoukai2026");
+    await page.locator("[data-admin-passcode-input]").fill("運営端末で設定したパスコード");
     await page.locator("[data-admin-passcode-button]").click();
     await page.locator("[data-admin-reset-button]").click();
     const resetButton = page.locator("[data-admin-reset-confirm-button]");
@@ -105,3 +105,4 @@ const assert = (condition, label) => {
   console.error(error.stack || error.message);
   process.exitCode = 1;
 });
+

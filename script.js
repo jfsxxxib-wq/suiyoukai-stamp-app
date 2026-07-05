@@ -287,9 +287,9 @@ const operationHistoryStorageKey = "suiyoukai-operation-history-v1";
 const stampQrAppliedStorageKey = "suiyoukai-stamp-qr-applied-v1";
 const todayTeacherStampReflectionStorageKey = "suiyoukai-today-teacher-stamps-v1";
 const teacherProfileStorageKey = "suiyoukai-teacher-profiles-v1";
+const adminPasscodeStorageKey = "suiyoukai-admin-passcode-local-v1";
 const backupAppId = "suiyoukai-stamp-adventure";
 const backupFormatVersion = 1;
-const adminPasscode = "suiyoukai2026";
 const externalGameRecordFormEnabled = true;
 const participationFormUrl = "https://docs.google.com/forms/d/e/1FAIpQLSdEqwXBhF3jDi-YUizfnNnLDfTzD7QJTK469-xwQwA21Gl_rA/viewform?usp=publish-editor";
 const shrineTodayTeacherStorageKey = "suiyoukai-shrine-today-teachers-v1";
@@ -2208,6 +2208,25 @@ const closeOperatorAuth = () => {
   pendingOperatorAction = null;
 };
 
+const getConfiguredAdminPasscode = () => {
+  try {
+    return window.localStorage.getItem(adminPasscodeStorageKey) || "";
+  } catch {
+    return "";
+  }
+};
+
+const isAdminPasscodeConfigured = () => getConfiguredAdminPasscode().length > 0;
+
+const setConfiguredAdminPasscode = (passcode) => {
+  window.localStorage.setItem(adminPasscodeStorageKey, passcode);
+};
+
+const isValidNewAdminPasscode = (passcode) => passcode.length >= 8;
+
+const matchesConfiguredAdminPasscode = (passcode) =>
+  isAdminPasscodeConfigured() && passcode === getConfiguredAdminPasscode();
+
 const openOperatorAuth = ({ title, summary, action }) => {
   pendingOperatorAction = action;
   operatorAuthTitle.textContent = title;
@@ -2220,7 +2239,7 @@ const openOperatorAuth = ({ title, summary, action }) => {
 };
 
 const confirmOperatorAction = () => {
-  if (operatorAuthInput.value !== adminPasscode) {
+  if (!matchesConfiguredAdminPasscode(operatorAuthInput.value)) {
     operatorAuthMessage.textContent = "パスコードが違います。押印は保存されていません。";
     operatorAuthInput.select();
     return;
@@ -2254,12 +2273,31 @@ const updateAdminLockState = () => {
 const lockAdminPanel = () => {
   isAdminUnlocked = false;
   closeRestoreConfirmation();
-  adminPasscodeMessage.textContent = "運営用の調整画面はロックされています。";
+  adminPasscodeMessage.textContent = isAdminPasscodeConfigured()
+    ? "運営用の調整画面はロックされています。"
+    : "公開用コードにはパスコードを入れていません。初回だけ、この運営端末でパスコードを設定します。";
   updateAdminLockState();
 };
 
 const unlockAdminPanel = () => {
-  if (adminPasscodeInput.value !== adminPasscode) {
+  const enteredPasscode = adminPasscodeInput.value.trim();
+
+  if (!isAdminPasscodeConfigured()) {
+    if (!isValidNewAdminPasscode(enteredPasscode)) {
+      adminPasscodeMessage.textContent = "初回設定です。8文字以上の運営用パスコードを入力してください。";
+      adminPasscodeInput.select();
+      return;
+    }
+
+    setConfiguredAdminPasscode(enteredPasscode);
+    isAdminUnlocked = true;
+    adminPasscodeMessage.textContent = "この端末に運営用パスコードを設定しました。";
+    updateAdminLockState();
+    updateAdminPanel();
+    return;
+  }
+
+  if (!matchesConfiguredAdminPasscode(enteredPasscode)) {
     adminPasscodeMessage.textContent = "パスコードが違います。";
     adminPasscodeInput.select();
     return;
@@ -5170,7 +5208,7 @@ const openAdminFixedTeacherQrPdfPage = () => {
     <p class="lead">この画面を印刷、またはPDF保存してネットプリントへ共有できます。スマホではブラウザの共有ボタンから保存や送信を選びます。</p>
     <div class="actions">
       <button type="button" onclick="document.querySelector('.print-note')?.classList.add('is-visible'); window.print()">印刷・PDF保存</button>
-      <button type="button" onclick="window.location.href = window.location.origin + '/#admin'">管理画面に戻る</button>
+      <button type="button" onclick="window.close()">このページを閉じる</button>
     </div>
     <p class="print-note">印刷画面が開かない時は、パソコンでは Ctrl+P、スマホではブラウザの共有ボタンやメニューから印刷・PDF保存を選んでください。</p>
     <section class="qr-grid">${cardsHtml}</section>
@@ -8229,16 +8267,17 @@ const openAdminEntry = () => {
   infoTabs?.classList.add("is-admin-available");
   lockAdminPanel();
   showPanel("admin");
-  adminPasscodeMessage.textContent = "運営用パスコードを入力してください。";
+  adminPasscodeMessage.textContent = isAdminPasscodeConfigured()
+    ? "運営用パスコードを入力してください。"
+    : "初回設定です。この運営端末で使うパスコードを8文字以上で入力してください。";
   adminPasscodeInput?.focus();
 };
 
 const syncAdminDirectEntry = () => {
-  const shouldShow = window.location.hash === adminEntryHash;
   if (adminTab) {
-    adminTab.hidden = !shouldShow;
+    adminTab.hidden = true;
   }
-  infoTabs?.classList.toggle("is-admin-available", shouldShow);
+  infoTabs?.classList.remove("is-admin-available");
 };
 
 guidebookButton?.addEventListener("pointerdown", () => {
@@ -8252,7 +8291,7 @@ for (const eventName of ["pointerup", "pointerleave", "pointercancel", "blur"]) 
 
 guidebookButton?.addEventListener("click", () => {
   if (window.location.hash === adminEntryHash) {
-    openAdminEntry();
+    window.history.replaceState(null, "", window.location.pathname + window.location.search);
     return;
   }
 

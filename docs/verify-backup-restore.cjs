@@ -1,4 +1,4 @@
-const { chromium } = require("playwright");
+﻿const { chromium } = require("playwright");
 const fs = require("fs");
 const path = require("path");
 const { pathToFileURL } = require("url");
@@ -27,7 +27,7 @@ const unlockAdmin = async (page) => {
     window.dispatchEvent(new HashChangeEvent("hashchange"));
   });
   await page.locator('[data-panel="admin"]').click();
-  await page.locator("[data-admin-passcode-input]").fill("suiyoukai2026");
+  await page.locator("[data-admin-passcode-input]").fill("運営端末で設定したパスコード");
   await page.locator("[data-admin-passcode-button]").click();
 };
 
@@ -85,7 +85,7 @@ const unlockAdmin = async (page) => {
     fs.writeFileSync(oldBackupPath, JSON.stringify(oldBackup, null, 2), "utf8");
     assert(backup.appId === "suiyoukai-stamp-adventure" && backup.formatVersion === 1, "識別子または版番号がありません。");
     assert(backup.progress && Array.isArray(backup.operationHistory) && backup.savedAt, "必要なバックアップ項目が不足しています。");
-    assert(!backupText.includes("suiyoukai2026") && !backupText.includes("みずの しずく"), "パスコードまたは個人情報が含まれています。");
+    assert(!backupText.includes("運営端末で設定したパスコード") && !backupText.includes("みずの しずく"), "パスコードまたは個人情報が含まれています。");
     checks.push("必要項目だけをJSONファイルへ保存");
 
     await page.evaluate(([pKey, hKey, ids]) => {
@@ -141,7 +141,7 @@ const unlockAdmin = async (page) => {
     assert(await page.locator("[data-admin-lock-card]").isVisible(), "復元後に自動再ロックされません。");
     checks.push("進捗と履歴を同じ状態へ復元して再ロック");
 
-    await page.locator("[data-admin-passcode-input]").fill("suiyoukai2026");
+    await page.locator("[data-admin-passcode-input]").fill("運営端末で設定したパスコード");
     await page.locator("[data-admin-passcode-button]").click();
     await page.locator("[data-admin-backup-file]").setInputFiles(oldBackupPath);
     await page.locator("[data-admin-restore-confirm]").waitFor({ state: "visible" });
@@ -157,7 +157,7 @@ const unlockAdmin = async (page) => {
     assert(oldRestored.stamps.teacherCircleRounds === 1, "旧バックアップ復元後に基本5人の先生の輪が後退しました。");
     checks.push("旧バックアップの不足先生IDを0回で補完し、基本5人の輪を維持");
 
-    await page.locator("[data-admin-passcode-input]").fill("suiyoukai2026");
+    await page.locator("[data-admin-passcode-input]").fill("運営端末で設定したパスコード");
     await page.locator("[data-admin-passcode-button]").click();
     await page.locator("[data-admin-backup-file]").setInputFiles({
       name: "broken.json",
@@ -192,3 +192,4 @@ const unlockAdmin = async (page) => {
   console.error(error.stack || error.message);
   process.exitCode = 1;
 });
+

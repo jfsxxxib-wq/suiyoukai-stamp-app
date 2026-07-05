@@ -1,4 +1,4 @@
-const { chromium } = require("playwright");
+﻿const { chromium } = require("playwright");
 const fs = require("fs");
 const path = require("path");
 const { pathToFileURL } = require("url");
@@ -64,7 +64,7 @@ const assert = (condition, message) => {
     assert(afterWrong === 9, "誤ったパスコードで参加スタンプが保存されました。");
     checks.push("誤ったパスコードでは保存しない");
 
-    await page.locator("[data-operator-auth-input]").fill("suiyoukai2026");
+    await page.locator("[data-operator-auth-input]").fill("運営端末で設定したパスコード");
     await page.locator("[data-operator-auth-confirm]").click();
     const afterCorrect = await page.evaluate((key) => JSON.parse(localStorage.getItem(key)).stamps.participationCount, storageKey);
     assert(afterCorrect === 10, "正しい運営認証後に参加スタンプが保存されません。");
@@ -72,7 +72,7 @@ const assert = (condition, message) => {
     checks.push("正しい認証後の1件だけ保存して再ロック");
 
     await page.locator('[data-panel="admin"]').click();
-    await page.locator("[data-admin-passcode-input]").fill("suiyoukai2026");
+    await page.locator("[data-admin-passcode-input]").fill("運営端末で設定したパスコード");
     await page.locator("[data-admin-passcode-button]").click();
     const history = (await page.locator("[data-admin-history-list]").textContent()).replace(/\s+/g, " ");
     assert(history.includes("参加スタンプ") && history.includes("9 → 10"), "押印履歴に参加スタンプの変更がありません。");
@@ -97,7 +97,7 @@ const assert = (condition, message) => {
     checks.push("減算後も冒険者カードと花図鑑に表示");
 
     await page.locator('[data-panel="admin"]').click();
-    await page.locator("[data-admin-passcode-input]").fill("suiyoukai2026");
+    await page.locator("[data-admin-passcode-input]").fill("運営端末で設定したパスコード");
     await page.locator("[data-admin-passcode-button]").click();
     await page.locator('[data-admin-adjust="plus"][data-admin-type="participation"]').click();
     await page.locator("[data-admin-save-button]").click();
@@ -121,3 +121,4 @@ const assert = (condition, message) => {
   console.error(error.stack || error.message);
   process.exitCode = 1;
 });
+

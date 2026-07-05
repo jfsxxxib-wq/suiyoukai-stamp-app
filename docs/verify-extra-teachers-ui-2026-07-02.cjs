@@ -1,4 +1,4 @@
-const { chromium } = require("playwright");
+﻿const { chromium } = require("playwright");
 const path = require("path");
 const { pathToFileURL } = require("url");
 
@@ -47,7 +47,7 @@ const assert = (condition, message) => {
       window.dispatchEvent(new HashChangeEvent("hashchange"));
     });
     await page.locator('[data-panel="admin"]').click();
-    await page.locator("[data-admin-passcode-input]").fill("suiyoukai2026");
+    await page.locator("[data-admin-passcode-input]").fill("運営端末で設定したパスコード");
     await page.locator("[data-admin-passcode-button]").click();
 
     const adminTeacherOptionCount = await page.locator("[data-admin-game-record-teacher] option").count();
@@ -72,3 +72,4 @@ const assert = (condition, message) => {
   console.error(error.stack || error.message);
   process.exitCode = 1;
 });
+

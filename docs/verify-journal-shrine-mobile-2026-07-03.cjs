@@ -1,4 +1,4 @@
-const { chromium } = require("playwright");
+﻿const { chromium } = require("playwright");
 const fs = require("fs");
 const path = require("path");
 const { pathToFileURL } = require("url");
@@ -45,7 +45,7 @@ const unlockAdmin = async (page) => {
   });
   await page.waitForTimeout(120);
   await openPanel(page, "admin");
-  await page.locator("[data-admin-passcode-input]").fill("suiyoukai2026");
+  await page.locator("[data-admin-passcode-input]").fill("運営端末で設定したパスコード");
   await page.locator("[data-admin-passcode-button]").click();
   await page.locator(".admin-card").first().waitFor({ state: "visible" });
 };
@@ -196,3 +196,4 @@ const unlockAdmin = async (page) => {
   console.error(error.stack || error.message);
   process.exitCode = 1;
 });
+

@@ -1,4 +1,4 @@
-const { chromium } = require("playwright");
+﻿const { chromium } = require("playwright");
 const fs = require("fs");
 const path = require("path");
 const { pathToFileURL } = require("url");
@@ -21,14 +21,14 @@ const assert = (condition, message) => {
 
 const unlockAdmin = async (page) => {
   await page.locator('[data-panel="admin"]').evaluate((button) => button.click());
-  await page.locator("[data-admin-passcode-input]").fill("suiyoukai2026");
+  await page.locator("[data-admin-passcode-input]").fill("運営端末で設定したパスコード");
   await page.locator("[data-admin-passcode-button]").click();
   assert(await page.locator(".admin-card").isVisible(), "管理画面を解除できません。");
 };
 
 const authenticateOperator = async (page) => {
   await page.locator("[data-operator-auth]").waitFor({ state: "visible" });
-  await page.locator("[data-operator-auth-input]").fill("suiyoukai2026");
+  await page.locator("[data-operator-auth-input]").fill("運営端末で設定したパスコード");
   await page.locator("[data-operator-auth-confirm]").click();
 };
 
@@ -157,7 +157,7 @@ const authenticateOperator = async (page) => {
     checks.push("スマホ幅430pxで操作領域・画像・横幅を確認");
 
     const storedHistoryText = JSON.stringify(history);
-    assert(!storedHistoryText.includes("suiyoukai2026") && !storedHistoryText.includes("互先") && !storedHistoryText.includes("勝ち"), "履歴にパスコードまたは不要な対局内容が含まれています。");
+    assert(!storedHistoryText.includes("運営端末で設定したパスコード") && !storedHistoryText.includes("互先") && !storedHistoryText.includes("勝ち"), "履歴にパスコードまたは不要な対局内容が含まれています。");
     assert(errors.length === 0, `画面エラー: ${errors.join(" / ")}`);
     checks.push("履歴に機密情報・不要な対局内容・画面エラーなし");
 
@@ -175,3 +175,4 @@ const authenticateOperator = async (page) => {
   console.error(error.stack || error.message);
   process.exitCode = 1;
 });
+

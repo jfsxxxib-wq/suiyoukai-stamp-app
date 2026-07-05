@@ -957,12 +957,12 @@
             <p class="panel-kicker">運営画面</p>
             <h2>スタンプ管理</h2>
             <section class="admin-lock-card" data-admin-lock-card aria-label="運営画面ロック">
-              <p>運営用パスコードを入力してください。</p>
+              <p>運営端末で設定したパスコードを入力してください。</p>
               <div class="admin-passcode-row">
                 <input type="password" data-admin-passcode-input aria-label="運営用パスコード" autocomplete="off">
                 <button type="button" data-admin-passcode-button>解除</button>
               </div>
-              <small data-admin-passcode-message>運営用の調整画面はロックされています。</small>
+              <small data-admin-passcode-message>公開用コードにはパスコードを入れていません。初回だけ、この運営端末でパスコードを設定します。</small>
             </section>
             <section class="admin-card" aria-label="運営画面モック" hidden>
               <div class="admin-status">
@@ -1233,7 +1233,7 @@
           <h2 id="operator-auth-title" data-operator-auth-title>押印を確認</h2>
           <p data-operator-auth-summary>保存内容を確認し、運営用パスコードを入力してください。</p>
           <label>
-            <span>運営用パスコード</span>
+            <span>運営端末で設定したパスコード</span>
             <input type="password" data-operator-auth-input autocomplete="off">
           </label>
           <small data-operator-auth-message>認証後、この1件だけを保存して自動で再ロックします。</small>

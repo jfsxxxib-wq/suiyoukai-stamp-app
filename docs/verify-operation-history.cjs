@@ -1,4 +1,4 @@
-const { chromium } = require("playwright");
+﻿const { chromium } = require("playwright");
 const fs = require("fs");
 const path = require("path");
 const { pathToFileURL } = require("url");
@@ -19,7 +19,7 @@ const assert = (condition, message) => {
 
 const unlockAdmin = async (page) => {
   await page.locator('[data-panel="admin"]').click();
-  await page.locator("[data-admin-passcode-input]").fill("suiyoukai2026");
+  await page.locator("[data-admin-passcode-input]").fill("運営端末で設定したパスコード");
   await page.locator("[data-admin-passcode-button]").click();
 };
 
@@ -55,7 +55,7 @@ const readHistory = (page) => page.evaluate((key) => JSON.parse(localStorage.get
 
     await page.locator("[data-next-adventure-button]").click();
     await page.locator("[data-participation-stamp-button]").click();
-    await page.locator("[data-operator-auth-input]").fill("suiyoukai2026");
+    await page.locator("[data-operator-auth-input]").fill("運営端末で設定したパスコード");
     await page.locator("[data-operator-auth-confirm]").click();
     let history = await readHistory(page);
     assert(history.at(-1)?.type === "participation_stamp", "参加押印の操作種別がありません。");
@@ -93,7 +93,7 @@ const readHistory = (page) => page.evaluate((key) => JSON.parse(localStorage.get
     assert(history.at(-1)?.type === "restore" && history.at(-1)?.target === "バックアップ記録", "復元履歴が残りません。");
     checks.push("復元を履歴の末尾へ追加");
 
-    await page.locator("[data-admin-passcode-input]").fill("suiyoukai2026");
+    await page.locator("[data-admin-passcode-input]").fill("運営端末で設定したパスコード");
     await page.locator("[data-admin-passcode-button]").click();
     await page.locator("[data-admin-reset-button]").click();
     await page.locator("[data-admin-reset-input]").fill("リセット");
@@ -103,13 +103,13 @@ const readHistory = (page) => page.evaluate((key) => JSON.parse(localStorage.get
     assert(history.length <= 50, "履歴が最大50件を超えています。");
     checks.push("全リセットを保存し、最大50件を維持");
 
-    await page.locator("[data-admin-passcode-input]").fill("suiyoukai2026");
+    await page.locator("[data-admin-passcode-input]").fill("運営端末で設定したパスコード");
     await page.locator("[data-admin-passcode-button]").click();
     const visibleHistory = (await page.locator("[data-admin-history-list]").textContent()).replace(/\s+/g, " ");
     assert(visibleHistory.includes("全リセット") && visibleHistory.includes("復元") && visibleHistory.includes("減算"), "操作種別が運営画面に表示されません。");
     assert(visibleHistory.includes("すべてのスタンプ") && visibleHistory.includes("1 → 0"), "対象と変更前後が運営画面に表示されません。");
     const storedText = JSON.stringify(history);
-    assert(!storedText.includes("suiyoukai2026") && !storedText.includes("互先") && !storedText.includes("勝ち"), "履歴に不要な情報が含まれています。");
+    assert(!storedText.includes("運営端末で設定したパスコード") && !storedText.includes("互先") && !storedText.includes("勝ち"), "履歴に不要な情報が含まれています。");
     checks.push("最近の履歴を分かりやすく表示し、不要情報を保存しない");
 
     assert(errors.length === 0, `画面エラー: ${errors.join(" / ")}`);
@@ -128,3 +128,4 @@ const readHistory = (page) => page.evaluate((key) => JSON.parse(localStorage.get
   console.error(error.stack || error.message);
   process.exitCode = 1;
 });
+
