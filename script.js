@@ -54,6 +54,8 @@ const adventurerNameEdit = document.querySelector("[data-adventurer-name-edit]")
 const adventurerNameForm = document.querySelector("[data-adventurer-name-form]");
 const adventurerNameInput = document.querySelector("[data-adventurer-name-input]");
 const adventurerNameMessage = document.querySelector("[data-adventurer-name-message]");
+const adventurerNameHint = document.querySelector("[data-adventurer-name-hint]");
+const adventurerReceptionCode = document.querySelector("[data-adventurer-reception-code]");
 const profileLatestStamp = document.querySelector("[data-profile-latest-stamp]");
 const profileLatestStampCopy = document.querySelector("[data-profile-latest-stamp-copy]");
 const profileLatestTeacherFlowers = document.querySelectorAll("[data-profile-latest-teacher-flower]");
@@ -295,6 +297,7 @@ const todayTeacherStampReflectionStorageKey = "suiyoukai-today-teacher-stamps-v1
 const teacherProfileStorageKey = "suiyoukai-teacher-profiles-v1";
 const adminPasscodeStorageKey = "suiyoukai-admin-passcode-local-v1";
 const adventurerNameStorageKey = "suiyoukai-adventurer-name-v1";
+const adventurerReceptionCodeStorageKey = "suiyoukai-adventurer-reception-code-v1";
 const defaultAdventurerName = "みずの しずく";
 const backupAppId = "suiyoukai-stamp-adventure";
 const backupFormatVersion = 1;
@@ -1159,17 +1162,53 @@ const saveAdventurerName = (value) => {
   return normalizedName || defaultAdventurerName;
 };
 
+const createReceptionCode = () => {
+  const array = new Uint32Array(1);
+  if (window.crypto?.getRandomValues) {
+    window.crypto.getRandomValues(array);
+  } else {
+    array[0] = Math.floor(Math.random() * 900000);
+  }
+
+  return String(100000 + (array[0] % 900000));
+};
+
+const loadReceptionCode = () => {
+  try {
+    const storedCode = localStorage.getItem(adventurerReceptionCodeStorageKey);
+    if (/^\d{6}$/.test(storedCode ?? "")) {
+      return storedCode;
+    }
+
+    const code = createReceptionCode();
+    localStorage.setItem(adventurerReceptionCodeStorageKey, code);
+    return code;
+  } catch {
+    return "000000";
+  }
+};
+
 const renderAdventurerName = () => {
   const name = loadAdventurerName();
+  const isDefaultName = name === defaultAdventurerName;
 
   if (adventurerName) {
     adventurerName.textContent = name;
+    adventurerName.classList.toggle("is-default", isDefaultName);
   }
   if (adventurerNameInput && document.activeElement !== adventurerNameInput) {
-    adventurerNameInput.value = name === defaultAdventurerName ? "" : name;
+    adventurerNameInput.value = isDefaultName ? "" : name;
   }
   if (adventurerNameEdit) {
-    adventurerNameEdit.textContent = name === defaultAdventurerName ? "名前を入れる" : "名前を変える";
+    adventurerNameEdit.textContent = isDefaultName ? "名前を入れる" : "名前を変える";
+  }
+  if (adventurerNameHint) {
+    adventurerNameHint.textContent = isDefaultName
+      ? "見本の名前です。好きな名前に変えられます。"
+      : "この名前はいつでも変えられます。記録は消えません。";
+  }
+  if (adventurerReceptionCode) {
+    adventurerReceptionCode.textContent = loadReceptionCode();
   }
 };
 
