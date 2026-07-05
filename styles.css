@@ -4851,6 +4851,14 @@ button.profile-today-record-flower {
   color: #2c5c78;
 }
 
+.admin-stamp-qr-button-primary {
+  min-height: 52px;
+  border-color: rgba(46, 108, 148, 0.52);
+  background:
+    linear-gradient(90deg, rgba(46, 108, 148, 0.22), rgba(197, 150, 58, 0.12)),
+    rgba(255, 255, 255, 0.96);
+}
+
 .admin-secondary-action {
   display: grid;
   gap: 7px;
@@ -4864,6 +4872,13 @@ button.profile-today-record-flower {
   color: var(--muted);
   font-size: 0.74rem;
   font-weight: 900;
+}
+
+.admin-secondary-action small {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 800;
+  line-height: 1.45;
 }
 
 .admin-stamp-qr {

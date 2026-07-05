@@ -1644,9 +1644,23 @@ const saveTodayTeacherStampReflections = () => {
 todayTeacherStampReflections = loadTodayTeacherStampReflections();
 latestTeacherStampReflection = todayTeacherStampReflections.at(-1) ?? null;
 
+const scrollProfileTodayRecordIntoView = () => {
+  if (!profileLatestStamp) {
+    return;
+  }
+
+  const scroll = () => {
+    profileLatestStamp.scrollIntoView({ behavior: "smooth", block: "center" });
+  };
+
+  window.setTimeout(scroll, 0);
+  window.setTimeout(scroll, 180);
+  window.setTimeout(scroll, 600);
+};
+
 const showProfileTodayRecord = () => {
   showPanel("profile");
-  window.setTimeout(() => profileLatestStamp?.scrollIntoView({ behavior: "smooth", block: "start" }), 0);
+  scrollProfileTodayRecordIntoView();
 };
 
 const applyParticipationStampPayload = (payload = {}) => {
@@ -1797,7 +1811,7 @@ const applyStampQrFromLocation = () => {
           ? `QRを開きましたが、先生または日付を読み取れませんでした。先生:${result.payload?.teacherId ?? "不明"} 日付:${result.payload?.date ?? "不明"}`
           : "QRを開きましたが、先生スタンプを反映できませんでした。新しいQRを作り直してください。";
     }
-    window.setTimeout(() => profileLatestStamp?.scrollIntoView({ behavior: "smooth", block: "start" }), 0);
+    scrollProfileTodayRecordIntoView();
   }
 
   return result.ok;
@@ -5231,16 +5245,6 @@ const updateAdminGameRecordApply = () => {
   }
   adminGameRecordApply.disabled = !teacher || isMaxAchieved || isCoolingDown;
   adminGameRecordApply.textContent = isCoolingDown
-    ? "反映しました"
-    : isMaxAchieved
-    ? "この先生は達成済み"
-    : "対局記録と先生スタンプを反映";
-  adminGameRecordMessage.textContent = isMaxAchieved
-    ? "この先生の花スタンプはすべて達成済みです。"
-    : isCoolingDown
-      ? "反映直後です。二重押し防止のため少し待っています。"
-      : "別画面でフォーム回答を確認してから押してください。";
-  adminGameRecordApply.textContent = isCoolingDown
     ? "確認反映しました"
     : isMaxAchieved
     ? "この先生は達成済み"
@@ -8342,7 +8346,7 @@ adminSettingsToggle?.addEventListener("click", () => {
 });
 adminShowProfileButton?.addEventListener("click", () => {
   showPanel("profile");
-  window.setTimeout(() => profileLatestStamp?.scrollIntoView({ behavior: "smooth", block: "center" }), 0);
+  scrollProfileTodayRecordIntoView();
 });
 for (const profileLatestTeacherFlower of profileLatestTeacherFlowers) {
   profileLatestTeacherFlower.addEventListener("click", () => {

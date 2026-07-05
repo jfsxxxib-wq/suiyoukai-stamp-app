@@ -6,7 +6,7 @@
     <meta name="google" content="notranslate">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>冒険記録帳</title>
-    <link rel="stylesheet" href="styles.css?v=20260704-stamp-qr-09">
+    <link rel="stylesheet" href="styles.css?v=20260705-qr-landing-01">
   </head>
   <body>
     <main class="record-book" aria-label="冒険記録帳">
@@ -985,14 +985,26 @@
               </dl>
 
               <div class="admin-section-heading">
-                <strong>今日よく使う</strong>
-                <span>受付と指導碁の反映</span>
+                <strong>今日の運営</strong>
+                <span>本人スマホへ入れるQRを先に使う</span>
               </div>
               <section class="admin-participation-apply" aria-label="参加スタンプ反映">
                 <div class="admin-adjustments-header">
-                  <strong>参加フォーム確認</strong>
+                  <strong>受付用 参加QR</strong>
                   <span data-admin-participation-date>本日</span>
                 </div>
+                <p class="admin-form-confirm-note">
+                  受付が済んだ人に本人スマホで読み取ってもらいます。その日の参加スタンプが1つ入り、同じ日にもう一度読んでも二重には増えません。
+                </p>
+                <button type="button" class="admin-stamp-qr-button" data-admin-participation-qr-create>受付用 参加QRを作る</button>
+                <div class="admin-stamp-qr" data-admin-participation-qr hidden aria-live="polite">
+                  <strong>受付用 参加QR</strong>
+                  <img data-admin-participation-qr-image alt="参加スタンプ反映用QRコード">
+                  <a data-admin-participation-qr-link href="#" target="_blank" rel="noopener noreferrer">読み取り用リンクを開く</a>
+                  <small data-admin-participation-qr-message>受付後に本人スマホで読み取ると、今日の参加スタンプが1つ入ります。</small>
+                </div>
+                <div class="admin-secondary-action">
+                  <strong>フォーム回答を見てこの端末へ入れる時</strong>
                 <a
                   class="admin-participation-form-link"
                   href="https://docs.google.com/forms/d/e/1FAIpQLSdEqwXBhF3jDi-YUizfnNnLDfTzD7QJTK469-xwQwA21Gl_rA/viewform?usp=publish-editor"
@@ -1008,20 +1020,32 @@
                 </label>
                 <button type="button" data-admin-participation-apply>今日の参加スタンプを反映</button>
                 <small data-admin-participation-message>フォーム回答を確認してから押してください。</small>
-                <button type="button" class="admin-stamp-qr-button" data-admin-participation-qr-create>受付用 参加QRを作る</button>
-                <div class="admin-stamp-qr" data-admin-participation-qr hidden aria-live="polite">
-                  <strong>受付用 参加QR</strong>
-                  <img data-admin-participation-qr-image alt="参加スタンプ反映用QRコード">
-                  <a data-admin-participation-qr-link href="#" target="_blank" rel="noopener noreferrer">読み取り用リンクを開く</a>
-                  <small data-admin-participation-qr-message>受付後に本人スマホで読み取ると、今日の参加スタンプが1つ入ります。</small>
                 </div>
               </section>
 
               <section class="admin-game-record-apply" aria-label="対局記録フォーム反映">
                 <div class="admin-adjustments-header">
-                  <strong>指導碁スタンプQR</strong>
+                  <strong>先生ごとの固定QR</strong>
                   <span data-admin-game-record-date-label>本日</span>
                 </div>
+                <p class="admin-form-confirm-note">
+                  先生席や受付に置く用です。本人スマホで読んだ先生のスタンプが1つ入り、今日の記録へ着地します。
+                </p>
+                <button type="button" class="admin-stamp-qr-button admin-stamp-qr-button-primary" data-admin-fixed-teacher-qr-create>先生ごとの固定QRを作る</button>
+                <div class="admin-fixed-teacher-qr" data-admin-fixed-teacher-qr hidden aria-live="polite">
+                  <strong>今日の先生別QR</strong>
+                  <p>先生席や受付に置く用です。本人スマホで読んだ先生のスタンプが1つ入ります。</p>
+                  <div class="admin-fixed-teacher-qr-actions">
+                    <button type="button" class="admin-fixed-teacher-qr-print" data-admin-fixed-teacher-qr-print>印刷用に表示する</button>
+                    <button type="button" class="admin-fixed-teacher-qr-print" data-admin-fixed-teacher-qr-pdf>PDF用ページを開く</button>
+                    <button type="button" class="admin-fixed-teacher-qr-print" data-admin-fixed-teacher-qr-preview-close hidden>通常表示に戻る</button>
+                  </div>
+                  <p class="admin-fixed-teacher-qr-print-help">印刷用表示にした後、印刷画面が開かない時は Ctrl+P、またはブラウザのメニューから印刷してください。</p>
+                  <div class="admin-fixed-teacher-qr-list" data-admin-fixed-teacher-qr-list></div>
+                  <small>同じスマホで同じ先生QRをもう一度読んでも、二重には増えません。</small>
+                </div>
+                <div class="admin-secondary-action">
+                  <strong>対局内容を確認してQRを作る時</strong>
                 <a
                   class="admin-game-record-form-link"
                   href="https://docs.google.com/forms/d/e/1FAIpQLSegoLkRkzQTTsj90BbVBdUOzocBhzh452_XsQ183cFLve9Glw/viewform?usp=dialog"
@@ -1073,22 +1097,11 @@
                   <a data-admin-stamp-qr-link href="#" target="_blank" rel="noopener noreferrer">読み取り用リンクを開く</a>
                   <small data-admin-stamp-qr-message>本人のスマホで読み取ると、今日の記録に先生スタンプが入ります。</small>
                 </div>
-                <button type="button" class="admin-stamp-qr-button" data-admin-fixed-teacher-qr-create>先生ごとの固定QRを作る</button>
-                <div class="admin-fixed-teacher-qr" data-admin-fixed-teacher-qr hidden aria-live="polite">
-                  <strong>今日の先生別QR</strong>
-                  <p>先生席や受付に置く用です。本人スマホで読んだ先生のスタンプが1つ入ります。</p>
-                  <div class="admin-fixed-teacher-qr-actions">
-                    <button type="button" class="admin-fixed-teacher-qr-print" data-admin-fixed-teacher-qr-print>印刷用に表示する</button>
-                    <button type="button" class="admin-fixed-teacher-qr-print" data-admin-fixed-teacher-qr-pdf>PDF用ページを開く</button>
-                    <button type="button" class="admin-fixed-teacher-qr-print" data-admin-fixed-teacher-qr-preview-close hidden>通常表示に戻る</button>
-                  </div>
-                  <p class="admin-fixed-teacher-qr-print-help">印刷用表示にした後、印刷画面が開かない時は Ctrl+P、またはブラウザのメニューから印刷してください。</p>
-                  <div class="admin-fixed-teacher-qr-list" data-admin-fixed-teacher-qr-list></div>
-                  <small>同じスマホで同じ先生QRをもう一度読んでも、二重には増えません。</small>
                 </div>
                 <div class="admin-secondary-action">
                   <strong>この端末だけで確認する時</strong>
                   <button type="button" data-admin-game-record-apply>この端末で確認反映</button>
+                  <small>運営端末で画面確認するための操作です。本人スマホには入りません。</small>
                 </div>
                 <button type="button" class="admin-show-profile-button" data-admin-show-profile hidden>冒険者カードを見る</button>
                 <button type="button" class="admin-undo-game-record-button" data-admin-undo-game-record hidden>直前の先生スタンプを取り消す</button>
@@ -1163,7 +1176,7 @@
                     <strong>バックアップ・復元</strong>
                     <span>端末ファイル</span>
                   </div>
-                  <p>スタンプ、獲得済み報酬、操作履歴、先生紹介を小さなファイルに保存します。</p>
+                  <p>スタンプ、獲得済み報酬、操作履歴、先生紹介を小さなファイルに保存します。対局記録の明細や今日のQR読み取り表示は含みません。</p>
                   <div class="admin-backup-actions">
                     <button type="button" data-admin-backup-save>バックアップを保存</button>
                     <button type="button" data-admin-backup-select>バックアップから復元</button>
@@ -1270,7 +1283,7 @@
       });
     </script>
     <script src="stamp-rules.js?v=20260702-shrine-today-teachers-01"></script>
-    <script src="script.js?v=20260704-stamp-qr-09"></script>
+    <script src="script.js?v=20260705-qr-landing-01"></script>
   </body>
 </html>
 
