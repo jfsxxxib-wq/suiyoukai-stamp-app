@@ -15,7 +15,7 @@
     <link rel="manifest" href="manifest.webmanifest?v=20260705-home-screen-01">
     <link rel="apple-touch-icon" href="assets/app-icon-180.png?v=20260705-home-screen-01">
     <link rel="icon" type="image/png" sizes="192x192" href="assets/app-icon-192.png?v=20260705-home-screen-01">
-    <link rel="stylesheet" href="styles.css?v=20260705-today-game-record-01">
+    <link rel="stylesheet" href="styles.css?v=20260705-adventurer-name-01">
   </head>
   <body>
     <main class="record-book" aria-label="冒険記録帳">
@@ -105,7 +105,16 @@
                 <span class="adventurer-seal" aria-hidden="true"></span>
                 <div>
                   <small>冒険者名</small>
-                  <h1>みずの しずく</h1>
+                  <h1 data-adventurer-name>みずの しずく</h1>
+                  <button type="button" class="adventurer-name-edit" data-adventurer-name-edit>名前を入れる</button>
+                  <form class="adventurer-name-form" data-adventurer-name-form hidden>
+                    <label>
+                      <span>このスマホで使う名前</span>
+                      <input type="text" data-adventurer-name-input autocomplete="name" maxlength="20" placeholder="お名前">
+                    </label>
+                    <button type="submit">保存</button>
+                  </form>
+                  <p class="adventurer-name-message" data-adventurer-name-message hidden></p>
                 </div>
               </div>
 
@@ -1293,7 +1302,7 @@
       });
     </script>
     <script src="stamp-rules.js?v=20260702-shrine-today-teachers-01"></script>
-    <script src="script.js?v=20260705-today-game-record-01"></script>
+    <script src="script.js?v=20260705-adventurer-name-01"></script>
   </body>
 </html>
 

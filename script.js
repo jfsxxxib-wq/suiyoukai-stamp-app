@@ -49,6 +49,11 @@ const profileRank = document.querySelector("[data-profile-rank]");
 const profileMedal = document.querySelector("[data-profile-medal]");
 const profileMedalIcon = document.querySelector("[data-profile-medal-icon]");
 const totalStamps = document.querySelector("[data-total-stamps]");
+const adventurerName = document.querySelector("[data-adventurer-name]");
+const adventurerNameEdit = document.querySelector("[data-adventurer-name-edit]");
+const adventurerNameForm = document.querySelector("[data-adventurer-name-form]");
+const adventurerNameInput = document.querySelector("[data-adventurer-name-input]");
+const adventurerNameMessage = document.querySelector("[data-adventurer-name-message]");
 const profileLatestStamp = document.querySelector("[data-profile-latest-stamp]");
 const profileLatestStampCopy = document.querySelector("[data-profile-latest-stamp-copy]");
 const profileLatestTeacherFlowers = document.querySelectorAll("[data-profile-latest-teacher-flower]");
@@ -289,6 +294,8 @@ const stampQrAppliedStorageKey = "suiyoukai-stamp-qr-applied-v1";
 const todayTeacherStampReflectionStorageKey = "suiyoukai-today-teacher-stamps-v1";
 const teacherProfileStorageKey = "suiyoukai-teacher-profiles-v1";
 const adminPasscodeStorageKey = "suiyoukai-admin-passcode-local-v1";
+const adventurerNameStorageKey = "suiyoukai-adventurer-name-v1";
+const defaultAdventurerName = "みずの しずく";
 const backupAppId = "suiyoukai-stamp-adventure";
 const backupFormatVersion = 1;
 const externalGameRecordFormEnabled = true;
@@ -1123,6 +1130,46 @@ const saveGameRecords = () => {
     localStorage.setItem(gameRecordsStorageKey, JSON.stringify(gameRecords));
   } catch {
     // 対局記録は保存できない環境でも、この画面を開いている間は保持します。
+  }
+};
+
+const normalizeAdventurerName = (value) => String(value ?? "").trim().replace(/\s+/g, " ").slice(0, 20);
+
+const loadAdventurerName = () => {
+  try {
+    return normalizeAdventurerName(localStorage.getItem(adventurerNameStorageKey)) || defaultAdventurerName;
+  } catch {
+    return defaultAdventurerName;
+  }
+};
+
+const saveAdventurerName = (value) => {
+  const normalizedName = normalizeAdventurerName(value);
+
+  try {
+    if (normalizedName) {
+      localStorage.setItem(adventurerNameStorageKey, normalizedName);
+    } else {
+      localStorage.removeItem(adventurerNameStorageKey);
+    }
+  } catch {
+    // 名前はこの端末だけの表示用です。保存できない時は表示だけ更新します。
+  }
+
+  return normalizedName || defaultAdventurerName;
+};
+
+const renderAdventurerName = () => {
+  const name = loadAdventurerName();
+
+  if (adventurerName) {
+    adventurerName.textContent = name;
+  }
+  if (adventurerNameInput && document.activeElement !== adventurerNameInput) {
+    adventurerNameInput.value = name === defaultAdventurerName ? "" : name;
+  }
+  if (adventurerNameEdit) {
+    adventurerNameEdit.textContent = name === defaultAdventurerName ? "名前を入れる" : "名前を変える";
   }
 };
 
@@ -7144,6 +7191,7 @@ const updateProfileCard = () => {
   const latestTitle = achievementResult.earnedTitles.at(-1);
   const latestMedal = achievementResult.earnedMedals.at(-1);
 
+  renderAdventurerName();
   totalStamps.textContent = `スタンプ ${getTotalStampCount()}`;
   if (!latestTeacherStampReflection && todayTeacherStampReflections.length === 0) {
     todayTeacherStampReflections = loadTodayTeacherStampReflections();
@@ -8693,6 +8741,36 @@ adminResetConfirmButton.addEventListener("click", () => {
   showPanel("admin");
   lockAdminPanel();
   adminPasscodeMessage.textContent = "記録をリセットし、自動で再ロックしました。";
+});
+
+adventurerNameEdit?.addEventListener("click", () => {
+  if (!adventurerNameForm) {
+    return;
+  }
+
+  const isOpening = adventurerNameForm.hidden;
+  adventurerNameForm.hidden = !isOpening;
+  if (adventurerNameMessage) {
+    adventurerNameMessage.hidden = true;
+    adventurerNameMessage.textContent = "";
+  }
+  if (isOpening) {
+    renderAdventurerName();
+    adventurerNameInput?.focus();
+  }
+});
+
+adventurerNameForm?.addEventListener("submit", (event) => {
+  event.preventDefault();
+  const name = saveAdventurerName(adventurerNameInput?.value);
+  renderAdventurerName();
+  adventurerNameForm.hidden = true;
+  if (adventurerNameMessage) {
+    adventurerNameMessage.hidden = false;
+    adventurerNameMessage.textContent = name === defaultAdventurerName
+      ? "名前を初期表示に戻しました。"
+      : "このスマホに名前を保存しました。";
+  }
 });
 
 updateParticipationStampCard();
