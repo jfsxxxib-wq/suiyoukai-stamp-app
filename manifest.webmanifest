@@ -1,0 +1,26 @@
+{
+  "name": "水曜会 花スタンプ冒険記録",
+  "short_name": "水曜会 花記録",
+  "description": "水曜会で参加と指導碁の花スタンプを記録する冒険者カードアプリです。",
+  "lang": "ja",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f6f2e4",
+  "theme_color": "#f6f2e4",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "assets/app-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/app-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
