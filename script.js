@@ -107,6 +107,7 @@ const libraryJournalNoteSave = document.querySelector("[data-library-journal-not
 const participationStamp = document.querySelector(".participation-stamp");
 const participationFlower = document.querySelector(".participation-stamp .stamp-flower");
 const participationFlowerName = document.querySelector("[data-participation-flower-name]");
+const participationReceptionCode = document.querySelector("[data-participation-reception-code]");
 const participationCount = document.querySelector("[data-participation-count]");
 const participationStatus = document.querySelector("[data-participation-status]");
 const participationStampButton = document.querySelector("[data-participation-stamp-button]");
@@ -1208,7 +1209,11 @@ const renderAdventurerName = () => {
       : "この名前はいつでも変えられます。記録は消えません。";
   }
   if (adventurerReceptionCode) {
-    adventurerReceptionCode.textContent = loadReceptionCode();
+    const receptionCode = loadReceptionCode();
+    adventurerReceptionCode.textContent = receptionCode;
+    if (participationReceptionCode) {
+      participationReceptionCode.textContent = receptionCode;
+    }
   }
 };
 
@@ -5917,6 +5922,13 @@ const hasParticipationStampToday = () =>
   userProgress.stamps.lastParticipationStampDate === getTodayForInput();
 
 const openParticipationForm = () => {
+  const code = loadReceptionCode();
+  try {
+    navigator.clipboard?.writeText(code)?.catch(() => {});
+  } catch {
+    // The visible code remains the fallback when clipboard access is unavailable.
+  }
+
   window.open(participationFormUrl, "_blank", "noopener,noreferrer");
 };
 
@@ -5946,7 +5958,7 @@ const updateParticipationStampCard = () => {
       : `あと${Math.max(0, goal - cycleProgress.countInCycle)}回`;
   participationStampButton.textContent = isMaxAchieved
     ? "参加スタンプ達成済み"
-    : "参加フォームを開く";
+    : "番号をコピーしてフォームを開く";
   participationStampButton.disabled = isMaxAchieved;
 };
 

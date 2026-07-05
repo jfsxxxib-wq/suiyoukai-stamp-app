@@ -466,9 +466,16 @@
   box-sizing: border-box;
 }
 
+html {
+  width: 100%;
+  overflow-x: hidden;
+}
+
 body {
   margin: 0;
+  width: 100%;
   min-height: 100vh;
+  overflow-x: hidden;
   font-family: "Yu Gothic", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
   color: var(--ink);
   background:
@@ -488,7 +495,10 @@ button {
   overflow: hidden;
   display: grid;
   align-items: end;
-  padding: clamp(18px, 4vw, 46px);
+  padding:
+    max(clamp(18px, 4vw, 46px), env(safe-area-inset-top))
+    clamp(18px, 4vw, 46px)
+    max(clamp(18px, 4vw, 46px), env(safe-area-inset-bottom));
 }
 
 .map-hero {
@@ -5936,6 +5946,29 @@ body.is-admin-qr-print-preview .admin-fixed-teacher-qr-item img {
   font-weight: 800;
 }
 
+.participation-reception-reminder {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 4px 10px;
+  align-items: center;
+  margin-top: 8px;
+  padding: 7px 9px;
+  border: 1px solid rgba(63, 118, 82, 0.2);
+  border-radius: 8px;
+  background: rgba(244, 250, 239, 0.86);
+}
+
+.participation-reception-reminder small {
+  min-width: 0;
+}
+
+.participation-reception-reminder strong {
+  color: #2f6b4f;
+  font-size: 0.9rem;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
 .participation-stamp-count,
 .participation-stamp-status {
   display: inline-flex;
@@ -9725,7 +9758,10 @@ button.library-collection-item.is-title.is-opening-book > span {
 @media (max-width: 680px) {
   .record-book {
     min-height: 100svh;
-    padding: 14px;
+    padding:
+      max(14px, env(safe-area-inset-top))
+      14px
+      max(14px, env(safe-area-inset-bottom));
   }
 
   .map-hero > img {
@@ -9855,7 +9891,10 @@ button.library-collection-item.is-title.is-opening-book > span {
     max-height: calc(100svh - 92px);
     overflow: auto;
     overflow-x: clip;
-    padding: 18px 18px 22px;
+    padding:
+      max(18px, env(safe-area-inset-top))
+      18px
+      max(22px, env(safe-area-inset-bottom));
   }
 
   .info-dock.is-detail-open .info-tabs {
@@ -11237,6 +11276,7 @@ body {
   display: grid;
   grid-template-columns: repeat(6, minmax(0, 1fr));
   gap: 8px;
+  max-width: 100%;
 }
 
 .flower-guide-card {
@@ -11318,6 +11358,7 @@ body {
 
 .flower-guide-action {
   justify-self: center;
+  max-width: 100%;
   margin-top: 5px;
   padding: 1px 7px;
   border: 1px solid rgba(77, 133, 93, 0.22);
@@ -11327,6 +11368,7 @@ body {
   font-size: 0.62rem;
   font-weight: 900;
   line-height: 1.35;
+  overflow-wrap: anywhere;
 }
 
 .teacher-guide-heading {
@@ -11447,6 +11489,20 @@ body {
   }
 
   .teacher-card .teacher-flower { width: 40px; height: 40px; }
+}
+
+@media (max-width: 430px) {
+  .flower-guide-group-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .flower-guide-card {
+    padding-inline: 7px;
+  }
+
+  .flower-guide-showcase img {
+    width: min(100%, 92px);
+  }
 }
 
 /* Teacher photo trial: use the originals without the baked-in lower-face fade. */
