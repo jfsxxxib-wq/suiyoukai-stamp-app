@@ -10,7 +10,7 @@ from docx.shared import Cm, Inches, Pt, RGBColor
 
 
 ROOT = Path(__file__).resolve().parents[1]
-OUT = ROOT / "dist" / "水曜会_花記録_ホーム画面追加案内_2026-07-05.docx"
+OUT = ROOT / "dist" / "水曜会_花記録_参加者向け案内_ホーム画面から使う_2026-07-05.docx"
 QR = ROOT / "tmp" / "app-entry-qr.png"
 APP_ICON = ROOT / "assets" / "app-icon-192.png"
 APP_URL = "https://jfsxxxib-wq.github.io/suiyoukai-stamp-app/"
@@ -137,11 +137,11 @@ def build():
 
     title = doc.add_paragraph()
     set_para(title, after=2, line=1.0, align=WD_ALIGN_PARAGRAPH.CENTER)
-    add_text(title, "水曜会 花記録をスマホに入れる", size=24, bold=True, color="2F6B4F")
+    add_text(title, "水曜会 花記録 参加者案内", size=24, bold=True, color="2F6B4F")
 
     subtitle = doc.add_paragraph()
     set_para(subtitle, after=7, line=1.05, align=WD_ALIGN_PARAGRAPH.CENTER)
-    add_text(subtitle, "QRコードで開いて、ホーム画面に追加します", size=12, bold=True, color="7A5A1B")
+    add_text(subtitle, "ホーム画面の花アイコンから開いて使います", size=12, bold=True, color="7A5A1B")
 
     top_table = doc.add_table(rows=1, cols=2)
     top_table.alignment = WD_TABLE_ALIGNMENT.CENTER
@@ -163,10 +163,10 @@ def build():
     add_text(p, "最初にすること", size=14, bold=True, color="2F6B4F")
     p = left.add_paragraph()
     set_para(p, after=4, line=1.25)
-    add_text(p, "1. 右のQRコードを読み取ります。\n2. iPhoneはSafari、AndroidはChromeで開きます。\n3. 自分でホーム画面に追加します。", size=11.5, bold=True, color="3E3323")
+    add_text(p, "1. 右のQRコードを読み取ります。\n2. iPhoneはSafari、AndroidはChromeで開きます。\n3. ホーム画面に「水曜会 花記録」を追加します。", size=11.5, bold=True, color="3E3323")
     p = left.add_paragraph()
     set_para(p, before=2, after=0, line=1.2)
-    add_text(p, "勝手にスマホへ入るものではありません。本人が追加するので安心です。", size=10.2, bold=True, color="7A5A1B")
+    add_text(p, "追加した後は、ホーム画面の花アイコンから開いて使います。", size=10.2, bold=True, color="7A5A1B")
 
     qr_p = right.paragraphs[0]
     set_para(qr_p, after=2, align=WD_ALIGN_PARAGRAPH.CENTER)
@@ -201,6 +201,7 @@ def build():
         "共有ボタンを押す",
         "ホーム画面に追加",
         "名前が「水曜会 花記録」なら追加",
+        "次からは花アイコンで開く",
     ])
 
     p = android_cell.paragraphs[0]
@@ -211,6 +212,7 @@ def build():
         "右上のメニューを押す",
         "ホーム画面に追加、またはアプリをインストール",
         "名前が「水曜会 花記録」なら追加",
+        "次からは花アイコンで開く",
     ])
 
     doc.add_paragraph()
@@ -225,10 +227,16 @@ def build():
     set_cell_shading(note, "F2F8EF")
     p = note.paragraphs[0]
     set_para(p, after=2, line=1.15)
-    add_text(p, "ホーム画面に追加できたら、花のアイコンを押して開いてください。", size=12, bold=True, color="2F6B4F")
+    add_text(p, "大事: 追加できたら、必ずホーム画面の花アイコンから開いてください。", size=12, bold=True, color="2F6B4F")
+    p = note.add_paragraph()
+    set_para(p, after=3, line=1.2)
+    add_text(p, "Edgeや別のブラウザで開いた画面は、ホーム画面の記録と分かれることがあります。QRを読んで別画面が開いた時は、花アイコンの「水曜会 花記録」に戻ってください。", size=10.2, bold=True, color="6F3F2C")
+    p = note.add_paragraph()
+    set_para(p, after=3, line=1.2)
+    add_text(p, "参加フォームでは、アプリに出ている8桁の受付番号を入力します。「番号をコピーしてフォームを開く」を押すと貼り付けできます。", size=10.2, color="3E3323")
     p = note.add_paragraph()
     set_para(p, after=0, line=1.2)
-    add_text(p, "分からない時は、近くのスタッフにこの画面を見せてください。", size=10.5, color="3E3323")
+    add_text(p, "分からない時は、近くのスタッフにこの紙を見せてください。", size=10.5, bold=True, color="3E3323")
 
     footer = doc.add_paragraph()
     set_para(footer, before=7, after=0, align=WD_ALIGN_PARAGRAPH.CENTER)
