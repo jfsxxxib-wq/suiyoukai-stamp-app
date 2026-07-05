@@ -56,6 +56,7 @@ const adventurerNameInput = document.querySelector("[data-adventurer-name-input]
 const adventurerNameMessage = document.querySelector("[data-adventurer-name-message]");
 const adventurerNameHint = document.querySelector("[data-adventurer-name-hint]");
 const adventurerReceptionCode = document.querySelector("[data-adventurer-reception-code]");
+const browserStorageWarning = document.querySelector("[data-browser-storage-warning]");
 const profileLatestStamp = document.querySelector("[data-profile-latest-stamp]");
 const profileLatestStampCopy = document.querySelector("[data-profile-latest-stamp-copy]");
 const profileLatestTeacherFlowers = document.querySelectorAll("[data-profile-latest-teacher-flower]");
@@ -1215,6 +1216,16 @@ const renderAdventurerName = () => {
       participationReceptionCode.textContent = receptionCode;
     }
   }
+};
+
+const isEdgeOnIos = () => /EdgiOS/i.test(navigator.userAgent);
+
+const updateBrowserStorageWarning = () => {
+  if (!browserStorageWarning) {
+    return;
+  }
+
+  browserStorageWarning.hidden = !isEdgeOnIos();
 };
 
 const getTodayGameRecords = () => {
@@ -8839,6 +8850,7 @@ updateShrineRecordSaveState();
 updateLibraryJournalKeeperSpeech();
 updateAdminPanel();
 updateAdminLockState();
+updateBrowserStorageWarning();
 applyStampQrFromLocation();
 
 const appLoadStatus = document.querySelector("[data-app-load-status]");
