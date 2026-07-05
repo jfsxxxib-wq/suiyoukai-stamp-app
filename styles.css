@@ -3848,9 +3848,11 @@ button {
 
 .adventurer-reception-code strong {
   color: #2f6b4f;
-  font-size: 0.98rem;
+  font-size: 0.94rem;
   font-weight: 900;
+  font-variant-numeric: tabular-nums;
   letter-spacing: 0;
+  overflow-wrap: anywhere;
 }
 
 .adventurer-reception-code small {

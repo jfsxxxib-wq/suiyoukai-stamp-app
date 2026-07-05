@@ -297,7 +297,7 @@ const todayTeacherStampReflectionStorageKey = "suiyoukai-today-teacher-stamps-v1
 const teacherProfileStorageKey = "suiyoukai-teacher-profiles-v1";
 const adminPasscodeStorageKey = "suiyoukai-admin-passcode-local-v1";
 const adventurerNameStorageKey = "suiyoukai-adventurer-name-v1";
-const adventurerReceptionCodeStorageKey = "suiyoukai-adventurer-reception-code-v1";
+const adventurerReceptionCodeStorageKey = "suiyoukai-adventurer-reception-code-v2";
 const defaultAdventurerName = "みずの しずく";
 const backupAppId = "suiyoukai-stamp-adventure";
 const backupFormatVersion = 1;
@@ -1167,16 +1167,16 @@ const createReceptionCode = () => {
   if (window.crypto?.getRandomValues) {
     window.crypto.getRandomValues(array);
   } else {
-    array[0] = Math.floor(Math.random() * 900000);
+    array[0] = Math.floor(Math.random() * 90000000);
   }
 
-  return String(100000 + (array[0] % 900000));
+  return String(10000000 + (array[0] % 90000000));
 };
 
 const loadReceptionCode = () => {
   try {
     const storedCode = localStorage.getItem(adventurerReceptionCodeStorageKey);
-    if (/^\d{6}$/.test(storedCode ?? "")) {
+    if (/^\d{8}$/.test(storedCode ?? "")) {
       return storedCode;
     }
 
@@ -1184,7 +1184,7 @@ const loadReceptionCode = () => {
     localStorage.setItem(adventurerReceptionCodeStorageKey, code);
     return code;
   } catch {
-    return "000000";
+    return "00000000";
   }
 };
 
