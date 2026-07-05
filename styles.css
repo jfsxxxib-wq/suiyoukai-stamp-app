@@ -4055,6 +4055,69 @@ button.profile-today-record-flower {
   line-height: 1.45;
 }
 
+.profile-today-game-records {
+  display: grid;
+  gap: 8px;
+}
+
+.profile-today-game-records[hidden] {
+  display: none;
+}
+
+.profile-today-game-record-card {
+  display: grid;
+  gap: 7px;
+  padding: 10px;
+  border: 1px solid rgba(197, 150, 58, 0.26);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.72), rgba(251, 242, 218, 0.58)),
+    rgba(255, 255, 255, 0.55);
+}
+
+.profile-today-game-record-card > strong {
+  color: #76581d;
+  font-size: 0.88rem;
+  font-weight: 900;
+}
+
+.profile-today-game-record-card dl {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: 4px 10px;
+  margin: 0;
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
+
+.profile-today-game-record-card dt {
+  color: rgba(75, 55, 36, 0.7);
+  font-size: 0.74rem;
+  font-weight: 900;
+}
+
+.profile-today-game-record-card dd {
+  margin: 0;
+  color: var(--ink);
+  font-size: 0.8rem;
+  font-weight: 900;
+  overflow-wrap: anywhere;
+}
+
+.profile-today-game-record-flower-line,
+.profile-today-game-record-companion {
+  margin: 0;
+  color: #4f6d48;
+  font-size: 0.76rem;
+  font-weight: 900;
+  line-height: 1.5;
+}
+
+.profile-today-game-record-companion {
+  color: rgba(75, 55, 36, 0.76);
+  font-weight: 800;
+}
+
 .profile-list > .profile-medal-entry {
   grid-template-columns: 1fr;
 }

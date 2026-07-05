@@ -53,6 +53,7 @@ const profileLatestStamp = document.querySelector("[data-profile-latest-stamp]")
 const profileLatestStampCopy = document.querySelector("[data-profile-latest-stamp-copy]");
 const profileLatestTeacherFlowers = document.querySelectorAll("[data-profile-latest-teacher-flower]");
 const profileTodayParticipationMark = document.querySelector("[data-profile-today-participation-mark]");
+const profileTodayGameRecords = document.querySelector("[data-profile-today-game-records]");
 const profileGuideProgress = document.querySelector("[data-profile-guide-progress]");
 const profileGuideProgressTrack = document.querySelector("[data-profile-guide-progress-track]");
 const circleBadge = document.querySelector("[data-circle-badge]");
@@ -1122,6 +1123,76 @@ const saveGameRecords = () => {
     localStorage.setItem(gameRecordsStorageKey, JSON.stringify(gameRecords));
   } catch {
     // 対局記録は保存できない環境でも、この画面を開いている間は保持します。
+  }
+};
+
+const getTodayGameRecords = () => {
+  const today = getTodayForInput();
+
+  return gameRecords
+    .filter((record) => record.date === today && teacherDetails[record.teacherId])
+    .filter((record) => record.handicap !== "記録なし" || record.result !== "記録なし")
+    .sort((a, b) => `${a.recordedAt || ""}${a.id}`.localeCompare(`${b.recordedAt || ""}${b.id}`))
+    .slice(-3);
+};
+
+const formatGameRecordDateLabel = (date) => {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+    return date;
+  }
+
+  return new Date(`${date}T00:00:00`).toLocaleDateString("ja-JP", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+};
+
+const createTodayGameRecordCard = (record) => {
+  const teacher = teacherDetails[record.teacherId];
+  const article = document.createElement("article");
+  const heading = document.createElement("strong");
+  const details = document.createElement("dl");
+  const flowerLine = document.createElement("p");
+  const companionLine = document.createElement("p");
+
+  article.className = "profile-today-game-record-card";
+  heading.textContent = "今日の指導碁";
+  flowerLine.className = "profile-today-game-record-flower-line";
+  flowerLine.textContent = "今日の花が咲きました。";
+  companionLine.className = "profile-today-game-record-companion";
+  companionLine.textContent = `ハリネズミ: 今日は${teacher.name}との一局を、大切にしまっておきます。`;
+
+  const rows = [
+    ["先生", teacher.name],
+    ["日付", formatGameRecordDateLabel(record.date)],
+    ["ハンデ", record.handicap === "記録なし" ? "未記録" : record.handicap],
+    ["結果", record.result === "記録なし" ? "未記録" : record.result],
+  ];
+
+  for (const [label, value] of rows) {
+    const term = document.createElement("dt");
+    const description = document.createElement("dd");
+    term.textContent = label;
+    description.textContent = value;
+    details.append(term, description);
+  }
+
+  article.append(heading, details, flowerLine, companionLine);
+  return article;
+};
+
+const renderProfileTodayGameRecords = () => {
+  if (!profileTodayGameRecords) {
+    return;
+  }
+
+  const records = getTodayGameRecords();
+  profileTodayGameRecords.textContent = "";
+  profileTodayGameRecords.hidden = records.length === 0;
+
+  for (const record of records) {
+    profileTodayGameRecords.append(createTodayGameRecordCard(record));
   }
 };
 
@@ -7095,6 +7166,7 @@ const updateProfileCard = () => {
   if (!latestTeacherStampReflection && profileLatestStampCopy) {
     profileLatestStampCopy.textContent = hasTodayParticipationStamp ? "今日の参加スタンプが入りました。" : "";
   }
+  renderProfileTodayGameRecords();
   if (profileLatestTeacherFlowers.length > 0) {
     profileLatestTeacherFlowers.forEach((button, index) => {
       const reflection = todayTeacherStampReflections[index];
