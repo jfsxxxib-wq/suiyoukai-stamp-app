@@ -8151,6 +8151,96 @@ const showTeacherList = () => {
   teacherList.hidden = false;
 };
 
+const swipePanelOrder = ["profile", "field-guide", "titles"];
+const swipeIgnoreSelector = [
+  "button",
+  "a",
+  "input",
+  "textarea",
+  "select",
+  "label",
+  "[contenteditable='true']",
+  "[role='button']",
+].join(",");
+let panelSwipeStart = null;
+
+const getActivePanelName = () => {
+  for (const panel of panels) {
+    if (!panel.hidden && panel.classList.contains("is-active")) {
+      return panel.dataset.view;
+    }
+  }
+
+  return "";
+};
+
+const canSwipePanelFrom = (event) => {
+  if (infoPanel.hidden || dock.classList.contains("is-collapsed") || dock.classList.contains("is-detail-open")) {
+    return false;
+  }
+
+  const activePanel = getActivePanelName();
+  if (!swipePanelOrder.includes(activePanel)) {
+    return false;
+  }
+
+  if (event.target?.closest?.(swipeIgnoreSelector)) {
+    return false;
+  }
+
+  return true;
+};
+
+const moveSwipePanel = (direction) => {
+  const activePanel = getActivePanelName();
+  const currentIndex = swipePanelOrder.indexOf(activePanel);
+  if (currentIndex < 0) {
+    return;
+  }
+
+  const nextIndex = currentIndex + direction;
+  if (nextIndex < 0 || nextIndex >= swipePanelOrder.length) {
+    return;
+  }
+
+  const nextPanel = swipePanelOrder[nextIndex];
+  showPanel(nextPanel);
+  if (nextPanel === "field-guide") {
+    showTeacherList();
+  }
+};
+
+infoPanel?.addEventListener("touchstart", (event) => {
+  if (!canSwipePanelFrom(event) || event.touches.length !== 1) {
+    panelSwipeStart = null;
+    return;
+  }
+
+  const touch = event.touches[0];
+  panelSwipeStart = {
+    x: touch.clientX,
+    y: touch.clientY,
+  };
+}, { passive: true });
+
+infoPanel?.addEventListener("touchend", (event) => {
+  if (!panelSwipeStart || event.changedTouches.length !== 1) {
+    panelSwipeStart = null;
+    return;
+  }
+
+  const touch = event.changedTouches[0];
+  const deltaX = touch.clientX - panelSwipeStart.x;
+  const deltaY = touch.clientY - panelSwipeStart.y;
+  panelSwipeStart = null;
+
+  if (Math.abs(deltaX) < 72 || Math.abs(deltaX) < Math.abs(deltaY) * 1.35) {
+    return;
+  }
+
+  moveSwipePanel(deltaX < 0 ? 1 : -1);
+}, { passive: true });
+
 for (const tab of tabs) {
   tab.addEventListener("click", () => {
     const target = tab.dataset.panel;
