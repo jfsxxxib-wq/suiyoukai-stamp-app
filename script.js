@@ -5650,8 +5650,8 @@ const removeAdminTeacherOperationApplied = (key) => {
 
 const clearAdminOperationMemory = () => {
   try {
-    localStorage.removeItem(adminIdentityCodeStorageKey);
-    localStorage.removeItem(adminIdentityDisplayNameStorageKey);
+    localStorage.setItem(adminIdentityCodeStorageKey, adminIdentityBlankCodeValue);
+    localStorage.setItem(adminIdentityDisplayNameStorageKey, adminIdentityBlankNameValue);
     localStorage.removeItem(adminIdentityRealNameStorageKey);
     localStorage.removeItem(adminCombinedAppliedKeysStorageKey);
   } catch {
