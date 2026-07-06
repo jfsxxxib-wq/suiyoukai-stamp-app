@@ -1190,6 +1190,7 @@ const normalizeAdminIdentityName = (value) => String(value ?? "").trim().replace
 
 const normalizeAdminIdentityCode = (value) => String(value ?? "").replace(/\D/g, "").slice(0, 8);
 const adminIdentityBlankCodeValue = "__blank__";
+const adminIdentityBlankNameValue = "__blank__";
 
 const loadAdminIdentityCode = () => {
   try {
@@ -1231,7 +1232,21 @@ const saveAdminIdentityCode = (value) => {
 
 const loadAdminIdentityDisplayName = () => {
   try {
-    return normalizeAdminIdentityName(localStorage.getItem(adminIdentityDisplayNameStorageKey)) || loadAdventurerName();
+    const storedName = localStorage.getItem(adminIdentityDisplayNameStorageKey);
+    if (storedName === adminIdentityBlankNameValue) {
+      return "";
+    }
+
+    const normalizedName = normalizeAdminIdentityName(storedName);
+    if (normalizedName) {
+      return normalizedName;
+    }
+
+    const hasCustomIdentity =
+      normalizeAdminIdentityCode(localStorage.getItem(adminIdentityCodeStorageKey)) ||
+      normalizeAdminIdentityName(localStorage.getItem(adminIdentityRealNameStorageKey));
+
+    return hasCustomIdentity ? "" : loadAdventurerName();
   } catch {
     return loadAdventurerName();
   }
@@ -1244,13 +1259,13 @@ const saveAdminIdentityDisplayName = (value) => {
     if (normalizedName) {
       localStorage.setItem(adminIdentityDisplayNameStorageKey, normalizedName);
     } else {
-      localStorage.removeItem(adminIdentityDisplayNameStorageKey);
+      localStorage.setItem(adminIdentityDisplayNameStorageKey, adminIdentityBlankNameValue);
     }
   } catch {
     // Identity notes are only a local operation aid.
   }
 
-  return normalizedName || loadAdventurerName();
+  return normalizedName;
 };
 
 const loadAdminIdentityRealName = () => {
@@ -1282,7 +1297,9 @@ const updateAdminIdentityCard = () => {
   const receptionCode = loadAdminIdentityCode();
   const receptionLabel = receptionCode || "未入力";
   const realName = loadAdminIdentityRealName();
-  const participantLabel = realName ? `${displayName} / ${realName}` : displayName;
+  const participantLabel = realName
+    ? `${displayName || "名前未入力"} / ${realName}`
+    : displayName || "未入力";
 
   if (adminIdentityCode && document.activeElement !== adminIdentityCode) {
     adminIdentityCode.value = receptionCode;
@@ -1315,9 +1332,15 @@ const updateAdminIdentityNoteText = () => {
   const receptionLabel = loadAdminIdentityCode() || "未入力";
   const realName = loadAdminIdentityRealName();
 
+  if (!displayName && !realName && receptionLabel === "未入力") {
+    adminIdentityNote.textContent = "操作対象が未入力です。受付番号、画面名、本名・確認名のどれかを入れてください。";
+    return;
+  }
+
+  const displayLabel = displayName || "名前未入力";
   adminIdentityNote.textContent = realName
-    ? `受付番号 ${receptionLabel} / ${displayName} / ${realName} の記録を操作します。`
-    : `受付番号 ${receptionLabel} / ${displayName} の記録を操作します。本名が必要な時だけ入力してください。`;
+    ? `受付番号 ${receptionLabel} / ${displayLabel} / ${realName} の記録を操作します。`
+    : `受付番号 ${receptionLabel} / ${displayLabel} の記録を操作します。本名が必要な時だけ入力してください。`;
 };
 
 const createReceptionCode = () => {
@@ -5625,6 +5648,33 @@ const removeAdminTeacherOperationApplied = (key) => {
   saveAdminCombinedAppliedKeys(keys);
 };
 
+const clearAdminOperationMemory = () => {
+  try {
+    localStorage.removeItem(adminIdentityCodeStorageKey);
+    localStorage.removeItem(adminIdentityDisplayNameStorageKey);
+    localStorage.removeItem(adminIdentityRealNameStorageKey);
+    localStorage.removeItem(adminCombinedAppliedKeysStorageKey);
+  } catch {
+    // Clearing operation helpers is best-effort.
+  }
+
+  if (adminIdentityCode) {
+    adminIdentityCode.value = "";
+  }
+  if (adminIdentityDisplayName) {
+    adminIdentityDisplayName.value = "";
+  }
+  if (adminIdentityRealName) {
+    adminIdentityRealName.value = "";
+  }
+  if (adminParticipationName) {
+    adminParticipationName.value = "";
+  }
+  if (adminCombinedMessage) {
+    adminCombinedMessage.textContent = "参加スタンプと対局内容を確認してから押してください。";
+  }
+};
+
 const updateAdminGameRecordApply = () => {
   if (!adminGameRecordApply || !adminGameRecordMessage) {
     return;
@@ -5750,6 +5800,7 @@ const applyGameRecordFromAdmin = () => {
     return;
   }
 
+  markAdminTeacherOperationApplied(teacherOperationKey);
   const gameRecordId = `game-admin-${Date.now()}-${draft.teacherId}`;
   gameRecords.push({
     id: gameRecordId,
@@ -5934,6 +5985,10 @@ const applyTodayParticipationStampFromAdmin = () => {
 };
 
 const applyCombinedAdminOperation = () => {
+  if (adminCombinedApply) {
+    adminCombinedApply.disabled = true;
+  }
+
   const participantName = adminParticipationName?.value.trim() || loadAdminIdentityDisplayName() || "参加者";
   const appliedItems = [];
   const today = getTodayForInput();
@@ -6044,6 +6099,7 @@ const resetUserProgress = () => {
   appliedStampQrIds = new Set();
   saveAppliedStampQrIds();
   adminGameRecordApplyCooldownUntil = 0;
+  clearAdminOperationMemory();
   userProgress = sanitizeProgress(createResetProgress());
   syncTeacherDetailsFromProgress();
   syncProgressRewards();
@@ -9246,18 +9302,21 @@ adminIdentityRealName?.addEventListener("input", () => {
   saveAdminIdentityRealName(adminIdentityRealName.value);
   updateAdminIdentityCard();
   updateAdminIdentityNoteText();
+  updateAdminOperationSummary();
 });
 
 adminIdentityCode?.addEventListener("input", () => {
   saveAdminIdentityCode(adminIdentityCode.value);
   updateAdminIdentityCard();
   updateAdminIdentityNoteText();
+  updateAdminOperationSummary();
 });
 
 adminIdentityDisplayName?.addEventListener("input", () => {
   saveAdminIdentityDisplayName(adminIdentityDisplayName.value);
   updateAdminIdentityCard();
   updateAdminIdentityNoteText();
+  updateAdminOperationSummary();
 });
 
 updateParticipationStampCard();
