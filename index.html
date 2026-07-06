@@ -15,7 +15,7 @@
     <link rel="manifest" href="manifest.webmanifest?v=20260705-home-screen-01">
     <link rel="apple-touch-icon" href="assets/app-icon-180.png?v=20260705-home-screen-01">
     <link rel="icon" type="image/png" sizes="192x192" href="assets/app-icon-192.png?v=20260705-home-screen-01">
-    <link rel="stylesheet" href="styles.css?v=20260705-edge-warning-01">
+    <link rel="stylesheet" href="styles.css?v=20260706-participation-start-01">
   </head>
   <body>
     <main class="record-book" aria-label="冒険記録帳">
@@ -58,6 +58,39 @@
           <span aria-hidden="true">□</span>
           冒険の書
         </button>
+      </section>
+
+      <section class="participation-start-sheet" data-participation-start-sheet hidden aria-label="水曜会参加の入口">
+        <button type="button" class="participation-start-backdrop" data-participation-start-close aria-label="参加の入口を閉じる"></button>
+        <div class="participation-start-card">
+          <div class="participation-start-header">
+            <div>
+              <small>水曜会に参加する</small>
+              <h2>受付番号を持って記入へ進む</h2>
+            </div>
+            <button type="button" class="participation-start-close" data-participation-start-close aria-label="閉じる">×</button>
+          </div>
+          <section class="participation-start-stamp" aria-label="参加スタンプ">
+            <span class="stamp-flower" data-participation-start-flower aria-hidden="true"></span>
+            <span class="participation-start-copy">
+              <small>参加スタンプ</small>
+              <strong data-participation-start-flower-name>コスモス</strong>
+              <em>フォーム送信後はホーム画面の花アイコンに戻ります</em>
+              <span class="participation-start-code">
+                <small>フォームに書く受付番号</small>
+                <strong data-participation-start-reception-code>00000000</strong>
+              </span>
+              <span class="participation-start-status-line">
+                <span data-participation-start-count>0/10回</span>
+                <span data-participation-start-status>まだ未達成</span>
+              </span>
+            </span>
+            <button type="button" class="participation-start-button" data-participation-start-form>受付番号をコピーして記入へ進む</button>
+            <p class="participation-start-guide" data-participation-start-guide>
+              フォーム記入だけでは花は入りません。送信後、ホーム画面の花アイコンに戻り、受付で参加QRを読んでください。
+            </p>
+          </section>
+        </div>
       </section>
 
       <section class="shrine-intro" data-shrine-intro hidden aria-label="組み合わせ神社への導入">
@@ -307,7 +340,7 @@
               <span class="participation-stamp-copy">
                 <small>参加スタンプ</small>
                 <strong data-participation-flower-name>コスモス</strong>
-                <em>フォーム送信後はホームから水曜会アプリを開き直します</em>
+                <em>フォーム送信後はホームから水曜会アプリを開き直し、受付QRで花を入れます</em>
                 <span class="participation-reception-reminder">
                   <small>フォームに書く受付番号</small>
                   <strong data-participation-reception-code>00000000</strong>
@@ -315,7 +348,10 @@
                 <span class="participation-stamp-count" data-participation-count>0/10回</span>
                 <span class="participation-stamp-status" data-participation-status>まだ未達成</span>
               </span>
-              <button type="button" class="participation-stamp-button" data-participation-stamp-button>番号をコピーしてフォームを開く</button>
+              <button type="button" class="participation-stamp-button" data-participation-stamp-button>受付番号をコピーして記入へ進む</button>
+              <p class="participation-stamp-guide" data-participation-stamp-guide>
+                フォーム記入だけでは花は入りません。送信後、ホーム画面の花アイコンに戻り、受付で参加QRを読んでください。
+              </p>
             </section>
             <div class="teacher-layout" data-teacher-mode="list">
               <section class="teacher-list teacher-screen is-active" aria-label="先生一覧">
@@ -544,12 +580,12 @@
                       href="https://docs.google.com/forms/d/e/1FAIpQLSegoLkRkzQTTsj90BbVBdUOzocBhzh452_XsQ183cFLve9Glw/viewform?usp=dialog"
                       target="_blank"
                       rel="noopener noreferrer"
-                    >対局記録フォームを開く</a>
+                    >詳しく残す時だけ対局記録フォームを開く</a>
                     <p class="event-first-note" data-teacher-event-first-note>
-                      運営反映後、この先生カードと冒険者カードに今日の指導碁が残ります。
+                      ふだんは先生席のQRで花を入れます。ハンデや勝敗まで残す時だけフォームを使います。
                     </p>
                     <button type="button" class="complete-teacher" hidden>2. 対局記録を入力</button>
-                    <p data-flow-message>フォーム送信後はホームから水曜会アプリを開き直します。運営確認後、QRで今日の記録へ反映します。</p>
+                    <p data-flow-message>先生席のQRで花が入ります。対局内容まで残す時だけフォームを使います。</p>
                   </div>
                 </div>
                 <section class="teacher-game-records" data-teacher-game-records aria-label="保存した対局記録">
@@ -1315,7 +1351,7 @@
       });
     </script>
     <script src="stamp-rules.js?v=20260702-shrine-today-teachers-01"></script>
-    <script src="script.js?v=20260705-edge-warning-01"></script>
+    <script src="script.js?v=20260706-participation-start-01"></script>
   </body>
 </html>
 

@@ -112,6 +112,16 @@ const participationReceptionCode = document.querySelector("[data-participation-r
 const participationCount = document.querySelector("[data-participation-count]");
 const participationStatus = document.querySelector("[data-participation-status]");
 const participationStampButton = document.querySelector("[data-participation-stamp-button]");
+const participationStampGuide = document.querySelector("[data-participation-stamp-guide]");
+const participationStartSheet = document.querySelector("[data-participation-start-sheet]");
+const participationStartCloseButtons = document.querySelectorAll("[data-participation-start-close]");
+const participationStartFlower = document.querySelector("[data-participation-start-flower]");
+const participationStartFlowerName = document.querySelector("[data-participation-start-flower-name]");
+const participationStartReceptionCode = document.querySelector("[data-participation-start-reception-code]");
+const participationStartCount = document.querySelector("[data-participation-start-count]");
+const participationStartStatus = document.querySelector("[data-participation-start-status]");
+const participationStartFormButton = document.querySelector("[data-participation-start-form]");
+const participationStartGuide = document.querySelector("[data-participation-start-guide]");
 const flowerGuideCards = document.querySelectorAll("[data-flower-guide-target]");
 const circleStamp = document.querySelector("[data-circle-stamp='first']");
 const circleStatus = document.querySelector("[data-circle-status]");
@@ -300,6 +310,7 @@ const teacherProfileStorageKey = "suiyoukai-teacher-profiles-v1";
 const adminPasscodeStorageKey = "suiyoukai-admin-passcode-local-v1";
 const adventurerNameStorageKey = "suiyoukai-adventurer-name-v1";
 const adventurerReceptionCodeStorageKey = "suiyoukai-adventurer-reception-code-v2";
+const participationFormOpenedStorageKey = "suiyoukai-participation-form-opened-v1";
 const defaultAdventurerName = "みずの しずく";
 const backupAppId = "suiyoukai-stamp-adventure";
 const backupFormatVersion = 1;
@@ -5932,8 +5943,39 @@ const getCurrentAchievementResult = () =>
 const hasParticipationStampToday = () =>
   userProgress.stamps.lastParticipationStampDate === getTodayForInput();
 
+const hasOpenedParticipationForm = () => {
+  try {
+    return localStorage.getItem(participationFormOpenedStorageKey) === getTodayForInput();
+  } catch {
+    return false;
+  }
+};
+
+const markParticipationFormOpened = () => {
+  try {
+    localStorage.setItem(participationFormOpenedStorageKey, getTodayForInput());
+  } catch {
+    // The visible guidance remains available even if local storage is blocked.
+  }
+};
+
+const openParticipationStartSheet = () => {
+  updateParticipationStampCard();
+  if (participationStartSheet) {
+    participationStartSheet.hidden = false;
+  }
+};
+
+const closeParticipationStartSheet = () => {
+  if (participationStartSheet) {
+    participationStartSheet.hidden = true;
+  }
+};
+
 const openParticipationForm = () => {
   const code = loadReceptionCode();
+  markParticipationFormOpened();
+  closeParticipationStartSheet();
   try {
     navigator.clipboard?.writeText(code)?.catch(() => {});
   } catch {
@@ -5954,12 +5996,17 @@ const updateParticipationStampCard = () => {
   const isFirstAchievementAchieved = currentCount >= goal;
   const isMaxAchieved = currentCount >= cycleProgress.maxCount;
   const isStampedToday = hasParticipationStampToday();
+  const shouldShowPostFormGuide = hasOpenedParticipationForm() && !isStampedToday;
 
   if (participationFlowerName) {
     participationFlowerName.textContent = cycleProgress.cycle.flowerName;
   }
+  if (participationStartFlowerName) {
+    participationStartFlowerName.textContent = cycleProgress.cycle.flowerName;
+  }
 
   applyFlowerVisual(participationFlower, cycleProgress.cycle);
+  applyFlowerVisual(participationStartFlower, cycleProgress.cycle);
 
   participationCount.textContent = `${cycleProgress.countInCycle}/${goal}回`;
   participationStatus.textContent = isStampedToday
@@ -5967,10 +6014,38 @@ const updateParticipationStampCard = () => {
     : isFirstAchievementAchieved
       ? `${cycleProgress.cycleNumber}巡目 ${cycleProgress.cycle.flowerName}`
       : `あと${Math.max(0, goal - cycleProgress.countInCycle)}回`;
+  if (participationStartReceptionCode) {
+    participationStartReceptionCode.textContent = loadReceptionCode();
+  }
+  if (participationStartCount) {
+    participationStartCount.textContent = participationCount.textContent;
+  }
+  if (participationStartStatus) {
+    participationStartStatus.textContent = participationStatus.textContent;
+  }
   participationStampButton.textContent = isMaxAchieved
     ? "参加スタンプ達成済み"
-    : "番号をコピーしてフォームを開く";
+    : "受付番号をコピーして記入へ進む";
   participationStampButton.disabled = isMaxAchieved;
+  if (participationStartFormButton) {
+    participationStartFormButton.textContent = participationStampButton.textContent;
+    participationStartFormButton.disabled = isMaxAchieved;
+  }
+
+  if (participationStampGuide) {
+    participationStampGuide.textContent = isStampedToday
+      ? "今日の花は入っています。次からもホーム画面の花アイコンから開いてください。"
+      : shouldShowPostFormGuide
+        ? "フォーム送信後は、ホーム画面の花アイコンに戻り、受付で参加QRを読んでください。フォーム記入だけでは花は入りません。"
+        : "フォーム記入だけでは花は入りません。送信後、ホーム画面の花アイコンに戻り、受付で参加QRを読んでください。";
+    participationStampGuide.classList.toggle("is-urgent", shouldShowPostFormGuide);
+    participationStampGuide.classList.toggle("is-complete", isStampedToday);
+  }
+  if (participationStartGuide) {
+    participationStartGuide.textContent = participationStampGuide?.textContent ?? "";
+    participationStartGuide.classList.toggle("is-urgent", shouldShowPostFormGuide);
+    participationStartGuide.classList.toggle("is-complete", isStampedToday);
+  }
 };
 
 const getAssetPath = (asset) => {
@@ -7485,7 +7560,7 @@ const setRecordPhase = (phase, teacher) => {
     completeTeacherButton.hidden = true;
     flowMessage.textContent = teacher.stampCount >= getTeacherMaxCount(teacher)
       ? "この先生の花スタンプはすべて達成済みです。"
-      : "フォーム送信後はホームから水曜会アプリを開き直します。運営確認後、QRで今日の記録へ反映します。";
+      : "先生席のQRで花が入ります。ハンデや勝敗まで残す時だけフォームを使います。";
     return;
   }
 
@@ -7608,8 +7683,8 @@ const renderTeacherDetail = (teacherKey) => {
   document.querySelector("[data-teacher-note]").textContent = profile.note;
   if (teacherEventFirstNote) {
     teacherEventFirstNote.textContent = teacher.stampCount === 0
-      ? `フォーム送信後はホームから水曜会アプリを開き直します。QR反映後、${teacher.name}の花が0/${getTeacherGoal(teacher)}から1/${getTeacherGoal(teacher)}に育ちます。`
-      : `フォーム送信後はホームから水曜会アプリを開き直します。QR反映後、${teacher.name}の花スタンプが冒険者カードへ残ります。`;
+      ? `ふだんは先生席のQRで${teacher.name}の花を入れます。ハンデや勝敗まで残す時だけフォームを使います。`
+      : `先生席のQRで${teacher.name}の花スタンプが冒険者カードへ残ります。詳しい対局内容は必要な時だけフォームで残します。`;
   }
   renderTeacherGameRecords(teacherKey);
   const isCycleAchievementPreview = !isAllCyclesComplete && isTeacherCycleAchievementCount(teacher.stampCount + 1, teacher);
@@ -7744,6 +7819,12 @@ const showFlowerGuideArrival = (targetElement, message) => {
   }, 2600);
 };
 
+const showParticipationStampEntry = (message = "参加フォームはここからだけ開きます") => {
+  showPanel("field-guide");
+  showTeacherList();
+  showFlowerGuideArrival(participationStamp, message);
+};
+
 for (const card of teacherCards) {
   card.addEventListener("click", () => {
     openTeacherDetailFromCard(card);
@@ -7757,7 +7838,7 @@ for (const flowerCard of flowerGuideCards) {
     const flowerMeta = flowerCard.querySelector(".flower-guide-meta")?.textContent ?? "";
 
     if (target === "participation") {
-      openParticipationForm();
+      showParticipationStampEntry("参加フォームはこの参加スタンプ欄から開きます");
       return;
     }
 
@@ -7769,7 +7850,7 @@ for (const flowerCard of flowerGuideCards) {
 for (const button of mapDestinationButtons) {
   button.addEventListener("click", () => {
     if (button.dataset.mapDestination === "participation") {
-      openParticipationForm();
+      openParticipationStartSheet();
       return;
     }
 
@@ -8509,6 +8590,8 @@ nextAdventureButton.addEventListener("click", () => {
 
   if (nextAdventureButton.dataset.nextAdventureTeacher) {
     document.querySelector(`.teacher-card[data-teacher="${nextAdventureButton.dataset.nextAdventureTeacher}"]`)?.click();
+  } else if (nextAdventureButton.dataset.adventureType === "participation") {
+    openParticipationStartSheet();
   }
 });
 
@@ -8540,6 +8623,14 @@ for (const input of [gameRecordDate, gameRecordHandicap, gameRecordResult]) {
 participationStampButton.addEventListener("click", () => {
   openParticipationForm();
 });
+
+participationStartFormButton?.addEventListener("click", () => {
+  openParticipationForm();
+});
+
+for (const closeButton of participationStartCloseButtons) {
+  closeButton.addEventListener("click", closeParticipationStartSheet);
+}
 
 adminParticipationApply?.addEventListener("click", applyTodayParticipationStampFromAdmin);
 adminParticipationQrCreateButton?.addEventListener("click", createAdminParticipationQr);
