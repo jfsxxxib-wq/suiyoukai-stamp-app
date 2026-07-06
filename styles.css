@@ -423,7 +423,7 @@
 }
 
 .info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) .teacher-photo[data-teacher-photo="matsumoto"]::after {
-  background: url("assets/teacher-matsumoto-trial-20260706.png") center center / contain no-repeat, #d9cfc6 !important;
+  background: url("assets/teacher-matsumoto-trial-20260706-02.png") center center / contain no-repeat, #d9cfc6 !important;
 }
 
 /* Photo size balance: larger portrait frame while preserving each teacher photo ratio. */
@@ -7779,7 +7779,7 @@ body.is-admin-qr-print-preview .admin-fixed-teacher-qr-item img {
 }
 
 .teacher-photo[data-teacher-photo="matsumoto"]::after {
-  background: url("assets/teacher-matsumoto-trial-20260706.png") center 42% / 94% auto no-repeat, #e2cfc2;
+  background: url("assets/teacher-matsumoto-trial-20260706-02.png") center 42% / 94% auto no-repeat, #e2cfc2;
   box-shadow: 0 8px 20px rgba(48, 38, 26, 0.12), inset 0 0 18px rgba(226, 207, 194, 0.42);
 }
 
@@ -11404,7 +11404,7 @@ button.library-collection-item.is-title.is-opening-book > span {
 }
 
 .info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) .teacher-photo[data-teacher-photo="matsumoto"]::after {
-  background: url("assets/teacher-matsumoto-trial-20260706.png") center center / contain no-repeat, #d9cfc6 !important;
+  background: url("assets/teacher-matsumoto-trial-20260706-02.png") center center / contain no-repeat, #d9cfc6 !important;
 }
 
 /* Photo size balance final override: larger, still uncropped. */
