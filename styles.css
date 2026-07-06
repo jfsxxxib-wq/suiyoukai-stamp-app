@@ -5085,7 +5085,19 @@ button.profile-today-record-flower {
   cursor: pointer;
 }
 
-.admin-combined-apply:disabled {
+.admin-duplicate-teacher-apply {
+  min-height: 42px;
+  border: 1px solid rgba(197, 150, 58, 0.36);
+  border-radius: 8px;
+  background: rgba(255, 247, 221, 0.92);
+  color: #785a19;
+  font: inherit;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.admin-combined-apply:disabled,
+.admin-duplicate-teacher-apply:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }

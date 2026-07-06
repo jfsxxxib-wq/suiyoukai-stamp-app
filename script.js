@@ -153,6 +153,7 @@ const adminParticipation = document.querySelector("[data-admin-participation]");
 const adminNote = document.querySelector("[data-admin-note]");
 const adminResult = document.querySelector("[data-admin-result]");
 const adminCombinedApply = document.querySelector("[data-admin-combined-apply]");
+const adminDuplicateTeacherApply = document.querySelector("[data-admin-duplicate-teacher-apply]");
 const adminCombinedMessage = document.querySelector("[data-admin-combined-message]");
 const adminHistoryList = document.querySelector("[data-admin-history-list]");
 const adminTroubleToggle = document.querySelector("[data-admin-trouble-toggle]");
@@ -290,6 +291,7 @@ let adminDraft = null;
 let latestTeacherStampReflection = null;
 let todayTeacherStampReflections = [];
 let adminGameRecordApplyCooldownUntil = 0;
+let adminDuplicateTeacherApplyCooldownUntil = 0;
 let pendingOperatorAction = null;
 let pendingRestoreBackup = null;
 let isShrineIntroPlaying = false;
@@ -5631,6 +5633,7 @@ const getAdminTeacherOperationKey = (draft = getAdminGameRecordDraft()) => [
 ].join("|");
 
 const isAdminTeacherOperationApplied = (key) => loadAdminCombinedAppliedKeys().has(key);
+const getAdminTeacherDuplicateKey = (draft = getAdminGameRecordDraft()) => `${getAdminTeacherOperationKey(draft)}|duplicate|${Date.now()}`;
 
 const markAdminTeacherOperationApplied = (key) => {
   const keys = loadAdminCombinedAppliedKeys();
@@ -5768,12 +5771,21 @@ const updateAdminOperationSummary = () => {
   if (adminCombinedApply) {
     adminCombinedApply.disabled = !canApplyParticipation && !canApplyTeacher;
   }
+  if (adminDuplicateTeacherApply) {
+    const canApplyDuplicateTeacher =
+      Boolean(teacher) &&
+      isTeacherAlreadyApplied &&
+      !isTeacherMax &&
+      Date.now() >= adminDuplicateTeacherApplyCooldownUntil;
+    adminDuplicateTeacherApply.hidden = !canApplyDuplicateTeacher;
+    adminDuplicateTeacherApply.disabled = !canApplyDuplicateTeacher;
+  }
   if (adminResult && isTeacherAlreadyApplied) {
     adminResult.textContent = "この対局内容は反映済み";
   }
 };
 
-const applyGameRecordFromAdmin = () => {
+const applyGameRecordFromAdmin = ({ allowDuplicate = false } = {}) => {
   const draft = getAdminGameRecordDraft();
   const teacher = teacherDetails[draft.teacherId];
 
@@ -5782,8 +5794,12 @@ const applyGameRecordFromAdmin = () => {
     return;
   }
 
-  const teacherOperationKey = getAdminTeacherOperationKey(draft);
-  if (isAdminTeacherOperationApplied(teacherOperationKey)) {
+  const baseTeacherOperationKey = getAdminTeacherOperationKey(draft);
+  const isDuplicateOperation = allowDuplicate && isAdminTeacherOperationApplied(baseTeacherOperationKey);
+  const teacherOperationKey = isDuplicateOperation
+    ? getAdminTeacherDuplicateKey(draft)
+    : baseTeacherOperationKey;
+  if (!allowDuplicate && isAdminTeacherOperationApplied(baseTeacherOperationKey)) {
     updateAdminPanel();
     if (adminGameRecordMessage) {
       adminGameRecordMessage.textContent = "この対局内容はすでに反映済みです。";
@@ -5850,7 +5866,9 @@ const applyGameRecordFromAdmin = () => {
   window.setTimeout(updateAdminGameRecordApply, 1250);
 
   if (adminGameRecordMessage) {
-    adminGameRecordMessage.textContent = `${teacher.name} の今日の指導碁を記録しました。参加者には冒険者カードを見せてください。`;
+    adminGameRecordMessage.textContent = isDuplicateOperation
+      ? `${teacher.name} の同じ条件の対局を、もう1局として追加しました。`
+      : `${teacher.name} の今日の指導碁を記録しました。参加者には冒険者カードを見せてください。`;
   }
   if (adminShowProfileButton) {
     adminShowProfileButton.hidden = false;
@@ -5893,6 +5911,7 @@ const undoLatestGameRecordFromAdmin = () => {
   saveTodayTeacherStampReflections();
   removeAdminTeacherOperationApplied(reflection.adminOperationKey);
   adminGameRecordApplyCooldownUntil = 0;
+  adminDuplicateTeacherApplyCooldownUntil = 0;
   syncTeacherDetailsFromProgress();
   syncProgressRewards();
   saveUserProgress();
@@ -6040,6 +6059,26 @@ const applyCombinedAdminOperation = () => {
   }
 };
 
+const applyDuplicateTeacherGameFromAdmin = () => {
+  if (adminDuplicateTeacherApply) {
+    adminDuplicateTeacherApply.disabled = true;
+  }
+
+  adminDuplicateTeacherApplyCooldownUntil = Date.now() + 1200;
+  applyGameRecordFromAdmin({ allowDuplicate: true });
+
+  if (adminCombinedMessage) {
+    const draft = getAdminGameRecordDraft();
+    const teacher = teacherDetails[draft.teacherId];
+    adminCombinedMessage.textContent = teacher
+      ? `${teacher.name} の同じ条件の対局を、もう1局として追加しました。`
+      : "追加する対局内容を選んでください。";
+  }
+
+  updateAdminOperationSummary();
+  window.setTimeout(updateAdminOperationSummary, 1250);
+};
+
 const getAdminDraftChanges = () => {
   if (!adminDraft) {
     return [];
@@ -6074,6 +6113,7 @@ const applyAdminDraftToProgress = () => {
   todayTeacherStampReflections = [];
   saveTodayTeacherStampReflections();
   adminGameRecordApplyCooldownUntil = 0;
+  adminDuplicateTeacherApplyCooldownUntil = 0;
   userProgress.stamps.participationCount = clampProgressCount(adminDraft.participationCount, getParticipationMaxCount());
   userProgress.stamps.teacherLessonCounts = Object.fromEntries(
     Object.entries(teacherDetails).map(([teacherId, teacher]) => [
@@ -6099,6 +6139,7 @@ const resetUserProgress = () => {
   appliedStampQrIds = new Set();
   saveAppliedStampQrIds();
   adminGameRecordApplyCooldownUntil = 0;
+  adminDuplicateTeacherApplyCooldownUntil = 0;
   clearAdminOperationMemory();
   userProgress = sanitizeProgress(createResetProgress());
   syncTeacherDetailsFromProgress();
@@ -8999,6 +9040,7 @@ for (const closeButton of participationStartCloseButtons) {
 adminParticipationApply?.addEventListener("click", applyTodayParticipationStampFromAdmin);
 adminParticipationQrCreateButton?.addEventListener("click", createAdminParticipationQr);
 adminCombinedApply?.addEventListener("click", applyCombinedAdminOperation);
+adminDuplicateTeacherApply?.addEventListener("click", applyDuplicateTeacherGameFromAdmin);
 adminGameRecordApply?.addEventListener("click", applyGameRecordFromAdmin);
 adminStampQrCreateButton?.addEventListener("click", createAdminStampQr);
 adminFixedTeacherQrCreateButton?.addEventListener("click", createAdminFixedTeacherQrs);
