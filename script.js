@@ -8234,7 +8234,7 @@ infoPanel?.addEventListener("touchend", (event) => {
   const deltaY = touch.clientY - panelSwipeStart.y;
   panelSwipeStart = null;
 
-  if (Math.abs(deltaX) < 72 || Math.abs(deltaX) < Math.abs(deltaY) * 1.35) {
+  if (Math.abs(deltaX) < 52 || Math.abs(deltaX) < Math.abs(deltaY) * 1.15) {
     return;
   }
 
