@@ -11742,7 +11742,7 @@ body {
 }
 
 .info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) .teacher-photo[data-teacher-photo="matsumoto"]::after {
-  background: url("assets/teacher-matsumoto.jpg") center center / contain no-repeat, #f3efe8 !important;
+  background: url("assets/teacher-matsumoto-suit-20260706-v3.png?v=20260706-photo-03") center center / contain no-repeat, #f3efe8 !important;
 }
 
 /* Temporary teacher portrait: detective-style silhouette until real photos are added. */
