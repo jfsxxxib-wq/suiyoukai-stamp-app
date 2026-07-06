@@ -12,10 +12,10 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="mobile-web-app-capable" content="yes">
     <title>水曜会 花記録</title>
-    <link rel="manifest" href="manifest.webmanifest?v=20260707-admin-target-01">
+    <link rel="manifest" href="manifest.webmanifest?v=20260707-admin-combined-01">
     <link rel="apple-touch-icon" href="assets/app-icon-180.png?v=20260705-home-screen-01">
     <link rel="icon" type="image/png" sizes="192x192" href="assets/app-icon-192.png?v=20260705-home-screen-01">
-    <link rel="stylesheet" href="styles.css?v=20260707-admin-target-01">
+    <link rel="stylesheet" href="styles.css?v=20260707-admin-combined-01">
   </head>
   <body>
     <main class="record-book" aria-label="冒険記録帳">
@@ -1054,28 +1054,32 @@
                 <p class="admin-identity-note" data-admin-identity-note>この端末の記録を操作します。</p>
               </section>
 
-              <dl class="admin-check-list">
-                <div>
-                  <dt>参加者</dt>
-                  <dd data-admin-participant-name>みずの しずく</dd>
+              <section class="admin-operation-card" aria-label="反映内容のまとめ">
+                <div class="admin-operation-heading">
+                  <strong>反映内容</strong>
+                  <span>上の人に入れる内容を確認</span>
                 </div>
-                <div>
-                  <dt>操作</dt>
-                  <dd>下書きを調整して確定保存</dd>
-                </div>
-                <div>
-                  <dt>参加</dt>
-                  <dd data-admin-participation>参加スタンプ 0回</dd>
-                </div>
-                <div>
-                  <dt>先生</dt>
-                  <dd data-admin-teacher>松本 武久 八段</dd>
-                </div>
-                <div>
-                  <dt>結果</dt>
-                  <dd data-admin-result>一巡目の輪を達成 → 冒険者カード更新</dd>
-                </div>
-              </dl>
+                <dl class="admin-check-list">
+                  <div>
+                    <dt>参加者</dt>
+                    <dd data-admin-participant-name>みずの しずく</dd>
+                  </div>
+                  <div>
+                    <dt>参加</dt>
+                    <dd data-admin-participation>今日の参加スタンプを入れる</dd>
+                  </div>
+                  <div>
+                    <dt>対局</dt>
+                    <dd data-admin-teacher>松本 武久 八段</dd>
+                  </div>
+                  <div>
+                    <dt>内容</dt>
+                    <dd data-admin-result>対局内容を確認中</dd>
+                  </div>
+                </dl>
+                <button type="button" class="admin-combined-apply" data-admin-combined-apply>この内容をまとめて反映</button>
+                <small data-admin-combined-message>参加スタンプと対局内容を確認してから押してください。</small>
+              </section>
 
               <div class="admin-section-heading">
                 <strong>今日の運営</strong>
@@ -1376,7 +1380,7 @@
       });
     </script>
     <script src="stamp-rules.js?v=20260702-shrine-today-teachers-01"></script>
-    <script src="script.js?v=20260707-admin-target-01"></script>
+    <script src="script.js?v=20260707-admin-combined-01"></script>
   </body>
 </html>
 

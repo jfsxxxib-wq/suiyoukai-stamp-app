@@ -152,6 +152,8 @@ const adminTeacher = document.querySelector("[data-admin-teacher]");
 const adminParticipation = document.querySelector("[data-admin-participation]");
 const adminNote = document.querySelector("[data-admin-note]");
 const adminResult = document.querySelector("[data-admin-result]");
+const adminCombinedApply = document.querySelector("[data-admin-combined-apply]");
+const adminCombinedMessage = document.querySelector("[data-admin-combined-message]");
 const adminHistoryList = document.querySelector("[data-admin-history-list]");
 const adminTroubleToggle = document.querySelector("[data-admin-trouble-toggle]");
 const adminTroublePanel = document.querySelector("[data-admin-trouble-panel]");
@@ -5597,6 +5599,42 @@ const updateAdminGameRecordApply = () => {
   }
 };
 
+const updateAdminOperationSummary = () => {
+  const today = getTodayForInput();
+  const draft = getAdminGameRecordDraft();
+  const teacher = teacherDetails[draft.teacherId];
+  const participationCount = normalizeProgressCount(userProgress.stamps.participationCount);
+  const isStampedToday = userProgress.stamps.lastParticipationStampDate === today;
+  const isParticipationMax = participationCount >= getParticipationMaxCount();
+  const teacherCount = teacher ? normalizeProgressCount(userProgress.stamps.teacherLessonCounts[draft.teacherId]) : 0;
+  const isTeacherMax = teacher ? teacherCount >= getTeacherMaxCount(teacher) : true;
+  const canApplyParticipation = !isStampedToday && !isParticipationMax;
+  const canApplyTeacher = Boolean(teacher) && !isTeacherMax;
+
+  if (adminParticipation) {
+    adminParticipation.textContent = canApplyParticipation
+      ? `今日の参加スタンプを入れる（現在 ${participationCount}/${getParticipationMaxCount()}）`
+      : isStampedToday
+        ? "今日の参加スタンプは反映済み"
+        : `参加スタンプは満了（${participationCount}/${getParticipationMaxCount()}）`;
+  }
+  if (adminTeacher) {
+    adminTeacher.textContent = teacher
+      ? `${teacher.name} / ${draft.date} / ${draft.handicap} / ${draft.result}`
+      : "先生を選んでください";
+  }
+  if (adminResult) {
+    adminResult.textContent = canApplyTeacher
+      ? `先生スタンプ ${teacherCount} → ${teacherCount + 1}`
+      : teacher
+        ? "この先生の花は満了しています"
+        : "対局内容を選んでください";
+  }
+  if (adminCombinedApply) {
+    adminCombinedApply.disabled = !canApplyParticipation && !canApplyTeacher;
+  }
+};
+
 const applyGameRecordFromAdmin = () => {
   const draft = getAdminGameRecordDraft();
   const teacher = teacherDetails[draft.teacherId];
@@ -5789,6 +5827,54 @@ const applyTodayParticipationStampFromAdmin = () => {
   updateAdminPanel();
   if (adminParticipationMessage) {
     adminParticipationMessage.textContent = `${participantName} さんの本日分を反映しました。`;
+  }
+};
+
+const applyCombinedAdminOperation = () => {
+  const participantName = adminParticipationName?.value.trim() || loadAdminIdentityDisplayName() || "参加者";
+  const appliedItems = [];
+  const today = getTodayForInput();
+  const beforeParticipation = normalizeProgressCount(userProgress.stamps.participationCount);
+  const canApplyParticipation =
+    userProgress.stamps.lastParticipationStampDate !== today &&
+    beforeParticipation < getParticipationMaxCount();
+
+  if (canApplyParticipation) {
+    addParticipationStamp();
+    appendOperationHistory({
+      type: "participation_stamp",
+      target: `${participantName} 参加スタンプ`,
+      before: beforeParticipation,
+      after: normalizeProgressCount(userProgress.stamps.participationCount),
+    });
+    appliedItems.push("参加スタンプ");
+  }
+
+  const draft = getAdminGameRecordDraft();
+  const teacher = teacherDetails[draft.teacherId];
+  const beforeTeacher = teacher
+    ? normalizeProgressCount(userProgress.stamps.teacherLessonCounts[draft.teacherId])
+    : 0;
+  const canApplyTeacher = teacher && beforeTeacher < getTeacherMaxCount(teacher);
+
+  if (canApplyTeacher) {
+    applyGameRecordFromAdmin();
+    appliedItems.push(`${teacher.name} の対局`);
+  } else if (appliedItems.length > 0) {
+    syncAdminDraftFromProgress();
+    updateParticipationStampCard();
+    updateTeacherCards();
+    updateRoundProgress();
+    updateProfileCard();
+    updateAdminPanel();
+  } else {
+    updateAdminPanel();
+  }
+
+  if (adminCombinedMessage) {
+    adminCombinedMessage.textContent = appliedItems.length > 0
+      ? `${participantName} に ${appliedItems.join("、")} を反映しました。`
+      : `${participantName} に反映できる新しい内容はありません。`;
   }
 };
 
@@ -7640,6 +7726,7 @@ const updateAdminPanel = () => {
   adminNote.textContent = "＋/−と項目リセットは下書きです。確定して保存を押すまで記録は変わりません。";
   adminStampButton.textContent = "確定して保存";
   adminStampButton.disabled = !isAdminDraftDirty;
+  updateAdminOperationSummary();
   renderAdminAdjustments();
   renderAdminHistory();
   updateAdminParticipationApply();
@@ -8747,6 +8834,7 @@ for (const closeButton of participationStartCloseButtons) {
 
 adminParticipationApply?.addEventListener("click", applyTodayParticipationStampFromAdmin);
 adminParticipationQrCreateButton?.addEventListener("click", createAdminParticipationQr);
+adminCombinedApply?.addEventListener("click", applyCombinedAdminOperation);
 adminGameRecordApply?.addEventListener("click", applyGameRecordFromAdmin);
 adminStampQrCreateButton?.addEventListener("click", createAdminStampQr);
 adminFixedTeacherQrCreateButton?.addEventListener("click", createAdminFixedTeacherQrs);
@@ -8773,6 +8861,11 @@ adminShowProfileButton?.addEventListener("click", () => {
   showPanel("profile");
   scrollProfileTodayRecordIntoView();
 });
+
+for (const input of [adminGameRecordTeacher, adminGameRecordDate, adminGameRecordHandicap, adminGameRecordResult]) {
+  input?.addEventListener("input", updateAdminOperationSummary);
+  input?.addEventListener("change", updateAdminOperationSummary);
+}
 for (const profileLatestTeacherFlower of profileLatestTeacherFlowers) {
   profileLatestTeacherFlower.addEventListener("click", () => {
     const teacherId = profileLatestTeacherFlower.dataset.teacherId;

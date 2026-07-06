@@ -3,7 +3,7 @@
   "short_name": "水曜会 花記録",
   "description": "水曜会で参加と指導碁の花スタンプを記録する冒険者カードアプリです。",
   "lang": "ja",
-  "start_url": "./?app=20260707-admin-target-01",
+  "start_url": "./?app=20260707-admin-combined-01",
   "scope": "./",
   "display": "standalone",
   "background_color": "#f6f2e4",
