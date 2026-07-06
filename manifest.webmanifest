@@ -3,7 +3,7 @@
   "short_name": "水曜会 花記録",
   "description": "水曜会で参加と指導碁の花スタンプを記録する冒険者カードアプリです。",
   "lang": "ja",
-  "start_url": "./?app=20260706-matsumoto-photo-04",
+  "start_url": "./?app=20260706-teacher-photo-source-01",
   "scope": "./",
   "display": "standalone",
   "background_color": "#f6f2e4",

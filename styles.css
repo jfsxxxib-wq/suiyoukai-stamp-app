@@ -11724,25 +11724,35 @@ body {
   }
 }
 
-/* Teacher photo trial: use the originals without the baked-in lower-face fade. */
-.info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) .teacher-photo[data-teacher-photo="akari"]::after {
-  background: url("assets/teacher-photo-1.jpg") center center / contain no-repeat, #f3efe8 !important;
+/* Current teacher photo sources. Change only these variables when portraits are replaced. */
+.teacher-photo[data-teacher-photo="akari"] {
+  --teacher-photo-image: url("assets/teacher-photo-1.jpg?v=20260706-teacher-photo-source-01");
+  --teacher-photo-bg: #f3efe8;
 }
 
-.info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) .teacher-photo[data-teacher-photo="yuki"]::after {
-  background: url("assets/teacher-yuki.jpg") center center / contain no-repeat, #f3efe8 !important;
+.teacher-photo[data-teacher-photo="yuki"] {
+  --teacher-photo-image: url("assets/teacher-yuki.jpg?v=20260706-teacher-photo-source-01");
+  --teacher-photo-bg: #f3efe8;
 }
 
-.info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) .teacher-photo[data-teacher-photo="koike"]::after {
-  background: url("assets/teacher-koike.jpg") center center / contain no-repeat, #f3efe8 !important;
+.teacher-photo[data-teacher-photo="koike"] {
+  --teacher-photo-image: url("assets/teacher-koike.jpg?v=20260706-teacher-photo-source-01");
+  --teacher-photo-bg: #f3efe8;
 }
 
-.info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) .teacher-photo[data-teacher-photo="yamashiro"]::after {
-  background: url("assets/teacher-yamashiro.jpg") center center / contain no-repeat, #f3efe8 !important;
+.teacher-photo[data-teacher-photo="yamashiro"] {
+  --teacher-photo-image: url("assets/teacher-yamashiro.jpg?v=20260706-teacher-photo-source-01");
+  --teacher-photo-bg: #f3efe8;
 }
 
-.info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) .teacher-photo[data-teacher-photo="matsumoto"]::after {
-  background: url("assets/teacher-matsumoto-suit-20260706-v3.png?v=20260706-photo-03") center center / contain no-repeat, #f3efe8 !important;
+.teacher-photo[data-teacher-photo="matsumoto"] {
+  --teacher-photo-image: url("assets/teacher-matsumoto-suit-20260706-v3.png?v=20260706-teacher-photo-source-01");
+  --teacher-photo-bg: #f3efe8;
+}
+
+.teacher-photo[data-teacher-photo]::after,
+.info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) .teacher-photo[data-teacher-photo]::after {
+  background: var(--teacher-photo-image) center center / contain no-repeat, var(--teacher-photo-bg, #f3efe8) !important;
 }
 
 /* Temporary teacher portrait: detective-style silhouette until real photos are added. */
