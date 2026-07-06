@@ -315,6 +315,8 @@ const teacherProfileStorageKey = "suiyoukai-teacher-profiles-v1";
 const adminPasscodeStorageKey = "suiyoukai-admin-passcode-local-v1";
 const adventurerNameStorageKey = "suiyoukai-adventurer-name-v1";
 const adventurerReceptionCodeStorageKey = "suiyoukai-adventurer-reception-code-v2";
+const adminIdentityCodeStorageKey = "suiyoukai-admin-identity-code-v1";
+const adminIdentityDisplayNameStorageKey = "suiyoukai-admin-identity-display-name-v1";
 const adminIdentityRealNameStorageKey = "suiyoukai-admin-identity-real-name-v1";
 const participationFormOpenedStorageKey = "suiyoukai-participation-form-opened-v1";
 const defaultAdventurerName = "みずの しずく";
@@ -1183,6 +1185,56 @@ const saveAdventurerName = (value) => {
 
 const normalizeAdminIdentityName = (value) => String(value ?? "").trim().replace(/\s+/g, " ").slice(0, 30);
 
+const normalizeAdminIdentityCode = (value) => String(value ?? "").replace(/\D/g, "").slice(0, 8);
+
+const loadAdminIdentityCode = () => {
+  try {
+    return normalizeAdminIdentityCode(localStorage.getItem(adminIdentityCodeStorageKey)) || loadReceptionCode();
+  } catch {
+    return loadReceptionCode();
+  }
+};
+
+const saveAdminIdentityCode = (value) => {
+  const normalizedCode = normalizeAdminIdentityCode(value);
+
+  try {
+    if (normalizedCode) {
+      localStorage.setItem(adminIdentityCodeStorageKey, normalizedCode);
+    } else {
+      localStorage.removeItem(adminIdentityCodeStorageKey);
+    }
+  } catch {
+    // Identity notes are only a local operation aid.
+  }
+
+  return normalizedCode || loadReceptionCode();
+};
+
+const loadAdminIdentityDisplayName = () => {
+  try {
+    return normalizeAdminIdentityName(localStorage.getItem(adminIdentityDisplayNameStorageKey)) || loadAdventurerName();
+  } catch {
+    return loadAdventurerName();
+  }
+};
+
+const saveAdminIdentityDisplayName = (value) => {
+  const normalizedName = normalizeAdminIdentityName(value);
+
+  try {
+    if (normalizedName) {
+      localStorage.setItem(adminIdentityDisplayNameStorageKey, normalizedName);
+    } else {
+      localStorage.removeItem(adminIdentityDisplayNameStorageKey);
+    }
+  } catch {
+    // Identity notes are only a local operation aid.
+  }
+
+  return normalizedName || loadAdventurerName();
+};
+
 const loadAdminIdentityRealName = () => {
   try {
     return normalizeAdminIdentityName(localStorage.getItem(adminIdentityRealNameStorageKey));
@@ -1208,18 +1260,22 @@ const saveAdminIdentityRealName = (value) => {
 };
 
 const updateAdminIdentityCard = () => {
-  const displayName = loadAdventurerName();
-  const receptionCode = loadReceptionCode();
+  const displayName = loadAdminIdentityDisplayName();
+  const receptionCode = loadAdminIdentityCode();
   const realName = loadAdminIdentityRealName();
+  const participantLabel = realName ? `${displayName} / ${realName}` : displayName;
 
-  if (adminIdentityCode) {
-    adminIdentityCode.textContent = receptionCode;
+  if (adminIdentityCode && document.activeElement !== adminIdentityCode) {
+    adminIdentityCode.value = receptionCode;
   }
-  if (adminIdentityDisplayName) {
-    adminIdentityDisplayName.textContent = displayName;
+  if (adminIdentityDisplayName && document.activeElement !== adminIdentityDisplayName) {
+    adminIdentityDisplayName.value = displayName;
   }
   if (adminParticipantName) {
-    adminParticipantName.textContent = realName ? `${displayName} / ${realName}` : displayName;
+    adminParticipantName.textContent = participantLabel;
+  }
+  if (adminParticipationName && document.activeElement !== adminParticipationName) {
+    adminParticipationName.value = participantLabel;
   }
   if (adminIdentityRealName && document.activeElement !== adminIdentityRealName) {
     adminIdentityRealName.value = realName;
@@ -8986,6 +9042,16 @@ adventurerNameForm?.addEventListener("submit", (event) => {
 
 adminIdentityRealName?.addEventListener("input", () => {
   saveAdminIdentityRealName(adminIdentityRealName.value);
+  updateAdminIdentityCard();
+});
+
+adminIdentityCode?.addEventListener("input", () => {
+  saveAdminIdentityCode(adminIdentityCode.value);
+  updateAdminIdentityCard();
+});
+
+adminIdentityDisplayName?.addEventListener("input", () => {
+  saveAdminIdentityDisplayName(adminIdentityDisplayName.value);
   updateAdminIdentityCard();
 });
 
