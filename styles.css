@@ -4978,6 +4978,70 @@ button.profile-today-record-flower {
   line-height: 1.35;
 }
 
+.admin-identity-card {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid rgba(77, 133, 93, 0.22);
+  border-radius: 8px;
+  background: rgba(244, 250, 238, 0.7);
+}
+
+.admin-identity-heading {
+  display: grid;
+  gap: 2px;
+}
+
+.admin-identity-heading strong {
+  color: var(--green);
+  font-size: 0.95rem;
+}
+
+.admin-identity-heading span,
+.admin-identity-note {
+  color: #665d50;
+  font-size: 0.78rem;
+  font-weight: 700;
+  line-height: 1.55;
+}
+
+.admin-identity-list {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+}
+
+.admin-identity-list > div {
+  display: grid;
+  grid-template-columns: 78px 1fr;
+  gap: 8px;
+  align-items: center;
+}
+
+.admin-identity-list dt {
+  color: #7a7162;
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
+.admin-identity-list dd {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 900;
+}
+
+.admin-identity-list input {
+  width: 100%;
+  min-height: 40px;
+  padding: 8px 10px;
+  border: 1px solid rgba(197, 150, 58, 0.32);
+  border-radius: 8px;
+  background: rgba(255, 253, 247, 0.94);
+  color: #2f2a25;
+  font: inherit;
+  font-weight: 800;
+}
+
 .admin-check-list {
   display: grid;
   gap: 0;

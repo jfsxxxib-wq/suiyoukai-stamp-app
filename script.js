@@ -143,6 +143,11 @@ const adminResetCancel = document.querySelector("[data-admin-reset-cancel]");
 const adminResetConfirmButton = document.querySelector("[data-admin-reset-confirm-button]");
 const adminState = document.querySelector("[data-admin-state]");
 const adminSummary = document.querySelector("[data-admin-summary]");
+const adminIdentityCode = document.querySelector("[data-admin-identity-code]");
+const adminIdentityDisplayName = document.querySelector("[data-admin-identity-display-name]");
+const adminIdentityRealName = document.querySelector("[data-admin-identity-real-name]");
+const adminIdentityNote = document.querySelector("[data-admin-identity-note]");
+const adminParticipantName = document.querySelector("[data-admin-participant-name]");
 const adminTeacher = document.querySelector("[data-admin-teacher]");
 const adminParticipation = document.querySelector("[data-admin-participation]");
 const adminNote = document.querySelector("[data-admin-note]");
@@ -310,6 +315,7 @@ const teacherProfileStorageKey = "suiyoukai-teacher-profiles-v1";
 const adminPasscodeStorageKey = "suiyoukai-admin-passcode-local-v1";
 const adventurerNameStorageKey = "suiyoukai-adventurer-name-v1";
 const adventurerReceptionCodeStorageKey = "suiyoukai-adventurer-reception-code-v2";
+const adminIdentityRealNameStorageKey = "suiyoukai-admin-identity-real-name-v1";
 const participationFormOpenedStorageKey = "suiyoukai-participation-form-opened-v1";
 const defaultAdventurerName = "みずの しずく";
 const backupAppId = "suiyoukai-stamp-adventure";
@@ -1173,6 +1179,56 @@ const saveAdventurerName = (value) => {
   }
 
   return normalizedName || defaultAdventurerName;
+};
+
+const normalizeAdminIdentityName = (value) => String(value ?? "").trim().replace(/\s+/g, " ").slice(0, 30);
+
+const loadAdminIdentityRealName = () => {
+  try {
+    return normalizeAdminIdentityName(localStorage.getItem(adminIdentityRealNameStorageKey));
+  } catch {
+    return "";
+  }
+};
+
+const saveAdminIdentityRealName = (value) => {
+  const normalizedName = normalizeAdminIdentityName(value);
+
+  try {
+    if (normalizedName) {
+      localStorage.setItem(adminIdentityRealNameStorageKey, normalizedName);
+    } else {
+      localStorage.removeItem(adminIdentityRealNameStorageKey);
+    }
+  } catch {
+    // Identity notes are only a local operation aid.
+  }
+
+  return normalizedName;
+};
+
+const updateAdminIdentityCard = () => {
+  const displayName = loadAdventurerName();
+  const receptionCode = loadReceptionCode();
+  const realName = loadAdminIdentityRealName();
+
+  if (adminIdentityCode) {
+    adminIdentityCode.textContent = receptionCode;
+  }
+  if (adminIdentityDisplayName) {
+    adminIdentityDisplayName.textContent = displayName;
+  }
+  if (adminParticipantName) {
+    adminParticipantName.textContent = realName ? `${displayName} / ${realName}` : displayName;
+  }
+  if (adminIdentityRealName && document.activeElement !== adminIdentityRealName) {
+    adminIdentityRealName.value = realName;
+  }
+  if (adminIdentityNote) {
+    adminIdentityNote.textContent = realName
+      ? `受付番号 ${receptionCode} / ${displayName} / ${realName} の記録を操作します。`
+      : `受付番号 ${receptionCode} / ${displayName} の記録を操作します。本名が必要な時だけ入力してください。`;
+  }
 };
 
 const createReceptionCode = () => {
@@ -7514,6 +7570,7 @@ const updateAdminPanel = () => {
   const nextTeacher = nextTeacherId ? teacherDetails[nextTeacherId] : null;
   const currentParticipationCount = normalizeProgressCount(adminDraft.participationCount);
   const draftCircleRounds = getAdminDraftTeacherCircleRounds();
+  updateAdminIdentityCard();
 
   adminParticipation.textContent = `参加スタンプ ${currentParticipationCount}回`;
   adminTeacher.textContent = nextTeacher?.name ?? "基本5人は一巡済み";
@@ -8917,6 +8974,7 @@ adventurerNameForm?.addEventListener("submit", (event) => {
   event.preventDefault();
   const name = saveAdventurerName(adventurerNameInput?.value);
   renderAdventurerName();
+  updateAdminIdentityCard();
   adventurerNameForm.hidden = true;
   if (adventurerNameMessage) {
     adventurerNameMessage.hidden = false;
@@ -8924,6 +8982,11 @@ adventurerNameForm?.addEventListener("submit", (event) => {
       ? "名前を初期表示に戻しました。"
       : "このスマホに名前を保存しました。";
   }
+});
+
+adminIdentityRealName?.addEventListener("input", () => {
+  saveAdminIdentityRealName(adminIdentityRealName.value);
+  updateAdminIdentityCard();
 });
 
 updateParticipationStampCard();
