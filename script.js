@@ -320,6 +320,7 @@ const adventurerReceptionCodeStorageKey = "suiyoukai-adventurer-reception-code-v
 const adminIdentityCodeStorageKey = "suiyoukai-admin-identity-code-v1";
 const adminIdentityDisplayNameStorageKey = "suiyoukai-admin-identity-display-name-v1";
 const adminIdentityRealNameStorageKey = "suiyoukai-admin-identity-real-name-v1";
+const adminCombinedAppliedKeysStorageKey = "suiyoukai-admin-combined-applied-keys-v1";
 const participationFormOpenedStorageKey = "suiyoukai-participation-form-opened-v1";
 const defaultAdventurerName = "みずの しずく";
 const backupAppId = "suiyoukai-stamp-adventure";
@@ -1188,10 +1189,25 @@ const saveAdventurerName = (value) => {
 const normalizeAdminIdentityName = (value) => String(value ?? "").trim().replace(/\s+/g, " ").slice(0, 30);
 
 const normalizeAdminIdentityCode = (value) => String(value ?? "").replace(/\D/g, "").slice(0, 8);
+const adminIdentityBlankCodeValue = "__blank__";
 
 const loadAdminIdentityCode = () => {
   try {
-    return normalizeAdminIdentityCode(localStorage.getItem(adminIdentityCodeStorageKey)) || loadReceptionCode();
+    const storedCode = localStorage.getItem(adminIdentityCodeStorageKey);
+    if (storedCode === adminIdentityBlankCodeValue) {
+      return "";
+    }
+
+    const normalizedCode = normalizeAdminIdentityCode(storedCode);
+    if (normalizedCode) {
+      return normalizedCode;
+    }
+
+    const hasCustomIdentity =
+      normalizeAdminIdentityName(localStorage.getItem(adminIdentityDisplayNameStorageKey)) ||
+      normalizeAdminIdentityName(localStorage.getItem(adminIdentityRealNameStorageKey));
+
+    return hasCustomIdentity ? "" : loadReceptionCode();
   } catch {
     return loadReceptionCode();
   }
@@ -1204,13 +1220,13 @@ const saveAdminIdentityCode = (value) => {
     if (normalizedCode) {
       localStorage.setItem(adminIdentityCodeStorageKey, normalizedCode);
     } else {
-      localStorage.removeItem(adminIdentityCodeStorageKey);
+      localStorage.setItem(adminIdentityCodeStorageKey, adminIdentityBlankCodeValue);
     }
   } catch {
     // Identity notes are only a local operation aid.
   }
 
-  return normalizedCode || loadReceptionCode();
+  return normalizedCode;
 };
 
 const loadAdminIdentityDisplayName = () => {
@@ -1264,6 +1280,7 @@ const saveAdminIdentityRealName = (value) => {
 const updateAdminIdentityCard = () => {
   const displayName = loadAdminIdentityDisplayName();
   const receptionCode = loadAdminIdentityCode();
+  const receptionLabel = receptionCode || "未入力";
   const realName = loadAdminIdentityRealName();
   const participantLabel = realName ? `${displayName} / ${realName}` : displayName;
 
@@ -1287,6 +1304,20 @@ const updateAdminIdentityCard = () => {
       ? `受付番号 ${receptionCode} / ${displayName} / ${realName} の記録を操作します。`
       : `受付番号 ${receptionCode} / ${displayName} の記録を操作します。本名が必要な時だけ入力してください。`;
   }
+};
+
+const updateAdminIdentityNoteText = () => {
+  if (!adminIdentityNote) {
+    return;
+  }
+
+  const displayName = loadAdminIdentityDisplayName();
+  const receptionLabel = loadAdminIdentityCode() || "未入力";
+  const realName = loadAdminIdentityRealName();
+
+  adminIdentityNote.textContent = realName
+    ? `受付番号 ${receptionLabel} / ${displayName} / ${realName} の記録を操作します。`
+    : `受付番号 ${receptionLabel} / ${displayName} の記録を操作します。本名が必要な時だけ入力してください。`;
 };
 
 const createReceptionCode = () => {
@@ -5549,6 +5580,51 @@ const createAdminStampQr = () => {
   adminStampQrMessage.textContent = `${teacher.name} の先生スタンプを本人スマホへ反映します。同じQRをもう一度読んでも二重には増えません。`;
 };
 
+const loadAdminCombinedAppliedKeys = () => {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(adminCombinedAppliedKeysStorageKey) || "[]");
+    return new Set(Array.isArray(parsed) ? parsed.filter((item) => typeof item === "string") : []);
+  } catch {
+    return new Set();
+  }
+};
+
+const saveAdminCombinedAppliedKeys = (keys) => {
+  try {
+    localStorage.setItem(adminCombinedAppliedKeysStorageKey, JSON.stringify([...keys].slice(-80)));
+  } catch {
+    // Duplicate prevention is a local operation aid.
+  }
+};
+
+const getAdminTeacherOperationKey = (draft = getAdminGameRecordDraft()) => [
+  loadAdminIdentityCode() || "no-code",
+  loadAdminIdentityDisplayName(),
+  loadAdminIdentityRealName() || "no-real-name",
+  draft.teacherId,
+  draft.date,
+  draft.handicap,
+  draft.result,
+].join("|");
+
+const isAdminTeacherOperationApplied = (key) => loadAdminCombinedAppliedKeys().has(key);
+
+const markAdminTeacherOperationApplied = (key) => {
+  const keys = loadAdminCombinedAppliedKeys();
+  keys.add(key);
+  saveAdminCombinedAppliedKeys(keys);
+};
+
+const removeAdminTeacherOperationApplied = (key) => {
+  if (!key) {
+    return;
+  }
+
+  const keys = loadAdminCombinedAppliedKeys();
+  keys.delete(key);
+  saveAdminCombinedAppliedKeys(keys);
+};
+
 const updateAdminGameRecordApply = () => {
   if (!adminGameRecordApply || !adminGameRecordMessage) {
     return;
@@ -5571,6 +5647,7 @@ const updateAdminGameRecordApply = () => {
     : 0;
   const isMaxAchieved = teacher ? currentCount >= getTeacherMaxCount(teacher) : true;
   const isCoolingDown = Date.now() < adminGameRecordApplyCooldownUntil;
+  const isAlreadyApplied = teacher ? isAdminTeacherOperationApplied(getAdminTeacherOperationKey(draft)) : false;
 
   if (adminGameRecordDateLabel) {
     adminGameRecordDateLabel.textContent = `本日 ${todayLabel}`;
@@ -5591,6 +5668,12 @@ const updateAdminGameRecordApply = () => {
       ? "反映直後です。二重押し防止のため少し待っています。"
       : "本人スマホへ入れる時は、上のQRを作って読み取ってもらいます。";
 
+  if (isAlreadyApplied) {
+    adminGameRecordApply.disabled = true;
+    adminGameRecordApply.textContent = "この対局は反映済み";
+    adminGameRecordMessage.textContent = "この対局内容はすでに反映済みです。";
+  }
+
   if (adminShowProfileButton) {
     adminShowProfileButton.hidden = !latestTeacherStampReflection;
   }
@@ -5608,8 +5691,10 @@ const updateAdminOperationSummary = () => {
   const isParticipationMax = participationCount >= getParticipationMaxCount();
   const teacherCount = teacher ? normalizeProgressCount(userProgress.stamps.teacherLessonCounts[draft.teacherId]) : 0;
   const isTeacherMax = teacher ? teacherCount >= getTeacherMaxCount(teacher) : true;
+  const teacherOperationKey = teacher ? getAdminTeacherOperationKey(draft) : "";
+  const isTeacherAlreadyApplied = teacherOperationKey ? isAdminTeacherOperationApplied(teacherOperationKey) : false;
   const canApplyParticipation = !isStampedToday && !isParticipationMax;
-  const canApplyTeacher = Boolean(teacher) && !isTeacherMax;
+  const canApplyTeacher = Boolean(teacher) && !isTeacherMax && !isTeacherAlreadyApplied;
 
   if (adminParticipation) {
     adminParticipation.textContent = canApplyParticipation
@@ -5633,6 +5718,9 @@ const updateAdminOperationSummary = () => {
   if (adminCombinedApply) {
     adminCombinedApply.disabled = !canApplyParticipation && !canApplyTeacher;
   }
+  if (adminResult && isTeacherAlreadyApplied) {
+    adminResult.textContent = "この対局内容は反映済み";
+  }
 };
 
 const applyGameRecordFromAdmin = () => {
@@ -5641,6 +5729,18 @@ const applyGameRecordFromAdmin = () => {
 
   if (!teacher) {
     updateAdminGameRecordApply();
+    return;
+  }
+
+  const teacherOperationKey = getAdminTeacherOperationKey(draft);
+  if (isAdminTeacherOperationApplied(teacherOperationKey)) {
+    updateAdminPanel();
+    if (adminGameRecordMessage) {
+      adminGameRecordMessage.textContent = "この対局内容はすでに反映済みです。";
+    }
+    if (adminCombinedMessage) {
+      adminCombinedMessage.textContent = "同じ対局内容は二重に反映しません。";
+    }
     return;
   }
 
@@ -5672,6 +5772,7 @@ const applyGameRecordFromAdmin = () => {
     before,
     after,
     goal: getTeacherGoal(teacher),
+    adminOperationKey: teacherOperationKey,
   };
   todayTeacherStampReflections = [...todayTeacherStampReflections, latestTeacherStampReflection].slice(-3);
   saveTodayTeacherStampReflections();
@@ -5686,6 +5787,7 @@ const applyGameRecordFromAdmin = () => {
     after,
   });
   syncAdminDraftFromProgress();
+  markAdminTeacherOperationApplied(teacherOperationKey);
   renderTeacherGameRecords(activeTeacherKey);
   updateParticipationStampCard();
   updateTeacherCards();
@@ -5738,6 +5840,7 @@ const undoLatestGameRecordFromAdmin = () => {
   todayTeacherStampReflections = todayTeacherStampReflections.filter((item) => item.gameRecordId !== reflection.gameRecordId);
   latestTeacherStampReflection = todayTeacherStampReflections.at(-1) ?? null;
   saveTodayTeacherStampReflections();
+  removeAdminTeacherOperationApplied(reflection.adminOperationKey);
   adminGameRecordApplyCooldownUntil = 0;
   syncTeacherDetailsFromProgress();
   syncProgressRewards();
@@ -5855,7 +5958,11 @@ const applyCombinedAdminOperation = () => {
   const beforeTeacher = teacher
     ? normalizeProgressCount(userProgress.stamps.teacherLessonCounts[draft.teacherId])
     : 0;
-  const canApplyTeacher = teacher && beforeTeacher < getTeacherMaxCount(teacher);
+  const teacherOperationKey = teacher ? getAdminTeacherOperationKey(draft) : "";
+  const canApplyTeacher =
+    teacher &&
+    beforeTeacher < getTeacherMaxCount(teacher) &&
+    !isAdminTeacherOperationApplied(teacherOperationKey);
 
   if (canApplyTeacher) {
     applyGameRecordFromAdmin();
@@ -7713,6 +7820,7 @@ const updateAdminPanel = () => {
   const currentParticipationCount = normalizeProgressCount(adminDraft.participationCount);
   const draftCircleRounds = getAdminDraftTeacherCircleRounds();
   updateAdminIdentityCard();
+  updateAdminIdentityNoteText();
 
   adminParticipation.textContent = `参加スタンプ ${currentParticipationCount}回`;
   adminTeacher.textContent = nextTeacher?.name ?? "基本5人は一巡済み";
@@ -9124,6 +9232,7 @@ adventurerNameForm?.addEventListener("submit", (event) => {
   const name = saveAdventurerName(adventurerNameInput?.value);
   renderAdventurerName();
   updateAdminIdentityCard();
+  updateAdminIdentityNoteText();
   adventurerNameForm.hidden = true;
   if (adventurerNameMessage) {
     adventurerNameMessage.hidden = false;
@@ -9136,16 +9245,19 @@ adventurerNameForm?.addEventListener("submit", (event) => {
 adminIdentityRealName?.addEventListener("input", () => {
   saveAdminIdentityRealName(adminIdentityRealName.value);
   updateAdminIdentityCard();
+  updateAdminIdentityNoteText();
 });
 
 adminIdentityCode?.addEventListener("input", () => {
   saveAdminIdentityCode(adminIdentityCode.value);
   updateAdminIdentityCard();
+  updateAdminIdentityNoteText();
 });
 
 adminIdentityDisplayName?.addEventListener("input", () => {
   saveAdminIdentityDisplayName(adminIdentityDisplayName.value);
   updateAdminIdentityCard();
+  updateAdminIdentityNoteText();
 });
 
 updateParticipationStampCard();
