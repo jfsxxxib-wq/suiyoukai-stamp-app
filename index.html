@@ -12,12 +12,28 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="mobile-web-app-capable" content="yes">
     <title>水曜会 花記録</title>
-    <link rel="manifest" href="manifest.webmanifest?v=20260707-preserve-record-date-01">
+    <link rel="manifest" href="manifest.webmanifest?v=20260707-browser-entry-guide-01">
     <link rel="apple-touch-icon" href="assets/app-icon-180.png?v=20260705-home-screen-01">
     <link rel="icon" type="image/png" sizes="192x192" href="assets/app-icon-192.png?v=20260705-home-screen-01">
-    <link rel="stylesheet" href="styles.css?v=20260707-preserve-record-date-01">
+    <link rel="stylesheet" href="styles.css?v=20260707-browser-entry-guide-01">
   </head>
   <body>
+    <section class="browser-install-guide" data-browser-install-guide hidden aria-label="ホーム画面追加の案内">
+      <div class="browser-install-guide-card">
+        <div>
+          <small>最初だけ</small>
+          <h1>ホーム画面に追加します</h1>
+          <p>この画面はSafari/Chromeです。追加できたら、次からは花アイコン「水曜会 花記録」から開きます。</p>
+        </div>
+        <ol>
+          <li>iPhoneは共有ボタンから「ホーム画面に追加」</li>
+          <li>Androidはメニューから「ホーム画面に追加」または「アプリをインストール」</li>
+          <li>追加後は、この画面を閉じて花アイコンを押す</li>
+        </ol>
+        <p class="browser-install-guide-note">受付QRや先生QRは、ホーム画面に追加するためのQRではありません。</p>
+        <button type="button" data-browser-install-guide-close>案内を閉じる</button>
+      </div>
+    </section>
     <main class="record-book" aria-label="冒険記録帳">
       <section class="map-hero" aria-label="水曜会探索マップ">
         <img src="assets/shonan-watercolor-map.png" alt="" aria-hidden="true">
@@ -1397,7 +1413,7 @@
       });
     </script>
     <script src="stamp-rules.js?v=20260702-shrine-today-teachers-01"></script>
-    <script src="script.js?v=20260707-preserve-record-date-01"></script>
+    <script src="script.js?v=20260707-browser-entry-guide-01"></script>
   </body>
 </html>
 

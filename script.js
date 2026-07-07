@@ -57,6 +57,8 @@ const adventurerNameMessage = document.querySelector("[data-adventurer-name-mess
 const adventurerNameHint = document.querySelector("[data-adventurer-name-hint]");
 const adventurerReceptionCode = document.querySelector("[data-adventurer-reception-code]");
 const browserStorageWarning = document.querySelector("[data-browser-storage-warning]");
+const browserInstallGuide = document.querySelector("[data-browser-install-guide]");
+const browserInstallGuideClose = document.querySelector("[data-browser-install-guide-close]");
 const profileLatestStamp = document.querySelector("[data-profile-latest-stamp]");
 const profileLatestStampCopy = document.querySelector("[data-profile-latest-stamp-copy]");
 const profileLatestTeacherFlowers = document.querySelectorAll("[data-profile-latest-teacher-flower]");
@@ -1404,6 +1406,35 @@ const renderAdventurerName = () => {
 };
 
 const isEdgeOnIos = () => /EdgiOS/i.test(navigator.userAgent);
+
+const isStandaloneDisplay = () =>
+  window.matchMedia?.("(display-mode: standalone)")?.matches || window.navigator.standalone === true;
+
+const hasStampPayloadInUrl = () => {
+  const searchParams = new URLSearchParams(window.location.search);
+  return searchParams.has("stamp") || /^#apply-stamp=/.test(window.location.hash || "") || /^#s=/.test(window.location.hash || "");
+};
+
+const isBrowserInstallGuideClosed = () => {
+  try {
+    return sessionStorage.getItem("suiyoukai-install-guide-closed") === "1";
+  } catch {
+    return false;
+  }
+};
+
+const updateBrowserInstallGuide = () => {
+  if (!browserInstallGuide) {
+    return;
+  }
+
+  const shouldShow = !isStandaloneDisplay()
+    && !hasStampPayloadInUrl()
+    && window.location.hash !== adminEntryHash
+    && !isBrowserInstallGuideClosed();
+
+  browserInstallGuide.hidden = !shouldShow;
+};
 
 const updateBrowserStorageWarning = () => {
   if (!browserStorageWarning) {
@@ -9148,7 +9179,20 @@ guidebookButton?.addEventListener("click", () => {
 
 window.addEventListener("hashchange", syncAdminDirectEntry);
 window.addEventListener("hashchange", applyStampQrFromLocation);
+window.addEventListener("hashchange", updateBrowserInstallGuide);
 syncAdminDirectEntry();
+updateBrowserInstallGuide();
+
+browserInstallGuideClose?.addEventListener("click", () => {
+  try {
+    sessionStorage.setItem("suiyoukai-install-guide-closed", "1");
+  } catch {
+    // 閉じた状態を保存できない時も、画面上では閉じます。
+  }
+  if (browserInstallGuide) {
+    browserInstallGuide.hidden = true;
+  }
+});
 
 nextAdventureButton.addEventListener("click", () => {
   if (nextAdventureButton.dataset.adventureType === "complete") {

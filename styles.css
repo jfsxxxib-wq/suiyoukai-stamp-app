@@ -4347,6 +4347,78 @@ button.profile-today-record-flower {
   cursor: pointer;
 }
 
+.browser-install-guide[hidden] {
+  display: none;
+}
+
+.browser-install-guide {
+  position: fixed;
+  inset: 0;
+  z-index: 1400;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  background: rgba(54, 45, 33, 0.42);
+  backdrop-filter: blur(3px);
+}
+
+.browser-install-guide-card {
+  display: grid;
+  gap: 14px;
+  width: min(100%, 390px);
+  padding: 22px;
+  border: 2px solid rgba(67, 118, 82, 0.34);
+  border-radius: 18px;
+  background: rgba(255, 250, 240, 0.98);
+  color: var(--ink);
+  box-shadow: 0 24px 60px rgba(45, 35, 24, 0.28);
+}
+
+.browser-install-guide-card small {
+  color: var(--green);
+  font-weight: 900;
+}
+
+.browser-install-guide-card h1,
+.browser-install-guide-card p,
+.browser-install-guide-card ol {
+  margin: 0;
+}
+
+.browser-install-guide-card h1 {
+  font-size: 1.45rem;
+  line-height: 1.25;
+}
+
+.browser-install-guide-card p,
+.browser-install-guide-card li {
+  color: var(--muted);
+  font-weight: 800;
+  line-height: 1.55;
+}
+
+.browser-install-guide-card ol {
+  display: grid;
+  gap: 8px;
+  padding-left: 1.35em;
+}
+
+.browser-install-guide-note {
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(185, 76, 97, 0.1);
+  color: #7e3040 !important;
+}
+
+.browser-install-guide-card button {
+  min-height: 46px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--green);
+  color: #fffaf0;
+  font-weight: 900;
+}
+
 .profile-today-record-flower img {
   width: 36px;
   height: 36px;
