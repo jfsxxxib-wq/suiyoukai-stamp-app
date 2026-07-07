@@ -170,6 +170,10 @@ const adminRestoreInput = document.querySelector("[data-admin-restore-input]");
 const adminRestoreCancel = document.querySelector("[data-admin-restore-cancel]");
 const adminRestoreConfirmButton = document.querySelector("[data-admin-restore-confirm-button]");
 const adminParticipationDate = document.querySelector("[data-admin-participation-date]");
+const adminInstallQr = document.querySelector("[data-admin-install-qr]");
+const adminInstallQrImage = document.querySelector("[data-admin-install-qr-image]");
+const adminInstallQrLink = document.querySelector("[data-admin-install-qr-link]");
+const adminInstallQrMessage = document.querySelector("[data-admin-install-qr-message]");
 const adminParticipationName = document.querySelector("[data-admin-participation-name]");
 const adminParticipationApply = document.querySelector("[data-admin-participation-apply]");
 const adminParticipationMessage = document.querySelector("[data-admin-participation-message]");
@@ -1470,7 +1474,7 @@ const renderProfileTodayGameRecords = () => {
     return;
   }
 
-  const records = getTodayGameRecords();
+  const records = getTodayGameRecords().slice(-1);
   profileTodayGameRecords.textContent = "";
   profileTodayGameRecords.hidden = records.length === 0;
 
@@ -1665,6 +1669,20 @@ const normalizeQrDate = (value) => {
   return getTodayForInput();
 };
 
+const normalizeStoredRecordDate = (value) => {
+  if (typeof value !== "string") {
+    return "";
+  }
+
+  const normalized = value.trim().replace(/\//g, "-");
+  if (!/^\d{4}-\d{1,2}-\d{1,2}$/.test(normalized)) {
+    return "";
+  }
+
+  const [year, month, day] = normalized.split("-");
+  return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+};
+
 const mobilePreviewOrigin = "http://192.168.128.168:4184";
 
 const getStampQrBaseUrl = () => {
@@ -1673,6 +1691,8 @@ const getStampQrBaseUrl = () => {
 
   return `${origin}${window.location.pathname}`;
 };
+
+const getAppInstallUrl = () => getStampQrBaseUrl();
 
 const createStampApplyUrl = (payload) => {
   const normalizedPayload = {
@@ -1889,7 +1909,7 @@ const getStampPayloadFromLocation = () => {
         type: payload.type,
         id: payload.id,
         teacherId: payload.teacherId,
-        date: normalizeQrDate(payload.date),
+        date: normalizeStoredRecordDate(payload.date),
         handicap: typeof payload.handicap === "string" ? payload.handicap : "互先",
         result: typeof payload.result === "string" ? payload.result : "記録なし",
       };
@@ -1906,7 +1926,7 @@ const getStampPayloadFromLocation = () => {
       type: "teacher_stamp",
       id,
       teacherId,
-      date: normalizeQrDate(date),
+      date: normalizeStoredRecordDate(date),
       handicap: decodeQrValue(handicapCode, qrHandicapValues),
       result: decodeQrValue(resultCode, qrResultValues),
     };
@@ -1915,12 +1935,13 @@ const getStampPayloadFromLocation = () => {
   return null;
 };
 
-const buildTeacherStampReflection = ({ gameRecordId, teacherId, before, after }) => {
+const buildTeacherStampReflection = ({ gameRecordId, teacherId, before, after, date = getTodayForInput() }) => {
   const teacher = teacherDetails[teacherId];
 
   return {
     gameRecordId,
     teacherId,
+    date,
     teacherName: teacher.name,
     flowerName: teacher.flowerName ?? "花",
     flowerAsset: teacher.flowerAsset ?? "cosmos-stamp-stage-05-v2.png",
@@ -1932,7 +1953,7 @@ const buildTeacherStampReflection = ({ gameRecordId, teacherId, before, after })
 
 const sanitizeTodayTeacherStampReflection = (reflection = {}) => {
   const teacherId = typeof reflection.teacherId === "string" ? reflection.teacherId : "";
-  const date = normalizeQrDate(reflection.date);
+  const date = normalizeStoredRecordDate(reflection.date);
   const teacher = teacherDetails[teacherId];
 
   if (!teacher || date !== getTodayForInput()) {
@@ -1942,6 +1963,7 @@ const sanitizeTodayTeacherStampReflection = (reflection = {}) => {
   return buildTeacherStampReflection({
     gameRecordId: typeof reflection.gameRecordId === "string" ? reflection.gameRecordId : `game-today-${teacherId}-${date}`,
     teacherId,
+    date,
     before: normalizeProgressCount(reflection.before),
     after: normalizeProgressCount(reflection.after),
   });
@@ -1963,6 +1985,7 @@ const loadTodayTeacherStampReflections = () => {
         return buildTeacherStampReflection({
           gameRecordId: record.id,
           teacherId: record.teacherId,
+          date: record.date,
           before: Math.max(0, after - 1),
           after,
         });
@@ -1979,24 +2002,30 @@ const loadTodayTeacherStampReflections = () => {
   }
 };
 
+const refreshTodayTeacherStampReflections = () => {
+  todayTeacherStampReflections = loadTodayTeacherStampReflections();
+  latestTeacherStampReflection = todayTeacherStampReflections.at(-1) ?? null;
+};
+
 const saveTodayTeacherStampReflections = () => {
   try {
     const today = getTodayForInput();
-    const storedReflections = todayTeacherStampReflections.map((reflection) => ({
-      gameRecordId: reflection.gameRecordId,
-      teacherId: reflection.teacherId,
-      before: reflection.before,
-      after: reflection.after,
-      date: today,
-    }));
+    const storedReflections = todayTeacherStampReflections
+      .map((reflection) => ({
+        gameRecordId: reflection.gameRecordId,
+        teacherId: reflection.teacherId,
+        before: reflection.before,
+        after: reflection.after,
+        date: normalizeStoredRecordDate(reflection.date),
+      }))
+      .filter((reflection) => reflection.date === today);
     localStorage.setItem(todayTeacherStampReflectionStorageKey, JSON.stringify(storedReflections.slice(-3)));
   } catch {
     // 今日の表示用メモは保存できない環境でも、開いている間は保持します。
   }
 };
 
-todayTeacherStampReflections = loadTodayTeacherStampReflections();
-latestTeacherStampReflection = todayTeacherStampReflections.at(-1) ?? null;
+refreshTodayTeacherStampReflections();
 
 const scrollProfileTodayRecordIntoView = () => {
   if (!profileLatestStamp) {
@@ -2018,7 +2047,7 @@ const showProfileTodayRecord = () => {
 };
 
 const applyParticipationStampPayload = (payload = {}) => {
-  const recordDate = normalizeQrDate(payload.date);
+  const recordDate = normalizeStoredRecordDate(payload.date);
   const stampId = typeof payload.id === "string" && payload.id
     ? payload.id
     : `participation-${recordDate}`;
@@ -2074,7 +2103,7 @@ const refreshAfterTeacherStampChange = (teacherId) => {
 };
 
 const applyTeacherStampPayload = (payload = {}) => {
-  const recordDate = normalizeQrDate(payload.date);
+  const recordDate = normalizeStoredRecordDate(payload.date);
   const teacherId = typeof payload.teacherId === "string" ? payload.teacherId : "";
   const handicap = typeof payload.handicap === "string" && payload.handicap ? payload.handicap : "互先";
   const result = typeof payload.result === "string" && payload.result ? payload.result : "記録なし";
@@ -2120,6 +2149,7 @@ const applyTeacherStampPayload = (payload = {}) => {
   latestTeacherStampReflection = buildTeacherStampReflection({
     gameRecordId,
     teacherId,
+    date: recordDate,
     before,
     after,
   });
@@ -5326,6 +5356,19 @@ const clearAdminStampQr = () => {
 const createQrImageUrl = (applyUrl) =>
   `https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=16&data=${encodeURIComponent(applyUrl)}`;
 
+const renderAdminInstallQr = () => {
+  if (!adminInstallQr || !adminInstallQrImage || !adminInstallQrLink || !adminInstallQrMessage) {
+    return;
+  }
+
+  const installUrl = getAppInstallUrl();
+
+  adminInstallQr.hidden = false;
+  adminInstallQrImage.src = createQrImageUrl(installUrl);
+  adminInstallQrLink.href = installUrl;
+  adminInstallQrMessage.textContent = "このQRはホーム画面追加用です。受付用 参加QRや先生QRからホーム画面に追加しないでください。";
+};
+
 const createAdminParticipationQr = () => {
   if (!adminParticipationQr || !adminParticipationQrImage || !adminParticipationQrLink || !adminParticipationQrMessage) {
     return;
@@ -5833,6 +5876,7 @@ const applyGameRecordFromAdmin = ({ allowDuplicate = false } = {}) => {
   latestTeacherStampReflection = {
     gameRecordId,
     teacherId: draft.teacherId,
+    date: draft.date,
     teacherName: teacher.name,
     flowerName: teacher.flowerName ?? "花",
     flowerAsset: teacher.flowerAsset ?? "cosmos-stamp-stage-05-v2.png",
@@ -6170,7 +6214,12 @@ const showPanel = (target) => {
     const isVisible = panel.dataset.view === target;
     panel.classList.toggle("is-active", isVisible);
     panel.hidden = !isVisible;
+    if (isVisible) {
+      panel.scrollTop = 0;
+    }
   }
+
+  infoPanel.scrollTop = 0;
 
   if (target !== "field-guide") {
     dock.classList.remove("is-detail-open");
@@ -7732,10 +7781,7 @@ const updateProfileCard = () => {
 
   renderAdventurerName();
   totalStamps.textContent = `スタンプ ${getTotalStampCount()}`;
-  if (!latestTeacherStampReflection && todayTeacherStampReflections.length === 0) {
-    todayTeacherStampReflections = loadTodayTeacherStampReflections();
-    latestTeacherStampReflection = todayTeacherStampReflections.at(-1) ?? null;
-  }
+  refreshTodayTeacherStampReflections();
   const hasTodayParticipationStamp = userProgress.stamps.lastParticipationStampDate === getTodayForInput();
   const hasTodayTeacherStamp = todayTeacherStampReflections.length > 0;
   const hasTodayRecord = hasTodayParticipationStamp || hasTodayTeacherStamp;
@@ -8163,6 +8209,7 @@ const swipeIgnoreSelector = [
   "[role='button']",
 ].join(",");
 let panelSwipeStart = null;
+let panelSwipeLocked = false;
 
 const getActivePanelName = () => {
   for (const panel of panels) {
@@ -8213,6 +8260,7 @@ const moveSwipePanel = (direction) => {
 infoPanel?.addEventListener("touchstart", (event) => {
   if (!canSwipePanelFrom(event) || event.touches.length !== 1) {
     panelSwipeStart = null;
+    panelSwipeLocked = false;
     return;
   }
 
@@ -8221,11 +8269,33 @@ infoPanel?.addEventListener("touchstart", (event) => {
     x: touch.clientX,
     y: touch.clientY,
   };
+  panelSwipeLocked = false;
 }, { passive: true });
+
+infoPanel?.addEventListener("touchmove", (event) => {
+  if (!panelSwipeStart || event.touches.length !== 1) {
+    return;
+  }
+
+  const touch = event.touches[0];
+  const deltaX = touch.clientX - panelSwipeStart.x;
+  const deltaY = touch.clientY - panelSwipeStart.y;
+  const absX = Math.abs(deltaX);
+  const absY = Math.abs(deltaY);
+
+  if (!panelSwipeLocked && absX > 14 && absX > absY * 0.7) {
+    panelSwipeLocked = true;
+  }
+
+  if (panelSwipeLocked) {
+    event.preventDefault();
+  }
+}, { passive: false });
 
 infoPanel?.addEventListener("touchend", (event) => {
   if (!panelSwipeStart || event.changedTouches.length !== 1) {
     panelSwipeStart = null;
+    panelSwipeLocked = false;
     return;
   }
 
@@ -8233,12 +8303,18 @@ infoPanel?.addEventListener("touchend", (event) => {
   const deltaX = touch.clientX - panelSwipeStart.x;
   const deltaY = touch.clientY - panelSwipeStart.y;
   panelSwipeStart = null;
+  panelSwipeLocked = false;
 
-  if (Math.abs(deltaX) < 52 || Math.abs(deltaX) < Math.abs(deltaY) * 1.15) {
+  if (Math.abs(deltaX) < 22 || Math.abs(deltaX) < Math.abs(deltaY) * 0.7) {
     return;
   }
 
   moveSwipePanel(deltaX < 0 ? 1 : -1);
+}, { passive: true });
+
+infoPanel?.addEventListener("touchcancel", () => {
+  panelSwipeStart = null;
+  panelSwipeLocked = false;
 }, { passive: true });
 
 for (const tab of tabs) {
@@ -9467,6 +9543,7 @@ updateLibraryJournalKeeperSpeech();
 updateAdminPanel();
 updateAdminLockState();
 updateBrowserStorageWarning();
+renderAdminInstallQr();
 applyStampQrFromLocation();
 
 const appLoadStatus = document.querySelector("[data-app-load-status]");

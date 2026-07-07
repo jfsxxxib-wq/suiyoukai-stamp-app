@@ -12,10 +12,10 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="mobile-web-app-capable" content="yes">
     <title>水曜会 花記録</title>
-    <link rel="manifest" href="manifest.webmanifest?v=20260707-panel-swipe-02">
+    <link rel="manifest" href="manifest.webmanifest?v=20260707-preserve-record-date-01">
     <link rel="apple-touch-icon" href="assets/app-icon-180.png?v=20260705-home-screen-01">
     <link rel="icon" type="image/png" sizes="192x192" href="assets/app-icon-192.png?v=20260705-home-screen-01">
-    <link rel="stylesheet" href="styles.css?v=20260707-panel-swipe-02">
+    <link rel="stylesheet" href="styles.css?v=20260707-preserve-record-date-01">
   </head>
   <body>
     <main class="record-book" aria-label="冒険記録帳">
@@ -1086,13 +1086,29 @@
                 <strong>今日の運営</strong>
                 <span>本人スマホへ入れるQRを先に使う</span>
               </div>
+              <section class="admin-participation-apply" aria-label="ホーム画面追加用QR">
+                <div class="admin-adjustments-header">
+                  <strong>最初にホーム画面へ入れるQR</strong>
+                  <span>新規参加者用</span>
+                </div>
+                <p class="admin-form-confirm-note">
+                  まだ花アイコンがない人は、まずこのQRをSafariまたはChromeで開き、ホーム画面に追加します。受付用 参加QRや先生QRからホーム画面に追加しないでください。
+                </p>
+                <div class="admin-stamp-qr" data-admin-install-qr aria-live="polite">
+                  <strong>アプリ入口QR</strong>
+                  <img data-admin-install-qr-image alt="水曜会 花記録をホーム画面に追加するためのQRコード">
+                  <a data-admin-install-qr-link href="#" target="_blank" rel="noopener noreferrer">アプリ入口を開く</a>
+                  <small data-admin-install-qr-message>このQRはホーム画面追加用です。花を入れる時は、ホーム画面の花アイコンから開いたあと受付QRを読みます。</small>
+                </div>
+              </section>
+
               <section class="admin-participation-apply" aria-label="参加スタンプ反映">
                 <div class="admin-adjustments-header">
                   <strong>受付用 参加QR</strong>
                   <span data-admin-participation-date>本日</span>
                 </div>
                 <p class="admin-form-confirm-note">
-                  受付が済んだ人に本人スマホで読み取ってもらいます。その日の参加スタンプが1つ入り、同じ日にもう一度読んでも二重には増えません。
+                  受付が済んだ人に、ホーム画面の花アイコンから開いた本人スマホで読み取ってもらいます。その日の参加スタンプが1つ入り、同じ日にもう一度読んでも二重には増えません。ホーム画面追加には使いません。
                 </p>
                 <button type="button" class="admin-stamp-qr-button" data-admin-participation-qr-create>受付用 参加QRを作る</button>
                 <div class="admin-stamp-qr" data-admin-participation-qr hidden aria-live="polite">
@@ -1381,7 +1397,7 @@
       });
     </script>
     <script src="stamp-rules.js?v=20260702-shrine-today-teachers-01"></script>
-    <script src="script.js?v=20260707-panel-swipe-02"></script>
+    <script src="script.js?v=20260707-preserve-record-date-01"></script>
   </body>
 </html>
 
