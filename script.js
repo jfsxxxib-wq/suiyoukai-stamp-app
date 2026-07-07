@@ -1415,6 +1415,11 @@ const hasStampPayloadInUrl = () => {
   return searchParams.has("stamp") || /^#apply-stamp=/.test(window.location.hash || "") || /^#s=/.test(window.location.hash || "");
 };
 
+const hasInstallGuideRequest = () => {
+  const searchParams = new URLSearchParams(window.location.search);
+  return searchParams.get("install") === "1";
+};
+
 const isBrowserInstallGuideClosed = () => {
   try {
     return sessionStorage.getItem("suiyoukai-install-guide-closed") === "1";
@@ -1428,10 +1433,10 @@ const updateBrowserInstallGuide = () => {
     return;
   }
 
-  const shouldShow = !isStandaloneDisplay()
-    && !hasStampPayloadInUrl()
+  const shouldShow = !hasStampPayloadInUrl()
     && window.location.hash !== adminEntryHash
-    && !isBrowserInstallGuideClosed();
+    && (hasInstallGuideRequest() || (!isStandaloneDisplay()
+    && !isBrowserInstallGuideClosed()));
 
   browserInstallGuide.hidden = !shouldShow;
 };
@@ -1723,7 +1728,7 @@ const getStampQrBaseUrl = () => {
   return `${origin}${window.location.pathname}`;
 };
 
-const getAppInstallUrl = () => getStampQrBaseUrl();
+const getAppInstallUrl = () => `${getStampQrBaseUrl()}?install=1`;
 
 const createStampApplyUrl = (payload) => {
   const normalizedPayload = {
