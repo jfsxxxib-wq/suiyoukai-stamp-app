@@ -1510,7 +1510,7 @@ const renderProfileTodayGameRecords = () => {
     return;
   }
 
-  const records = getTodayGameRecords().slice(-1);
+  const records = getTodayGameRecords();
   profileTodayGameRecords.textContent = "";
   profileTodayGameRecords.hidden = records.length === 0;
 
