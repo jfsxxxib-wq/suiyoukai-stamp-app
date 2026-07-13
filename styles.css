@@ -11922,7 +11922,7 @@ body {
 
 /* Current teacher photo sources. Change only these variables when portraits are replaced. */
 .teacher-photo[data-teacher-photo="akari"] {
-  --teacher-photo-image: url("assets/teacher-photo-1.jpg?v=20260706-teacher-photo-source-01");
+  --teacher-photo-image: url("assets/teacher-tsuneishi-20260713-photo-2.jpg?v=20260713-teacher-photo-source-02");
   --teacher-photo-bg: #f3efe8;
 }
 
