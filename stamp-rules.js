@@ -107,7 +107,7 @@ const achievementRules = {
       },
       {
         teacherId: "teacher_extra_01",
-        teacherName: "追加先生A",
+        teacherName: "徐 文燕 三段",
         flower: "suzuran",
         flowerName: "すずらん",
         flowerAsset: "suzuran-stamp-stage-05-list.png",
@@ -118,13 +118,13 @@ const achievementRules = {
           medal: null,
           title: {
             id: "title_teacher_extra_01_suzuran_fairy_friend",
-            name: "追加先生A すずらんのネズミ妖精と出会った人",
+            name: "徐 文燕 三段 すずらんのネズミ妖精と出会った人",
           },
         },
       },
       {
         teacherId: "teacher_extra_02",
-        teacherName: "追加先生B",
+        teacherName: "大西 竜平 七段",
         flower: "shirotsumekusa",
         flowerName: "白詰草",
         flowerAsset: "shirotsumekusa-stamp-stage-05-list.png",
@@ -135,7 +135,7 @@ const achievementRules = {
           medal: null,
           title: {
             id: "title_teacher_extra_02_shirotsumekusa_fairy_friend",
-            name: "追加先生B 白詰草のトイプードル妖精と出会った人",
+            name: "大西 竜平 七段 白詰草のトイプードル妖精と出会った人",
           },
         },
       },

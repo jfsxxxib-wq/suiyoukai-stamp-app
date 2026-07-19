@@ -11946,6 +11946,16 @@ body {
   --teacher-photo-bg: #f3efe8;
 }
 
+.teacher-photo[data-teacher-photo="jo-bunen"] {
+  --teacher-photo-image: url("assets/teacher-jo-bunen-20260719.jpg?v=20260719-teacher-photo-source-01");
+  --teacher-photo-bg: #f3efe8;
+}
+
+.teacher-photo[data-teacher-photo="onishi-ryohei"] {
+  --teacher-photo-image: url("assets/teacher-onishi-ryohei-20260719.jpg?v=20260719-teacher-photo-source-01");
+  --teacher-photo-bg: #f3efe8;
+}
+
 .teacher-photo[data-teacher-photo]::after,
 .info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) .teacher-photo[data-teacher-photo]::after {
   background: var(--teacher-photo-image) center center / contain no-repeat, var(--teacher-photo-bg, #f3efe8) !important;
