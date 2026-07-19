@@ -11958,6 +11958,8 @@ body {
 
 .teacher-photo[data-teacher-photo]::after,
 .info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) .teacher-photo[data-teacher-photo]::after {
+  content: "" !important;
+  display: block !important;
   background: var(--teacher-photo-image) center center / contain no-repeat, var(--teacher-photo-bg, #f3efe8) !important;
 }
 
