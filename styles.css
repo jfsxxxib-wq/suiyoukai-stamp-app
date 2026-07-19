@@ -11959,8 +11959,18 @@ body {
 .teacher-photo[data-teacher-photo]::after,
 .info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) .teacher-photo[data-teacher-photo]::after {
   content: "" !important;
+  position: absolute !important;
+  inset: 0 !important;
   display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  border-radius: inherit !important;
   background: var(--teacher-photo-image) center center / contain no-repeat, var(--teacher-photo-bg, #f3efe8) !important;
+}
+
+.teacher-photo[data-teacher-photo] span,
+.info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) .teacher-photo[data-teacher-photo] span {
+  display: none !important;
 }
 
 /* Temporary teacher portrait: detective-style silhouette until real photos are added. */
