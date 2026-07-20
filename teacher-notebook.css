@@ -1,0 +1,207 @@
+:root {
+  --ink: #273f32;
+  --body: #514a40;
+  --paper: #faf7ed;
+  --paper-deep: #efe8d7;
+  --green: #315c46;
+  --green-soft: #dce7db;
+  --gold: #a78645;
+  --blue: #a9c4c9;
+  --line: rgba(117, 92, 49, 0.26);
+  color-scheme: light;
+  font-family: "Yu Mincho", "Hiragino Mincho ProN", "Noto Serif JP", serif;
+}
+
+* { box-sizing: border-box; }
+html { min-height: 100%; background: #e9e4d8; }
+body {
+  min-height: 100%;
+  margin: 0;
+  color: var(--body);
+  background:
+    radial-gradient(circle at 18% 12%, rgba(255,255,255,.8), transparent 30%),
+    linear-gradient(145deg, #dce7de, #efe8da 48%, #d9e4e6);
+}
+button { font: inherit; }
+
+.notebook-shell {
+  width: min(100%, 430px);
+  min-height: 100dvh;
+  margin: 0 auto;
+  padding: max(12px, env(safe-area-inset-top)) 12px max(12px, env(safe-area-inset-bottom));
+}
+
+.notebook-book,
+.notebook-lock {
+  position: relative;
+  min-height: calc(100dvh - 24px);
+  overflow: hidden;
+  border: 1px solid rgba(82, 70, 45, .24);
+  border-radius: 20px;
+  background:
+    radial-gradient(circle at 15% 9%, rgba(72, 114, 82, .05) 0 2px, transparent 3px),
+    radial-gradient(circle at 82% 18%, rgba(167, 134, 69, .08) 0 1px, transparent 2px),
+    repeating-linear-gradient(0deg, rgba(105, 87, 50, .018) 0 1px, transparent 1px 5px),
+    var(--paper);
+  box-shadow: 0 18px 46px rgba(45, 48, 38, .18), inset 0 0 0 5px rgba(255,255,255,.38);
+}
+
+.notebook-book::after {
+  content: "";
+  position: absolute;
+  right: -60px;
+  bottom: -75px;
+  width: 230px;
+  height: 155px;
+  border-radius: 50%;
+  background: repeating-radial-gradient(ellipse at 50% 100%, rgba(82, 124, 104, .08) 0 10px, transparent 11px 22px);
+  pointer-events: none;
+}
+
+.notebook-lock {
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  padding: 34px;
+  text-align: center;
+}
+.notebook-lock h1 { margin: 5px 0 18px; color: var(--ink); font-size: 2rem; }
+.notebook-lock p { line-height: 1.9; }
+.lock-mark { display: grid; place-items: center; width: 64px; height: 64px; border-radius: 50%; background: var(--green-soft); color: var(--ink); font-size: 1.6rem; }
+.lock-note { padding: 15px; border: 1px solid var(--line); border-radius: 12px; background: rgba(255,255,255,.55); font-size: .88rem; }
+
+.notebook-topbar {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 54px;
+  padding: 12px 16px 0;
+}
+.notebook-back { border: 0; background: transparent; color: var(--green); font-weight: 700; cursor: pointer; }
+.about-link { margin-left: auto; padding: 6px 4px; border: 0; background: transparent; color: var(--green); font-size: .76rem; text-decoration: underline; text-decoration-color: rgba(49,92,70,.28); text-underline-offset: 4px; cursor: pointer; }
+
+.notebook-view { position: relative; z-index: 2; padding: 12px 22px 38px; }
+.notebook-view[hidden], .notebook-book[hidden], .notebook-lock[hidden] { display: none; }
+.eyebrow { margin: 0 0 6px; color: var(--gold); font-size: .78rem; font-weight: 700; letter-spacing: .15em; }
+.notebook-view > h1 { margin: 0; color: var(--ink); font-size: clamp(1.7rem, 8vw, 2.25rem); font-weight: 600; line-height: 1.45; letter-spacing: .06em; }
+.view-date { display: block; margin-top: 8px; color: var(--green); font-size: 1rem; }
+
+.cover-view { min-height: calc(100dvh - 78px); text-align: center; }
+.cover-view h1 { margin-top: 12px; font-size: clamp(2.3rem, 12vw, 3.3rem); line-height: 1.28; }
+.teacher-name { margin: 12px 0 0; color: var(--body); font-size: 1.08rem; font-weight: 700; }
+.cover-rule { display: flex; align-items: center; justify-content: center; gap: 9px; margin: 15px auto; color: var(--gold); }
+.cover-rule i { width: 55px; height: 1px; background: var(--gold); opacity: .45; }
+.cover-message { margin: 0; color: var(--green); font-size: 1.18rem; line-height: 1.8; }
+.cover-flower { position: absolute; top: 5px; right: 13px; width: 64px; height: 64px; opacity: .7; }
+.cover-flower span { position: absolute; width: 25px; height: 25px; border-radius: 50% 50% 42% 52%; background: rgba(137, 174, 183, .55); }
+.cover-flower span:nth-child(1) { left: 20px; }
+.cover-flower span:nth-child(2) { top: 19px; left: 39px; }
+.cover-flower span:nth-child(3) { top: 38px; left: 20px; }
+.cover-flower span:nth-child(4) { top: 19px; left: 1px; }
+
+.notebook-illustration {
+  position: relative;
+  width: 148px;
+  height: 118px;
+  margin: 19px auto 18px;
+  border: 1px solid rgba(59,78,62,.3);
+  border-radius: 5px 12px 12px 5px;
+  background: linear-gradient(145deg, #a9b6a1, #718876);
+  box-shadow: 8px 10px 16px rgba(47,53,40,.16), inset 7px 0 0 rgba(255,255,255,.13);
+  transform: rotate(-3deg);
+}
+.notebook-illustration::before { content: "一局"; position: absolute; inset: 36px 42px; display: grid; place-items: center; border: 1px solid rgba(246,239,208,.5); color: #f3ead0; font-size: .9rem; }
+.book-ribbon { position: absolute; top: -3px; bottom: -10px; left: 24px; width: 4px; background: #b89b62; }
+.stone { position: absolute; width: 29px; height: 29px; border-radius: 50%; box-shadow: 0 5px 6px rgba(0,0,0,.22); }
+.stone-white { right: -19px; bottom: 15px; background: radial-gradient(circle at 35% 28%, white, #ddd7c9 70%); }
+.stone-black { right: 4px; bottom: -13px; background: radial-gradient(circle at 35% 25%, #5b625e, #161b18 72%); }
+
+.paper-button {
+  width: 100%;
+  min-height: 56px;
+  padding: 12px 18px;
+  border: 1px solid var(--gold);
+  border-radius: 10px;
+  background: linear-gradient(#fffdf6, #f2ead8);
+  color: var(--ink);
+  font-weight: 700;
+  letter-spacing: .05em;
+  box-shadow: 0 5px 10px rgba(73,58,31,.09), inset 0 0 0 3px rgba(255,255,255,.55);
+  cursor: pointer;
+}
+.paper-button:focus-visible, .encounter-card:focus-visible { outline: 3px solid rgba(87,136,151,.5); outline-offset: 3px; }
+.warm-note { min-height: 1.4em; margin: 16px 0 4px; color: var(--green); font-size: .88rem; line-height: 1.7; }
+.cover-view footer { margin-top: 19px; color: var(--green); font-size: .78rem; letter-spacing: .12em; }
+
+.encounter-count { margin: 22px 0 14px; color: var(--green); font-weight: 700; }
+.encounter-list { display: grid; gap: 12px; }
+.encounter-card {
+  position: relative;
+  display: grid;
+  grid-template-columns: 46px minmax(0,1fr) auto;
+  gap: 12px;
+  width: 100%;
+  padding: 14px 12px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: rgba(255,255,255,.62);
+  color: inherit;
+  text-align: left;
+  box-shadow: 0 7px 14px rgba(68,61,45,.07);
+  cursor: pointer;
+}
+.encounter-card.is-anonymous { cursor: default; }
+.encounter-mark { display: grid; place-items: center; width: 46px; height: 46px; border-radius: 50%; background: var(--green-soft); color: var(--green); font-size: 1.25rem; }
+.encounter-copy strong { display: block; color: var(--ink); font-size: 1.03rem; }
+.encounter-copy span, .encounter-copy small { display: block; margin-top: 4px; line-height: 1.5; }
+.encounter-copy span { color: var(--green); font-weight: 700; font-size: .84rem; }
+.encounter-copy small { color: #6a6257; }
+.encounter-arrow { align-self: center; color: var(--gold); }
+.meeting-badge { display: inline-block; margin: 16px 0; padding: 8px 17px; border: 1px solid var(--gold); border-radius: 999px; background: rgba(255,252,241,.75); color: #745b2c; font-weight: 700; }
+.history-person-heading span { display: block; }
+.history-person-heading span:first-child { font-size: .82em; }
+.reunion-callout { margin: 0 0 18px; padding: 15px; border-radius: 12px; background: rgba(203,218,224,.48); color: var(--green); line-height: 1.7; }
+.history-list { display: grid; gap: 13px; }
+.history-card { padding: 16px; border: 1px solid var(--line); border-radius: 13px; background: rgba(255,255,255,.58); }
+.history-card header { display: flex; justify-content: space-between; gap: 8px; color: var(--green); }
+.history-card h2 { margin: 0; font-size: 1rem; }
+.history-card time { font-size: .78rem; }
+.history-card dl { display: grid; grid-template-columns: auto 1fr; gap: 7px 12px; margin: 14px 0; font-size: .88rem; }
+.history-card dt { color: #7a705f; }
+.history-card dd { margin: 0; color: var(--ink); }
+.feeling { margin: 12px 0 0; color: var(--green); font-weight: 700; line-height: 1.7; }
+.closing-line { margin: 24px 0 0; color: var(--green); text-align: center; font-size: .86rem; }
+
+.reunion-view { padding-top: 25px; text-align: center; }
+.reunion-view h1 { margin-top: 14px; }
+.reunion-copy { color: var(--green); line-height: 1.8; }
+.previous-note { margin: 18px 0 24px; padding: 21px; border: 1px solid var(--line); border-radius: 4px 14px 5px 11px; background: #f3ecdc; box-shadow: 0 8px 15px rgba(68,57,34,.09); text-align: left; transform: rotate(-.5deg); }
+.previous-note strong, .previous-note span { display: block; margin-top: 7px; }
+.previous-note strong { color: var(--ink); }
+.previous-note .feeling { margin-top: 13px; }
+.reunion-stones { display: flex; justify-content: center; gap: 8px; margin-bottom: 12px; }
+.reunion-stones span { width: 25px; height: 25px; border-radius: 50%; box-shadow: 0 3px 5px rgba(0,0,0,.18); }
+.reunion-stones span:first-child { background: #1f2521; }
+.reunion-stones span:last-child { background: #f7f3e7; }
+
+.about-view { padding-bottom: 50px; }
+.about-view > h1 { margin-bottom: 22px; }
+.about-card { margin-top: 12px; padding: 16px; border: 1px solid var(--line); border-radius: 13px; background: rgba(255,255,255,.58); }
+.about-card h2 { margin: 0; color: var(--ink); font-size: 1rem; }
+.about-card p { margin: 9px 0 0; font-size: .86rem; line-height: 1.85; }
+
+.empty-note { padding: 40px 18px; border: 1px dashed var(--line); border-radius: 14px; color: #6c655a; text-align: center; line-height: 1.9; }
+.preview-ribbon { position: fixed; z-index: 10; right: 0; bottom: 0; padding: 7px 12px; border-radius: 10px 0 0 0; background: #725f35; color: white; font-family: sans-serif; font-size: 11px; }
+
+@media (min-width: 650px) {
+  .notebook-shell { padding-block: 24px; }
+  .notebook-book, .notebook-lock { min-height: min(820px, calc(100dvh - 48px)); }
+  .cover-view { min-height: 710px; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .notebook-view { animation: page-in .28s ease-out; }
+  @keyframes page-in { from { opacity: 0; transform: translateY(6px); } }
+}
