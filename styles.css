@@ -12453,3 +12453,158 @@ body.is-fairy-viewer-open {
 .info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) .teacher-photo[data-teacher-photo^="extra-"]::after {
   display: none !important;
 }
+
+/* 一局のご縁帳 共有最小試験 */
+.teacher-sharing-modal[hidden] {
+  display: none;
+}
+
+.teacher-sharing-modal {
+  position: fixed;
+  z-index: 120;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+}
+
+.teacher-sharing-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(42, 48, 42, 0.5);
+  backdrop-filter: blur(3px);
+}
+
+.teacher-sharing-card {
+  position: relative;
+  width: min(100%, 430px);
+  max-height: calc(100dvh - 40px);
+  overflow-y: auto;
+  border: 1px solid #d8d0bc;
+  border-radius: 24px;
+  background: #fffdf7;
+  box-shadow: 0 22px 60px rgba(47, 54, 45, 0.24);
+  padding: 26px 22px 22px;
+  color: #34372f;
+}
+
+.teacher-sharing-flower {
+  margin-bottom: 4px;
+  font-size: 38px;
+  line-height: 1;
+  text-align: center;
+}
+
+.teacher-sharing-kicker {
+  margin: 0;
+  color: #6c8068;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-align: center;
+}
+
+.teacher-sharing-card h2 {
+  margin: 8px 0 10px;
+  font-size: clamp(22px, 6vw, 28px);
+  line-height: 1.35;
+  text-align: center;
+}
+
+.teacher-sharing-lead,
+.teacher-sharing-message,
+.teacher-sharing-privacy {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.8;
+  text-align: center;
+}
+
+.teacher-sharing-summary {
+  display: grid;
+  gap: 10px;
+  margin: 20px 0 14px;
+}
+
+.teacher-sharing-summary[hidden],
+.teacher-sharing-handicap[hidden],
+.teacher-sharing-privacy[hidden] {
+  display: none;
+}
+
+.teacher-sharing-summary div {
+  border: 1px solid #e1dac8;
+  border-radius: 14px;
+  background: #faf7ee;
+  padding: 12px 14px;
+}
+
+.teacher-sharing-summary dt,
+.teacher-sharing-handicap > span {
+  display: block;
+  margin-bottom: 5px;
+  color: #6a6f62;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.teacher-sharing-summary dd {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.teacher-sharing-handicap {
+  display: block;
+  margin: 0 0 14px;
+}
+
+.teacher-sharing-handicap select {
+  width: 100%;
+  min-height: 48px;
+  border: 1px solid #b9c8b5;
+  border-radius: 12px;
+  background: #fff;
+  padding: 0 14px;
+  color: #34372f;
+  font: inherit;
+}
+
+.teacher-sharing-privacy {
+  border-radius: 12px;
+  background: #f1f5ed;
+  padding: 12px;
+  color: #596254;
+  text-align: left;
+}
+
+.teacher-sharing-message {
+  min-height: 1.8em;
+  margin-top: 12px;
+  color: #675d48;
+}
+
+.teacher-sharing-actions {
+  display: grid;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.teacher-sharing-actions button {
+  min-height: 50px;
+  border: 1px solid #a9bba4;
+  border-radius: 14px;
+  background: #edf4e9;
+  color: #36543c;
+  font: inherit;
+  font-weight: 800;
+}
+
+.teacher-sharing-actions button:last-child {
+  background: #fffdf7;
+  color: #4f554b;
+}
+
+.teacher-sharing-actions button:disabled {
+  opacity: 0.55;
+}

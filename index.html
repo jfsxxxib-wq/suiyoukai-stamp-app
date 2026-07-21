@@ -15,7 +15,7 @@
     <link rel="manifest" href="manifest.webmanifest?v=20260707-same-day-records-01">
     <link rel="apple-touch-icon" href="assets/app-icon-180.png?v=20260705-home-screen-01">
     <link rel="icon" type="image/png" sizes="192x192" href="assets/app-icon-192.png?v=20260705-home-screen-01">
-    <link rel="stylesheet" href="styles.css?v=20260719-teacher-photos-03">
+    <link rel="stylesheet" href="styles.css?v=20260721-sharing-trial-01">
   </head>
   <body>
     <section class="browser-install-guide" data-browser-install-guide hidden aria-label="ホーム画面追加の案内">
@@ -1364,6 +1364,47 @@
           </div>
         </article>
       </section>
+      <section class="teacher-sharing-modal" data-teacher-sharing-modal hidden aria-label="一局のご縁帳への共有確認">
+        <div class="teacher-sharing-backdrop" data-teacher-sharing-close></div>
+        <article class="teacher-sharing-card" role="dialog" aria-modal="true" aria-labelledby="teacher-sharing-title">
+          <div class="teacher-sharing-flower" aria-hidden="true">🌸</div>
+          <p class="teacher-sharing-kicker" data-teacher-sharing-kicker>今日の記録</p>
+          <h2 id="teacher-sharing-title" data-teacher-sharing-title>今日の花が入りました</h2>
+          <p class="teacher-sharing-lead" data-teacher-sharing-lead></p>
+          <dl class="teacher-sharing-summary" data-teacher-sharing-summary hidden>
+            <div>
+              <dt>先生に表示される名前</dt>
+              <dd data-teacher-sharing-name></dd>
+            </div>
+            <div>
+              <dt>対局日</dt>
+              <dd data-teacher-sharing-date></dd>
+            </div>
+          </dl>
+          <label class="teacher-sharing-handicap" data-teacher-sharing-handicap-wrap hidden>
+            <span>置き石</span>
+            <select data-teacher-sharing-handicap>
+              <option value="">選んでください</option>
+              <option value="互先">互先</option>
+              <option value="先">先</option>
+              <option value="2子">2子</option>
+              <option value="3子">3子</option>
+              <option value="4子">4子</option>
+              <option value="5子">5子</option>
+              <option value="6子以上">6子以上</option>
+              <option value="分からない">分からない</option>
+            </select>
+          </label>
+          <p class="teacher-sharing-privacy" data-teacher-sharing-privacy hidden>
+            この記録は先生本人の「一局のご縁帳」に表示されます。住所・電話番号・メールアドレス・受付番号は先生には表示されません。
+          </p>
+          <p class="teacher-sharing-message" data-teacher-sharing-message aria-live="polite"></p>
+          <div class="teacher-sharing-actions" data-teacher-sharing-actions>
+            <button type="button" data-teacher-sharing-primary>ご縁帳への記録を確認</button>
+            <button type="button" data-teacher-sharing-secondary>今日の記録を見る</button>
+          </div>
+        </article>
+      </section>
       <section class="achievement-modal" data-achievement-modal hidden aria-label="5回達成">
         <div class="achievement-modal-backdrop" data-achievement-close></div>
         <article class="achievement-modal-card">
@@ -1413,7 +1454,7 @@
       });
     </script>
     <script src="stamp-rules.js?v=20260719-teacher-photos-01"></script>
-    <script src="script.js?v=20260719-teacher-photos-01"></script>
+    <script src="script.js?v=20260721-sharing-trial-01"></script>
   </body>
 </html>
 
