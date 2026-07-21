@@ -204,6 +204,20 @@ const adminFixedTeacherQrList = document.querySelector("[data-admin-fixed-teache
 const adminFixedTeacherQrPrintButton = document.querySelector("[data-admin-fixed-teacher-qr-print]");
 const adminFixedTeacherQrPdfButton = document.querySelector("[data-admin-fixed-teacher-qr-pdf]");
 const adminFixedTeacherQrPreviewCloseButton = document.querySelector("[data-admin-fixed-teacher-qr-preview-close]");
+const teacherSharingModal = document.querySelector("[data-teacher-sharing-modal]");
+const teacherSharingKicker = document.querySelector("[data-teacher-sharing-kicker]");
+const teacherSharingTitle = document.querySelector("[data-teacher-sharing-title]");
+const teacherSharingLead = document.querySelector("[data-teacher-sharing-lead]");
+const teacherSharingSummary = document.querySelector("[data-teacher-sharing-summary]");
+const teacherSharingName = document.querySelector("[data-teacher-sharing-name]");
+const teacherSharingDate = document.querySelector("[data-teacher-sharing-date]");
+const teacherSharingHandicapWrap = document.querySelector("[data-teacher-sharing-handicap-wrap]");
+const teacherSharingHandicap = document.querySelector("[data-teacher-sharing-handicap]");
+const teacherSharingPrivacy = document.querySelector("[data-teacher-sharing-privacy]");
+const teacherSharingMessage = document.querySelector("[data-teacher-sharing-message]");
+const teacherSharingPrimary = document.querySelector("[data-teacher-sharing-primary]");
+const teacherSharingSecondary = document.querySelector("[data-teacher-sharing-secondary]");
+const teacherSharingCloseButtons = document.querySelectorAll("[data-teacher-sharing-close]");
 const adminTeacherProfileSelect = document.querySelector("[data-admin-teacher-profile-select]");
 const adminTeacherProfileStyle = document.querySelector("[data-admin-teacher-profile-style]");
 const adminTeacherProfileLesson = document.querySelector("[data-admin-teacher-profile-lesson]");
@@ -300,6 +314,9 @@ let adminGameRecordApplyCooldownUntil = 0;
 let adminDuplicateTeacherApplyCooldownUntil = 0;
 let pendingOperatorAction = null;
 let pendingRestoreBackup = null;
+let activeTeacherSharingRecord = null;
+let activeTeacherSharingStage = "closed";
+let isTeacherSharingSubmitting = false;
 let isShrineIntroPlaying = false;
 let shrineIntroTimerIds = [];
 
@@ -330,6 +347,7 @@ const adminIdentityDisplayNameStorageKey = "suiyoukai-admin-identity-display-nam
 const adminIdentityRealNameStorageKey = "suiyoukai-admin-identity-real-name-v1";
 const adminCombinedAppliedKeysStorageKey = "suiyoukai-admin-combined-applied-keys-v1";
 const participationFormOpenedStorageKey = "suiyoukai-participation-form-opened-v1";
+const teacherSharingOutboxStorageKey = "suiyoukai-teacher-sharing-outbox-trial-v1";
 const defaultAdventurerName = "みずの しずく";
 const backupAppId = "suiyoukai-stamp-adventure";
 const backupFormatVersion = 1;
@@ -1471,6 +1489,238 @@ const formatGameRecordDateLabel = (date) => {
   });
 };
 
+const teacherSharingHandicapValues = new Set(["互先", "先", "2子", "3子", "4子", "5子", "6子以上", "分からない"]);
+const teacherSharingResultValues = new Set(["verified", "unregistered", "invalid", "temporary_error"]);
+
+const getTeacherSharingTrialConfig = () => window.SUIYOUKAI_TEACHER_SHARING_TRIAL ?? {};
+const isTeacherSharingTrialEnabled = () => getTeacherSharingTrialConfig().enabled === true;
+
+const sanitizeTeacherSharingOutboxRecord = (record = {}) => {
+  const teacherId = typeof record.teacherId === "string" ? record.teacherId : "";
+  const gameDate = normalizeStoredRecordDate(record.gameDate);
+  const displayName = normalizeAdventurerName(record.displayName);
+  const receptionCodeAtConsent = String(record.receptionCodeAtConsent ?? "");
+  const handicap = teacherSharingHandicapValues.has(record.handicap) ? record.handicap : "";
+
+  if (!record.recordId || !teacherDetails[teacherId] || !gameDate || !displayName || !handicap) {
+    return null;
+  }
+
+  return {
+    recordId: String(record.recordId),
+    teacherId,
+    displayName,
+    gameDate,
+    handicap,
+    receptionCodeAtConsent,
+    consentedAt: typeof record.consentedAt === "string" ? record.consentedAt : "",
+    status: record.status === "sent" ? "sent" : "pending",
+    lastAttemptAt: typeof record.lastAttemptAt === "string" ? record.lastAttemptAt : "",
+    retryCount: Math.max(0, Number(record.retryCount) || 0),
+  };
+};
+
+const loadTeacherSharingOutbox = () => {
+  try {
+    const stored = JSON.parse(localStorage.getItem(teacherSharingOutboxStorageKey) ?? "[]");
+    return Array.isArray(stored) ? stored.map(sanitizeTeacherSharingOutboxRecord).filter(Boolean) : [];
+  } catch {
+    return [];
+  }
+};
+
+let teacherSharingOutbox = loadTeacherSharingOutbox();
+
+const saveTeacherSharingOutbox = () => {
+  try {
+    localStorage.setItem(teacherSharingOutboxStorageKey, JSON.stringify(teacherSharingOutbox.slice(-30)));
+    return true;
+  } catch {
+    return false;
+  }
+};
+
+const upsertTeacherSharingOutboxRecord = (record) => {
+  teacherSharingOutbox = teacherSharingOutbox.filter((item) => item.recordId !== record.recordId);
+  teacherSharingOutbox.push(record);
+  saveTeacherSharingOutbox();
+};
+
+const setTeacherSharingStage = (stage) => {
+  if (!teacherSharingModal || !activeTeacherSharingRecord) {
+    return;
+  }
+
+  const teacher = teacherDetails[activeTeacherSharingRecord.teacherId];
+  const isConsent = stage === "consent";
+  activeTeacherSharingStage = stage;
+  teacherSharingSummary.hidden = !isConsent;
+  teacherSharingHandicapWrap.hidden = !isConsent;
+  teacherSharingPrivacy.hidden = !isConsent;
+  teacherSharingMessage.textContent = "";
+  teacherSharingPrimary.disabled = false;
+  teacherSharingSecondary.disabled = false;
+
+  if (stage === "success") {
+    teacherSharingKicker.textContent = "今日の記録";
+    teacherSharingTitle.textContent = "今日の花が入りました";
+    teacherSharingLead.textContent = `${teacher.name}との一局を冒険者カードに保存しました。`;
+    teacherSharingPrimary.textContent = "ご縁帳への記録を確認";
+    teacherSharingSecondary.textContent = "今日の記録を見る";
+    return;
+  }
+
+  if (isConsent) {
+    teacherSharingKicker.textContent = "一局のご縁帳";
+    teacherSharingTitle.textContent = "一局のご縁帳にも残しますか？";
+    teacherSharingLead.textContent = `${teacher.name}との一局`;
+    teacherSharingName.textContent = `「${loadAdventurerName()}」`;
+    teacherSharingDate.textContent = formatGameRecordDateLabel(activeTeacherSharingRecord.date);
+    teacherSharingHandicap.value = "";
+    teacherSharingPrimary.textContent = "この名前で残す";
+    teacherSharingSecondary.textContent = "今回は残さない";
+  }
+};
+
+const showTeacherSharingResult = (result, record) => {
+  const teacher = teacherDetails[record.teacherId];
+  activeTeacherSharingStage = result;
+  teacherSharingSummary.hidden = true;
+  teacherSharingHandicapWrap.hidden = true;
+  teacherSharingPrivacy.hidden = true;
+  teacherSharingPrimary.disabled = false;
+  teacherSharingSecondary.disabled = false;
+  teacherSharingSecondary.textContent = "今日の記録を見る";
+
+  if (result === "verified") {
+    teacherSharingKicker.textContent = "送信済み";
+    teacherSharingTitle.textContent = "一局のご縁帳へ残しました";
+    teacherSharingLead.textContent = `次にお会いした時、${teacher.name}がこの一局を振り返れます。`;
+    teacherSharingMessage.textContent = `先生に表示される内容: ${record.displayName}・${record.handicap}・${formatGameRecordDateLabel(record.gameDate)}`;
+    teacherSharingPrimary.textContent = "閉じる";
+    return;
+  }
+
+  teacherSharingKicker.textContent = "花は保存済みです";
+  teacherSharingTitle.textContent = "花と今日の記録は保存されました";
+  teacherSharingLead.textContent = result === "temporary_error"
+    ? "通信がつながらなかったため、ご縁帳への記録はスマホ内に保留しています。"
+    : "ご縁帳への記録は、受付番号を確認してから送信します。";
+  teacherSharingMessage.textContent = "まだ先生には表示されていません。";
+  teacherSharingPrimary.textContent = result === "temporary_error" ? "もう一度送る" : "確認後にもう一度送る";
+};
+
+const showTeacherSharingDeclined = () => {
+  activeTeacherSharingStage = "declined";
+  teacherSharingSummary.hidden = true;
+  teacherSharingHandicapWrap.hidden = true;
+  teacherSharingPrivacy.hidden = true;
+  teacherSharingKicker.textContent = "今日の記録";
+  teacherSharingTitle.textContent = "花と今日の記録は保存されています";
+  teacherSharingLead.textContent = "ご縁帳への共有は行いませんでした。";
+  teacherSharingMessage.textContent = "";
+  teacherSharingPrimary.textContent = "閉じる";
+  teacherSharingSecondary.textContent = "今日の記録を見る";
+};
+
+const closeTeacherSharingModal = () => {
+  if (teacherSharingModal) {
+    teacherSharingModal.hidden = true;
+  }
+  activeTeacherSharingRecord = null;
+  activeTeacherSharingStage = "closed";
+  isTeacherSharingSubmitting = false;
+  showProfileTodayRecord();
+};
+
+const openTeacherSharingSuccess = (record) => {
+  if (!isTeacherSharingTrialEnabled() || !record || !teacherDetails[record.teacherId] || !teacherSharingModal) {
+    return;
+  }
+  activeTeacherSharingRecord = record;
+  teacherSharingModal.hidden = false;
+  setTeacherSharingStage("success");
+  teacherSharingPrimary.focus();
+};
+
+const sendTeacherSharingRecord = async (record) => {
+  const config = getTeacherSharingTrialConfig();
+  try {
+    if (typeof config.submitRecord === "function") {
+      const response = await config.submitRecord({ ...record });
+      return teacherSharingResultValues.has(response?.result) ? response.result : "temporary_error";
+    }
+    if (typeof config.endpoint === "string" && /^https:\/\//.test(config.endpoint)) {
+      const response = await fetch(config.endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(record),
+      });
+      if (!response.ok) {
+        return "temporary_error";
+      }
+      const data = await response.json();
+      return teacherSharingResultValues.has(data?.result) ? data.result : "temporary_error";
+    }
+  } catch {
+    return "temporary_error";
+  }
+  return "temporary_error";
+};
+
+const submitActiveTeacherSharingRecord = async () => {
+  if (!activeTeacherSharingRecord || isTeacherSharingSubmitting) {
+    return;
+  }
+
+  const isRetry = ["unregistered", "invalid", "temporary_error"].includes(activeTeacherSharingStage);
+  const existing = teacherSharingOutbox.find((item) => item.recordId === `share-${activeTeacherSharingRecord.id}`);
+  const handicap = isRetry ? existing?.handicap : teacherSharingHandicap.value;
+  if (!teacherSharingHandicapValues.has(handicap)) {
+    teacherSharingMessage.textContent = "置き石を選んでください。分からない場合も選べます。";
+    teacherSharingHandicap.focus();
+    return;
+  }
+
+  const now = new Date().toISOString();
+  const record = existing ?? sanitizeTeacherSharingOutboxRecord({
+    recordId: `share-${activeTeacherSharingRecord.id}`,
+    teacherId: activeTeacherSharingRecord.teacherId,
+    displayName: loadAdventurerName(),
+    gameDate: activeTeacherSharingRecord.date,
+    handicap,
+    receptionCodeAtConsent: loadReceptionCode(),
+    consentedAt: now,
+    status: "pending",
+    lastAttemptAt: "",
+    retryCount: 0,
+  });
+  if (!record) {
+    showTeacherSharingResult("invalid", {
+      ...activeTeacherSharingRecord,
+      displayName: loadAdventurerName(),
+      gameDate: activeTeacherSharingRecord.date,
+      handicap,
+    });
+    return;
+  }
+
+  record.lastAttemptAt = now;
+  record.retryCount += 1;
+  upsertTeacherSharingOutboxRecord(record);
+  isTeacherSharingSubmitting = true;
+  teacherSharingPrimary.disabled = true;
+  teacherSharingSecondary.disabled = true;
+  teacherSharingMessage.textContent = "ご縁帳へ送信しています…";
+  const result = await sendTeacherSharingRecord(record);
+  isTeacherSharingSubmitting = false;
+  if (result === "verified") {
+    record.status = "sent";
+    upsertTeacherSharingOutboxRecord(record);
+  }
+  showTeacherSharingResult(result, record);
+};
+
 const createTodayGameRecordCard = (record) => {
   const teacher = teacherDetails[record.teacherId];
   const article = document.createElement("article");
@@ -2172,14 +2422,15 @@ const applyTeacherStampPayload = (payload = {}) => {
   userProgress.stamps.teacherLessonCounts[teacherId] = clampProgressCount(before + 1, getTeacherMaxCount(teacher));
   const after = normalizeProgressCount(userProgress.stamps.teacherLessonCounts[teacherId]);
 
-  gameRecords.push({
+  const gameRecord = {
     id: gameRecordId,
     teacherId,
     date: recordDate,
     handicap,
     result,
     recordedAt: new Date().toISOString(),
-  });
+  };
+  gameRecords.push(gameRecord);
   saveGameRecords();
 
   latestTeacherStampReflection = buildTeacherStampReflection({
@@ -2201,7 +2452,7 @@ const applyTeacherStampPayload = (payload = {}) => {
   });
   refreshAfterTeacherStampChange(teacherId);
   showProfileTodayRecord();
-  return { ok: true, reason: "applied" };
+  return { ok: true, reason: "applied", record: gameRecord };
 };
 
 const applyStampQrFromLocation = () => {
@@ -2232,6 +2483,15 @@ const applyStampQrFromLocation = () => {
           : "QRを開きましたが、先生スタンプを反映できませんでした。新しいQRを作り直してください。";
     }
     scrollProfileTodayRecordIntoView();
+  }
+  if (
+    result.ok
+    && result.reason === "applied"
+    && payload.type === "teacher_stamp"
+    && typeof payload.id === "string"
+    && payload.id.startsWith("teacher-fixed-")
+  ) {
+    window.setTimeout(() => openTeacherSharingSuccess(result.record), 350);
   }
 
   return result.ok;
@@ -9574,6 +9834,37 @@ adminIdentityDisplayName?.addEventListener("input", () => {
   updateAdminIdentityCard();
   updateAdminIdentityNoteText();
   updateAdminOperationSummary();
+});
+
+teacherSharingPrimary?.addEventListener("click", () => {
+  if (activeTeacherSharingStage === "success") {
+    setTeacherSharingStage("consent");
+    teacherSharingHandicap.focus();
+    return;
+  }
+  if (activeTeacherSharingStage === "consent" || ["unregistered", "invalid", "temporary_error"].includes(activeTeacherSharingStage)) {
+    submitActiveTeacherSharingRecord();
+    return;
+  }
+  closeTeacherSharingModal();
+});
+
+teacherSharingSecondary?.addEventListener("click", () => {
+  if (activeTeacherSharingStage === "consent") {
+    showTeacherSharingDeclined();
+    return;
+  }
+  closeTeacherSharingModal();
+});
+
+teacherSharingCloseButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    if (activeTeacherSharingStage === "consent") {
+      showTeacherSharingDeclined();
+      return;
+    }
+    closeTeacherSharingModal();
+  });
 });
 
 updateParticipationStampCard();
