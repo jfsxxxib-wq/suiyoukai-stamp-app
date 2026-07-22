@@ -1,0 +1,425 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; connect-src https://script.google.com https://script.googleusercontent.com; form-action 'none'; base-uri 'none'">
+  <title>先生ページ ブラウザー通信試験</title>
+  <style>
+    :root {
+      color-scheme: light;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.6;
+      color: #202124;
+      background: #f5f7fa;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 24px;
+    }
+
+    main {
+      width: min(760px, 100%);
+      margin: 0 auto;
+      padding: 28px;
+      border: 1px solid #d7dce2;
+      border-radius: 14px;
+      background: #fff;
+      box-shadow: 0 8px 24px rgb(31 41 55 / 8%);
+    }
+
+    h1,
+    h2 {
+      line-height: 1.3;
+    }
+
+    h1 {
+      margin-top: 0;
+      font-size: 1.6rem;
+    }
+
+    h2 {
+      margin-top: 28px;
+      font-size: 1.15rem;
+    }
+
+    .notice {
+      padding: 12px 14px;
+      border: 2px solid #9a6700;
+      border-radius: 8px;
+      background: #fff8c5;
+      font-weight: 700;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 700;
+    }
+
+    input,
+    button {
+      width: 100%;
+      min-height: 46px;
+      border-radius: 8px;
+      font: inherit;
+    }
+
+    input {
+      padding: 8px 10px;
+      border: 1px solid #8c959f;
+    }
+
+    button {
+      margin-top: 14px;
+      padding: 10px 16px;
+      border: 0;
+      background: #0969da;
+      color: #fff;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      background: #8c959f;
+      cursor: not-allowed;
+    }
+
+    pre {
+      overflow-wrap: anywhere;
+      white-space: pre-wrap;
+      padding: 14px;
+      border: 1px solid #d0d7de;
+      border-radius: 8px;
+      background: #f6f8fa;
+    }
+
+    .status {
+      padding: 14px;
+      border: 2px solid #57606a;
+      border-radius: 8px;
+      background: #f6f8fa;
+    }
+
+    .status[data-kind="sending"] {
+      border-color: #0969da;
+      background: #ddf4ff;
+    }
+
+    .status[data-kind="success"] {
+      border-color: #1a7f37;
+      background: #dafbe1;
+    }
+
+    .status[data-kind="duplicate"] {
+      border-color: #9a6700;
+      background: #fff8c5;
+    }
+
+    .status[data-kind="timeout"] {
+      border-color: #bc4c00;
+      background: #fff1e5;
+    }
+
+    .status[data-kind="failure"],
+    .status[data-kind="unexpected"] {
+      border-color: #cf222e;
+      background: #ffebe9;
+    }
+
+    .result-grid {
+      display: grid;
+      grid-template-columns: max-content 1fr;
+      gap: 6px 12px;
+      margin: 0;
+    }
+
+    .result-grid dt {
+      font-weight: 700;
+    }
+
+    .result-grid dd {
+      min-width: 0;
+      margin: 0;
+      overflow-wrap: anywhere;
+    }
+
+    .small {
+      font-size: 0.9rem;
+      color: #57606a;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>先生ページ ブラウザー通信試験</h1>
+
+    <p class="notice">試験専用です。本番データ、受付番号、参加者名、先生IDは入力・送信しないでください。</p>
+    <p>ページを開いただけでは通信しません。送信はボタンを押したときの1回だけで、自動再送は行いません。</p>
+
+    <h2>送信先</h2>
+    <label for="endpoint">試験用Apps ScriptウェブアプリURL</label>
+    <input
+      id="endpoint"
+      type="url"
+      inputmode="url"
+      autocomplete="off"
+      autocapitalize="none"
+      spellcheck="false"
+      placeholder="https://script.google.com/macros/s/.../exec"
+      aria-describedby="endpoint-help"
+    >
+    <p id="endpoint-help" class="small">入力したURLはファイル、ブラウザー保存領域、Cookie、画面の結果欄へ保存しません。</p>
+
+    <h2>送信するダミーデータ</h2>
+    <pre id="payload-preview" aria-live="polite"></pre>
+
+    <button id="send-button" type="button">ダミーデータを1件送信</button>
+
+    <h2>判定</h2>
+    <section id="status" class="status" data-kind="idle" role="status" aria-live="polite" aria-atomic="true">
+      <strong id="status-title">未送信</strong>
+      <div id="status-message">送信ボタンはまだ押されていません。</div>
+    </section>
+
+    <h2>HTTPと解析結果</h2>
+    <dl class="result-grid">
+      <dt>HTTP状態</dt><dd id="http-status">未取得</dd>
+      <dt>Content-Type</dt><dd id="content-type">未取得</dd>
+      <dt>JSON解析</dt><dd id="json-status">未実施</dd>
+      <dt>result</dt><dd id="result-value">未取得</dd>
+      <dt>recordId</dt><dd id="record-id-value">未取得</dd>
+      <dt>stored</dt><dd id="stored-value">未取得</dd>
+      <dt>duplicate</dt><dd id="duplicate-value">未取得</dd>
+      <dt>storedCount</dt><dd id="stored-count-value">未取得</dd>
+    </dl>
+
+    <h2>JSON解析前の生のレスポンス本文</h2>
+    <pre id="raw-response">未取得</pre>
+  </main>
+
+  <script>
+    "use strict";
+
+    const TIMEOUT_MS = 15_000;
+    const DUMMY_TEMPLATE = Object.freeze({
+      schemaVersion: 1,
+      testRunId: "pages-gas-trial-20260722-A",
+      requestId: "request-003",
+      recordId: "trial-record-003",
+      deviceId: "trial-device-browser-smartphone"
+    });
+
+    const endpointInput = document.querySelector("#endpoint");
+    const sendButton = document.querySelector("#send-button");
+    const payloadPreview = document.querySelector("#payload-preview");
+    const statusBox = document.querySelector("#status");
+    const statusTitle = document.querySelector("#status-title");
+    const statusMessage = document.querySelector("#status-message");
+    const rawResponse = document.querySelector("#raw-response");
+    const fields = Object.freeze({
+      httpStatus: document.querySelector("#http-status"),
+      contentType: document.querySelector("#content-type"),
+      jsonStatus: document.querySelector("#json-status"),
+      result: document.querySelector("#result-value"),
+      recordId: document.querySelector("#record-id-value"),
+      stored: document.querySelector("#stored-value"),
+      duplicate: document.querySelector("#duplicate-value"),
+      storedCount: document.querySelector("#stored-count-value")
+    });
+
+    let inFlight = false;
+
+    payloadPreview.textContent = JSON.stringify(
+      { ...DUMMY_TEMPLATE, sentAt: "送信ボタン押下時のISO 8601日時" },
+      null,
+      2
+    );
+
+    function setStatus(kind, title, message) {
+      statusBox.dataset.kind = kind;
+      statusTitle.textContent = title;
+      statusMessage.textContent = message;
+    }
+
+    function showValue(element, value) {
+      element.textContent = value === undefined ? "項目なし" : String(value);
+    }
+
+    function clearResult() {
+      fields.httpStatus.textContent = "未取得";
+      fields.contentType.textContent = "未取得";
+      fields.jsonStatus.textContent = "未実施";
+      fields.result.textContent = "未取得";
+      fields.recordId.textContent = "未取得";
+      fields.stored.textContent = "未取得";
+      fields.duplicate.textContent = "未取得";
+      fields.storedCount.textContent = "未取得";
+      rawResponse.textContent = "未取得";
+    }
+
+    function getValidatedEndpoint() {
+      const value = endpointInput.value.trim();
+      let endpoint;
+
+      try {
+        endpoint = new URL(value);
+      } catch {
+        throw new Error("試験用Apps Script URLを正しく入力してください。");
+      }
+
+      const isAppsScriptWebApp =
+        endpoint.protocol === "https:" &&
+        endpoint.hostname === "script.google.com" &&
+        /^\/macros\/s\/[^/]+\/exec$/.test(endpoint.pathname) &&
+        endpoint.search === "" &&
+        endpoint.hash === "";
+
+      if (!isAppsScriptWebApp) {
+        throw new Error("https://script.google.com/macros/s/.../exec 形式の試験用URLだけを使用できます。");
+      }
+
+      return endpoint.href;
+    }
+
+    function classifyResponse(response, parsed) {
+      if (!response.ok) {
+        return {
+          kind: "unexpected",
+          title: "予定外の応答",
+          message: `HTTP ${response.status}が返りました。追加送信は行いません。`
+        };
+      }
+
+      const isSuccess =
+        parsed?.result === "accepted" &&
+        parsed?.recordId === DUMMY_TEMPLATE.recordId &&
+        parsed?.stored === true &&
+        parsed?.duplicate === false &&
+        Number.isInteger(parsed?.storedCount);
+
+      if (isSuccess) {
+        return {
+          kind: "success",
+          title: "正常保存",
+          message: "ダミーデータ1件が正常に保存されました。追加送信は行いません。"
+        };
+      }
+
+      const isDuplicate =
+        parsed?.result === "accepted" &&
+        parsed?.recordId === DUMMY_TEMPLATE.recordId &&
+        parsed?.stored === false &&
+        parsed?.duplicate === true &&
+        Number.isInteger(parsed?.storedCount);
+
+      if (isDuplicate) {
+        return {
+          kind: "duplicate",
+          title: "重複のため保存なし",
+          message: "同じrecordIdが既に保存されています。追加保存や再送は行いません。"
+        };
+      }
+
+      return {
+        kind: "unexpected",
+        title: "予定外の応答",
+        message: "予定した成功・重複の形式と一致しません。追加送信は行いません。"
+      };
+    }
+
+    async function sendDummyOnce() {
+      if (inFlight) {
+        setStatus("sending", "送信中", "二重送信を防ぐため、現在の通信が終わるまで待ってください。");
+        return;
+      }
+
+      let endpoint;
+      try {
+        endpoint = getValidatedEndpoint();
+      } catch (error) {
+        setStatus("unexpected", "送信前確認エラー", error.message);
+        return;
+      }
+
+      const payload = Object.freeze({
+        ...DUMMY_TEMPLATE,
+        sentAt: new Date().toISOString()
+      });
+
+      payloadPreview.textContent = JSON.stringify(payload, null, 2);
+      clearResult();
+      inFlight = true;
+      sendButton.disabled = true;
+      endpointInput.disabled = true;
+      setStatus("sending", "送信中", "ダミーデータを1件だけ送信しています。再操作しないでください。");
+
+      const controller = new AbortController();
+      let timedOut = false;
+      const timeoutId = window.setTimeout(() => {
+        timedOut = true;
+        controller.abort();
+      }, TIMEOUT_MS);
+
+      try {
+        const response = await fetch(endpoint, {
+          method: "POST",
+          headers: {
+            "Content-Type": "text/plain;charset=UTF-8"
+          },
+          body: JSON.stringify(payload),
+          redirect: "follow",
+          credentials: "omit",
+          cache: "no-store",
+          referrerPolicy: "no-referrer",
+          signal: controller.signal
+        });
+
+        fields.httpStatus.textContent = `${response.status} ${response.statusText}`.trim();
+        fields.contentType.textContent = response.headers.get("content-type") || "ヘッダーなし";
+
+        const rawText = await response.text();
+        rawResponse.textContent = rawText === "" ? "（空の本文）" : rawText;
+
+        let parsed;
+        try {
+          parsed = JSON.parse(rawText);
+          fields.jsonStatus.textContent = "解析成功";
+        } catch {
+          fields.jsonStatus.textContent = "解析失敗";
+          setStatus("unexpected", "予定外の応答", "生の本文をJSONとして解析できませんでした。追加送信は行いません。");
+          return;
+        }
+
+        showValue(fields.result, parsed.result);
+        showValue(fields.recordId, parsed.recordId);
+        showValue(fields.stored, parsed.stored);
+        showValue(fields.duplicate, parsed.duplicate);
+        showValue(fields.storedCount, parsed.storedCount);
+
+        const outcome = classifyResponse(response, parsed);
+        setStatus(outcome.kind, outcome.title, outcome.message);
+      } catch (error) {
+        if (timedOut && error.name === "AbortError") {
+          setStatus("timeout", "15秒でタイムアウト", "通信を中止しました。自動再送や追加送信は行いません。");
+        } else {
+          setStatus("failure", "通信失敗", "通信を完了できませんでした。自動再送や追加送信は行いません。");
+        }
+      } finally {
+        window.clearTimeout(timeoutId);
+        inFlight = false;
+        sendButton.disabled = false;
+        endpointInput.disabled = false;
+      }
+    }
+
+    sendButton.addEventListener("click", sendDummyOnce);
+  </script>
+</body>
+</html>
