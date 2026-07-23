@@ -20,7 +20,7 @@ const checks = [
   ["raw response body is not displayed", !/response\.text\(\)/.test(client)],
   ["server parses e.postData.contents", /e\.postData\.contents/.test(server) && /JSON\.parse\(raw\)/.test(server)],
   ["server returns accepted", /result:\s*["']accepted["']/.test(server)],
-  ["storage is test namespace only", /teacherSharingCommTrial:/.test(server) && /pages-gas-trial-/.test(server)],
+  ["storage is test namespace only", /teacherSharingTimeoutTrial20260723:/.test(server) && /pages-gas-trial-/.test(server)],
   ["storedCount filters current namespace", /countRecords_/.test(server) && /startsWith\(prefix\)/.test(server)],
   ["deletion requires preview and token", /prepareConfiguredTrialDeletion/.test(server) && /CLEANUP_CONFIRMATION_TOKEN/.test(server)],
   ["no production identifiers in dummy payload", !/(receptionCode|teacherId|displayName|participantName)/.test(client)]
