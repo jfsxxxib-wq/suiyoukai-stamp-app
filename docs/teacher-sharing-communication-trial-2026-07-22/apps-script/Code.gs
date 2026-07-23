@@ -1,6 +1,6 @@
-const TRIAL_PROPERTY_PREFIX = "teacherSharingCommTrial:";
+const TRIAL_PROPERTY_PREFIX = "teacherSharingTimeoutTrial20260723:";
 const TEST_RUN_ID_PREFIX = "pages-gas-trial-";
-const RESPONSE_DELAY_MS = 2500;
+const RESPONSE_DELAY_MS = 20000;
 const LOCK_WAIT_MS = 5000;
 const MAX_BODY_LENGTH = 4096;
 const DELETE_PREPARATION_TTL_MS = 10 * 60 * 1000;
@@ -32,7 +32,7 @@ function doPost(e) {
       lock.releaseLock();
     }
 
-    if (payload.recordId === "trial-record-delay-001") {
+    if (payload.recordId === "trial-record-003") {
       Utilities.sleep(RESPONSE_DELAY_MS);
     }
     return jsonOutput_(response);
