@@ -22,14 +22,24 @@
 
 ## 確認用入口
 
-見本データでの確認用。公開用URLとしては使用しない。
+見本データでの確認用。公開用URLとしては使用しない。2026年7月24日以降、公開版ではURLに`?preview=1`を付けるだけでは見本を表示せず、認証情報がない場合の閉鎖画面を維持する。
 
-- 表紙: `teacher-notebook.html?preview=1&teacher=tsuneishi`
-- 再会: `teacher-notebook.html?preview=1&teacher=tsuneishi&participant=p-yamada`
-- 別の先生の分離確認: `teacher-notebook.html?preview=1&teacher=yuki`
+- ローカル表紙: `http://127.0.0.1:4184/teacher-notebook-preview?preview=1&teacher=tsuneishi`
+- ローカル再会: `http://127.0.0.1:4184/teacher-notebook-preview?preview=1&teacher=tsuneishi&participant=p-yamada`
+- ローカルで別の先生を分離確認: `http://127.0.0.1:4184/teacher-notebook-preview?preview=1&teacher=yuki`
 - 閉鎖画面: `teacher-notebook.html`
 
 見本モードには常に「見本データ」と表示する。
+
+見本表示には、次の3条件がすべて必要である。
+
+1. `window.SUIYOUKAI_TEACHER_NOTEBOOK_PREVIEW?.enabled === true`
+2. URLに`?preview=1`がある
+3. `file:`、`localhost`、ループバックまたはプライベートLAN内のローカル試験環境である
+
+通常公開HTMLにはローカル専用設定を書かない。LAN内の実機確認を含む手動試験では、`local-mobile-server.cjs`の`/teacher-notebook-preview`入口だけがページ読込前に設定を注入する。専用入口であっても`?preview=1`がなければ閉鎖画面とする。
+
+正常な`SUIYOUKAI_TEACHER_SESSION`を最優先し、本番セッション用の値が存在するのに内容が不完全・不正な場合は、見本へフォールバックせず閉鎖画面にする。ローカル見本制御は固定ダミーデータを確認するためだけのものであり、本番認証、先生ID、記録取得権限の代替として扱わない。
 
 ## 本番接続で必須のもの
 
