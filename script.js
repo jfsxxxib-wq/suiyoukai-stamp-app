@@ -205,6 +205,7 @@ const adminFixedTeacherQrPrintButton = document.querySelector("[data-admin-fixed
 const adminFixedTeacherQrPdfButton = document.querySelector("[data-admin-fixed-teacher-qr-pdf]");
 const adminFixedTeacherQrPreviewCloseButton = document.querySelector("[data-admin-fixed-teacher-qr-preview-close]");
 const teacherSharingModal = document.querySelector("[data-teacher-sharing-modal]");
+const teacherSharingFlower = document.querySelector(".teacher-sharing-flower");
 const teacherSharingKicker = document.querySelector("[data-teacher-sharing-kicker]");
 const teacherSharingTitle = document.querySelector("[data-teacher-sharing-title]");
 const teacherSharingLead = document.querySelector("[data-teacher-sharing-lead]");
@@ -1490,10 +1491,30 @@ const formatGameRecordDateLabel = (date) => {
 };
 
 const teacherSharingHandicapValues = new Set(["互先", "先", "2子", "3子", "4子", "5子", "6子以上", "分からない"]);
-const teacherSharingResultValues = new Set(["verified", "unregistered", "invalid", "temporary_error"]);
+const teacherSharingResultValues = new Set(["verified", "unregistered", "invalid", "temporary_error", "timeout"]);
+const teacherSharingTimeoutMs = 15000;
 
 const getTeacherSharingTrialConfig = () => window.SUIYOUKAI_TEACHER_SHARING_TRIAL ?? {};
 const isTeacherSharingTrialEnabled = () => getTeacherSharingTrialConfig().enabled === true;
+const getTeacherSharingTimeoutMs = (config) => (
+  Number.isFinite(config.testTimeoutMs) && config.testTimeoutMs > 0
+    ? config.testTimeoutMs
+    : teacherSharingTimeoutMs
+);
+
+const setTeacherSharingTextLines = (element, lines, className) => {
+  if (!element) {
+    return;
+  }
+
+  element.textContent = "";
+  for (const line of lines) {
+    const span = document.createElement("span");
+    span.className = className;
+    span.textContent = line;
+    element.append(span);
+  }
+};
 
 const sanitizeTeacherSharingOutboxRecord = (record = {}) => {
   const teacherId = typeof record.teacherId === "string" ? record.teacherId : "";
@@ -1554,9 +1575,13 @@ const setTeacherSharingStage = (stage) => {
   const teacher = teacherDetails[activeTeacherSharingRecord.teacherId];
   const isConsent = stage === "consent";
   activeTeacherSharingStage = stage;
+  teacherSharingFlower.textContent = "🌸";
+  teacherSharingFlower.classList.remove("is-timeout");
   teacherSharingSummary.hidden = !isConsent;
   teacherSharingHandicapWrap.hidden = !isConsent;
   teacherSharingPrivacy.hidden = !isConsent;
+  teacherSharingLead.classList.remove("is-timeout-note");
+  teacherSharingMessage.classList.remove("is-timeout-detail");
   teacherSharingMessage.textContent = "";
   teacherSharingPrimary.disabled = false;
   teacherSharingSecondary.disabled = false;
@@ -1585,9 +1610,13 @@ const setTeacherSharingStage = (stage) => {
 const showTeacherSharingResult = (result, record) => {
   const teacher = teacherDetails[record.teacherId];
   activeTeacherSharingStage = result;
+  teacherSharingFlower.textContent = "🌸";
+  teacherSharingFlower.classList.remove("is-timeout");
   teacherSharingSummary.hidden = true;
   teacherSharingHandicapWrap.hidden = true;
   teacherSharingPrivacy.hidden = true;
+  teacherSharingLead.classList.remove("is-timeout-note");
+  teacherSharingMessage.classList.remove("is-timeout-detail");
   teacherSharingPrimary.disabled = false;
   teacherSharingSecondary.disabled = false;
   teacherSharingSecondary.textContent = "今日の記録を見る";
@@ -1598,6 +1627,36 @@ const showTeacherSharingResult = (result, record) => {
     teacherSharingLead.textContent = `次にお会いした時、${teacher.name}がこの一局を振り返れます。`;
     teacherSharingMessage.textContent = `先生に表示される内容: ${record.displayName}・${record.handicap}・${formatGameRecordDateLabel(record.gameDate)}`;
     teacherSharingPrimary.textContent = "閉じる";
+    return;
+  }
+
+  if (result === "timeout") {
+    teacherSharingFlower.textContent = "…";
+    teacherSharingFlower.classList.add("is-timeout");
+    teacherSharingKicker.textContent = "一局のご縁帳";
+    setTeacherSharingTextLines(
+      teacherSharingTitle,
+      ["送信結果を", "確認できませんでした"],
+      "teacher-sharing-title-line",
+    );
+    teacherSharingLead.classList.add("is-timeout-note");
+    setTeacherSharingTextLines(
+      teacherSharingLead,
+      ["花と今日の記録は、", "スマホに保存されています。"],
+      "teacher-sharing-safe-line",
+    );
+    teacherSharingMessage.classList.add("is-timeout-detail");
+    setTeacherSharingTextLines(
+      teacherSharingMessage,
+      [
+        "ご縁帳には保存済みの可能性があります。",
+        "重複を防ぐため、自動再送はしていません。",
+        "必要な場合は、運営にご確認ください。",
+      ],
+      "teacher-sharing-message-line",
+    );
+    teacherSharingPrimary.textContent = "今日の記録を見る";
+    teacherSharingSecondary.textContent = "閉じる";
     return;
   }
 
@@ -1612,9 +1671,13 @@ const showTeacherSharingResult = (result, record) => {
 
 const showTeacherSharingDeclined = () => {
   activeTeacherSharingStage = "declined";
+  teacherSharingFlower.textContent = "🌸";
+  teacherSharingFlower.classList.remove("is-timeout");
   teacherSharingSummary.hidden = true;
   teacherSharingHandicapWrap.hidden = true;
   teacherSharingPrivacy.hidden = true;
+  teacherSharingLead.classList.remove("is-timeout-note");
+  teacherSharingMessage.classList.remove("is-timeout-detail");
   teacherSharingKicker.textContent = "今日の記録";
   teacherSharingTitle.textContent = "花と今日の記録は保存されています";
   teacherSharingLead.textContent = "ご縁帳への共有は行いませんでした。";
@@ -1623,14 +1686,16 @@ const showTeacherSharingDeclined = () => {
   teacherSharingSecondary.textContent = "今日の記録を見る";
 };
 
-const closeTeacherSharingModal = () => {
+const closeTeacherSharingModal = ({ showTodayRecord = true } = {}) => {
   if (teacherSharingModal) {
     teacherSharingModal.hidden = true;
   }
   activeTeacherSharingRecord = null;
   activeTeacherSharingStage = "closed";
   isTeacherSharingSubmitting = false;
-  showProfileTodayRecord();
+  if (showTodayRecord) {
+    showProfileTodayRecord();
+  }
 };
 
 const openTeacherSharingSuccess = (record) => {
@@ -1645,27 +1710,52 @@ const openTeacherSharingSuccess = (record) => {
 
 const sendTeacherSharingRecord = async (record) => {
   const config = getTeacherSharingTrialConfig();
+  const timeoutMs = getTeacherSharingTimeoutMs(config);
+  let timeoutId = null;
+  let didTimeOut = false;
+  let controller = null;
+
   try {
-    if (typeof config.submitRecord === "function") {
-      const response = await config.submitRecord({ ...record });
-      return teacherSharingResultValues.has(response?.result) ? response.result : "temporary_error";
-    }
-    if (typeof config.endpoint === "string" && /^https:\/\//.test(config.endpoint)) {
-      const response = await fetch(config.endpoint, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(record),
-      });
-      if (!response.ok) {
-        return "temporary_error";
+    const request = (() => {
+      if (typeof config.submitRecord === "function") {
+        return Promise.resolve(config.submitRecord({ ...record }));
       }
-      const data = await response.json();
-      return teacherSharingResultValues.has(data?.result) ? data.result : "temporary_error";
+      if (typeof config.endpoint === "string" && /^https:\/\//.test(config.endpoint)) {
+        controller = new AbortController();
+        return fetch(config.endpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(record),
+          signal: controller.signal,
+        }).then(async (response) => {
+          if (!response.ok) {
+            return { result: "temporary_error" };
+          }
+          return response.json();
+        });
+      }
+      return Promise.resolve({ result: "temporary_error" });
+    })();
+
+    const timeout = new Promise((resolve) => {
+      timeoutId = window.setTimeout(() => {
+        didTimeOut = true;
+        controller?.abort();
+        resolve({ result: "timeout" });
+      }, timeoutMs);
+    });
+    const response = await Promise.race([request, timeout]);
+    return teacherSharingResultValues.has(response?.result) ? response.result : "temporary_error";
+  } catch (error) {
+    if (didTimeOut && error?.name === "AbortError") {
+      return "timeout";
     }
-  } catch {
     return "temporary_error";
+  } finally {
+    if (timeoutId !== null) {
+      window.clearTimeout(timeoutId);
+    }
   }
-  return "temporary_error";
 };
 
 const submitActiveTeacherSharingRecord = async () => {
@@ -9842,6 +9932,10 @@ teacherSharingPrimary?.addEventListener("click", () => {
     teacherSharingHandicap.focus();
     return;
   }
+  if (activeTeacherSharingStage === "timeout") {
+    closeTeacherSharingModal({ showTodayRecord: true });
+    return;
+  }
   if (activeTeacherSharingStage === "consent" || ["unregistered", "invalid", "temporary_error"].includes(activeTeacherSharingStage)) {
     submitActiveTeacherSharingRecord();
     return;
@@ -9854,6 +9948,10 @@ teacherSharingSecondary?.addEventListener("click", () => {
     showTeacherSharingDeclined();
     return;
   }
+  if (activeTeacherSharingStage === "timeout") {
+    closeTeacherSharingModal({ showTodayRecord: false });
+    return;
+  }
   closeTeacherSharingModal();
 });
 
@@ -9861,6 +9959,10 @@ teacherSharingCloseButtons.forEach((button) => {
   button.addEventListener("click", () => {
     if (activeTeacherSharingStage === "consent") {
       showTeacherSharingDeclined();
+      return;
+    }
+    if (activeTeacherSharingStage === "timeout") {
+      closeTeacherSharingModal({ showTodayRecord: false });
       return;
     }
     closeTeacherSharingModal();

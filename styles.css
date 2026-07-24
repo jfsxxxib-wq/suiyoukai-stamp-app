@@ -12495,6 +12495,19 @@ body.is-fairy-viewer-open {
   text-align: center;
 }
 
+.teacher-sharing-flower.is-timeout {
+  display: grid;
+  width: 48px;
+  height: 48px;
+  place-items: center;
+  margin: 0 auto 7px;
+  border-radius: 50%;
+  background: #f2ead8;
+  color: #7a6748;
+  font-size: 29px;
+  font-weight: 800;
+}
+
 .teacher-sharing-kicker {
   margin: 0;
   color: #6c8068;
@@ -12511,6 +12524,17 @@ body.is-fairy-viewer-open {
   text-align: center;
 }
 
+.teacher-sharing-title-line,
+.teacher-sharing-safe-line,
+.teacher-sharing-message-line {
+  display: block;
+}
+
+.teacher-sharing-title-line,
+.teacher-sharing-safe-line {
+  white-space: nowrap;
+}
+
 .teacher-sharing-lead,
 .teacher-sharing-message,
 .teacher-sharing-privacy {
@@ -12518,6 +12542,23 @@ body.is-fairy-viewer-open {
   font-size: 14px;
   line-height: 1.8;
   text-align: center;
+}
+
+.teacher-sharing-lead.is-timeout-note {
+  margin-top: 18px;
+  border-radius: 14px;
+  background: #f1f5ed;
+  padding: 13px 14px;
+  color: #596254;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.75;
+  text-align: left;
+}
+
+.teacher-sharing-message.is-timeout-detail {
+  min-height: 0;
+  line-height: 1.75;
 }
 
 .teacher-sharing-summary {
