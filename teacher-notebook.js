@@ -7,6 +7,7 @@
   const backButton = document.querySelector("[data-notebook-back]");
   const views = [...document.querySelectorAll("[data-view]")];
   const params = new URLSearchParams(window.location.search);
+  const hasOwn = (object, key) => Object.prototype.hasOwnProperty.call(object, key);
 
   const previewTeachers = {
     tsuneishi: { id: "tsuneishi", name: "常石 隆志 六段" },
@@ -23,14 +24,37 @@
 
   // Production must inject this object only after server-side authentication.
   // Its getRecords() implementation must also enforce teacherId on the server.
+  const productionSessionWasProvided = hasOwn(window, "SUIYOUKAI_TEACHER_SESSION");
   const productionSession = window.SUIYOUKAI_TEACHER_SESSION;
-  const isPreview = params.get("preview") === "1";
+  const validProductionSession = productionSession
+    && typeof productionSession === "object"
+    && typeof productionSession.teacher?.id === "string"
+    && productionSession.teacher.id.trim() !== ""
+    && typeof productionSession.teacher?.name === "string"
+    && productionSession.teacher.name.trim() !== ""
+    && typeof productionSession.getRecords === "function";
+  const previewConfig = window.SUIYOUKAI_TEACHER_NOTEBOOK_PREVIEW;
+  const previewRequested = params.get("preview") === "1";
+  const hostname = window.location.hostname;
+  const isPrivateLanHostname = /^10\./.test(hostname)
+    || /^192\.168\./.test(hostname)
+    || /^172\.(1[6-9]|2\d|3[01])\./.test(hostname);
+  const isLocalPreviewEnvironment = window.location.protocol === "file:"
+    || hostname === "localhost"
+    || hostname === "127.0.0.1"
+    || hostname === "::1"
+    || isPrivateLanHostname;
+  const previewAllowed = !productionSessionWasProvided
+    && previewConfig?.enabled === true
+    && previewRequested
+    && isLocalPreviewEnvironment;
   const previewTeacher = previewTeachers[params.get("teacher") || "tsuneishi"];
-  const session = productionSession?.teacher?.id
+  const session = validProductionSession
     ? productionSession
-    : isPreview && previewTeacher
+    : previewAllowed && previewTeacher
       ? { teacher: previewTeacher, getRecords: async () => previewRecords }
       : null;
+  const isPreviewSession = Boolean(session && session !== productionSession);
 
   if (!root || !lock || !book || !session) {
     if (lock) lock.hidden = false;
@@ -38,7 +62,7 @@
     return;
   }
 
-  if (isPreview && !productionSession) {
+  if (isPreviewSession) {
     const ribbon = document.createElement("span");
     ribbon.className = "preview-ribbon";
     ribbon.textContent = "見本データ";
