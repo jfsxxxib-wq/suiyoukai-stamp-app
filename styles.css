@@ -4357,66 +4357,142 @@ button.profile-today-record-flower {
   z-index: 1400;
   display: grid;
   place-items: center;
-  padding: 18px;
-  background: rgba(54, 45, 33, 0.42);
+  padding:
+    max(22px, env(safe-area-inset-top))
+    18px
+    max(22px, env(safe-area-inset-bottom));
+  background: rgba(62, 54, 41, 0.3);
   backdrop-filter: blur(3px);
 }
 
 .browser-install-guide-card {
-  display: grid;
-  gap: 14px;
-  width: min(100%, 390px);
-  padding: 22px;
-  border: 2px solid rgba(67, 118, 82, 0.34);
-  border-radius: 18px;
-  background: rgba(255, 250, 240, 0.98);
-  color: var(--ink);
-  box-shadow: 0 24px 60px rgba(45, 35, 24, 0.28);
+  width: min(100%, 352px);
+  overflow: hidden;
+  border: 1px solid #d9c58a;
+  border-radius: 22px;
+  background: rgba(255, 250, 239, 0.99);
+  box-shadow: 0 24px 58px rgba(53, 42, 28, 0.24);
 }
 
-.browser-install-guide-card small {
-  color: var(--green);
-  font-weight: 900;
+.browser-install-guide-accent {
+  height: 8px;
+  background: linear-gradient(90deg, #d9bc68 0%, #eed99b 48%, #9fbd8b 100%);
 }
 
-.browser-install-guide-card h1,
-.browser-install-guide-card p,
-.browser-install-guide-card ol {
+.browser-install-guide-content {
+  padding: 22px 22px 20px;
+}
+
+.browser-install-guide-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
   margin: 0;
+  color: #6b714f;
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+}
+
+.browser-install-guide-label::before {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #e4c971;
+  box-shadow: 0 0 0 5px rgba(228, 201, 113, 0.2);
+  content: "";
 }
 
 .browser-install-guide-card h1 {
-  font-size: 1.45rem;
-  line-height: 1.25;
+  margin: 11px 0 0;
+  color: #2f4935;
+  font-family: "Yu Mincho", "Hiragino Mincho ProN", serif;
+  font-size: 27px;
+  line-height: 1.35;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
 }
 
-.browser-install-guide-card p,
-.browser-install-guide-card li {
-  color: var(--muted);
+.browser-install-guide-intro {
+  margin: 13px 0 0;
+  color: var(--ink);
+  font-size: 16px;
   font-weight: 800;
-  line-height: 1.55;
-}
-
-.browser-install-guide-card ol {
-  display: grid;
-  gap: 8px;
-  padding-left: 1.35em;
+  line-height: 1.75;
 }
 
 .browser-install-guide-note {
-  padding: 10px 12px;
-  border-radius: 12px;
-  background: rgba(185, 76, 97, 0.1);
-  color: #7e3040 !important;
+  display: grid;
+  gap: 10px;
+  margin-top: 16px;
+  padding: 14px 15px;
+  border: 1px solid rgba(191, 158, 72, 0.32);
+  border-radius: 15px;
+  background: #fff5d9;
 }
 
-.browser-install-guide-card button {
-  min-height: 46px;
-  border: 0;
-  border-radius: 999px;
-  background: var(--green);
-  color: #fffaf0;
+.browser-install-guide-note p {
+  margin: 0;
+  color: #625c4d;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.7;
+}
+
+.browser-install-guide-note p + p {
+  padding-top: 10px;
+  border-top: 1px solid rgba(169, 140, 65, 0.2);
+}
+
+.browser-install-guide-actions {
+  display: grid;
+  gap: 10px;
+  margin-top: 19px;
+}
+
+.browser-install-guide-button {
+  min-height: 52px;
+  border-radius: 15px;
+  font-size: 16px;
   font-weight: 900;
+  letter-spacing: 0.02em;
+}
+
+.browser-install-guide-button.is-primary {
+  border: 1px solid #2f593d;
+  background: var(--green);
+  color: #fffdf5;
+  box-shadow: 0 7px 14px rgba(48, 91, 60, 0.18);
+}
+
+.browser-install-guide-button.is-secondary {
+  border: 1px solid rgba(76, 105, 72, 0.28);
+  background: #fffdf8;
+  color: #4d554b;
+}
+
+@media (max-height: 720px) {
+  .browser-install-guide-content {
+    padding: 17px 20px 16px;
+  }
+
+  .browser-install-guide-card h1 {
+    font-size: 24px;
+  }
+
+  .browser-install-guide-intro {
+    margin-top: 9px;
+    font-size: 15px;
+  }
+
+  .browser-install-guide-note {
+    margin-top: 11px;
+    padding: 11px 13px;
+  }
+
+  .browser-install-guide-actions {
+    margin-top: 13px;
+  }
 }
 
 .profile-today-record-flower img {

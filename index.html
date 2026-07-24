@@ -15,23 +15,27 @@
     <link rel="manifest" href="manifest.webmanifest?v=20260707-same-day-records-01">
     <link rel="apple-touch-icon" href="assets/app-icon-180.png?v=20260705-home-screen-01">
     <link rel="icon" type="image/png" sizes="192x192" href="assets/app-icon-192.png?v=20260705-home-screen-01">
-    <link rel="stylesheet" href="styles.css?v=20260721-sharing-trial-01">
+    <link rel="stylesheet" href="styles.css?v=20260724-safari-guide-01">
   </head>
   <body>
-    <section class="browser-install-guide" data-browser-install-guide hidden aria-label="ホーム画面追加の案内">
+    <section class="browser-install-guide" data-browser-install-guide hidden aria-label="Safari利用の案内" role="dialog" aria-modal="true">
       <div class="browser-install-guide-card">
-        <div>
-          <small>最初だけ</small>
-          <h1>ホーム画面に追加します</h1>
-          <p>この画面はSafari/Chromeです。追加できたら、次からは花アイコン「水曜会 花記録」から開きます。</p>
+        <div class="browser-install-guide-accent" aria-hidden="true"></div>
+        <div class="browser-install-guide-content">
+          <p class="browser-install-guide-label">iPhoneの方へ</p>
+          <h1>Safariで<br>お使いください</h1>
+          <p class="browser-install-guide-intro">
+            このアプリはSafariで開いたままお使いください。
+          </p>
+          <div class="browser-install-guide-note">
+            <p>ホーム画面へ追加すると、Safariとは別の記録として保存される場合があります。</p>
+            <p>名前・受付番号・花やスタンプを同じ場所に残すため、Safariからご利用ください。</p>
+          </div>
+          <div class="browser-install-guide-actions">
+            <button class="browser-install-guide-button is-primary" type="button" data-browser-install-guide-dismiss>このまま使う</button>
+            <button class="browser-install-guide-button is-secondary" type="button" data-browser-install-guide-dismiss>案内を閉じる</button>
+          </div>
         </div>
-        <ol>
-          <li>iPhoneは共有ボタンから「ホーム画面に追加」</li>
-          <li>Androidはメニューから「ホーム画面に追加」または「アプリをインストール」</li>
-          <li>追加後は、この画面を閉じて花アイコンを押す</li>
-        </ol>
-        <p class="browser-install-guide-note">受付QRや先生QRは、ホーム画面に追加するためのQRではありません。</p>
-        <button type="button" data-browser-install-guide-close>案内を閉じる</button>
       </div>
     </section>
     <main class="record-book" aria-label="冒険記録帳">
@@ -91,7 +95,7 @@
             <span class="participation-start-copy">
               <small>参加スタンプ</small>
               <strong data-participation-start-flower-name>コスモス</strong>
-              <em>フォーム送信後はホーム画面の花アイコンに戻ります</em>
+              <em>フォーム送信後はこのアプリの画面に戻ります</em>
               <span class="participation-start-code">
                 <small>フォームに書く受付番号</small>
                 <strong data-participation-start-reception-code>00000000</strong>
@@ -103,7 +107,7 @@
             </span>
             <button type="button" class="participation-start-button" data-participation-start-form>受付番号をコピーして記入へ進む</button>
             <p class="participation-start-guide" data-participation-start-guide>
-              フォーム記入だけでは花は入りません。送信後、ホーム画面の花アイコンに戻り、受付で参加QRを読んでください。
+              フォーム記入だけでは花は入りません。送信後、このアプリの画面に戻り、受付で参加QRを読んでください。
             </p>
           </section>
         </div>
@@ -150,7 +154,7 @@
                 <p class="stamp-count" data-total-stamps>スタンプ 7</p>
               </div>
               <p class="browser-storage-warning" data-browser-storage-warning hidden>
-                Edgeで開いています。ホーム画面の水曜会 花記録とは記録が分かれます。同じ開き方で使ってください。
+                Edgeで開いています。Safariとは別の記録として保存される場合があります。Safariからご利用ください。
               </p>
 
               <div class="adventurer-name-block">
@@ -363,7 +367,7 @@
               </span>
               <button type="button" class="participation-stamp-button" data-participation-stamp-button>受付番号をコピーして記入へ進む</button>
               <p class="participation-stamp-guide" data-participation-stamp-guide>
-                フォーム記入だけでは花は入りません。送信後、ホーム画面の花アイコンに戻り、受付で参加QRを読んでください。
+                フォーム記入だけでは花は入りません。送信後、このアプリの画面に戻り、受付で参加QRを読んでください。
               </p>
             </section>
             <div class="teacher-layout" data-teacher-mode="list">
@@ -1100,21 +1104,21 @@
 
               <div class="admin-section-heading">
                 <strong>今日の運営</strong>
-                <span>本人スマホへ入れるQRを先に使う</span>
+                <span>本人スマホでSafariから開く入口QRを先に使う</span>
               </div>
-              <section class="admin-participation-apply" aria-label="ホーム画面追加用QR">
+              <section class="admin-participation-apply" aria-label="Safariで開くアプリ入口QR">
                 <div class="admin-adjustments-header">
-                  <strong>最初にホーム画面へ入れるQR</strong>
+                  <strong>Safariで開くアプリ入口QR</strong>
                   <span>新規参加者用</span>
                 </div>
                 <p class="admin-form-confirm-note">
-                  まだ花アイコンがない人は、まずこのQRをSafariまたはChromeで開き、ホーム画面に追加します。受付用 参加QRや先生QRからホーム画面に追加しないでください。
+                  iPhoneの方は、このQRをSafariで開き、そのまま利用します。受付用 参加QRや先生QRは、花や記録を入れるために使います。
                 </p>
                 <div class="admin-stamp-qr" data-admin-install-qr aria-live="polite">
                   <strong>アプリ入口QR</strong>
-                  <img data-admin-install-qr-image alt="水曜会 花記録をホーム画面に追加するためのQRコード">
+                  <img data-admin-install-qr-image alt="水曜会 花記録をSafariで開くためのQRコード">
                   <a data-admin-install-qr-link href="#" target="_blank" rel="noopener noreferrer">アプリ入口を開く</a>
-                  <small data-admin-install-qr-message>このQRはホーム画面追加用です。花を入れる時は、ホーム画面の花アイコンから開いたあと受付QRを読みます。</small>
+                  <small data-admin-install-qr-message>このQRはSafariで開くアプリ入口です。花を入れる時は、Safariで水曜会アプリを開いたまま受付QRを読みます。</small>
                 </div>
               </section>
 
@@ -1124,7 +1128,7 @@
                   <span data-admin-participation-date>本日</span>
                 </div>
                 <p class="admin-form-confirm-note">
-                  受付が済んだ人に、ホーム画面の花アイコンから開いた本人スマホで読み取ってもらいます。その日の参加スタンプが1つ入り、同じ日にもう一度読んでも二重には増えません。ホーム画面追加には使いません。
+                  受付が済んだ人に、Safariで水曜会アプリを開いている本人スマホで読み取ってもらいます。その日の参加スタンプが1つ入り、同じ日にもう一度読んでも二重には増えません。このQRはアプリ入口ではありません。
                 </p>
                 <button type="button" class="admin-stamp-qr-button" data-admin-participation-qr-create>受付用 参加QRを作る</button>
                 <div class="admin-stamp-qr" data-admin-participation-qr hidden aria-live="polite">
@@ -1454,7 +1458,7 @@
       });
     </script>
     <script src="stamp-rules.js?v=20260719-teacher-photos-01"></script>
-    <script src="script.js?v=20260721-sharing-trial-01"></script>
+    <script src="script.js?v=20260724-safari-guide-01"></script>
   </body>
 </html>
 

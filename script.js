@@ -58,7 +58,7 @@ const adventurerNameHint = document.querySelector("[data-adventurer-name-hint]")
 const adventurerReceptionCode = document.querySelector("[data-adventurer-reception-code]");
 const browserStorageWarning = document.querySelector("[data-browser-storage-warning]");
 const browserInstallGuide = document.querySelector("[data-browser-install-guide]");
-const browserInstallGuideClose = document.querySelector("[data-browser-install-guide-close]");
+const browserInstallGuideDismissButtons = document.querySelectorAll("[data-browser-install-guide-dismiss]");
 const profileLatestStamp = document.querySelector("[data-profile-latest-stamp]");
 const profileLatestStampCopy = document.querySelector("[data-profile-latest-stamp-copy]");
 const profileLatestTeacherFlowers = document.querySelectorAll("[data-profile-latest-teacher-flower]");
@@ -343,6 +343,7 @@ const teacherProfileStorageKey = "suiyoukai-teacher-profiles-v1";
 const adminPasscodeStorageKey = "suiyoukai-admin-passcode-local-v1";
 const adventurerNameStorageKey = "suiyoukai-adventurer-name-v1";
 const adventurerReceptionCodeStorageKey = "suiyoukai-adventurer-reception-code-v2";
+const safariUseGuideDismissedStorageKey = "suiyoukai-safari-use-guide-dismissed-v1";
 const adminIdentityCodeStorageKey = "suiyoukai-admin-identity-code-v1";
 const adminIdentityDisplayNameStorageKey = "suiyoukai-admin-identity-display-name-v1";
 const adminIdentityRealNameStorageKey = "suiyoukai-admin-identity-real-name-v1";
@@ -1429,21 +1430,37 @@ const isEdgeOnIos = () => /EdgiOS/i.test(navigator.userAgent);
 const isStandaloneDisplay = () =>
   window.matchMedia?.("(display-mode: standalone)")?.matches || window.navigator.standalone === true;
 
+const isIPhoneSafari = () => {
+  const userAgent = navigator.userAgent || "";
+  const isIPhone = /iPhone|iPod/i.test(userAgent);
+  const isSafari = /Version\/[\d.]+.*Mobile\/\S+\s+Safari\//i.test(userAgent);
+  const isOtherIosBrowser = /CriOS|EdgiOS|FxiOS|OPiOS/i.test(userAgent);
+
+  return isIPhone && isSafari && !isOtherIosBrowser;
+};
+
 const hasStampPayloadInUrl = () => {
   const searchParams = new URLSearchParams(window.location.search);
   return searchParams.has("stamp") || /^#apply-stamp=/.test(window.location.hash || "") || /^#s=/.test(window.location.hash || "");
 };
 
-const hasInstallGuideRequest = () => {
-  const searchParams = new URLSearchParams(window.location.search);
-  return searchParams.get("install") === "1";
-};
-
 const isBrowserInstallGuideClosed = () => {
   try {
-    return sessionStorage.getItem("suiyoukai-install-guide-closed") === "1";
+    return localStorage.getItem(safariUseGuideDismissedStorageKey) === "1";
   } catch {
     return false;
+  }
+};
+
+const closeBrowserInstallGuide = () => {
+  try {
+    localStorage.setItem(safariUseGuideDismissedStorageKey, "1");
+  } catch {
+    // 保存できない場合も、現在の画面では案内を閉じます。
+  }
+
+  if (browserInstallGuide) {
+    browserInstallGuide.hidden = true;
   }
 };
 
@@ -1452,10 +1469,11 @@ const updateBrowserInstallGuide = () => {
     return;
   }
 
-  const shouldShow = !hasStampPayloadInUrl()
+  const shouldShow = isIPhoneSafari()
+    && !isStandaloneDisplay()
+    && !hasStampPayloadInUrl()
     && window.location.hash !== adminEntryHash
-    && (hasInstallGuideRequest() || (!isStandaloneDisplay()
-    && !isBrowserInstallGuideClosed()));
+    && !isBrowserInstallGuideClosed();
 
   browserInstallGuide.hidden = !shouldShow;
 };
@@ -5752,7 +5770,7 @@ const renderAdminInstallQr = () => {
   adminInstallQr.hidden = false;
   adminInstallQrImage.src = createQrImageUrl(installUrl);
   adminInstallQrLink.href = installUrl;
-  adminInstallQrMessage.textContent = "このQRはホーム画面追加用です。受付用 参加QRや先生QRからホーム画面に追加しないでください。";
+  adminInstallQrMessage.textContent = "このQRはSafariで開くアプリ入口です。受付用 参加QRや先生QRは、花や記録を入れるために使います。";
 };
 
 const createAdminParticipationQr = () => {
@@ -6871,10 +6889,10 @@ const updateParticipationStampCard = () => {
 
   if (participationStampGuide) {
     participationStampGuide.textContent = isStampedToday
-      ? "今日の花は入っています。次からもホーム画面の花アイコンから開いてください。"
+      ? "今日の花は入っています。次からも同じブラウザで水曜会アプリを開いてください。"
       : shouldShowPostFormGuide
-        ? "フォーム送信後は、ホーム画面の花アイコンに戻り、受付で参加QRを読んでください。フォーム記入だけでは花は入りません。"
-        : "フォーム記入だけでは花は入りません。送信後、ホーム画面の花アイコンに戻り、受付で参加QRを読んでください。";
+        ? "フォーム送信後は、このアプリの画面に戻り、受付で参加QRを読んでください。フォーム記入だけでは花は入りません。"
+        : "フォーム記入だけでは花は入りません。送信後、このアプリの画面に戻り、受付で参加QRを読んでください。";
     participationStampGuide.classList.toggle("is-urgent", shouldShowPostFormGuide);
     participationStampGuide.classList.toggle("is-complete", isStampedToday);
   }
@@ -9538,15 +9556,8 @@ window.addEventListener("hashchange", updateBrowserInstallGuide);
 syncAdminDirectEntry();
 updateBrowserInstallGuide();
 
-browserInstallGuideClose?.addEventListener("click", () => {
-  try {
-    sessionStorage.setItem("suiyoukai-install-guide-closed", "1");
-  } catch {
-    // 閉じた状態を保存できない時も、画面上では閉じます。
-  }
-  if (browserInstallGuide) {
-    browserInstallGuide.hidden = true;
-  }
+browserInstallGuideDismissButtons.forEach((button) => {
+  button.addEventListener("click", closeBrowserInstallGuide);
 });
 
 nextAdventureButton.addEventListener("click", () => {
