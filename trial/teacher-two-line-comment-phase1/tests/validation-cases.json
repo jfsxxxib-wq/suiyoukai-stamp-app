@@ -1,0 +1,398 @@
+{
+  "textCases": [
+    {
+      "id": "plain-japanese",
+      "input": "囲碁",
+      "required": true,
+      "expected": { "ok": true, "value": "囲碁", "length": 2 }
+    },
+    {
+      "id": "trim-halfwidth-space",
+      "input": "  囲碁  ",
+      "required": true,
+      "expected": { "ok": true, "value": "囲碁", "length": 2 }
+    },
+    {
+      "id": "trim-fullwidth-space",
+      "input": "　囲碁　",
+      "required": true,
+      "expected": { "ok": true, "value": "囲碁", "length": 2 }
+    },
+    {
+      "id": "internal-space",
+      "input": "囲碁 サロン",
+      "required": true,
+      "expected": { "ok": true, "value": "囲碁 サロン", "length": 6 }
+    },
+    {
+      "id": "emoji",
+      "input": "😊",
+      "required": true,
+      "expected": { "ok": true, "value": "😊", "length": 1 }
+    },
+    {
+      "id": "flag",
+      "input": "🇯🇵",
+      "required": true,
+      "expected": { "ok": true, "value": "🇯🇵", "length": 1 }
+    },
+    {
+      "id": "family-zwj",
+      "input": "👨‍👩‍👧‍👦",
+      "required": true,
+      "expected": { "ok": true, "value": "👨‍👩‍👧‍👦", "length": 1 }
+    },
+    {
+      "id": "keycap",
+      "input": "1️⃣",
+      "required": true,
+      "expected": { "ok": true, "value": "1️⃣", "length": 1 }
+    },
+    {
+      "id": "decomposed-dakuten",
+      "input": "が",
+      "required": true,
+      "expected": { "ok": true, "value": "が", "length": 1 }
+    },
+    {
+      "id": "variation-selector",
+      "input": "✈️",
+      "required": true,
+      "expected": { "ok": true, "value": "✈️", "length": 1 }
+    },
+    {
+      "id": "empty-optional",
+      "input": "",
+      "required": false,
+      "expected": { "ok": true, "value": "", "length": 0 }
+    },
+    {
+      "id": "empty-required",
+      "input": "",
+      "required": true,
+      "expected": { "ok": false, "code": "required", "length": 0 }
+    },
+    {
+      "id": "exactly-30",
+      "input": "ああああああああああああああああああああああああああああああ",
+      "required": true,
+      "expected": { "ok": true, "length": 30 }
+    },
+    {
+      "id": "over-30-not-truncated",
+      "input": "あああああああああああああああああああああああああああああああ",
+      "required": true,
+      "expected": { "ok": false, "code": "too_long", "length": 31, "preserveInput": true }
+    },
+    {
+      "id": "line-feed",
+      "input": "囲碁\nサロン",
+      "required": true,
+      "expected": { "ok": false, "code": "contains_newline" }
+    },
+    {
+      "id": "carriage-return",
+      "input": "囲碁\rサロン",
+      "required": true,
+      "expected": { "ok": false, "code": "contains_newline" }
+    },
+    {
+      "id": "next-line",
+      "input": "囲碁サロン",
+      "required": true,
+      "expected": { "ok": false, "code": "contains_newline" }
+    },
+    {
+      "id": "line-separator",
+      "input": "囲碁 サロン",
+      "required": true,
+      "expected": { "ok": false, "code": "contains_newline" }
+    },
+    {
+      "id": "paragraph-separator",
+      "input": "囲碁 サロン",
+      "required": true,
+      "expected": { "ok": false, "code": "contains_newline" }
+    },
+    {
+      "id": "tab",
+      "input": "囲碁\tサロン",
+      "required": true,
+      "expected": { "ok": false, "code": "invalid_format" }
+    },
+    {
+      "id": "c0-control",
+      "input": "囲碁\u0007サロン",
+      "required": true,
+      "expected": { "ok": false, "code": "invalid_format" }
+    },
+    {
+      "id": "c1-control",
+      "input": "囲碁サロン",
+      "required": true,
+      "expected": { "ok": false, "code": "invalid_format" }
+    },
+    {
+      "id": "unpaired-high-surrogate",
+      "input": "\ud800",
+      "required": true,
+      "expected": { "ok": false, "code": "invalid_format" }
+    },
+    {
+      "id": "unpaired-low-surrogate",
+      "input": "\udc00",
+      "required": true,
+      "expected": { "ok": false, "code": "invalid_format" }
+    },
+    {
+      "id": "unpaired-surrogate-before-newline",
+      "input": "\ud800\n",
+      "required": true,
+      "expected": { "ok": false, "code": "invalid_format" }
+    },
+    {
+      "id": "non-string",
+      "input": 123,
+      "required": true,
+      "expected": { "ok": false, "code": "invalid_format" }
+    }
+  ],
+  "twoLineCases": [
+    {
+      "id": "draft-empty",
+      "line1": "",
+      "line2": "",
+      "requiredBoth": false,
+      "expected": { "ok": true }
+    },
+    {
+      "id": "draft-one-line",
+      "line1": "お知らせ",
+      "line2": "",
+      "requiredBoth": false,
+      "expected": { "ok": true }
+    },
+    {
+      "id": "review-two-lines",
+      "line1": "今回のお知らせ",
+      "line2": "皆さんへのひとこと",
+      "requiredBoth": true,
+      "expected": { "ok": true }
+    },
+    {
+      "id": "review-line2-required",
+      "line1": "今回のお知らせ",
+      "line2": "",
+      "requiredBoth": true,
+      "expected": { "ok": false, "field": "line2", "code": "required" }
+    }
+  ],
+  "idCases": [
+    {
+      "id": "teacher-valid",
+      "kind": "teacher",
+      "input": "trial-teacher-001",
+      "expected": true
+    },
+    {
+      "id": "teacher-invalid-name",
+      "kind": "teacher",
+      "input": "trial-teacher-etsuko",
+      "expected": false
+    },
+    {
+      "id": "teacher-expected-match",
+      "kind": "expectedTeacher",
+      "input": "trial-teacher-001",
+      "expectedValue": "trial-teacher-001",
+      "expected": true
+    },
+    {
+      "id": "teacher-unexpected-number",
+      "kind": "expectedTeacher",
+      "input": "trial-teacher-002",
+      "expectedValue": "trial-teacher-001",
+      "expected": false
+    },
+    {
+      "id": "environment-a-valid",
+      "kind": "environment",
+      "input": "teacher-two-line-comment-phase1-20260730-A",
+      "expected": true
+    },
+    {
+      "id": "environment-b-valid",
+      "kind": "environment",
+      "input": "teacher-two-line-comment-phase1-20260730-B",
+      "expected": true
+    },
+    {
+      "id": "environment-d-invalid",
+      "kind": "environment",
+      "input": "teacher-two-line-comment-phase1-20260730-D",
+      "expected": false
+    },
+    {
+      "id": "spreadsheet-id-valid",
+      "kind": "spreadsheet",
+      "input": "trialSpreadsheetId_ExampleOnly-123",
+      "expected": true
+    },
+    {
+      "id": "spreadsheet-id-invalid-space",
+      "kind": "spreadsheet",
+      "input": "trial spreadsheet id",
+      "expected": false
+    },
+    {
+      "id": "comment-uuid-valid",
+      "kind": "prefixedUuid",
+      "input": "cmt_3f15de91-4eac-4a44-80c1-16e7e569f546",
+      "expected": true
+    },
+    {
+      "id": "event-uuid-valid",
+      "kind": "prefixedUuid",
+      "input": "evt_89f73c77-1a35-4fc1-b092-f99f8ab902c8",
+      "expected": true
+    },
+    {
+      "id": "request-uuid-valid",
+      "kind": "prefixedUuid",
+      "input": "req_50f03e1d-aaba-450c-935b-c8ed7895aca8",
+      "expected": true
+    },
+    {
+      "id": "incident-uuid-valid",
+      "kind": "prefixedUuid",
+      "input": "inc_70f03e1d-aaba-450c-835b-c8ed7895aca8",
+      "expected": true
+    },
+    {
+      "id": "uuid-v5-invalid",
+      "kind": "prefixedUuid",
+      "input": "cmt_3f15de91-4eac-5a44-80c1-16e7e569f546",
+      "expected": false
+    },
+    {
+      "id": "uuid-variant-invalid",
+      "kind": "prefixedUuid",
+      "input": "cmt_3f15de91-4eac-4a44-70c1-16e7e569f546",
+      "expected": false
+    },
+    {
+      "id": "uuid-uppercase-invalid",
+      "kind": "prefixedUuid",
+      "input": "cmt_3F15DE91-4EAC-4A44-80C1-16E7E569F546",
+      "expected": false
+    },
+    {
+      "id": "uuid-prefix-invalid",
+      "kind": "prefixedUuid",
+      "input": "usr_3f15de91-4eac-4a44-80c1-16e7e569f546",
+      "expected": false
+    }
+  ],
+  "environmentCases": [
+    {
+      "id": "active-valid",
+      "config": {
+        "environmentStatus": "ACTIVE",
+        "environmentId": "teacher-two-line-comment-phase1-20260730-A",
+        "trialSpreadsheetId": "trialSpreadsheetId_ExampleOnly",
+        "expectedSpreadsheetName": "【試験専用・本番接続禁止】先生2行コメント 第1段階 シート 2026-07-30",
+        "scriptTimeZone": "Asia/Tokyo"
+      },
+      "expected": { "ok": true }
+    },
+    {
+      "id": "inconsistent-stops",
+      "config": {
+        "environmentStatus": "INCONSISTENT",
+        "environmentId": "teacher-two-line-comment-phase1-20260730-A",
+        "trialSpreadsheetId": "trialSpreadsheetId_ExampleOnly",
+        "expectedSpreadsheetName": "【試験専用・本番接続禁止】先生2行コメント 第1段階 シート 2026-07-30",
+        "scriptTimeZone": "Asia/Tokyo"
+      },
+      "expected": { "ok": false, "code": "environment_inactive" }
+    },
+    {
+      "id": "archived-stops",
+      "config": {
+        "environmentStatus": "ARCHIVED",
+        "environmentId": "teacher-two-line-comment-phase1-20260730-A",
+        "trialSpreadsheetId": "trialSpreadsheetId_ExampleOnly",
+        "expectedSpreadsheetName": "【試験専用・本番接続禁止】先生2行コメント 第1段階 シート 2026-07-30",
+        "scriptTimeZone": "Asia/Tokyo"
+      },
+      "expected": { "ok": false, "code": "environment_inactive" }
+    },
+    {
+      "id": "missing-spreadsheet-id",
+      "config": {
+        "environmentStatus": "ACTIVE",
+        "environmentId": "teacher-two-line-comment-phase1-20260730-A",
+        "trialSpreadsheetId": "",
+        "expectedSpreadsheetName": "【試験専用・本番接続禁止】先生2行コメント 第1段階 シート 2026-07-30",
+        "scriptTimeZone": "Asia/Tokyo"
+      },
+      "expected": { "ok": false, "code": "invalid_environment_config", "field": "trialSpreadsheetId" }
+    },
+    {
+      "id": "invalid-spreadsheet-id-format",
+      "config": {
+        "environmentStatus": "ACTIVE",
+        "environmentId": "teacher-two-line-comment-phase1-20260730-A",
+        "trialSpreadsheetId": "invalid/id",
+        "expectedSpreadsheetName": "【試験専用・本番接続禁止】先生2行コメント 第1段階 シート 2026-07-30",
+        "scriptTimeZone": "Asia/Tokyo"
+      },
+      "expected": { "ok": false, "code": "invalid_spreadsheet_id" }
+    },
+    {
+      "id": "invalid-environment-id",
+      "config": {
+        "environmentStatus": "ACTIVE",
+        "environmentId": "production",
+        "trialSpreadsheetId": "trialSpreadsheetId_ExampleOnly",
+        "expectedSpreadsheetName": "【試験専用・本番接続禁止】先生2行コメント 第1段階 シート 2026-07-30",
+        "scriptTimeZone": "Asia/Tokyo"
+      },
+      "expected": { "ok": false, "code": "invalid_environment_id" }
+    },
+    {
+      "id": "invalid-name-prefix",
+      "config": {
+        "environmentStatus": "ACTIVE",
+        "environmentId": "teacher-two-line-comment-phase1-20260730-A",
+        "trialSpreadsheetId": "trialSpreadsheetId_ExampleOnly",
+        "expectedSpreadsheetName": "先生2行コメント",
+        "scriptTimeZone": "Asia/Tokyo"
+      },
+      "expected": { "ok": false, "code": "invalid_spreadsheet_name" }
+    },
+    {
+      "id": "invalid-time-zone",
+      "config": {
+        "environmentStatus": "ACTIVE",
+        "environmentId": "teacher-two-line-comment-phase1-20260730-A",
+        "trialSpreadsheetId": "trialSpreadsheetId_ExampleOnly",
+        "expectedSpreadsheetName": "【試験専用・本番接続禁止】先生2行コメント 第1段階 シート 2026-07-30",
+        "scriptTimeZone": "UTC"
+      },
+      "expected": { "ok": false, "code": "invalid_time_zone" }
+    }
+  ],
+  "spreadsheetMetadataCases": [
+    {
+      "id": "exact-name-match",
+      "name": "【試験専用・本番接続禁止】先生2行コメント 第1段階 シート 2026-07-30",
+      "expected": { "ok": true }
+    },
+    {
+      "id": "name-mismatch",
+      "name": "【試験専用・本番接続禁止】先生2行コメント 第1段階 シート 別環境",
+      "expected": { "ok": false, "code": "spreadsheet_name_mismatch" }
+    }
+  ]
+}
