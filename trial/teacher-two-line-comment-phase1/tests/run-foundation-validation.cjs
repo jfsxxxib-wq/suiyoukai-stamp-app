@@ -122,9 +122,14 @@ const validEnvironmentCase = cases.environmentCases.find(
 );
 
 for (const testCase of cases.spreadsheetMetadataCases) {
-  const result = context.ttlcValidateOpenedSpreadsheetMetadata(
+  const response = {
+    properties: {
+      title: testCase.name
+    }
+  };
+  const result = context.ttlcValidateSpreadsheetMetadataResponse(
     validEnvironmentCase.config,
-    { name: testCase.name }
+    response
   );
   const expected = testCase.expected;
 
@@ -172,8 +177,8 @@ check(
   "missing Intl.Segmenter did not fail safely"
 );
 
-function createEnvironmentRuntime(properties, timeZone, spreadsheetName) {
-  let openCount = 0;
+function buildEnvironmentRuntime(properties, timeZone, responseOrError) {
+  const calls = [];
   const runtime = vm.createContext({
     console,
     Intl,
@@ -192,14 +197,15 @@ function createEnvironmentRuntime(properties, timeZone, spreadsheetName) {
         return timeZone;
       }
     },
-    SpreadsheetApp: {
-      openById() {
-        openCount += 1;
-        return {
-          getName() {
-            return spreadsheetName;
+    Sheets: {
+      Spreadsheets: {
+        get(spreadsheetId, options) {
+          calls.push({ spreadsheetId, options });
+          if (responseOrError instanceof Error) {
+            throw responseOrError;
           }
-        };
+          return responseOrError;
+        }
       }
     }
   });
@@ -216,8 +222,8 @@ function createEnvironmentRuntime(properties, timeZone, spreadsheetName) {
 
   return {
     runtime,
-    getOpenCount() {
-      return openCount;
+    getCalls() {
+      return calls.slice();
     }
   };
 }
@@ -231,13 +237,19 @@ const validProperties = {
   EXPECTED_SPREADSHEET_NAME: expectedTrialName
 };
 
-const inconsistentRuntime = createEnvironmentRuntime(
+const validMetadataResponse = {
+  properties: {
+    title: expectedTrialName
+  }
+};
+
+const inconsistentRuntime = buildEnvironmentRuntime(
   { ...validProperties, ENVIRONMENT_STATUS: "INCONSISTENT" },
   "Asia/Tokyo",
-  expectedTrialName
+  validMetadataResponse
 );
 const inconsistentResult =
-  inconsistentRuntime.runtime.ttlcOpenTrialSpreadsheetReadOnly_();
+  inconsistentRuntime.runtime.ttlcGetTrialSpreadsheetMetadataReadOnly_();
 check(
   inconsistentResult.ok === false &&
     inconsistentResult.code === "environment_inactive",
@@ -245,18 +257,18 @@ check(
   "INCONSISTENT did not stop"
 );
 check(
-  inconsistentRuntime.getOpenCount() === 0,
-  "guard-inconsistent-no-open",
-  "INCONSISTENT reached SpreadsheetApp.openById"
+  inconsistentRuntime.getCalls().length === 0,
+  "guard-inconsistent-no-read",
+  "INCONSISTENT reached Sheets.Spreadsheets.get"
 );
 
-const invalidIdRuntime = createEnvironmentRuntime(
+const invalidIdRuntime = buildEnvironmentRuntime(
   { ...validProperties, ENVIRONMENT_ID: "production" },
   "Asia/Tokyo",
-  expectedTrialName
+  validMetadataResponse
 );
 const invalidIdResult =
-  invalidIdRuntime.runtime.ttlcOpenTrialSpreadsheetReadOnly_();
+  invalidIdRuntime.runtime.ttlcGetTrialSpreadsheetMetadataReadOnly_();
 check(
   invalidIdResult.ok === false &&
     invalidIdResult.code === "invalid_environment_id",
@@ -264,18 +276,18 @@ check(
   "invalid environment ID did not stop"
 );
 check(
-  invalidIdRuntime.getOpenCount() === 0,
-  "guard-invalid-id-no-open",
-  "invalid environment ID reached SpreadsheetApp.openById"
+  invalidIdRuntime.getCalls().length === 0,
+  "guard-invalid-id-no-read",
+  "invalid environment ID reached Sheets.Spreadsheets.get"
 );
 
-const archivedRuntime = createEnvironmentRuntime(
+const archivedRuntime = buildEnvironmentRuntime(
   { ...validProperties, ENVIRONMENT_STATUS: "ARCHIVED" },
   "Asia/Tokyo",
-  expectedTrialName
+  validMetadataResponse
 );
 const archivedResult =
-  archivedRuntime.runtime.ttlcOpenTrialSpreadsheetReadOnly_();
+  archivedRuntime.runtime.ttlcGetTrialSpreadsheetMetadataReadOnly_();
 check(
   archivedResult.ok === false &&
     archivedResult.code === "environment_inactive",
@@ -283,41 +295,168 @@ check(
   "ARCHIVED did not stop"
 );
 check(
-  archivedRuntime.getOpenCount() === 0,
-  "guard-archived-no-open",
-  "ARCHIVED reached SpreadsheetApp.openById"
+  archivedRuntime.getCalls().length === 0,
+  "guard-archived-no-read",
+  "ARCHIVED reached Sheets.Spreadsheets.get"
 );
 
-const validRuntime = createEnvironmentRuntime(
+const missingPropertyRuntime = buildEnvironmentRuntime(
+  {
+    ENVIRONMENT_STATUS: validProperties.ENVIRONMENT_STATUS,
+    ENVIRONMENT_ID: validProperties.ENVIRONMENT_ID,
+    EXPECTED_SPREADSHEET_NAME: validProperties.EXPECTED_SPREADSHEET_NAME
+  },
+  "Asia/Tokyo",
+  validMetadataResponse
+);
+const missingPropertyResult =
+  missingPropertyRuntime.runtime.ttlcGetTrialSpreadsheetMetadataReadOnly_();
+check(
+  missingPropertyResult.ok === false &&
+    missingPropertyResult.code === "invalid_environment_config" &&
+    missingPropertyResult.field === "trialSpreadsheetId",
+  "guard-missing-property-result",
+  "missing spreadsheet ID did not stop"
+);
+check(
+  missingPropertyRuntime.getCalls().length === 0,
+  "guard-missing-property-no-read",
+  "missing spreadsheet ID reached Sheets.Spreadsheets.get"
+);
+
+const invalidSpreadsheetIdRuntime = buildEnvironmentRuntime(
+  { ...validProperties, TRIAL_SPREADSHEET_ID: "invalid id" },
+  "Asia/Tokyo",
+  validMetadataResponse
+);
+const invalidSpreadsheetIdResult =
+  invalidSpreadsheetIdRuntime.runtime.ttlcGetTrialSpreadsheetMetadataReadOnly_();
+check(
+  invalidSpreadsheetIdResult.ok === false &&
+    invalidSpreadsheetIdResult.code === "invalid_spreadsheet_id",
+  "guard-invalid-spreadsheet-id-result",
+  "invalid spreadsheet ID did not stop"
+);
+check(
+  invalidSpreadsheetIdRuntime.getCalls().length === 0,
+  "guard-invalid-spreadsheet-id-no-read",
+  "invalid spreadsheet ID reached Sheets.Spreadsheets.get"
+);
+
+const validRuntime = buildEnvironmentRuntime(
   validProperties,
   "Asia/Tokyo",
-  expectedTrialName
+  validMetadataResponse
 );
 const validGuardResult =
-  validRuntime.runtime.ttlcOpenTrialSpreadsheetReadOnly_();
+  validRuntime.runtime.ttlcGetTrialSpreadsheetMetadataReadOnly_();
 check(
   validGuardResult.ok === true,
   "guard-valid-result",
   "valid trial configuration was rejected"
 );
+const validCalls = validRuntime.getCalls();
 check(
-  validRuntime.getOpenCount() === 1,
-  "guard-valid-open-once",
-  "valid trial configuration did not open exactly once"
+  validCalls.length === 1,
+  "guard-valid-read-once",
+  "valid trial configuration did not read exactly once"
+);
+check(
+  validCalls[0] &&
+    validCalls[0].spreadsheetId === validProperties.TRIAL_SPREADSHEET_ID,
+  "guard-valid-spreadsheet-id",
+  "unexpected spreadsheet ID was passed"
+);
+check(
+  validCalls[0] &&
+    validCalls[0].options &&
+    validCalls[0].options.fields === "properties.title",
+  "guard-valid-fields",
+  "metadata request did not limit fields to properties.title"
 );
 
-const mismatchedNameRuntime = createEnvironmentRuntime(
+const mismatchedNameRuntime = buildEnvironmentRuntime(
   validProperties,
   "Asia/Tokyo",
-  expectedTrialName + " 別環境"
+  {
+    properties: {
+      title: expectedTrialName + " 別環境"
+    }
+  }
 );
 const mismatchedNameResult =
-  mismatchedNameRuntime.runtime.ttlcOpenTrialSpreadsheetReadOnly_();
+  mismatchedNameRuntime.runtime.ttlcGetTrialSpreadsheetMetadataReadOnly_();
 check(
   mismatchedNameResult.ok === false &&
     mismatchedNameResult.code === "spreadsheet_name_mismatch",
   "guard-name-mismatch",
   "opened spreadsheet name mismatch was not rejected"
+);
+
+const malformedMetadataCases = [
+  {
+    id: "guard-response-not-object",
+    response: null
+  },
+  {
+    id: "guard-response-array",
+    response: []
+  },
+  {
+    id: "guard-response-properties-missing",
+    response: {}
+  },
+  {
+    id: "guard-response-properties-array",
+    response: { properties: [] }
+  },
+  {
+    id: "guard-response-title-missing",
+    response: { properties: {} }
+  },
+  {
+    id: "guard-response-title-empty",
+    response: { properties: { title: "" } }
+  },
+  {
+    id: "guard-response-title-non-string",
+    response: { properties: { title: 123 } }
+  }
+];
+
+for (const malformedCase of malformedMetadataCases) {
+  const malformedRuntime = buildEnvironmentRuntime(
+    validProperties,
+    "Asia/Tokyo",
+    malformedCase.response
+  );
+  const malformedResult =
+    malformedRuntime.runtime.ttlcGetTrialSpreadsheetMetadataReadOnly_();
+  check(
+    malformedResult.ok === false &&
+      malformedResult.code === "invalid_spreadsheet_metadata",
+    malformedCase.id,
+    "malformed metadata response was not rejected safely"
+  );
+}
+
+const exceptionRuntime = buildEnvironmentRuntime(
+  validProperties,
+  "Asia/Tokyo",
+  new Error("simulated API failure")
+);
+const exceptionResult =
+  exceptionRuntime.runtime.ttlcGetTrialSpreadsheetMetadataReadOnly_();
+check(
+  exceptionResult.ok === false &&
+    exceptionResult.code === "spreadsheet_read_failed",
+  "guard-api-exception-result",
+  "Advanced Sheets Service exception did not fail safely"
+);
+check(
+  exceptionRuntime.getCalls().length === 1,
+  "guard-api-exception-read-once",
+  "Advanced Sheets Service exception caused an unexpected retry"
 );
 
 const summary = {

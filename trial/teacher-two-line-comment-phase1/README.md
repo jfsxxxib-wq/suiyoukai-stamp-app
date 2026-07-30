@@ -38,11 +38,11 @@ trial-teacher-001
 - `apps-script/IdValidation.gs`
   - 試験用先生ID、環境ID、接頭辞付きUUIDv4を検証する純粋関数
 - `apps-script/EnvironmentGuard.gs`
-  - 設定値だけを調べる純粋関数と、Apps Script専用の読み取り処理を分離
+  - 設定値だけを調べる純粋関数と、Advanced Sheets Serviceによる読み取り専用のメタデータ取得を分離
 - `apps-script/FoundationSelfTest.gs`
   - Apps Script上で後日実行する、書き込みを伴わない自己試験
 - `apps-script/appsscript.json`
-  - V8、`Asia/Tokyo`、スプレッドシート読み取り専用権限
+  - V8、`Asia/Tokyo`、スプレッドシート読み取り専用権限、Advanced Sheets Service v4
 - `tests/validation-cases.json`
   - ローカル共通確認データ
 - `tests/run-foundation-validation.cjs`
@@ -58,7 +58,9 @@ node trial/teacher-two-line-comment-phase1/tests/run-foundation-validation.cjs
 
 通常は、PATHで利用できる`node`を使って実行する。`node`がPATHにない場合は、作業環境で利用可能であることを確認済みのNode.js実行ファイルを使用する。端末固有の絶対パスは、リポジトリ内のファイルへ記録しない。
 
-文字検証・ID検証は、Apps Script用の実際の`.gs`実装をローカル試験から直接読み込んで確認する。環境ガードは、模擬した`PropertiesService`、`Session`、`SpreadsheetApp`を使用して確認する。外部サービスへは接続せず、不正な環境IDや`INCONSISTENT`・`ARCHIVED`の停止状態では、`SpreadsheetApp.openById`へ到達しないことも試験する。
+文字検証・ID検証は、Apps Script用の実際の`.gs`実装をローカル試験から直接読み込んで確認する。環境ガードは、模擬した`PropertiesService`、`Session`、`Sheets.Spreadsheets.get`を使用して確認する。外部サービスへは接続せず、不正な環境IDや`INCONSISTENT`・`ARCHIVED`の停止状態では、`Sheets.Spreadsheets.get`へ到達しないことも試験する。
+
+Advanced Sheets Serviceは`appsscript.json`の`enabledAdvancedServices`で有効化する。Google側の作業が別途承認された後、Apps ScriptエディタでGoogle Sheets API v4がサービス`Sheets`として認識されていることを確認する。OAuthスコープは`https://www.googleapis.com/auth/spreadsheets.readonly`だけとし、書き込み権限は追加しない。
 
 ## 環境ガードの順序
 
@@ -67,17 +69,18 @@ node trial/teacher-two-line-comment-phase1/tests/run-foundation-validation.cjs
 3. 設定値を純粋関数へ渡す
 4. `ENVIRONMENT_STATUS = ACTIVE`を確認する
 5. 環境ID、接続先ID、期待する試験専用名称を確認する
-6. すべて合格した場合だけスプレッドシートを読み取り専用で開く
-7. 実際のスプレッドシート名と期待する完全な名称を照合する
+6. すべて合格した場合だけ、Advanced Sheets Serviceで`properties.title`だけを取得する
+7. 応答、`properties`、空でない文字列の`properties.title`を検査する
+8. 実際のタイトルと期待する完全な名称を照合する
 
-`INCONSISTENT`、`ARCHIVED`、未設定、不正形式では、スプレッドシートを開かない。
+`INCONSISTENT`、`ARCHIVED`、未設定、不正形式では、Advanced Sheets Serviceを呼び出さない。
 
 ## 今回実装しないもの
 
 - `create_draft`などの保存・状態変更操作
 - セル更新、シート作成、履歴追記
 - `ScriptLock`を使う更新処理
-- `doGet`、`doPost`
+- WebアプリのGET・POST入口
 - 公開API
 - `get_integrity_status`
 - `request_id`の結果照会

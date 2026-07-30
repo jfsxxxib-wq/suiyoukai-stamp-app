@@ -97,23 +97,28 @@ function ttlcValidateEnvironmentConfig(config) {
   };
 }
 
-function ttlcValidateOpenedSpreadsheetMetadata(config, metadata) {
+function ttlcValidateSpreadsheetMetadataResponse(config, response) {
   var configResult = ttlcValidateEnvironmentConfig(config);
   if (!configResult.ok) {
     return configResult;
   }
 
-  if (metadata === null || typeof metadata !== "object") {
+  if (
+    response === null ||
+    typeof response !== "object" ||
+    Array.isArray(response) ||
+    response.properties === null ||
+    typeof response.properties !== "object" ||
+    Array.isArray(response.properties) ||
+    !ttlcIsNonEmptyTrimmedString(response.properties.title)
+  ) {
     return {
       ok: false,
       code: "invalid_spreadsheet_metadata"
     };
   }
 
-  if (
-    typeof metadata.name !== "string" ||
-    metadata.name !== config.expectedSpreadsheetName
-  ) {
+  if (response.properties.title !== config.expectedSpreadsheetName) {
     return {
       ok: false,
       code: "spreadsheet_name_mismatch"
@@ -123,7 +128,7 @@ function ttlcValidateOpenedSpreadsheetMetadata(config, metadata) {
   return {
     ok: true,
     environmentId: config.environmentId,
-    spreadsheetName: metadata.name
+    spreadsheetName: response.properties.title
   };
 }
 
@@ -139,7 +144,7 @@ function ttlcReadEnvironmentConfig_() {
   };
 }
 
-function ttlcOpenTrialSpreadsheetReadOnly_() {
+function ttlcGetTrialSpreadsheetMetadataReadOnly_() {
   var config = ttlcReadEnvironmentConfig_();
   var configResult = ttlcValidateEnvironmentConfig(config);
 
@@ -151,10 +156,25 @@ function ttlcOpenTrialSpreadsheetReadOnly_() {
     };
   }
 
-  var spreadsheet = SpreadsheetApp.openById(config.trialSpreadsheetId);
-  var metadataResult = ttlcValidateOpenedSpreadsheetMetadata(config, {
-    name: spreadsheet.getName()
-  });
+  var response;
+  try {
+    response = Sheets.Spreadsheets.get(
+      config.trialSpreadsheetId,
+      {
+        fields: "properties.title"
+      }
+    );
+  } catch (error) {
+    return {
+      ok: false,
+      code: "spreadsheet_read_failed"
+    };
+  }
+
+  var metadataResult = ttlcValidateSpreadsheetMetadataResponse(
+    config,
+    response
+  );
 
   if (!metadataResult.ok) {
     return metadataResult;

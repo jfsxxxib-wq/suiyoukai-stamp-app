@@ -114,7 +114,7 @@ function runFoundationSelfTest() {
 }
 
 function runEnvironmentGuardReadOnlySelfTest() {
-  var result = ttlcOpenTrialSpreadsheetReadOnly_();
+  var result = ttlcGetTrialSpreadsheetMetadataReadOnly_();
 
   if (typeof Logger === "object" && typeof Logger.log === "function") {
     Logger.log(JSON.stringify(result));
