@@ -41,12 +41,24 @@ trial-teacher-001
   - 設定値だけを調べる純粋関数と、Advanced Sheets Serviceによる読み取り専用のメタデータ取得を分離
 - `apps-script/FoundationSelfTest.gs`
   - Apps Script上で後日実行する、書き込みを伴わない自己試験
+- `apps-script/RequestFingerprint.gs`
+  - `create_draft`要求の形式検査、正規化、SHA-256指紋作成
+- `apps-script/ApiResponse.gs`
+  - N-01で使用する許可項目限定の安全な返却作成
+- `apps-script/CreateDraftDecision.gs`
+  - `duplicate`、`invalid_request`、`existing_comment`、複数件検出を判定する純粋関数
+- `apps-script/CreateDraftN01SelfTest.gs`
+  - Googleへ接続しないN-01専用自己試験
 - `apps-script/appsscript.json`
   - V8、`Asia/Tokyo`、スプレッドシート読み取り専用権限、Advanced Sheets Service v4
 - `tests/validation-cases.json`
   - ローカル共通確認データ
 - `tests/run-foundation-validation.cjs`
   - `.gs`の実装を直接読み込み、同じ関数をローカル実行
+- `tests/n01-cases.json`
+  - N-01専用の指紋・判定確認データ
+- `tests/run-create-draft-n01-validation.cjs`
+  - N-01の`.gs`実装を直接読み込み、外部接続と書き込み経路がないことも確認
 
 ## ローカル確認
 
@@ -57,6 +69,14 @@ node trial/teacher-two-line-comment-phase1/tests/run-foundation-validation.cjs
 ```
 
 通常は、PATHで利用できる`node`を使って実行する。`node`がPATHにない場合は、作業環境で利用可能であることを確認済みのNode.js実行ファイルを使用する。端末固有の絶対パスは、リポジトリ内のファイルへ記録しない。
+
+N-01専用試験は、基礎試験が合格した後に次を実行する。
+
+```powershell
+node trial/teacher-two-line-comment-phase1/tests/run-create-draft-n01-validation.cjs
+```
+
+N-01専用試験は、Google、スプレッドシート、Apps Scriptの試験環境へ接続しない。`ScriptLock`、`PropertiesService`、`Sheets`、`SpreadsheetApp`、`batchUpdate`、セル書き込みを使用せず、判定・指紋・返却・事故記録用最小データの組み立てだけをローカルで確認する。
 
 文字検証・ID検証は、Apps Script用の実際の`.gs`実装をローカル試験から直接読み込んで確認する。環境ガードは、模擬した`PropertiesService`、`Session`、`Sheets.Spreadsheets.get`を使用して確認する。外部サービスへは接続せず、不正な環境IDや`INCONSISTENT`・`ARCHIVED`の停止状態では、`Sheets.Spreadsheets.get`へ到達しないことも試験する。
 
@@ -78,6 +98,8 @@ Advanced Sheets Serviceは`appsscript.json`の`enabledAdvancedServices`で有効
 ## 今回実装しないもの
 
 - `create_draft`などの保存・状態変更操作
+- 「要求処理結果」シートを含む3シートの作成・読み書き
+- `spreadsheets.batchUpdate`
 - セル更新、シート作成、履歴追記
 - `ScriptLock`を使う更新処理
 - WebアプリのGET・POST入口

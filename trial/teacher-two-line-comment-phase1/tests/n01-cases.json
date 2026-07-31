@@ -1,0 +1,379 @@
+{
+  "fingerprintCases": [
+    {
+      "id": "FP-01-valid-normalized",
+      "kind": "single",
+      "request": {
+        "schemaVersion": 1,
+        "environmentId": "teacher-two-line-comment-phase1-20260731-A",
+        "operation": "create_draft",
+        "requestId": "req_50f03e1d-aaba-450c-935b-c8ed7895aca8",
+        "payload": {
+          "line1": "  囲碁のお知らせ  ",
+          "line2": "続きを入力してください"
+        }
+      },
+      "actorId": "trial-teacher-001",
+      "expected": {
+        "ok": true,
+        "normalizedLine1": "囲碁のお知らせ"
+      }
+    },
+    {
+      "id": "FP-02-unexpected-top-level",
+      "kind": "single",
+      "request": {
+        "schemaVersion": 1,
+        "environmentId": "teacher-two-line-comment-phase1-20260731-A",
+        "operation": "create_draft",
+        "requestId": "req_50f03e1d-aaba-450c-935b-c8ed7895aca8",
+        "payload": {
+          "line1": "",
+          "line2": ""
+        },
+        "actor_id": "trial-teacher-001"
+      },
+      "actorId": "trial-teacher-001",
+      "expected": {
+        "ok": false,
+        "result": "invalid_request",
+        "code": "invalid_format"
+      }
+    },
+    {
+      "id": "FP-03-unexpected-payload",
+      "kind": "single",
+      "request": {
+        "schemaVersion": 1,
+        "environmentId": "teacher-two-line-comment-phase1-20260731-A",
+        "operation": "create_draft",
+        "requestId": "req_50f03e1d-aaba-450c-935b-c8ed7895aca8",
+        "payload": {
+          "line1": "",
+          "line2": "",
+          "status": "draft"
+        }
+      },
+      "actorId": "trial-teacher-001",
+      "expected": {
+        "ok": false,
+        "result": "invalid_request",
+        "code": "invalid_format"
+      }
+    },
+    {
+      "id": "FP-04-line-too-long",
+      "kind": "single",
+      "request": {
+        "schemaVersion": 1,
+        "environmentId": "teacher-two-line-comment-phase1-20260731-A",
+        "operation": "create_draft",
+        "requestId": "req_50f03e1d-aaba-450c-935b-c8ed7895aca8",
+        "payload": {
+          "line1": "あああああああああああああああああああああああああああああああ",
+          "line2": ""
+        }
+      },
+      "actorId": "trial-teacher-001",
+      "expected": {
+        "ok": false,
+        "result": "invalid_request",
+        "code": "too_long",
+        "field": "line1"
+      }
+    },
+    {
+      "id": "FP-05-normalization-stable",
+      "kind": "compare",
+      "requestA": {
+        "schemaVersion": 1,
+        "environmentId": "teacher-two-line-comment-phase1-20260731-A",
+        "operation": "create_draft",
+        "requestId": "req_50f03e1d-aaba-450c-935b-c8ed7895aca8",
+        "payload": {
+          "line1": "囲碁",
+          "line2": "ご案内"
+        }
+      },
+      "requestB": {
+        "schemaVersion": 1,
+        "environmentId": "teacher-two-line-comment-phase1-20260731-A",
+        "operation": "create_draft",
+        "requestId": "req_50f03e1d-aaba-450c-935b-c8ed7895aca8",
+        "payload": {
+          "line1": "  囲碁  ",
+          "line2": "ご案内"
+        }
+      },
+      "actorIdA": "trial-teacher-001",
+      "actorIdB": "trial-teacher-001",
+      "expectedSame": true
+    },
+    {
+      "id": "FP-06-actor-changes-fingerprint",
+      "kind": "compare",
+      "requestA": {
+        "schemaVersion": 1,
+        "environmentId": "teacher-two-line-comment-phase1-20260731-A",
+        "operation": "create_draft",
+        "requestId": "req_50f03e1d-aaba-450c-935b-c8ed7895aca8",
+        "payload": {
+          "line1": "囲碁",
+          "line2": "ご案内"
+        }
+      },
+      "requestB": {
+        "schemaVersion": 1,
+        "environmentId": "teacher-two-line-comment-phase1-20260731-A",
+        "operation": "create_draft",
+        "requestId": "req_50f03e1d-aaba-450c-935b-c8ed7895aca8",
+        "payload": {
+          "line1": "囲碁",
+          "line2": "ご案内"
+        }
+      },
+      "actorIdA": "trial-teacher-001",
+      "actorIdB": "trial-teacher-002",
+      "expectedSame": false
+    }
+  ],
+  "fixtures": {
+    "requestResults": {
+      "acceptedMatch": {
+        "requestFingerprint": "MATCH",
+        "operation": "create_draft",
+        "result": "accepted",
+        "commentId": "cmt_11111111-1111-4111-8111-111111111111",
+        "versionNo": 1,
+        "status": "draft",
+        "processedAt": "2026-07-31T17:00:00+09:00"
+      },
+      "existingMatch": {
+        "requestFingerprint": "MATCH",
+        "operation": "create_draft",
+        "result": "existing_comment",
+        "commentId": "cmt_22222222-2222-4222-8222-222222222222",
+        "versionNo": 2,
+        "status": "draft",
+        "processedAt": "2026-07-31T17:00:00+09:00"
+      },
+      "different": {
+        "requestFingerprint": "OTHER",
+        "operation": "create_draft",
+        "result": "accepted",
+        "commentId": "cmt_33333333-3333-4333-8333-333333333333",
+        "versionNo": 1,
+        "status": "draft",
+        "processedAt": "2026-07-31T16:00:00+09:00"
+      },
+      "sortZ": {
+        "requestFingerprint": "zzz",
+        "operation": "create_draft",
+        "result": "accepted",
+        "commentId": "cmt_44444444-4444-4444-8444-444444444444",
+        "versionNo": 1,
+        "status": "draft",
+        "processedAt": "2026-07-31T15:00:00+09:00"
+      },
+      "sortA": {
+        "requestFingerprint": "aaa",
+        "operation": "create_draft",
+        "result": "existing_comment",
+        "commentId": "cmt_55555555-5555-4555-8555-555555555555",
+        "versionNo": 5,
+        "status": "pending_review",
+        "processedAt": "2026-07-31T14:00:00+09:00"
+      }
+    },
+    "comments": {
+      "draft": {
+        "teacherId": "trial-teacher-001",
+        "commentId": "cmt_22222222-2222-4222-8222-222222222222",
+        "versionNo": 2,
+        "status": "draft"
+      },
+      "pending": {
+        "teacherId": "trial-teacher-001",
+        "commentId": "cmt_11111111-1111-4111-8111-111111111111",
+        "versionNo": 3,
+        "status": "pending_review"
+      },
+      "draftLater": {
+        "teacherId": "trial-teacher-001",
+        "commentId": "cmt_99999999-9999-4999-8999-999999999999",
+        "versionNo": 1,
+        "status": "draft"
+      },
+      "otherTeacher": {
+        "teacherId": "trial-teacher-999",
+        "commentId": "cmt_66666666-6666-4666-8666-666666666666",
+        "versionNo": 6,
+        "status": "draft"
+      },
+      "approved": {
+        "teacherId": "trial-teacher-001",
+        "commentId": "cmt_77777777-7777-4777-8777-777777777777",
+        "versionNo": 7,
+        "status": "approved"
+      }
+    }
+  },
+  "decisionCases": [
+    {
+      "id": "N01-01-no-open-comment",
+      "processedResults": [],
+      "openComments": [],
+      "expected": {
+        "decision": "create_draft"
+      }
+    },
+    {
+      "id": "N01-02-one-draft",
+      "processedResults": [],
+      "openComments": ["draft"],
+      "expected": {
+        "decision": "persist_existing_comment",
+        "responseResult": "existing_comment",
+        "status": "draft",
+        "requestResult": "existing_comment"
+      }
+    },
+    {
+      "id": "N01-03-one-pending-review",
+      "processedResults": [],
+      "openComments": ["pending"],
+      "expected": {
+        "decision": "persist_existing_comment",
+        "responseResult": "existing_comment",
+        "status": "pending_review",
+        "requestResult": "existing_comment"
+      }
+    },
+    {
+      "id": "N01-04-draft-and-pending",
+      "processedResults": [],
+      "openComments": ["draft", "pending"],
+      "expected": {
+        "decision": "integrity_stop",
+        "reasonCode": "multiple_open_comments",
+        "detectedCommentIds": [
+          "cmt_11111111-1111-4111-8111-111111111111",
+          "cmt_22222222-2222-4222-8222-222222222222"
+        ]
+      }
+    },
+    {
+      "id": "N01-05-two-drafts-sorted",
+      "processedResults": [],
+      "openComments": ["draftLater", "draft"],
+      "expected": {
+        "decision": "integrity_stop",
+        "reasonCode": "multiple_open_comments",
+        "detectedCommentIds": [
+          "cmt_22222222-2222-4222-8222-222222222222",
+          "cmt_99999999-9999-4999-8999-999999999999"
+        ]
+      }
+    },
+    {
+      "id": "N01-06-duplicate-before-multiple-open",
+      "processedResults": ["acceptedMatch"],
+      "openComments": ["draft", "pending"],
+      "expected": {
+        "decision": "duplicate",
+        "responseResult": "duplicate",
+        "originalResult": "accepted"
+      }
+    },
+    {
+      "id": "N01-07-duplicate-existing-comment",
+      "processedResults": ["existingMatch"],
+      "openComments": [],
+      "expected": {
+        "decision": "duplicate",
+        "responseResult": "duplicate",
+        "originalResult": "existing_comment"
+      }
+    },
+    {
+      "id": "N01-08-invalid-request-before-multiple-open",
+      "processedResults": ["different"],
+      "openComments": ["draft", "pending"],
+      "expected": {
+        "decision": "invalid_request",
+        "responseResult": "invalid_request"
+      }
+    },
+    {
+      "id": "N01-09-teacher-mismatch-no-disclosure",
+      "processedResults": [],
+      "openComments": ["otherTeacher"],
+      "expected": {
+        "decision": "temporary_error",
+        "responseResult": "temporary_error",
+        "responseHasData": false
+      }
+    },
+    {
+      "id": "N01-10-multiple-request-results-sorted",
+      "processedResults": ["sortZ", "sortA"],
+      "openComments": ["draft"],
+      "expected": {
+        "decision": "integrity_stop",
+        "reasonCode": "multiple_request_results",
+        "detectedRequestFingerprints": ["aaa", "zzz"]
+      }
+    },
+    {
+      "id": "N01-11-multiple-matching-request-results",
+      "processedResults": ["acceptedMatch", "existingMatch"],
+      "openComments": [],
+      "expected": {
+        "decision": "integrity_stop",
+        "reasonCode": "multiple_request_results"
+      }
+    },
+    {
+      "id": "N01-12-approved-does-not-block",
+      "processedResults": [],
+      "openComments": ["approved"],
+      "expected": {
+        "decision": "create_draft"
+      }
+    },
+    {
+      "id": "N01-13-existing-response-allowlist",
+      "processedResults": [],
+      "openComments": ["draft"],
+      "expected": {
+        "decision": "persist_existing_comment",
+        "responseDataKeys": ["commentId", "status", "versionNo"],
+        "requestResultKeys": [
+          "comment_id",
+          "operation",
+          "processed_at",
+          "request_fingerprint",
+          "request_id",
+          "result",
+          "schema_version",
+          "status",
+          "version_no"
+        ]
+      }
+    },
+    {
+      "id": "N01-14-duplicate-response-allowlist",
+      "processedResults": ["acceptedMatch"],
+      "openComments": [],
+      "expected": {
+        "decision": "duplicate",
+        "responseDataKeys": [
+          "commentId",
+          "originalResult",
+          "status",
+          "versionNo"
+        ]
+      }
+    }
+  ]
+}
