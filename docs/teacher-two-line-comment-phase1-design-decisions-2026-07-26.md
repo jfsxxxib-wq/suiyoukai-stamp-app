@@ -25,6 +25,8 @@
 | 第6議題 | 自動開始・自動終了の履歴 | 承認済み | 2026年7月26日 |
 | 第7議題 | 試験データの保管・削除手順 | 承認済み | 2026年7月26日 |
 | 第8議題 | 復旧不能な不整合の記録・警告・解消方法 | 承認済み | 2026年7月27日 |
+| 第9議題 | 既存の作成途中コメントがある場合の `create_draft` | 承認済み | 2026年7月31日 |
+| 第10議題 | 「要求処理結果」とN-01の整合性・事故記録 | 承認済み | 2026年7月31日 |
 
 ## 3. 第1議題「1行30文字の数え方」
 
@@ -540,6 +542,7 @@ IDは記録を識別するための値であり、IDを知っていることを�
 |---|---|
 | `accepted` | 正常に受け付けた |
 | `duplicate` | 同じ要求が処理済みで、再実行していない |
+| `existing_comment` | 作成途中または確認待ちのコメントがすでにあり、新しい下書きを作成していない |
 | `version_conflict` | 取得後に版が変わった、または古い画面から操作した |
 | `invalid_transition` | 許可されていない状態遷移 |
 | `invalid_request` | 形式、入力値、操作名、要求IDの再利用方法が不正 |
@@ -1326,3 +1329,499 @@ Apps Scriptは`ScriptLock`を保持したまま、次の順序で処理する。
 - 通常画面のボタンだけによる解除
 - 事故記録を保存しないままの環境再開
 - 悦子さんの確認を経ない`INCONSISTENT → ACTIVE`
+
+## 12. 第9議題「既存の作成途中コメントがある場合の `create_draft`」
+
+### 12.1 決定文
+
+> 同じ先生に状態が `draft` または `pending_review` のコメントがすでに1件ある場合、別の `requestId` による `create_draft` では、新しい下書きを作成しない。
+>
+> 既存コメントの本文を上書きせず、`comment_id`、`version_no`、状態、現在値、変更履歴を一切変更しない。新しい `comment_id` および `event_id` も発行しない。
+>
+> 通信上の同一要求として、同じ `requestId` と同じ要求内容が再送された場合は、従来どおり `duplicate` を返し、初回の確定結果を返す。
+>
+> 同じ `requestId` を異なる要求内容へ再利用した場合は、承認済みの `request_id` 規則に従い `invalid_request` で拒否する。
+>
+> 同じ先生に `draft` または `pending_review` が合計2件以上見つかった場合は、どれか1件を選んで `existing_comment` を返してはならない。第8議題の手順に従ってデータ不整合として記録し、環境全体を `INCONSISTENT` へ変更して安全停止する。
+
+### 12.2 判定順序
+
+`create_draft` では、次の順序で判定する。
+
+1. `requestId` と要求内容の指紋を確認する
+2. 同一要求が処理済みなら `duplicate` を返す
+3. 同じ `requestId` が異なる要求内容に使われていれば `invalid_request` を返す
+4. 同じ先生に `draft` または `pending_review` が何件あるか確認する
+5. 合計2件以上ある場合は、`existing_comment` を返さず、データ不整合として環境全体を安全停止する
+6. 1件だけ存在する場合は `existing_comment` を返し、新しい下書きを作成しない
+7. 1件も存在しない場合だけ、新しい下書きを作成する
+
+複数件の検出による安全停止では、第8議題に従って事故記録を保存し、通常の読み取り・書き込み・公開取得を停止する。呼び出し元へは内部情報を含まない安全な `temporary_error` を返す。
+
+### 12.3 既存コメントが1件ある場合の返却
+
+`existing_comment` では、既存コメントを特定するために必要な次の最小項目だけを返す。
+
+- `commentId`
+- `versionNo`
+- `status`
+
+認証を使用する環境では、認証済みの先生IDと既存コメントの先生IDが一致する場合だけ、これらの項目を返す。一致しない場合は `existing_comment` を返さず、他の先生に属するコメントの存在、識別子、版番号、状態を開示しない。
+
+第1段階では先生用認証をまだ実装しないため、サーバーの試験設定から決定した先生IDと既存コメントの先生IDが一致する場合だけ、同じ最小項目を返す。画面またはPOST本文から受け取った先生IDを本人一致の根拠に使用しない。
+
+本文、履歴、差し戻し理由、管理情報は、この返却へ含めない。
+
+返却例：
+
+```json
+{
+  "schemaVersion": 1,
+  "result": "existing_comment",
+  "operation": "create_draft",
+  "requestId": "req_50f03e1d-aaba-450c-935b-c8ed7895aca8",
+  "serverNow": "2026-07-31T10:00:00+09:00",
+  "data": {
+    "commentId": "cmt_3f15de91-4eac-4a44-80c1-16e7e569f546",
+    "versionNo": 2,
+    "status": "draft"
+  }
+}
+```
+
+### 12.4 先生への案内
+
+既存コメントの状態に応じて、次の文章を表示する。
+
+`draft` の場合：
+
+> 作成途中のコメントがあります。新しい下書きは作らず、保存済みのコメントを開いて続きを入力してください。
+
+`pending_review` の場合：
+
+> 確認をお願いしているコメントがあります。新しい下書きは作らず、確認結果をお待ちください。
+
+`draft` の場合は、案内後に保存済みコメントを開けるようにする。`pending_review` の場合は、新しい入力や上書きを行わない。
+
+### 12.5 変更しないもの
+
+既存コメントが1件あるため `existing_comment` を返す場合、次の処理は禁止する。
+
+- 新しいコメント行の作成
+- 既存本文の上書き
+- `version_no`の加算
+- 変更履歴の追記
+- `comment_id`または`event_id`の発行
+- 既存コメントの状態変更
+
+## 13. 第10議題「要求処理結果」とN-01の整合性・事故記録
+
+### 13.1 決定文
+
+> 第1段階の試験用スプレッドシートに、「コメント現在値」「コメント変更履歴」に加えて、3つ目のシートとして「要求処理結果」を作成する。
+>
+> 「要求処理結果」は、同じ `request_id` の二重処理を防ぎ、最初に確定した結果を安全に再確認するために使用する。
+>
+> N-01では、少なくとも `accepted` と `existing_comment` の確定結果を保存する。`duplicate`、`invalid_request`、`temporary_error` は、新しい確定結果行として保存しない。
+>
+> `duplicate` は新しい行を追加せず、最初に保存された確定結果を読み取り、処理を再実行せずに返す。
+>
+> 「要求処理結果」は追記専用とし、確定済み・未確定を問わず、追加後の行を通常処理から上書き、削除、並べ替え、再利用しない。
+>
+> 本文、変更履歴、理由、シート行番号、スプレッドシートID、シートID、URLその他の接続先情報は保存しない。
+
+### 13.2 「要求処理結果」の列
+
+| 列名 | 内容 |
+|---|---|
+| `schema_version` | データ形式の版 |
+| `request_id` | 要求ごとの一意なID |
+| `request_fingerprint` | 正規化済み要求から算出したSHA-256 |
+| `operation` | `create_draft`などの操作名 |
+| `result` | 最初に確定した `accepted` または `existing_comment` |
+| `comment_id` | 確定結果の対象コメントID |
+| `version_no` | 確定結果の版番号 |
+| `status` | 確定結果の内部状態 |
+| `processed_at` | 確定日時 |
+
+次の情報は保存しない。
+
+- `line_1`、`line_2`などの本文
+- 変更履歴の内容
+- 差し戻し、取消、取り下げなどの理由
+- シートの行番号
+- スプレッドシートID、シートID、ファイル名、URL
+- 認証情報、トークン
+- 生の例外文やスタックトレース
+
+### 13.3 保存する結果
+
+#### `accepted`
+
+新しい下書きの作成が完全に成立し、「コメント現在値」「コメント変更履歴」「要求処理結果」の保存確認がすべて完了した場合だけ保存する。
+
+#### `existing_comment`
+
+同じ先生に `draft` または `pending_review` が1件だけ存在し、先生IDの一致確認が完了した場合に保存する。
+
+#### 保存しない結果
+
+次は新しい確定結果行として保存しない。
+
+- `duplicate`
+- `invalid_request`
+- `temporary_error`
+
+`duplicate` は、保存済み行の `result`、`comment_id`、`version_no`、`status`から返却内容を再構成する。元の結果を区別するため、`data.originalResult`へ保存済み行の `result`を返す。
+
+返却例：
+
+```json
+{
+  "schemaVersion": 1,
+  "result": "duplicate",
+  "operation": "create_draft",
+  "requestId": "req_50f03e1d-aaba-450c-935b-c8ed7895aca8",
+  "serverNow": "2026-07-31T10:05:00+09:00",
+  "data": {
+    "originalResult": "existing_comment",
+    "commentId": "cmt_3f15de91-4eac-4a44-80c1-16e7e569f546",
+    "versionNo": 2,
+    "status": "draft"
+  }
+}
+```
+
+### 13.4 `request_id`の一意性
+
+「要求処理結果」では、1つの `request_id`につき確定結果は1行だけとする。
+
+同じ `request_id`が2行以上見つかった場合は、どれか1行を選ばない。`accepted`、`existing_comment`、`duplicate`を返さず、データ不整合として事故記録を作成し、環境全体を `INCONSISTENT`へ変更して安全停止する。呼び出し元へは安全な `temporary_error`を返す。
+
+安全な理由コードは次とする。
+
+```text
+multiple_request_results
+```
+
+### 13.5 保存後の読み直し
+
+確定結果行を追加した後は、同じ `ScriptLock`を保持したまま、`request_id`で読み直す。
+
+次のすべてが保存予定値と一致した場合だけ、確定結果として扱う。
+
+- 該当件数が1件
+- `schema_version`
+- `request_id`
+- `request_fingerprint`
+- `operation`
+- `result`
+- `comment_id`
+- `version_no`
+- `status`
+- `processed_at`
+
+0件、2件以上、項目の不一致、読み取り失敗を同じ結果として扱わず、各節の規則に従って判定する。
+
+### 13.6 `existing_comment`の保存結果
+
+`existing_comment`では、「コメント現在値」と「コメント変更履歴」を変更せず、「要求処理結果」だけを1回の `spreadsheets.batchUpdate`で追記する。
+
+追加後は、同じ `ScriptLock`内で読み直し、次のように判定する。
+
+| 読み直し結果 | 判定 |
+|---|---|
+| 保存予定行が1件だけ存在し、全項目が完全一致 | 初回処理中なら `existing_comment` |
+| 保存予定行が0件 | `temporary_error` |
+| 同じ `request_id`が複数件 | `INCONSISTENT` |
+| 1件だが内容が一致しない | `INCONSISTENT` |
+| 読み取り自体が一時的に失敗し、状態を観測できない | `temporary_error` |
+
+`existing_comment`の確定結果を保存できなかった場合は、`existing_comment`を成功として返さない。コメント本文、状態、版番号、現在値、変更履歴は変更しない。
+
+同じ `requestId`が再送された場合は「要求処理結果」を再検索する。完全一致する確定結果行が1件あれば、新しい行を追加せず `duplicate`を返す。0件ならN-01を再判定する。複数件または内容不一致ならデータ不整合として安全停止する。
+
+0件または一時的な読み取り失敗だけでは、直ちに `INCONSISTENT`へ変更しない。書き込み結果が不明でも、自動で同じ要求を再送しない。
+
+### 13.7 新しい下書きの原子的な保存
+
+新しい下書きでは、次の3行を必ず1つの `spreadsheets.batchUpdate`要求へまとめる。
+
+1. 「コメント現在値」の新規行
+2. 「コメント変更履歴」の `draft_saved`行
+3. 「要求処理結果」の `accepted`行
+
+- 3つを別々に書き込む代替経路を作らない。
+- 同一操作内で別の書き込み方式へ切り替えない。
+- 1つでも要求形式が不正なら、3つとも適用しない。
+- 適用される場合は、同じ要求内の3つをまとめて原子的に適用する。
+- 確定結果の保存確認前に `accepted`を返さない。
+
+`spreadsheets.batchUpdate`の公式仕様では、同じ要求に含まれる各更新を事前に検証し、1つでも不正なら全体を適用せず、適用する場合は要求内の更新をまとめて原子的に適用する。ただし、共同編集者、手動編集、別のスクリプトなど、同じ要求の外側から行われる変更まで防ぐものではない。
+
+### 13.8 書き込み処理用の時刻
+
+書き込み処理用のサーバー時刻は、`ScriptLock`取得後、環境と3シートの確認に合格した直後、要求処理結果とコメントを検索する前に1回だけ確定する。
+
+同じ時刻を次へ使用する。
+
+- 「コメント現在値」の `created_at`
+- 「コメント現在値」の `updated_at`
+- 「コメント変更履歴」の `occurred_at`
+- 「要求処理結果」の `processed_at`
+- 成功時のAPI返却 `serverNow`
+- 書き込み要求の通信結果が不明となった場合のAPI返却 `serverNow`
+
+ロック取得前の要求形式検査、本文検証、正規化、指紋作成で拒否する場合は、返却を作成する時点の時刻を `serverNow`として使用する。シートへ保存する日時は作成しない。
+
+`duplicate`など、既存の確定結果を読み取って返す場合の `serverNow`は、従来の決定どおり、その要求を処理して返却を作成する時点の時刻とする。
+
+### 13.9 保存結果が不明な場合の判定
+
+`batchUpdate`の応答がタイムアウトその他の通信事情により不明になった場合も、同じ `ScriptLock`を保持したまま、発行済みの `comment_id`、`event_id`、`request_id`で3シートを読み直す。
+
+| 読み直し結果 | 判定 |
+|---|---|
+| 予定した3行が各1件存在し、全項目が完全一致 | 初回処理中なら `accepted` |
+| 予定した3行がすべて存在しない | `temporary_error` |
+| 一部の行だけ存在 | 行を変更せず `INCONSISTENT` |
+| 予定値と異なる項目がある | 行を変更せず `INCONSISTENT` |
+| 同じ `comment_id`、`event_id`または`request_id`の行が複数ある | どれも選ばず `INCONSISTENT` |
+| 読み取り自体が一時的に失敗し、状態を観測できない | `temporary_error`。同じ `requestId`の再送で再確認する |
+
+部分状態、予定外の値、重複、照合不一致を検出した場合は、復旧のための削除、上書き、書き戻し、補完を行わない。証拠をそのまま残し、第8議題に従って事故記録を作成し、環境全体を `INCONSISTENT`へ変更して安全停止する。
+
+### 13.10 追記専用と禁止する復旧
+
+「コメント変更履歴」と「要求処理結果」は、確定済み・未確定を問わず、追加後の行を通常処理から削除または上書きしない。追記専用に例外を設けない。
+
+次の処理を禁止する。
+
+- 部分状態を解消するための行削除
+- 保存予定値への推測による上書き
+- 複数行から正しいと思われる1件を選ぶ処理
+- 失敗後に別々の書き込みを行って不足行を補う処理
+- 履歴や要求処理結果の後付け補完
+- `batchUpdate`の失敗後に別の書き込み方式へ切り替える処理
+
+### 13.11 `ScriptLock`と環境確認の順序
+
+処理順序は次のとおりとする。
+
+1. 要求形式を検証する
+2. 本文を検証し、NFC標準化と前後空白除去を行う
+3. サーバー側で操作主体を決定し、要求指紋を作成する
+4. `ScriptLock`を取得する
+5. Script Propertiesだけを読み、`ENVIRONMENT_STATUS`を確認する
+6. `ACTIVE`でなければ、スプレッドシートを開かず停止する
+7. Script Propertiesの `ENVIRONMENT_ID`と `TRIAL_SPREADSHEET_ID`を検証する
+8. 登録された試験用スプレッドシートだけを開く
+9. 実際のスプレッドシート名を確認する
+10. Apps Scriptとスプレッドシートのタイムゾーンを確認する
+11. 「コメント現在値」「コメント変更履歴」「要求処理結果」の名称と列構成を確認する
+12. すべて一致した場合だけ、書き込み処理用のサーバー時刻を1回確定する
+13. 同じ `request_id`の要求処理結果を検索する
+14. N-01の判定に必要なコメントを検索する
+15. 判定結果に応じて、`duplicate`、`invalid_request`、`existing_comment`、複数件の安全停止、新規下書き作成のいずれかへ進む
+
+事故記録処理は、すでに取得している同じ `ScriptLock`を保持したまま行う。事故記録関数の内部で、別の `ScriptLock`を重ねて取得しない。
+
+`ScriptLock`は同じApps Script内の同時実行を防ぐためのものであり、スプレッドシートの手動編集や、別の仕組みからの変更を停止するものではない。
+
+試験中は次を禁止する。
+
+- 3シートの手動編集
+- 別のApps Scriptによる変更
+- 自動処理や外部ツールによる変更
+- シートの並べ替え
+- 行の追加、削除、上書き
+- 列名、列順、シート名の変更
+
+### 13.12 `multiple_request_results`の事故記録
+
+同じ `request_id`が複数行見つかった場合は、単一行用の `request_fingerprint`、`operation`、`comment_id`を `null`とする。
+
+検出した各行の安全な最小項目を `detected_request_results`配列として保存する。
+
+```json
+{
+  "failure_reason_code": "multiple_request_results",
+  "request_id": "req_50f03e1d-aaba-450c-935b-c8ed7895aca8",
+  "request_fingerprint": null,
+  "operation": null,
+  "comment_id": null,
+  "detected_count": 2,
+  "detected_request_results": [
+    {
+      "request_fingerprint": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+      "operation": "create_draft",
+      "result": "accepted",
+      "comment_id": "cmt_3f15de91-4eac-4a44-80c1-16e7e569f546",
+      "version_no": 1,
+      "status": "draft",
+      "processed_at": "2026-07-31T17:00:00+09:00"
+    }
+  ]
+}
+```
+
+`detected_count`は検出した行数とする。
+
+`detected_request_results`は、次の固定順序で比較して並べる。
+
+1. `request_fingerprint`
+2. `operation`
+3. `result`
+4. `comment_id`
+5. `version_no`
+6. `status`
+7. `processed_at`
+
+文字列は昇順、`version_no`は数値の昇順とする。
+
+配列には本文、理由、シート行番号、接続先情報、例外詳細を含めない。
+
+### 13.13 `multiple_open_comments`の事故記録
+
+同じ先生に `draft`または`pending_review`が合計2件以上見つかった場合の安全な理由コードは、次とする。
+
+```text
+multiple_open_comments
+```
+
+単一対象用の次の項目は、該当しないため `null`とする。
+
+- `comment_id`
+- 操作前の `version_no`
+- 操作後に予定していた `version_no`
+- 操作前の現在値スナップショット
+- 操作後に予定していた現在値スナップショット
+- 各スナップショットの照合用ハッシュ
+- 追加予定だった `event_id`
+
+検出したコメントは、次の `detected_comments`配列として保存する。
+
+```json
+{
+  "failure_reason_code": "multiple_open_comments",
+  "comment_id": null,
+  "before_version_no": null,
+  "planned_version_no": null,
+  "before_snapshot": null,
+  "planned_snapshot": null,
+  "before_snapshot_hash": null,
+  "planned_snapshot_hash": null,
+  "planned_event_id": null,
+  "detected_count": 2,
+  "detected_comments": [
+    {
+      "comment_id": "cmt_11111111-1111-4111-8111-111111111111",
+      "status": "draft",
+      "version_no": 2
+    },
+    {
+      "comment_id": "cmt_22222222-2222-4222-8222-222222222222",
+      "status": "pending_review",
+      "version_no": 3
+    }
+  ]
+}
+```
+
+`detected_comments`は `comment_id`の昇順で並べる。配列内へ本文、理由、先生名、シート行番号、接続先情報を保存しない。
+
+事故記録と `INCONSISTENT`への変更は、すでに保持している同じ `ScriptLock`内で、第8議題の保存順序に従って行う。
+
+### 13.14 `get_integrity_status`
+
+`get_integrity_status`では、次を外部へ返さない。
+
+- `detected_request_results`
+- `detected_comments`
+- 検出した各 `comment_id`
+- 各コメントの `status`
+- 各コメントの `version_no`
+- 各 `request_fingerprint`
+- スナップショット
+- シート行番号
+- 接続先情報
+
+読み取りをきっかけに事故記録、環境状態、現在値、履歴、要求処理結果を変更しない。
+
+### 13.15 Advanced Sheets Service、Sheets API、OAuth権限
+
+設計承認時点の状態は次のとおりである。
+
+- Advanced Sheets Service v4は有効化済み
+- Google上でサービス `Sheets`として認識済み
+- OAuth権限は `https://www.googleapis.com/auth/spreadsheets.readonly`
+- 書き込み権限は未追加
+- `spreadsheets.batchUpdate`による書き込みは未実施
+
+Google統合試験へ進む場合は、別途承認後に次を行う。
+
+- `spreadsheets.batchUpdate`を使用するコードの追加
+- OAuth権限を必要最小限の書き込み可能な `spreadsheets`範囲へ変更
+- 標準Google Cloudプロジェクトを使用している場合は、Sheets APIの有効状態を再確認
+- 変更前後の `appsscript.json`差分を提示
+- 権限確認画面の内容を記録
+- 本番や通常アプリへ接続していないことを再確認
+
+今回の設計記録への追記だけでは、Advanced Sheets Service、Sheets API、OAuth権限、`appsscript.json`を変更しない。
+
+### 13.16 試験終了と保管
+
+試験終了記録へ次を追加する。
+
+- 「要求処理結果」のデータ行数
+- `result`別の件数
+- 一意な `request_id`の件数
+- 重複した `request_id`がないこと
+- 3シートの整合確認結果
+
+削除時の照合対象へ次を追加する。
+
+- 「要求処理結果」のシート名
+- 列構成
+- データ行数
+- `request_id`件数
+- 試験終了記録との一致
+
+削除または保管時にも、「要求処理結果」の既存行を個別に編集・削除しない。試験用スプレッドシート全体を、承認済みの保管・削除手順に従って扱う。
+
+### 13.17 追加する試験
+
+N-01専用の別試験として、少なくとも次を追加する。
+
+| ID案 | 試験内容 | 期待結果 |
+|---|---|---|
+| RR-01 | `accepted`を保存 | 最小項目が1行だけ保存される |
+| RR-02 | `existing_comment`を保存 | 最小項目が1行だけ保存される |
+| RR-03 | `duplicate` | 新しい行を追加せず、元の結果から返す |
+| RR-04 | `invalid_request` | 確定結果行を追加しない |
+| RR-05 | `temporary_error` | 確定結果行を追加しない |
+| RR-06 | 同じ `request_id`が2行 | どちらも選ばず安全停止 |
+| RR-07 | `existing_comment`の保存予定行が0件 | `temporary_error` |
+| RR-08 | `existing_comment`の保存予定行が1件で完全一致 | 初回処理中なら `existing_comment` |
+| RR-09 | `existing_comment`の保存予定行が複数 | `INCONSISTENT` |
+| RR-10 | `existing_comment`の保存予定行が内容不一致 | `INCONSISTENT` |
+| RR-11 | 再送時に確定結果行なし | N-01を再判定できる |
+| RR-12 | 再送時に確定結果行あり | `duplicate`として返す |
+| TX-01 | 1つの `batchUpdate`へ3行を含める | 書き込み要求は1回だけ |
+| TX-02 | 別々の書き込みへ切り替える代替コードを静的検査 | 代替コードが存在しない |
+| TX-03 | 通信結果不明後、3行が各1件で完全一致 | 初回処理なら `accepted` |
+| TX-04 | 通信結果不明後、3行とも存在しない | `temporary_error` |
+| TX-05 | 一部の行だけ存在 | 削除せず `INCONSISTENT` |
+| TX-06 | 項目が一致しない | 上書きせず `INCONSISTENT` |
+| TX-07 | 同じIDが複数ある | どれも選ばず `INCONSISTENT` |
+| ENV-01 | ロック直後に非 `ACTIVE` | シートを開かず停止 |
+| ENV-02 | シート名、タイムゾーンまたは列構成不一致 | データを読まず停止 |
+| ENV-03 | 試験中の手動変更を模擬 | 削除・補完せず安全停止 |
+| INC-01 | 複数の要求処理結果 | 固定順序の配列として事故記録 |
+| INC-02 | 複数の作成途中コメント | `comment_id`順の配列として事故記録 |
+| INC-03 | `get_integrity_status` | 検出配列を返さない |
+| TIME-01 | 新規下書きの3シートの日時 | 環境確認後に確定した同じ時刻を使用 |
+| TIME-02 | 書き込み成功または結果不明時の `serverNow` | 3シートと同じ確定時刻を使用 |
+| TIME-03 | ロック取得前の形式拒否 | 返却時刻だけを作り、保存日時を作成しない |
+
+合格済みの基礎自己試験17件は変更しない。N-01と3シート整合性の試験は、別の自己試験・別のローカル試験として追加する。
