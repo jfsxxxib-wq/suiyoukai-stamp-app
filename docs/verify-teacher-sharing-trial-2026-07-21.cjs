@@ -23,7 +23,7 @@ const stampUrl = (teacherId, id) => `${appUrl}?stamp=${encodePayload({
   type: "teacher_stamp",
   id,
   teacherId,
-  date: "2026-07-21",
+  date: "2026-08-30",
   handicap: "記録なし",
   result: "記録なし",
 })}`;
@@ -33,7 +33,26 @@ const stampUrl = (teacherId, id) => `${appUrl}?stamp=${encodePayload({
     headless: true,
     executablePath: "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe",
   });
-  const page = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1 });
+  const page = await browser.newPage({
+    viewport: { width: 390, height: 844 },
+    deviceScaleFactor: 1,
+    timezoneId: "Asia/Tokyo",
+  });
+
+  await page.addInitScript(() => {
+    const RealDate = Date;
+    const fixedNow = new RealDate("2026-08-30T12:00:00+09:00").getTime();
+    class FixedDate extends RealDate {
+      constructor(...args) {
+        super(...(args.length ? args : [fixedNow]));
+      }
+
+      static now() {
+        return fixedNow;
+      }
+    }
+    window.Date = FixedDate;
+  });
 
   await page.addInitScript(() => {
     window.SUIYOUKAI_TEACHER_SHARING_TRIAL = {
@@ -50,7 +69,7 @@ const stampUrl = (teacherId, id) => `${appUrl}?stamp=${encodePayload({
     localStorage.setItem("teacher-sharing-test-result", "verified");
   }, [nameKey, receptionKey, outboxKey]);
 
-  await page.goto(stampUrl("tsuneishi", "teacher-fixed-2026-07-21-tsuneishi"), { waitUntil: "load" });
+  await page.goto(stampUrl("tsuneishi", "teacher-fixed-2026-08-30-tsuneishi"), { waitUntil: "load" });
   await page.locator("[data-teacher-sharing-modal]").waitFor({ state: "visible" });
   assert(await page.locator("[data-teacher-sharing-title]").textContent() === "今日の花が入りました", "花保存成功画面が出ません。");
   const gameRecords = await page.evaluate(() => JSON.parse(localStorage.getItem("suiyoukai-game-records-v1") || "[]"));
@@ -71,12 +90,12 @@ const stampUrl = (teacherId, id) => `${appUrl}?stamp=${encodePayload({
   assert(outbox[0].receptionCodeAtConsent === "12345678", "同意時点の受付番号が固定保存されていません。");
 
   await page.locator("[data-teacher-sharing-primary]").click();
-  await page.goto(stampUrl("tsuneishi", "teacher-fixed-2026-07-21-tsuneishi"), { waitUntil: "load" });
+  await page.goto(stampUrl("tsuneishi", "teacher-fixed-2026-08-30-tsuneishi"), { waitUntil: "load" });
   assert(await page.locator("[data-teacher-sharing-modal]").isHidden(), "同じ先生QRの再読込で共有画面が再表示されました。");
   const recordsAfterDuplicate = await page.evaluate(() => JSON.parse(localStorage.getItem("suiyoukai-game-records-v1") || "[]"));
   assert(recordsAfterDuplicate.length === 1, "同じ先生QRで端末内対局記録が二重になりました。");
 
-  await page.goto(stampUrl("yuki", "teacher-fixed-2026-07-21-yuki"), { waitUntil: "load" });
+  await page.goto(stampUrl("yuki", "teacher-fixed-2026-08-30-yuki"), { waitUntil: "load" });
   await page.locator("[data-teacher-sharing-modal]").waitFor({ state: "visible" });
   await page.locator("[data-teacher-sharing-primary]").click();
   await page.locator("[data-teacher-sharing-secondary]").click();
@@ -86,7 +105,7 @@ const stampUrl = (teacherId, id) => `${appUrl}?stamp=${encodePayload({
 
   await page.locator("[data-teacher-sharing-primary]").click();
   await page.evaluate(() => localStorage.setItem("teacher-sharing-test-result", "temporary_error"));
-  await page.goto(stampUrl("koike", "teacher-fixed-2026-07-21-koike"), { waitUntil: "load" });
+  await page.goto(stampUrl("koike", "teacher-fixed-2026-08-30-koike"), { waitUntil: "load" });
   await page.locator("[data-teacher-sharing-modal]").waitFor({ state: "visible" });
   await page.locator("[data-teacher-sharing-primary]").click();
   await page.locator("[data-teacher-sharing-handicap]").selectOption("分からない");
@@ -111,12 +130,12 @@ const stampUrl = (teacherId, id) => `${appUrl}?stamp=${encodePayload({
     window.SUIYOUKAI_TEACHER_SESSION = {
       teacher: { id: "tsuneishi", name: "常石 隆志 六段" },
       getRecords: async () => ([{
-        id: "share-game-qr-teacher-fixed-2026-07-21-tsuneishi",
+        id: "share-game-qr-teacher-fixed-2026-08-30-tsuneishi",
         teacherId: "tsuneishi",
         participantId: "trial-participant-1",
         participantName: "みずのしずく",
         consentToTeacher: true,
-        date: "2026-07-21",
+        date: "2026-08-30",
         rank: "",
         handicap: "3子",
         venue: "",

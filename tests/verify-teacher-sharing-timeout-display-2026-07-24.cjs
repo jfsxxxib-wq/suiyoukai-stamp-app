@@ -15,7 +15,7 @@ const stampUrl = (teacherId, id) => `${appUrl}?stamp=${encodePayload({
   type: "teacher_stamp",
   id,
   teacherId,
-  date: "2026-07-24",
+  date: "2026-08-30",
   handicap: "記録なし",
   result: "記録なし",
 })}`;
@@ -30,6 +30,22 @@ let browser;
   const page = await browser.newPage({
     viewport: { width: 390, height: 844 },
     deviceScaleFactor: 1,
+    timezoneId: "Asia/Tokyo",
+  });
+
+  await page.addInitScript(() => {
+    const RealDate = Date;
+    const fixedNow = new RealDate("2026-08-30T12:00:00+09:00").getTime();
+    class FixedDate extends RealDate {
+      constructor(...args) {
+        super(...(args.length ? args : [fixedNow]));
+      }
+
+      static now() {
+        return fixedNow;
+      }
+    }
+    window.Date = FixedDate;
   });
 
   await page.addInitScript(() => {
@@ -57,7 +73,7 @@ let browser;
     localStorage.removeItem(sharingOutboxKey);
   }, [nameKey, receptionKey, outboxKey]);
 
-  await page.goto(stampUrl("koike", "teacher-fixed-timeout-display-2026-07-24-koike"), { waitUntil: "load" });
+  await page.goto(stampUrl("koike", "teacher-fixed-2026-08-30-koike"), { waitUntil: "load" });
   await page.locator("[data-teacher-sharing-modal]").waitFor({ state: "visible" });
   await page.locator("[data-teacher-sharing-primary]").click();
   await page.locator("[data-teacher-sharing-handicap]").selectOption("分からない");
@@ -110,7 +126,7 @@ let browser;
     "「今日の記録を見る」で今日の記録へ移動しませんでした。",
   );
 
-  await page.goto(stampUrl("yuki", "teacher-fixed-timeout-display-2026-07-24-yuki"), { waitUntil: "load" });
+  await page.goto(stampUrl("yuki", "teacher-fixed-2026-08-30-yuki"), { waitUntil: "load" });
   await page.locator("[data-teacher-sharing-modal]").waitFor({ state: "visible" });
   await page.locator("[data-teacher-sharing-primary]").click();
   await page.locator("[data-teacher-sharing-handicap]").selectOption("分からない");
