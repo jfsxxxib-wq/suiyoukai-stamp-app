@@ -2027,6 +2027,8 @@ const saveAppliedStampQrIds = () => {
 
 const qrHandicapValues = ["記録なし", "互先", "先", "先逆コミ6.5目", "2子", "3子", "4子", "5子", "6子", "7子", "8子", "9子"];
 const qrResultValues = ["記録なし", "勝ち", "負け", "持碁"];
+const fixedTeacherQrEventDate = "2026-08-30";
+const fixedTeacherQrRequiredFields = ["type", "id", "teacherId", "date", "handicap", "result"];
 
 const encodeQrValue = (value, values) => Math.max(0, values.indexOf(value));
 
@@ -2298,6 +2300,7 @@ const getStampPayloadFromLocation = () => {
   if (encodedValue) {
     try {
       const payload = decodeStampPayload(encodedValue);
+      const isFixedTeacherPayload = typeof payload.id === "string" && payload.id.startsWith("teacher-fixed-");
 
       return {
         type: payload.type,
@@ -2306,6 +2309,11 @@ const getStampPayloadFromLocation = () => {
         date: normalizeStoredRecordDate(payload.date),
         handicap: typeof payload.handicap === "string" ? payload.handicap : "互先",
         result: typeof payload.result === "string" ? payload.result : "記録なし",
+        fixedTeacherRequiredFieldsPresent: isFixedTeacherPayload
+          && fixedTeacherQrRequiredFields.every((field) => Object.hasOwn(payload, field)),
+        fixedTeacherRawDate: isFixedTeacherPayload ? payload.date : undefined,
+        fixedTeacherRawHandicap: isFixedTeacherPayload ? payload.handicap : undefined,
+        fixedTeacherRawResult: isFixedTeacherPayload ? payload.result : undefined,
       };
     } catch {
       return null;
@@ -2501,12 +2509,49 @@ const applyTeacherStampPayload = (payload = {}) => {
   const teacherId = typeof payload.teacherId === "string" ? payload.teacherId : "";
   const handicap = typeof payload.handicap === "string" && payload.handicap ? payload.handicap : "互先";
   const result = typeof payload.result === "string" && payload.result ? payload.result : "記録なし";
-  const stampId = typeof payload.id === "string" && payload.id
-    ? payload.id
+  const explicitStampId = typeof payload.id === "string" ? payload.id : "";
+  const stampId = explicitStampId
+    ? explicitStampId
     : `qr-${teacherId}-${recordDate}-${encodeQrValue(handicap, qrHandicapValues)}-${encodeQrValue(result, qrResultValues)}`;
   const teacher = teacherDetails[teacherId];
 
-  if (!teacher || !/^\d{4}-\d{2}-\d{2}$/.test(recordDate)) {
+  const isFixedTeacherStamp = explicitStampId.startsWith("teacher-fixed-");
+  if (isFixedTeacherStamp) {
+    const canonicalFixedTeacherStampId = `teacher-fixed-${recordDate}-${teacherId}`;
+    if (
+      payload.type !== "teacher_stamp" ||
+      payload.fixedTeacherRequiredFieldsPresent !== true ||
+      typeof payload.fixedTeacherRawDate !== "string" ||
+      !/^\d{4}-\d{2}-\d{2}$/.test(payload.fixedTeacherRawDate) ||
+      payload.fixedTeacherRawDate !== recordDate ||
+      !/^\d{4}-\d{2}-\d{2}$/.test(recordDate) ||
+      !teacherId ||
+      !teacher ||
+      stampId !== canonicalFixedTeacherStampId ||
+      payload.fixedTeacherRawHandicap !== "記録なし" ||
+      payload.fixedTeacherRawResult !== "記録なし"
+    ) {
+      return { ok: false, reason: "invalid", payload: { ...payload, teacherId, date: recordDate } };
+    }
+
+    if (recordDate !== fixedTeacherQrEventDate) {
+      return {
+        ok: false,
+        reason: "fixed_teacher_wrong_event_date",
+        payload: { ...payload, teacherId, date: recordDate }
+      };
+    }
+
+    if (getTodayInTokyo() !== fixedTeacherQrEventDate) {
+      return {
+        ok: false,
+        reason: "fixed_teacher_not_today",
+        payload: { ...payload, teacherId, date: recordDate }
+      };
+    }
+  }
+
+  if (!explicitStampId || !teacher || !/^\d{4}-\d{2}-\d{2}$/.test(recordDate)) {
     return { ok: false, reason: "invalid", payload: { ...payload, teacherId, date: recordDate } };
   }
 
@@ -2569,9 +2614,12 @@ const applyStampQrFromLocation = () => {
     return false;
   }
 
-  const result = payload.type === "participation_stamp"
-    ? applyParticipationStampPayload(payload)
-    : applyTeacherStampPayload(payload);
+  const isReservedFixedTeacherId = typeof payload.id === "string" && payload.id.startsWith("teacher-fixed-");
+  const result = isReservedFixedTeacherId
+    ? applyTeacherStampPayload(payload)
+    : payload.type === "participation_stamp"
+      ? applyParticipationStampPayload(payload)
+      : applyTeacherStampPayload(payload);
   if (window.history?.replaceState) {
     window.history.replaceState(null, "", getStampQrBaseUrl());
   }
@@ -2584,9 +2632,11 @@ const applyStampQrFromLocation = () => {
       profileLatestStamp.hidden = false;
     }
     if (profileLatestStampCopy) {
-      profileLatestStampCopy.textContent = result.reason === "max"
-        ? "この先生のスタンプはすでに達成済みです。"
-        : result.reason === "invalid"
+      profileLatestStampCopy.textContent = ["fixed_teacher_not_today", "fixed_teacher_wrong_event_date"].includes(result.reason)
+        ? "この先生QRは8月30日用ではないか、本日利用できません。QRの日付と日本時間の日付を確認してください。"
+        : result.reason === "max"
+          ? "この先生のスタンプはすでに達成済みです。"
+          : result.reason === "invalid"
           ? `QRを開きましたが、先生または日付を読み取れませんでした。先生:${result.payload?.teacherId ?? "不明"} 日付:${result.payload?.date ?? "不明"}`
           : "QRを開きましたが、先生スタンプを反映できませんでした。新しいQRを作り直してください。";
     }
@@ -2755,6 +2805,17 @@ const getTodayForInput = () => {
   const now = new Date();
   const localDate = new Date(now.getTime() - now.getTimezoneOffset() * 60000);
   return localDate.toISOString().slice(0, 10);
+};
+
+const getTodayInTokyo = () => {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: "Asia/Tokyo",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(new Date());
+  const values = Object.fromEntries(parts.map(({ type, value }) => [type, value]));
+  return `${values.year}-${values.month}-${values.day}`;
 };
 
 const getGameRecordDraft = () => ({
@@ -5792,13 +5853,55 @@ const createAdminParticipationQr = () => {
   adminParticipationQrMessage.textContent = "受付後に本人スマホで読み取ると、今日の参加スタンプが1つ入ります。同じ日にもう一度読んでも二重には増えません。";
 };
 
+const fixedTeacherQrGenerationUnavailableMessage =
+  "先生固定QRは2026年8月30日（日本時間）の当日だけ作成できます。今日は作成できません。";
+
+const isFixedTeacherQrEventDay = () => getTodayInTokyo() === fixedTeacherQrEventDate;
+
+const clearAdminFixedTeacherQrOutput = ({ showMessage = false } = {}) => {
+  document.body.classList.remove("is-admin-qr-print-preview");
+  if (adminFixedTeacherQrList) {
+    adminFixedTeacherQrList.textContent = "";
+    if (showMessage) {
+      const message = document.createElement("p");
+      message.className = "admin-form-confirm-note";
+      message.textContent = fixedTeacherQrGenerationUnavailableMessage;
+      adminFixedTeacherQrList.append(message);
+    }
+  }
+  if (adminFixedTeacherQrPrintButton) {
+    adminFixedTeacherQrPrintButton.disabled = true;
+    adminFixedTeacherQrPrintButton.textContent = "印刷用に表示する";
+  }
+  if (adminFixedTeacherQrPdfButton) {
+    adminFixedTeacherQrPdfButton.disabled = true;
+  }
+  if (adminFixedTeacherQrPreviewCloseButton) {
+    adminFixedTeacherQrPreviewCloseButton.hidden = true;
+  }
+  if (showMessage && adminFixedTeacherQr) {
+    adminFixedTeacherQr.hidden = false;
+  }
+};
+
 const createAdminFixedTeacherQrs = () => {
   if (!adminFixedTeacherQr || !adminFixedTeacherQrList) {
     return;
   }
 
-  const today = getTodayForInput();
+  if (!isFixedTeacherQrEventDay()) {
+    clearAdminFixedTeacherQrOutput({ showMessage: true });
+    return;
+  }
+
+  const today = fixedTeacherQrEventDate;
   adminFixedTeacherQrList.textContent = "";
+  if (adminFixedTeacherQrPrintButton) {
+    adminFixedTeacherQrPrintButton.disabled = false;
+  }
+  if (adminFixedTeacherQrPdfButton) {
+    adminFixedTeacherQrPdfButton.disabled = false;
+  }
 
   for (const [teacherId, teacher] of Object.entries(teacherDetails)) {
     const payload = {
@@ -5867,6 +5970,11 @@ const escapePrintableText = (value) =>
 
 const openAdminFixedTeacherQrPdfPage = () => {
   if (!adminFixedTeacherQrList) {
+    return;
+  }
+
+  if (!isFixedTeacherQrEventDay()) {
+    clearAdminFixedTeacherQrOutput({ showMessage: true });
     return;
   }
 
@@ -9621,6 +9729,11 @@ adminGameRecordApply?.addEventListener("click", applyGameRecordFromAdmin);
 adminStampQrCreateButton?.addEventListener("click", createAdminStampQr);
 adminFixedTeacherQrCreateButton?.addEventListener("click", createAdminFixedTeacherQrs);
 adminFixedTeacherQrPrintButton?.addEventListener("click", () => {
+  if (!isFixedTeacherQrEventDay()) {
+    clearAdminFixedTeacherQrOutput({ showMessage: true });
+    return;
+  }
+
   if (!document.body.classList.contains("is-admin-qr-print-preview")) {
     setAdminFixedTeacherQrPrintPreview(true);
     return;
@@ -9997,6 +10110,9 @@ updateAdminPanel();
 updateAdminLockState();
 updateBrowserStorageWarning();
 renderAdminInstallQr();
+if (!isFixedTeacherQrEventDay()) {
+  clearAdminFixedTeacherQrOutput();
+}
 applyStampQrFromLocation();
 
 const appLoadStatus = document.querySelector("[data-app-load-status]");
