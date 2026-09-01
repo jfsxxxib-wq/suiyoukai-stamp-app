@@ -1,0 +1,55 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1788175695354,
+      "tag": "0000_magical_adam_warlock",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1788219336635,
+      "tag": "0001_elite_spacker_dave",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1788224394382,
+      "tag": "0002_milky_thundra",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1788227350571,
+      "tag": "0003_nebulous_steel_serpent",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1788228591170,
+      "tag": "0004_reset_september_2_reception",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1788229722980,
+      "tag": "0005_reset_september_2_reception_again",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1788232141453,
+      "tag": "0006_final_reset_september_2_reception",
+      "breakpoints": true
+    }
+  ]
+}

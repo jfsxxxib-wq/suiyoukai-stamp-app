@@ -1,0 +1,244 @@
+{
+  "version": "6",
+  "dialect": "sqlite",
+  "id": "f76d7d20-73a7-4383-8557-c2cbee8baeb3",
+  "prevId": "cad7e052-ddfc-4c7f-9d00-b536f9f8df1e",
+  "tables": {
+    "reception_sequences": {
+      "name": "reception_sequences",
+      "columns": {
+        "event_key": {
+          "name": "event_key",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "last_number": {
+          "name": "last_number",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "reception_sequences_20260902": {
+      "name": "reception_sequences_20260902",
+      "columns": {
+        "event_key": {
+          "name": "event_key",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "last_number": {
+          "name": "last_number",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "receptions_20260902": {
+      "name": "receptions_20260902",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "reception_code": {
+          "name": "reception_code",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "resume_token_hash": {
+          "name": "resume_token_hash",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "client_request_id": {
+          "name": "client_request_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "receptions_20260902_reception_code_unique": {
+          "name": "receptions_20260902_reception_code_unique",
+          "columns": [
+            "reception_code"
+          ],
+          "isUnique": true
+        },
+        "receptions_20260902_resume_token_hash_unique": {
+          "name": "receptions_20260902_resume_token_hash_unique",
+          "columns": [
+            "resume_token_hash"
+          ],
+          "isUnique": true
+        },
+        "receptions_20260902_client_request_id_unique": {
+          "name": "receptions_20260902_client_request_id_unique",
+          "columns": [
+            "client_request_id"
+          ],
+          "isUnique": true
+        },
+        "receptions_20260902_status_updated_idx": {
+          "name": "receptions_20260902_status_updated_idx",
+          "columns": [
+            "status",
+            "updated_at"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "test_receptions": {
+      "name": "test_receptions",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "reception_code": {
+          "name": "reception_code",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "resume_token_hash": {
+          "name": "resume_token_hash",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "client_request_id": {
+          "name": "client_request_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "test_receptions_reception_code_unique": {
+          "name": "test_receptions_reception_code_unique",
+          "columns": [
+            "reception_code"
+          ],
+          "isUnique": true
+        },
+        "test_receptions_resume_token_hash_unique": {
+          "name": "test_receptions_resume_token_hash_unique",
+          "columns": [
+            "resume_token_hash"
+          ],
+          "isUnique": true
+        },
+        "test_receptions_client_request_id_unique": {
+          "name": "test_receptions_client_request_id_unique",
+          "columns": [
+            "client_request_id"
+          ],
+          "isUnique": true
+        },
+        "test_receptions_status_updated_idx": {
+          "name": "test_receptions_status_updated_idx",
+          "columns": [
+            "status",
+            "updated_at"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    }
+  },
+  "views": {},
+  "enums": {},
+  "_meta": {
+    "schemas": {},
+    "tables": {},
+    "columns": {}
+  },
+  "internal": {
+    "indexes": {}
+  }
+}
