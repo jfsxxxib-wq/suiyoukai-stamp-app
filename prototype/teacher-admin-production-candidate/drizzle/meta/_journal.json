@@ -1,0 +1,27 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1788167320713,
+      "tag": "0000_needy_adam_destine",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1788253200000,
+      "tag": "0001_teacher_admin_matches",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1788353649966,
+      "tag": "0002_harsh_invisible_woman",
+      "breakpoints": true
+    }
+  ]
+}
