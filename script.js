@@ -10113,6 +10113,13 @@ renderAdminInstallQr();
 if (!isFixedTeacherQrEventDay()) {
   clearAdminFixedTeacherQrOutput();
 }
+window.suiyoukaiLinkage = Object.freeze({
+  getAppNumber: loadReceptionCode,
+  getDisplayName: loadAdventurerName,
+  applyParticipationStamp: applyParticipationStampPayload,
+  showTodayRecord: showProfileTodayRecord,
+});
+
 applyStampQrFromLocation();
 
 const appLoadStatus = document.querySelector("[data-app-load-status]");
