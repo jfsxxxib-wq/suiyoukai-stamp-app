@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="ja">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>水曜会ポータル｜画面見本</title><link rel="stylesheet" href="app/globals.css"></head>
+<body>
+  <div class="site-shell view" id="home"><main class="portal-home">
+    <header class="portal-header"><div class="brand-mark"><span class="go-stone black"></span><span class="go-stone white"></span></div><div><p>湘南・藤沢</p><h1>水曜会ポータル</h1></div><span class="sample-badge">画面見本</span></header>
+    <section class="welcome-panel"><div><p class="eyebrow">今月の定例会</p><h2>9月9日（水）</h2><p>いつもの時間・いつもの会場です</p></div><span class="calendar-tile"><small>水</small><strong>9</strong></span></section>
+    <section class="primary-card"><div class="primary-card-art"><img src="public/fairy-apollon-guide.png" alt="案内役の妖精"></div><div class="primary-card-copy"><span class="card-kicker">いつもの記録</span><h2>花記録を使う</h2><p>参加の記録、指導碁の花、冒険者カードはこちらです。</p><button class="ui-button" data-go="flower-handoff">花記録を開く <span>›</span></button></div></section>
+    <section class="portal-stack" aria-label="水曜会メニュー">
+      <button class="portal-card league-card" data-go="league-login"><span class="card-icon character-icon codex-icon"><img src="public/menu-codex-original.png" alt=""></span><span><small>リーグ参加者専用</small><strong>水曜会リーグ</strong><em>会員確認後、結果送信とリーグ表へ</em></span><span>🔒</span></button>
+      <div class="notice-strip event-notice"><span class="notice-character"><img src="public/menu-league.png" alt=""></span><div><strong>イベントのお知らせ</strong><p>開催日・会場などのお知らせをここに表示します。</p></div><span>›</span></div>
+      <div class="notice-strip"><span class="notice-character"><img src="public/menu-teacher-notice.png" alt=""></span><div><strong>先生からのお知らせ</strong><p>承認された2行コメントを、ここに表示します。</p></div><span>›</span></div>
+      <button class="portal-card teacher-card" data-go="teacher-login"><span class="card-icon character-icon"><img src="public/menu-journal.png" alt=""></span><span><small>先生専用</small><strong>一局のご縁帳</strong><em>本人確認後、自分の記録だけを表示</em></span><span>🔒</span></button>
+    </section>
+    <footer class="portal-footer signature-lockup" aria-label="Be Water, Apollon Team, Codex"><span class="signature-motto">Be Water</span><img src="public/apollon-team-signature-indigo.png" alt="Apollon Team"><span class="signature-codex">Codex</span></footer>
+  </main></div>
+
+  <div class="site-shell view" id="flower-handoff" hidden><section class="handoff-panel">
+    <button class="ui-button ghost back-button" data-go="home">← 入口へ戻る</button>
+    <div class="handoff-illustration" aria-hidden="true"><span class="handoff-site">⌂</span><span class="handoff-line">→</span><span class="handoff-flower">✿</span></div>
+    <p class="eyebrow">花記録を開く</p><h1>今までの記録を、そのまま使います</h1><p class="lead">この入口から現在の「水曜会 花記録」へ移動します。花やスタンプの記録場所は変わりません。</p>
+    <div class="safety-note"><span>🛡️</span><div><strong>参加者の方にお願いする操作はひとつだけ</strong><span>「花記録へ進む」を押します。アプリのインストールは必要ありません。</span></div></div>
+    <button class="ui-button primary-action" data-go="flower-preview">花記録へ進む ›</button><p class="mock-note">画面見本のため、本番アプリは開きません</p>
+  </section></div>
+
+  <div class="flower-preview-page view" id="flower-preview" hidden>
+    <div class="preview-toolbar"><button class="ui-button ghost" data-go="flower-handoff">← ひとつ前へ</button><span>ⓘ 現在の花記録を再現した見本です</span></div>
+    <section class="flower-app"><img class="flower-map" src="public/shonan-watercolor-map.png" alt=""><div class="flower-app-shade"></div><div class="flower-app-title"><p>水曜会探索マップ</p><h1>花を見つける小さな旅</h1></div><button class="map-pin participation-pin"><span>水曜会</span><strong>参加する</strong></button><button class="map-pin teacher-pin"><span>指導碁</span><strong>先生を選ぶ</strong></button><div class="next-journey"><div><span>次の冒険</span><strong>最初の花を見つけよう</strong><small>参加または先生との指導碁を記録すると、冒険が始まります。</small></div><img src="public/fairy-apollon-guide.png" alt="案内役の妖精"></div><nav class="flower-tabs"><button>冒険者カード</button><button class="active">花図鑑</button><button>称号</button></nav></section>
+    <div class="preview-explanation"><span>✅</span><p><strong>ここから先は今のアプリです。</strong><span>現在の記録を守るため、最初はこの形でつなぎます。</span></p><button class="ui-button outline" data-go="home">ポータル入口をもう一度見る</button></div>
+  </div>
+
+  <div class="site-shell view" id="league-login" hidden><section class="login-page">
+    <button class="ui-button ghost back-button" data-go="home">← 入口へ戻る</button>
+    <div class="login-heading"><span>🏆</span><div><p class="eyebrow">水曜会リーグ</p><h1>会員確認</h1></div></div>
+    <div class="login-card">
+      <div class="qr-message"><span>▦</span><div><strong>QRから開いた方</strong><span>会員番号は自動で入ります。暗証番号だけ入力してください。</span></div></div>
+      <label class="login-field"><span>会員番号</span><input value="S-0123" aria-label="会員番号"></label>
+      <label class="login-field"><span>4桁の暗証番号</span><input type="password" value="1234" inputmode="numeric" maxlength="4" aria-label="4桁の暗証番号"></label>
+      <label class="remember-row"><input type="checkbox" checked><span><strong>このスマートフォンでは次回から入力を省く</strong><small>共用の端末ではチェックを外してください</small></span></label>
+      <button class="ui-button login-action" data-go="league">⇥ リーグページへ入る</button>
+      <button class="help-link" type="button">会員番号や暗証番号が分からない方</button>
+    </div>
+    <div class="demo-scenarios"><span>画面見本の切り替え</span><button class="ui-button outline" data-go="league-denied">権限がない場合</button><button class="ui-button outline" data-go="league-admin">管理者画面</button></div>
+    <p class="mock-note">ChatGPTアカウントは必要ありません</p>
+  </section></div>
+
+  <div class="site-shell view" id="league-denied" hidden><section class="access-page">
+    <button class="ui-button ghost back-button" data-go="league-login">← 会員確認へ戻る</button>
+    <div class="access-card"><span class="access-icon">🔒</span><p class="eyebrow">会員番号 S-0456</p><h1>リーグ参加の確認が必要です</h1><p>水曜会の会員確認はできましたが、現在はリーグ参加者として登録されていません。</p><div class="access-guidance"><span>👥</span><span><strong>途中から参加する方へ</strong>悦子さんが管理画面で登録すると、同じ会員番号のままリーグページを見られるようになります。</span></div><button class="ui-button" data-go="home">ポータル入口へ戻る</button></div>
+    <div class="demo-scenarios"><span>画面見本の切り替え</span><button class="ui-button outline" data-go="league-admin">管理者画面を見る</button></div>
+  </section></div>
+
+  <div class="site-shell view" id="league-admin" hidden><section class="admin-page">
+    <button class="ui-button ghost back-button" data-go="league-login">← 会員確認へ戻る</button>
+    <div class="admin-heading"><span>✓</span><div><p class="eyebrow">管理者専用</p><h1>リーグ参加者の管理</h1></div></div>
+    <div class="admin-card">
+      <label class="login-field"><span>会員を探す</span><input value="高橋さん" aria-label="会員を探す"></label>
+      <div class="member-card"><div class="member-avatar">高</div><div><strong>高橋さん</strong><span>会員番号　S-0456</span><small>水曜会会員</small></div><span>✅</span></div>
+      <div class="permission-row"><div><strong>第2期リーグ参加者</strong><span>オンにするとリーグページが見られます</span></div><button class="mock-switch" type="button" aria-label="第2期リーグ参加者" aria-pressed="false"><span></span></button></div>
+      <label class="login-field"><span>参加開始日</span><input type="date" value="2026-09-09" aria-label="参加開始日"></label>
+      <button class="ui-button login-action admin-save" data-go="league" disabled>✓ 参加登録を保存する</button>
+      <p class="ready-message" hidden>✅ 保存すると、同じ会員番号ですぐにリーグページへ入れます。</p>
+    </div>
+    <p class="mock-note">画面見本のため、実際の登録内容は変更されません</p>
+  </section></div>
+
+  <div class="site-shell view" id="league" hidden><section class="detail-page"><button class="ui-button ghost back-button" data-go="home">← 入口へ戻る</button><div class="detail-heading league-heading"><span>🏆</span><div><p class="eyebrow">水曜会リーグ</p><h1>第2期 リーグ戦表</h1></div></div><div class="league-actions"><button><span>📝</span><span><strong>対局結果を送る</strong><small>参加者はこちら</small></span><span>›</span></button><button><span>✅</span><span><strong>結果を確認する</strong><small>管理者専用</small></span><span>🔒</span></button></div><div class="table-card"><div class="table-title"><h2>現在の成績</h2><span>見本データ</span></div><table style="width:100%;border-collapse:collapse"><thead><tr><th>順位</th><th>お名前</th><th>対局数</th><th>成績</th></tr></thead><tbody><tr><td>1</td><td><strong>山田さん</strong></td><td>8</td><td>6勝2敗</td></tr><tr><td>2</td><td><strong>佐藤さん</strong></td><td>7</td><td>5勝2敗</td></tr><tr><td>3</td><td><strong>鈴木さん</strong></td><td>8</td><td>5勝3敗</td></tr></tbody></table></div><section class="participant-section"><div class="participant-heading"><div><p class="eyebrow">リーグ参加者</p><h2>名前を押すと成績が開きます</h2></div><span>見本データ</span></div><div class="participant-buttons"><button class="participant-button" data-player="山田さん" data-wins="6" data-losses="2" data-rate="75.0%">山田さん <span>›</span></button><button class="participant-button" data-player="佐藤さん" data-wins="5" data-losses="2" data-rate="71.4%">佐藤さん <span>›</span></button><button class="participant-button" data-player="鈴木さん" data-wins="5" data-losses="3" data-rate="62.5%">鈴木さん <span>›</span></button><button class="participant-button" data-player="高橋さん" data-wins="4" data-losses="4" data-rate="50.0%">高橋さん <span>›</span></button><button class="participant-button" data-player="伊藤さん" data-wins="3" data-losses="5" data-rate="37.5%">伊藤さん <span>›</span></button></div><p class="participant-hint" data-player-hint>確認したい方のお名前を押してください。</p><div class="participant-result" data-player-result hidden><div class="participant-result-name"><span>個人成績</span><strong data-player-name></strong></div><dl><div><dt>勝ち</dt><dd data-player-wins></dd></div><div><dt>負け</dt><dd data-player-losses></dd></div><div><dt>勝率</dt><dd data-player-rate></dd></div></dl></div></section></section></div>
+
+  <div class="site-shell view" id="teacher-login" hidden><section class="login-page teacher-login-page">
+    <button class="ui-button ghost back-button" data-go="home">← 入口へ戻る</button>
+    <div class="login-heading teacher-login-heading"><span>📖</span><div><p class="eyebrow">先生専用</p><h1>ご本人の確認</h1></div></div>
+    <div class="login-card">
+      <div class="qr-message teacher-qr-message"><span>▦</span><div><strong>先生専用QRから開きます</strong><span>先生番号は自動で入ります。4桁の暗証番号だけ入力してください。</span></div></div>
+      <label class="login-field"><span>先生番号</span><input value="T-0001" aria-label="先生番号"></label>
+      <label class="login-field"><span>4桁の暗証番号</span><input type="password" value="1234" inputmode="numeric" maxlength="4" aria-label="4桁の暗証番号"></label>
+      <label class="remember-row"><input type="checkbox" checked><span><strong>このスマートフォンでは次回から入力を省く</strong><small>共用の端末ではチェックを外してください</small></span></label>
+      <button class="ui-button login-action teacher-login-action" data-go="teacher">🔑 自分のご縁帳を開く</button>
+    </div>
+    <p class="mock-note">ほかの先生のご縁帳は表示されません</p>
+  </section></div>
+
+  <div class="site-shell view" id="teacher" hidden><section class="detail-page"><button class="ui-button ghost back-button" data-go="home">← 入口へ戻る</button><div class="detail-heading teacher-heading"><span>📖</span><div><p class="eyebrow">先生専用</p><h1>一局のご縁帳</h1></div></div><div class="teacher-identity"><span>🛡️</span><span><strong>松本先生のご縁帳</strong>ログインした先生ご本人の記録だけを表示しています。</span><span>🔒</span></div><div class="teacher-comment"><div><span>📣</span><span>先生からのお知らせ</span></div><p>今回のお知らせが入ります</p><p>皆さんへのひとことが入ります</p><small>悦子さんの確認後、公開期間中だけ表示</small></div><div class="teacher-records"><div class="record-date"><span>📅</span><span>今日のご縁</span><strong>3局</strong></div><article><span class="record-flower">✿</span><div><strong>田中さん</strong><p>3か月ぶりの再会　六子</p></div><time>14:20</time></article><article><span class="record-flower">✿</span><div><strong>佐藤さん</strong><p>はじめての一局　九子</p></div><time>15:10</time></article></div>
+    <section class="past-teacher-section"><div class="past-teacher-heading"><span>↶</span><div><p class="eyebrow">これまでのご縁</p><h2>過去の指導碁</h2></div></div><div class="past-day-list">
+      <article class="past-day open"><button type="button" class="past-day-toggle" aria-expanded="true"><span class="past-date"><span>📅</span><strong>8月12日（水）</strong></span><span class="past-place"><span>⌖</span>藤沢市民会館</span><span class="past-count">3局</span><span class="past-arrow">⌄</span></button><div class="past-day-records"><p>その日の記録</p><div><span class="record-flower">✿</span><strong>田中さん</strong><span>六子</span><time>13:40</time></div><div><span class="record-flower">✿</span><strong>佐藤さん</strong><span>九子</span><time>14:30</time></div><div><span class="record-flower">✿</span><strong>山本さん</strong><span>三子</span><time>15:20</time></div></div></article>
+      <article class="past-day"><button type="button" class="past-day-toggle" aria-expanded="false"><span class="past-date"><span>📅</span><strong>7月8日（水）</strong></span><span class="past-place"><span>⌖</span>藤沢囲碁サロン</span><span class="past-count">2局</span><span class="past-arrow">⌄</span></button><div class="past-day-records" hidden><p>その日の記録</p><div><span class="record-flower">✿</span><strong>鈴木さん</strong><span>五子</span><time>14:10</time></div><div><span class="record-flower">✿</span><strong>高橋さん</strong><span>七子</span><time>15:00</time></div></div></article>
+    </div></section><div class="private-note"><span>🔒</span><span><strong>対局者名は管理者が記入・確認します</strong>先生ご本人だけが閲覧でき、勝敗・順位・ほかの先生との比較は表示しません。</span></div></section></div>
+  <script>document.addEventListener('click',e=>{const past=e.target.closest('.past-day-toggle');if(past){const item=past.closest('.past-day'),details=item.querySelector('.past-day-records'),willOpen=!item.classList.contains('open');document.querySelectorAll('.past-day').forEach(day=>{day.classList.remove('open');day.querySelector('.past-day-toggle').setAttribute('aria-expanded','false');day.querySelector('.past-day-records').hidden=true});if(willOpen){item.classList.add('open');past.setAttribute('aria-expanded','true');details.hidden=false}return}const toggle=e.target.closest('.mock-switch');if(toggle){const enabled=toggle.getAttribute('aria-pressed')!=='true';toggle.setAttribute('aria-pressed',String(enabled));toggle.classList.toggle('on',enabled);document.querySelector('.admin-save').disabled=!enabled;document.querySelector('.ready-message').hidden=!enabled;return}const player=e.target.closest('.participant-button');if(player){document.querySelectorAll('.participant-button').forEach(b=>b.classList.remove('selected'));player.classList.add('selected');document.querySelector('[data-player-name]').textContent=player.dataset.player;document.querySelector('[data-player-wins]').textContent=player.dataset.wins;document.querySelector('[data-player-losses]').textContent=player.dataset.losses;document.querySelector('[data-player-rate]').textContent=player.dataset.rate;document.querySelector('[data-player-hint]').hidden=true;document.querySelector('[data-player-result]').hidden=false;return}const b=e.target.closest('[data-go]');if(!b||b.disabled)return;document.querySelectorAll('.view').forEach(v=>v.hidden=true);document.getElementById(b.dataset.go).hidden=false;window.scrollTo(0,0)});</script>
+</body></html>
