@@ -4,15 +4,29 @@ import { useState } from 'react';
 import {
   ArrowLeft, ArrowRight, BookOpenText, CalendarDays, CheckCircle2,
   ChevronDown, ChevronRight, ClipboardCheck, Flower2, History, House, Info,
-  LockKeyhole, KeyRound, LogIn, MapPin, Megaphone, QrCode, ShieldCheck, Trophy, UserRoundCheck,
-  UsersRound,
+  ImagePlus, LockKeyhole, KeyRound, LogIn, MapPin, Megaphone, Pencil, QrCode,
+  Share2, ShieldCheck, Trophy, UserRoundCheck, UsersRound,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
-type View = 'home' | 'flower-handoff' | 'flower-preview' | 'league-login' | 'league-denied' | 'league' | 'league-admin' | 'teacher-login' | 'teacher';
+type View = 'home' | 'meeting-admin' | 'events' | 'event-admin' | 'event-application' | 'flower-handoff' | 'flower-preview' | 'league-login' | 'league-denied' | 'league' | 'league-admin' | 'teacher-login' | 'teacher';
+
+const weekdays = ['日', '月', '火', '水', '木', '金', '土'];
+const formatJapaneseDate = (value: string) => {
+  const [year, month, day] = value.split('-').map(Number);
+  const weekday = weekdays[new Date(year, month - 1, day).getDay()] ?? '';
+  return { title: `${month}月${day}日（${weekday}）`, month: `${month}月`, day: String(day), weekday };
+};
+
+type EventItem = { id: string; title: string; date: string; time: string; place: string; description: string };
+const initialEvents: EventItem[] = [
+  { id: 'event-1', title: '水曜会交流会', date: '2026-09-20', time: '13:00〜16:30', place: '藤沢市民会館', description: '皆さんで囲碁を楽しむ交流会です。初めて参加する方も歓迎します。' },
+  { id: 'event-2', title: '秋の指導碁会', date: '2026-10-04', time: '14:00〜17:00', place: 'いつもの会場', description: '先生との指導碁を中心にした会です。組み合わせは当日ご案内します。' },
+  { id: 'event-3', title: '親睦囲碁会', date: '2026-10-18', time: '13:00〜16:00', place: '会場は後日お知らせ', description: '詳しい内容と会場は、決まりしだいこのページでお知らせします。' },
+];
 const leagueRows = [
   { rank: 1, name: '山田さん', games: 8, score: '6勝2敗' },
   { rank: 2, name: '佐藤さん', games: 7, score: '5勝2敗' },
@@ -42,6 +56,103 @@ export default function Home() {
   const [selectedPlayer, setSelectedPlayer] = useState<(typeof participants)[number] | null>(null);
   const [leagueEnabled, setLeagueEnabled] = useState(false);
   const [openPastDay, setOpenPastDay] = useState<string | null>(pastTeacherDays[0].id);
+  const [scheduleOpen, setScheduleOpen] = useState(false);
+  const [meetingSchedule, setMeetingSchedule] = useState({ dates: ['2026-09-09', '2026-09-16', '2026-09-23', '2026-09-30', ''], time: 'いつもの時間', place: 'いつもの会場です' });
+  const [meetingDraft, setMeetingDraft] = useState(meetingSchedule);
+  const [events, setEvents] = useState<EventItem[]>(initialEvents);
+  const [eventDraft, setEventDraft] = useState<EventItem>(initialEvents[0]);
+  const [eventPosterUrl, setEventPosterUrl] = useState('');
+  const [eventPosterDraftUrl, setEventPosterDraftUrl] = useState('');
+  const [selectedEvent, setSelectedEvent] = useState<EventItem>(initialEvents[0]);
+  const [applicationSent, setApplicationSent] = useState(false);
+  const [sharedEventId, setSharedEventId] = useState<string | null>(null);
+
+  const meetingDates = meetingSchedule.dates.filter(Boolean).sort();
+  const nextMeeting = formatJapaneseDate(meetingDates[0]);
+  const meetingSummary = [meetingSchedule.time, meetingSchedule.place].filter(Boolean).join('・');
+
+  const openApplication = (event: EventItem) => {
+    setSelectedEvent(event);
+    setApplicationSent(false);
+    setView('event-application');
+  };
+
+  const saveMeeting = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setMeetingSchedule({ ...meetingDraft, dates: meetingDraft.dates.filter(Boolean).sort().concat(Array(5).fill('')).slice(0, 5) });
+    setScheduleOpen(false);
+    setView('home');
+  };
+
+  const saveEvent = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setEvents(current => current.map(item => item.id === eventDraft.id ? eventDraft : item));
+    if (eventPosterDraftUrl) setEventPosterUrl(eventPosterDraftUrl);
+    setView('events');
+  };
+
+  if (view === 'meeting-admin') {
+    const draftDates = meetingDraft.dates.filter(Boolean).sort();
+    const draftNext = formatJapaneseDate(draftDates[0]);
+    const draftSummary = [meetingDraft.time, meetingDraft.place].filter(Boolean).join('・');
+    return (
+      <PageShell><section className="admin-page">
+        <Button className="back-button" variant="ghost" onClick={() => setView('home')}><ArrowLeft />入口へ戻る</Button>
+        <div className="admin-heading meeting-admin-heading"><span><Pencil /></span><div><p className="eyebrow">管理者専用</p><h1>定例会の予定を変更</h1></div></div>
+        <form className="meeting-editor-card" onSubmit={saveMeeting}>
+          <p className="meeting-editor-note"><LockKeyhole /><span>悦子さんなど、管理者として確認された方だけが変更できます。</span></p>
+          <div className="meeting-date-fields">{meetingDraft.dates.map((date, index) => <label className="login-field" key={index}><span>第{index + 1}回 {index > 2 && <small>任意</small>}</span><Input type="date" value={date} required={index < 3} onChange={event => setMeetingDraft(current => ({ ...current, dates: current.dates.map((item, itemIndex) => itemIndex === index ? event.target.value : item) }))} /></label>)}</div>
+          <label className="login-field"><span>時間</span><Input value={meetingDraft.time} onChange={event => setMeetingDraft(current => ({ ...current, time: event.target.value }))} /></label>
+          <label className="login-field"><span>会場・案内</span><Input value={meetingDraft.place} onChange={event => setMeetingDraft(current => ({ ...current, place: event.target.value }))} /></label>
+          <section className="meeting-mini-preview"><div><p className="eyebrow">次回の定例会</p><h2>{draftNext.title}</h2><p>{draftSummary}</p></div><span className="calendar-tile"><small>{draftNext.weekday}</small><strong>{draftNext.day}</strong></span></section>
+          <section className="upcoming-meetings meeting-preview-upcoming"><p>このあとの定例会</p><div className="upcoming-meeting-list">{draftDates.slice(1).map(date => <SmallMeeting key={date} date={date} summary={draftSummary} />)}</div></section>
+          <div className="meeting-editor-actions"><Button type="button" variant="outline" onClick={() => setView('home')}>やめる</Button><Button type="submit"><CheckCircle2 />変更を保存する</Button></div>
+          <p className="meeting-editor-footnote">公開前の制作版です</p>
+        </form>
+      </section></PageShell>
+    );
+  }
+
+  if (view === 'events') return (
+    <PageShell><section className="event-page">
+      <Button className="back-button" variant="ghost" onClick={() => setView('home')}><ArrowLeft />入口へ戻る</Button>
+      <header className="event-page-heading"><span className="event-page-dog"><img src="/menu-league.png" alt="" /></span><div><p className="eyebrow">水曜会からのご案内</p><h1>イベントのお知らせ</h1></div></header>
+      <p className="event-page-intro">開催日、時間、会場をご確認ください。催しを押すと、詳しい内容が開きます。</p>
+      <div className="event-sample-note"><span><CalendarDays /> 日程・内容は画面見本です</span><span>新しい順</span></div>
+      <div className="event-admin-control"><Button variant="outline" onClick={() => { setEventDraft(events[0]); setEventPosterDraftUrl(eventPosterUrl); setView('event-admin'); }}><Pencil />お知らせを追加・変更</Button><small>管理者にだけ表示</small></div>
+      <section className="event-list">{events.map((item, index) => {
+        const date = formatJapaneseDate(item.date);
+        return <details className="event-card" key={item.id}><summary><span className="event-date-tile"><small>{date.month}</small><strong>{date.day}</strong><span>{date.weekday}</span></span><span className="event-card-title"><small>{index === 0 ? '次のイベント' : 'これからの予定'}</small><strong>{item.title}</strong><span>{item.time}　{item.place}</span></span><ChevronDown className="event-chevron" /></summary><div className="event-card-details">{index === 0 && eventPosterUrl && <div className="event-poster-display"><img src={eventPosterUrl} alt="イベントのポスター" /></div>}<p>{item.description}</p>{index === 0 && <dl className="event-facts"><div><dt>受付</dt><dd>12:45から</dd></div><div><dt>持ち物</dt><dd>特にありません</dd></div></dl>}<div className="event-card-actions"><Button variant="outline" className="event-share-button" onClick={async () => { try { if (navigator.share) await navigator.share({ title: item.title, text: `${date.title} ${item.time} ${item.place}`, url: window.location.href }); else await navigator.clipboard.writeText(`${item.title}\n${date.title} ${item.time}\n${item.place}`); } catch {} setSharedEventId(item.id); }}><Share2 />転送する</Button><Button className="event-apply-button" onClick={() => openApplication(item)}>申し込む</Button></div>{sharedEventId === item.id && <p className="share-feedback">共有先を選ぶか、お知らせの内容をコピーしました。</p>}</div></details>;
+      })}</section>
+      <p className="event-contact-note">予定が変更になった場合も、このページでお知らせします。</p>
+      <Signature />
+    </section></PageShell>
+  );
+
+  if (view === 'event-admin') return (
+    <PageShell><section className="admin-page">
+      <Button className="back-button" variant="ghost" onClick={() => setView('events')}><ArrowLeft />イベント一覧へ戻る</Button>
+      <div className="admin-heading"><span><Pencil /></span><div><p className="eyebrow">管理者専用</p><h1>イベントを追加・変更</h1></div></div>
+      <form className="event-editor-card" onSubmit={saveEvent}>
+        <p className="meeting-editor-note"><LockKeyhole /><span>悦子さんなど、管理者として確認された方だけが編集できます。</span></p>
+        <label className="login-field"><span>イベント名</span><Input value={eventDraft.title} required onChange={event => setEventDraft(current => ({ ...current, title: event.target.value }))} /></label>
+        <div className="event-editor-grid"><label className="login-field"><span>開催日</span><Input type="date" value={eventDraft.date} required onChange={event => setEventDraft(current => ({ ...current, date: event.target.value }))} /></label><label className="login-field"><span>時間</span><Input value={eventDraft.time} required onChange={event => setEventDraft(current => ({ ...current, time: event.target.value }))} /></label></div>
+        <label className="login-field"><span>会場</span><Input value={eventDraft.place} required onChange={event => setEventDraft(current => ({ ...current, place: event.target.value }))} /></label>
+        <label className="login-field"><span>お知らせ本文</span><textarea value={eventDraft.description} onChange={event => setEventDraft(current => ({ ...current, description: event.target.value }))} /><small>Word、メールなどで作った文章を、この欄へコピーして貼り付けられます。</small></label>
+        <label className="event-upload-field"><span><ImagePlus />ポスター画像を添付</span><small>JPG・PNGなどの画像を選びます。</small><input type="file" accept="image/*" onChange={event => { const file = event.target.files?.[0]; if (file) setEventPosterDraftUrl(URL.createObjectURL(file)); }} />{eventPosterDraftUrl && <span className="event-poster-preview"><img src={eventPosterDraftUrl} alt="選んだポスターの確認" /></span>}</label>
+        <Button className="event-form-submit" type="submit"><CheckCircle2 />お知らせを保存する</Button>
+        <p className="meeting-editor-footnote">公開前の制作版です</p>
+      </form>
+    </section></PageShell>
+  );
+
+  if (view === 'event-application') return (
+    <PageShell><section className="admin-page">
+      <Button className="back-button" variant="ghost" onClick={() => setView('events')}><ArrowLeft />イベントへ戻る</Button>
+      <div className="admin-heading"><span><ClipboardCheck /></span><div><p className="eyebrow">参加申込み</p><h1>申込みフォーム</h1></div></div>
+      {!applicationSent ? <form className="event-application-card" onSubmit={event => { event.preventDefault(); setApplicationSent(true); }}><p className="application-event-name">{selectedEvent.title}</p><label className="login-field"><span>お名前</span><Input placeholder="例：山田 花子" required /></label><label className="login-field"><span>会員番号・受付番号 <small>分かる方だけ</small></span><Input inputMode="numeric" placeholder="例：12345678" /></label><label className="login-field"><span>管理者への連絡 <small>任意</small></span><textarea placeholder="質問や連絡があればご記入ください" /></label><label className="application-agreement"><input type="checkbox" required /><span>入力した内容を、このイベントの参加確認に使用することに同意します。</span></label><Button className="event-form-submit" type="submit">この内容で申し込む</Button><p className="meeting-editor-footnote">公開前の制作版では、入力内容は送信されません</p></form> : <section className="event-application-card application-success"><span><CheckCircle2 /></span><h2>申込みを受け付けました</h2><p><strong>{selectedEvent.title}</strong><br />管理者が確認できる申込み一覧へ届きます。</p><Button onClick={() => setView('events')}>イベント一覧へ戻る</Button></section>}
+    </section></PageShell>
+  );
 
   if (view === 'league-login') return (
     <PageShell><section className="login-page" aria-labelledby="login-title">
@@ -174,17 +285,27 @@ export default function Home() {
   return (
     <PageShell><main className="portal-home">
       <header className="portal-header"><div className="brand-mark"><span className="go-stone black" /><span className="go-stone white" /></div><div><p>湘南・藤沢</p><h1>水曜会ポータル</h1></div><span className="sample-badge">画面見本</span></header>
-      <section className="welcome-panel"><div><p className="eyebrow">今月の定例会</p><h2>9月9日（水）</h2><p>いつもの時間・いつもの会場です</p></div><span className="calendar-tile"><small>水</small><strong>9</strong></span></section>
+      <section className="welcome-panel"><div className="meeting-copy"><p className="eyebrow">次回の定例会</p><h2>{nextMeeting.title}</h2><p data-meeting-summary>{meetingSummary}</p><button className="schedule-toggle" type="button" aria-expanded={scheduleOpen} onClick={() => setScheduleOpen(current => !current)}>{scheduleOpen ? '今月の日程を閉じる' : '今月の日程を確認'} <ChevronDown /></button></div><span className="calendar-tile"><small>{nextMeeting.weekday}</small><strong>{nextMeeting.day}</strong></span></section>
+      {scheduleOpen && <div className="meeting-details"><div className="meeting-edit-control"><Button variant="outline" onClick={() => { setMeetingDraft(meetingSchedule); setView('meeting-admin'); }}><Pencil />予定を変更</Button><small>管理者にだけ表示</small></div><section className="upcoming-meetings"><p>このあとの定例会</p><div className="upcoming-meeting-list">{meetingDates.slice(1).map(date => <SmallMeeting key={date} date={date} summary={meetingSummary} />)}</div></section></div>}
       <section className="primary-card"><div className="primary-card-art"><img src="/fairy-apollon-guide.png" alt="案内役の妖精" /></div><div className="primary-card-copy"><span className="card-kicker">いつもの記録</span><h2>花記録を使う</h2><p>参加の記録、指導碁の花、冒険者カードはこちらです。</p><Button size="lg" onClick={() => setView('flower-handoff')}>花記録を開く <ChevronRight /></Button></div></section>
       <section className="portal-stack" aria-label="水曜会メニュー">
         <button className="portal-card league-card" type="button" onClick={() => setView('league-login')}><span className="card-icon character-icon codex-icon"><img src="/menu-codex-original.png" alt="" /></span><span><small>リーグ参加者専用</small><strong>水曜会リーグ</strong><em>会員確認後、結果送信とリーグ表へ</em></span><LockKeyhole /></button>
-        <div className="notice-strip event-notice"><span className="notice-character"><img src="/menu-league.png" alt="" /></span><div><strong>イベントのお知らせ</strong><p>開催日・会場などのお知らせをここに表示します。</p></div><ChevronRight /></div>
+        <button className="notice-strip event-notice event-entry-button" type="button" onClick={() => setView('events')}><span className="notice-character"><img src="/menu-league.png" alt="" /></span><span><strong>イベントのお知らせ</strong><p>開催日・会場などのお知らせをここに表示します。</p></span><ChevronRight /></button>
         <div className="notice-strip"><span className="notice-character"><img src="/menu-teacher-notice.png" alt="" /></span><div><strong>先生からのお知らせ</strong><p>承認された2行コメントを、ここに表示します。</p></div><ChevronRight /></div>
         <button className="portal-card teacher-card" type="button" onClick={() => setView('teacher-login')}><span className="card-icon character-icon"><img src="/menu-journal.png" alt="" /></span><span><small>先生専用</small><strong>一局のご縁帳</strong><em>本人確認後、自分の記録だけを表示</em></span><LockKeyhole /></button>
       </section>
-      <footer className="portal-footer signature-lockup" aria-label="Be Water, Apollon Team, Codex"><span className="signature-motto">Be Water</span><img src="/apollon-team-signature-indigo.png" alt="Apollon Team" /><span className="signature-codex">Codex</span></footer>
+      <Signature />
     </main></PageShell>
   );
 }
 
 function PageShell({ children }: { children: React.ReactNode }) { return <div className="site-shell">{children}</div>; }
+
+function SmallMeeting({ date, summary }: { date: string; summary: string }) {
+  const value = formatJapaneseDate(date);
+  return <article className="small-meeting-card"><span className="small-date-tile"><strong>{value.day}</strong><small>{value.weekday}</small></span><span><strong>{value.title}</strong><span>{summary}</span></span></article>;
+}
+
+function Signature() {
+  return <footer className="portal-footer signature-lockup" aria-label="Be Water, Apollon Team, Codex"><span className="signature-motto">Be Water</span><img src="/apollon-team-signature-indigo.png" alt="Apollon Team" /><span className="signature-codex">Codex</span></footer>;
+}
