@@ -6936,16 +6936,8 @@ const closeParticipationStartSheet = () => {
 };
 
 const openParticipationForm = () => {
-  const code = loadReceptionCode();
-  markParticipationFormOpened();
   closeParticipationStartSheet();
-  try {
-    navigator.clipboard?.writeText(code)?.catch(() => {});
-  } catch {
-    // The visible code remains the fallback when clipboard access is unavailable.
-  }
-
-  window.open(participationFormUrl, "_blank", "noopener,noreferrer");
+  window.location.assign("https://suiyoukai-portal.c84s4n967v.chatgpt.site");
 };
 
 const updateParticipationStampCard = () => {
@@ -6959,7 +6951,8 @@ const updateParticipationStampCard = () => {
   const isFirstAchievementAchieved = currentCount >= goal;
   const isMaxAchieved = currentCount >= cycleProgress.maxCount;
   const isStampedToday = hasParticipationStampToday();
-  const shouldShowPostFormGuide = hasOpenedParticipationForm() && !isStampedToday;
+  const registered = window.suiyoukaiGate?.status === "registered";
+  const shouldShowPostFormGuide = registered && !isStampedToday;
 
   if (participationFlowerName) {
     participationFlowerName.textContent = cycleProgress.cycle.flowerName;
@@ -6988,7 +6981,7 @@ const updateParticipationStampCard = () => {
   }
   participationStampButton.textContent = isMaxAchieved
     ? "参加スタンプ達成済み"
-    : "受付番号をコピーして記入へ進む";
+    : "サイトの登録を確認する";
   participationStampButton.disabled = isMaxAchieved;
   if (participationStartFormButton) {
     participationStartFormButton.textContent = participationStampButton.textContent;
@@ -6999,8 +6992,8 @@ const updateParticipationStampCard = () => {
     participationStampGuide.textContent = isStampedToday
       ? "今日の花は入っています。次からも同じブラウザで水曜会アプリを開いてください。"
       : shouldShowPostFormGuide
-        ? "フォーム送信後は、このアプリの画面に戻り、受付で参加QRを読んでください。フォーム記入だけでは花は入りません。"
-        : "フォーム記入だけでは花は入りません。送信後、このアプリの画面に戻り、受付で参加QRを読んでください。";
+        ? "お名前の登録はサイトで済んでいます。会場で参加QRを読み取ってください。"
+        : "サイトでお名前を登録し、会場で参加QRを読み取ってください。登録だけでは参加スタンプは付きません。";
     participationStampGuide.classList.toggle("is-urgent", shouldShowPostFormGuide);
     participationStampGuide.classList.toggle("is-complete", isStampedToday);
   }
@@ -10113,6 +10106,7 @@ renderAdminInstallQr();
 if (!isFixedTeacherQrEventDay()) {
   clearAdminFixedTeacherQrOutput();
 }
+window.addEventListener("suiyoukai-gate-change", updateParticipationStampCard);
 window.suiyoukaiLinkage = Object.freeze({
   getAppNumber: loadReceptionCode,
   getDisplayName: loadAdventurerName,

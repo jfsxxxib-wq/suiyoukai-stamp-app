@@ -1,0 +1,10 @@
+const vm=require('node:vm');const fs=require('node:fs');const assert=require('node:assert/strict');
+const code=fs.readFileSync(__dirname+'/gate-client.js','utf8');
+const data=new Map([['suiyoukai-stamp-progress-v1','{"stamps":{"participationCount":7}}'],['suiyoukai-game-records-v1','[{"date":"2026-09-02","teacher":"existing"}]']]);
+const storage=map=>({getItem:k=>map.get(k)||null,setItem:(k,v)=>map.set(k,v),removeItem:k=>map.delete(k)});
+let opened=0,exchanged=0,hashRemoved=false;const notices=[];
+const element=()=>({dataset:{},style:{},setAttribute(){},append(){},replaceChildren(){},addEventListener(){},remove(){}});
+const window={suiyoukaiLinkage:{getAppNumber:()=> '12345678'},dispatchEvent(){},};
+const context={window,location:{hash:'#gate-ticket='+'a'.repeat(64),pathname:'/suiyoukai-stamp-app/',search:''},history:{replaceState(){hashRemoved=true;}},sessionStorage:storage(new Map()),localStorage:storage(data),crypto:require('node:crypto').webcrypto,URLSearchParams,AbortSignal,Event,document:{querySelector:s=>s==='[data-panel="field-guide"]'?{click:()=>opened++}:null,createElement:element,createTextNode:text=>text,body:{append:n=>notices.push(n)}},fetch:async(url,opts)=>{assert.ok(hashRemoved);const body=JSON.parse(opts.body);assert.equal(body.appNumber,'12345678');assert.equal(opts.credentials,'omit');exchanged++;return Response.json({token:'b'.repeat(64),participant:{participantNumber:'87654321',familyName:'接続',givenName:'確認',synced:true}});}};
+vm.runInNewContext(code,context);
+setTimeout(()=>{assert.equal(exchanged,1);assert.equal(opened,1);assert.equal(window.suiyoukaiGate.status,'registered');assert.equal(data.get('suiyoukai-gate-device-v1'),'b'.repeat(64));assert.equal(data.get('suiyoukai-stamp-progress-v1'),'{"stamps":{"participationCount":7}}');assert.equal(data.get('suiyoukai-game-records-v1'),'[{"date":"2026-09-02","teacher":"existing"}]');console.log('PASS: existing stamps and game records unchanged; existing app number linked; catalog opened; ticket removed from address; separate device token saved.');},100);
