@@ -1,0 +1,20 @@
+const fs=require('fs'),vm=require('vm'),assert=require('assert/strict'),crypto=require('crypto');
+const before=JSON.parse(fs.readFileSync(__dirname+'/../event-reservation-test/google-readback.json','utf8'));
+const matrices=before.map(x=>x.values.map(r=>r.map(v=>v??'')));
+matrices[0][1][2]=new Date('2026-09-26T13:00:00+09:00');matrices[0][1][4]=1;
+const original=JSON.stringify(matrices);
+class Sheet{constructor(data){this.data=data;}getLastRow(){return this.data.length;}getRange(r,c,n=1,m=1){if(typeof r!=='number')throw Error('numeric range required');return{getValues:()=>Array.from({length:n},(_,i)=>Array.from({length:m},(_,j)=>this.data[r+i-1]?.[c+j-1]??'')),setValues:v=>{for(let i=0;i<n;i++)for(let j=0;j<m;j++){this.data[r+i-1]??=[];this.data[r+i-1][c+j-1]=v[i][j];}return this.getRange(r,c,n,m);},setValue:v=>this.getRange(r,c).setValues([[v]]),setNumberFormat:()=>this.getRange(r,c,n,m)}}}
+const sheets=matrices.map(m=>new Sheet(m)),ids=['1TMuW2zrRlvrc43ia8Au8zwmKHr2pnHZ0o6zkuURMJUU','1Pi8EDp19YysJRNpDBNBTD8nkjwSBDIjGjBuyl8OCNW4'];
+const image=fs.readFileSync(__dirname+'/../../work/portal-production-20260904/outputs/event-signup-preview/poster-sample.jpg');let locked=false;
+const context=vm.createContext({Date,Math,JSON,Error,Number,String,SpreadsheetApp:{openById:id=>{const i=ids.indexOf(id);assert(i>=0);return{getName:()=>['水曜会 テスト専用 イベント設定','水曜会 テスト専用 申込一覧'][i],getSheetByName:()=>sheets[i]};},flush:()=>assert(locked)},LockService:{getScriptLock:()=>({waitLock:()=>{assert(!locked);locked=true;},releaseLock:()=>{assert(locked);locked=false;}})},DriveApp:{getFileById:id=>{assert.equal(id,'1d1g1ngvWSTfpQTbUcr3qADBlbKSWYsqh');return{getBlob:()=>({getBytes:()=>image})};}},Utilities:{DigestAlgorithm:{SHA_256:'sha256'},computeDigest:(a,b)=>[...crypto.createHash(a).update(b).digest()],base64Encode:b=>b.toString('base64'),formatDate:d=>new Date(d.getTime()+9*3600000).toISOString().slice(0,16).replace('T',' ')}});
+vm.runInContext('const EVENT_BOOK='+JSON.stringify(ids[0])+';const SIGNUP_BOOK='+JSON.stringify(ids[1])+';'+fs.readFileSync(__dirname+'/Flow.gs','utf8'),context);
+const call=p=>context.flowOperation(p),id='TEST-FLOW-20260904',event={id,title:'通し確認用イベント〈架空〉',date:'2026-09-26',time:'13:00',place:'確認用の会場',capacity:3,teacher:'',posterId:'1d1g1ngvWSTfpQTbUcr3qADBlbKSWYsqh'};
+assert.equal(call({op:'save',event}).eventCount,1);assert(call({op:'save',event}).replayed);assert.equal(call({op:'read'}).event.datetime,'2026-09-26 13:00');
+assert.throws(()=>call({op:'save',event:{...event,capacity:4}}));
+const signup={op:'submit',id:id+'-A',name:'架空の申込者A'};
+assert.equal(call(signup).outcome,'accepted');assert(call(signup).replayed);assert.equal(call(signup).signups.length,1);
+const cancelled=call({op:'cancel',id:id+'-A'});assert.equal(cancelled.event.state,'再開待ち');assert(cancelled.signups[0].cancelled);assert.equal(cancelled.remaining,3);
+assert.equal(call({op:'submit',id:id+'-B',name:'架空の申込者B'}).outcome,'paused');
+assert.equal(call({op:'reopen'}).event.state,'受付中');assert.equal(call({op:'close'}).event.state,'締切');assert.equal(call({op:'save',event}).event.state,'締切');assert.equal(call(signup).outcome,'cancelled');
+const preserved=JSON.stringify([matrices[0].slice(0,2).map(r=>r.slice(0,6)),matrices[1].slice(0,3)]);assert.equal(preserved,original);assert.equal(locked,false);
+console.log('PASS: event & signup replay; date/poster readback; cancellation history; paused intake; manual reopen; close survives retry; prior rows unchanged. Local model only.');

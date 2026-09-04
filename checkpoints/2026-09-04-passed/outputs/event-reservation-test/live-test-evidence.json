@@ -1,0 +1,22 @@
+{
+  "source": "Owner-only Google Apps Script test page, visible result",
+  "deploymentVersion": 1,
+  "completedAt": 1788526801258,
+  "checks": {
+    "oneAcceptedOneFull": true,
+    "actualExecutionsOverlapped": true,
+    "criticalSectionsSerialized": true,
+    "replayKeptOneRow": true,
+    "cancellationPausedIntake": true,
+    "adminReopenAcceptedOne": true,
+    "finalOneActiveOneCancelledAndClosed": true
+  },
+  "race": [
+    {"requestId":"TEST-A","status":"full","entered":1788526759110,"acquired":1788526762232,"completed":1788526763169,"active":1},
+    {"requestId":"TEST-B","status":"accepted","entered":1788526758981,"acquired":1788526759053,"completed":1788526762170,"active":1}
+  ],
+  "replay": {"id":"TEST-B","replayed":true,"active":1,"status":"accepted"},
+  "paused": {"status":"paused","active":0},
+  "afterReopen": {"id":"TEST-C","status":"accepted","active":1},
+  "final": {"status":"締切","active":1,"rowCount":2,"cancelledId":"TEST-B","acceptedId":"TEST-C"}
+}

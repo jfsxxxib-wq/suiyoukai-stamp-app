@@ -1,0 +1,26 @@
+import {DatabaseSync} from 'node:sqlite';
+import {readFileSync} from 'node:fs';
+import {createHash} from 'node:crypto';
+import assert from 'node:assert/strict';
+import {api} from '../server/gate.mjs';
+const db=new DatabaseSync(':memory:');
+for(const file of ['0000_friendly_ben_grimm.sql','0001_cheerful_black_tom.sql'])db.exec(readFileSync(new URL('../drizzle/'+file,import.meta.url),'utf8'));
+const DB={prepare:sql=>({bind:(...args)=>({first:async()=>db.prepare(sql).get(...args)||null,run:async()=>db.prepare(sql).run(...args)})})};
+const ticket='a'.repeat(64),deviceKey='b'.repeat(64),appNumber='12345678';
+const item={id:'history-20260904-99',ticketHash:createHash('sha256').update(ticket).digest('hex'),name:'試験',appNumber,participationDates:['2026-08-30','2026-09-02'],lessons:[],recordIds:['test']};
+const env={DB,HISTORY_RECORDS:JSON.stringify({entries:[item]}),LEDGER_URL:'https://example.invalid',LEDGER_SECRET:'test'};
+let ip=0,offline=true;
+globalThis.fetch=async()=>{if(offline)throw Error('offline');return Response.json({ok:true,historyId:item.id});};
+async function call(action,change={},origin='https://jfsxxxib-wq.github.io'){const r=await api(new Request('https://portal.invalid/api/flower/history/'+action,{method:'POST',headers:{Origin:origin,'CF-Connecting-IP':String(++ip)},body:JSON.stringify({ticket,deviceKey,appNumber,...change})}),env);return {status:r.status,data:await r.json()};}
+assert.equal((await call('preview')).status,200);assert.equal(db.prepare('SELECT count(*) n FROM history_claims').get().n,0);
+assert.equal((await call('preview',{appNumber:'87654321'})).status,409);
+assert.equal((await call('preview',{ticket:'c'.repeat(64)})).status,404);
+assert.equal((await call('preview',{},'https://evil.invalid')).status,403);
+assert.equal((await call('receipt')).status,409);
+assert.equal((await call('claim')).status,200);assert.equal((await call('claim')).status,200);
+assert.equal((await call('claim',{deviceKey:'c'.repeat(64)})).status,409);
+assert.equal((await call('receipt')).data.synced,false);offline=false;
+assert.equal((await call('receipt')).data.synced,true);assert.equal((await call('receipt')).data.synced,true);
+item.appNumber='';env.HISTORY_RECORDS=JSON.stringify({entries:[item]});db.exec('DELETE FROM history_claims');
+assert.equal((await call('claim',{appNumber:'87654321'})).status,200);assert.equal((await call('claim')).status,409);
+console.log('PASS history API: preview read-only, origin, number binding, replay, other-device denial, ledger outage retry.');

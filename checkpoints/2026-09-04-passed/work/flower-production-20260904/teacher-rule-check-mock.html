@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>先生スタンプ ルール表示確認</title>
+    <link rel="stylesheet" href="teacher-rule-check-mock.css">
+  </head>
+  <body>
+    <main class="phone-mock" aria-label="先生スタンプ ルール表示確認">
+      <header class="screen-header">
+        <a class="back-button" href="yesterday-style-mock.html" aria-label="戻る">‹</a>
+        <div>
+          <p>表示確認</p>
+          <h1>先生スタンプの進み方</h1>
+        </div>
+        <span class="status-badge">保存なし</span>
+      </header>
+
+      <section class="rule-summary" aria-label="ルール概要">
+        <article>
+          <strong>先生ごとの5回</strong>
+          <span>同じ先生の指導碁スタンプを5回集めると、その先生の妖精達成。</span>
+        </article>
+        <article>
+          <strong>先生の輪</strong>
+          <span>先生5人を各1回受けると、先生の輪が1巡。5回達成とは別に管理。</span>
+        </article>
+      </section>
+
+      <section class="teacher-lesson-panel" aria-label="先生ごとの5回妖精達成">
+        <div class="section-heading">
+          <p>先生ごとの5回妖精達成</p>
+          <strong>個別カウント</strong>
+        </div>
+
+        <article class="teacher-row" data-state="progress">
+          <img class="flower" src="assets/iris-stamp-stage-05-list.png" alt="">
+          <div class="teacher-main">
+            <h2>常石 隆志 六段</h2>
+            <p>菖蒲の妖精まで 3/5</p>
+            <div class="stamp-dots" aria-label="3/5">
+              <span class="filled"></span><span class="filled"></span><span class="filled"></span><span></span><span></span>
+            </div>
+          </div>
+          <span class="row-tag">別管理</span>
+        </article>
+
+        <article class="teacher-row" data-state="progress">
+          <img class="flower" src="assets/camellia-stamp-stage-05-list.png" alt="">
+          <div class="teacher-main">
+            <h2>結城 聡 九段</h2>
+            <p>椿の妖精まで 1/5</p>
+            <div class="stamp-dots" aria-label="1/5">
+              <span class="filled"></span><span></span><span></span><span></span><span></span>
+            </div>
+          </div>
+          <span class="row-tag">別管理</span>
+        </article>
+
+        <article class="teacher-row is-current" data-state="almost">
+          <img class="flower" src="assets/sunflower-stamp-stage-05-list.png" alt="">
+          <div class="teacher-main">
+            <h2>小池 芳弘 七段</h2>
+            <p>ひまわりの妖精まで 4/5</p>
+            <div class="stamp-dots" aria-label="4/5">
+              <span class="filled"></span><span class="filled"></span><span class="filled"></span><span class="filled"></span><span></span>
+            </div>
+          </div>
+          <img class="fairy" src="assets/fairy-companion-sunflower-v2.png" alt="ひまわりの妖精">
+        </article>
+
+        <article class="teacher-row" data-state="progress">
+          <img class="flower" src="assets/hydrangea-stamp-stage-05-list.png" alt="">
+          <div class="teacher-main">
+            <h2>山城 宏 九段</h2>
+            <p>紫陽花の妖精まで 2/5</p>
+            <div class="stamp-dots" aria-label="2/5">
+              <span class="filled"></span><span class="filled"></span><span></span><span></span><span></span>
+            </div>
+          </div>
+          <span class="row-tag">別管理</span>
+        </article>
+
+        <article class="teacher-row" data-state="empty">
+          <img class="flower" src="assets/sakura-stamp-stage-05-list.png" alt="">
+          <div class="teacher-main">
+            <h2>松本 武久 八段</h2>
+            <p>桜の妖精まで 0/5</p>
+            <div class="stamp-dots" aria-label="0/5">
+              <span></span><span></span><span></span><span></span><span></span>
+            </div>
+          </div>
+          <span class="row-tag muted">未記録</span>
+        </article>
+      </section>
+
+      <section class="circle-panel" aria-label="先生の輪 一巡判定">
+        <div class="section-heading">
+          <p>先生の輪 一巡判定</p>
+          <strong>各先生1回ずつ</strong>
+        </div>
+
+        <div class="circle-progress">
+          <div>
+            <span>一巡目</span>
+            <strong>4 / 5 人</strong>
+          </div>
+          <div class="progress-track" aria-hidden="true"><span></span></div>
+          <small>5回妖精達成とは別に、各先生を1回受けたかだけを見ます。</small>
+        </div>
+
+        <div class="circle-grid" aria-label="一巡チェック">
+          <span class="done">常石</span>
+          <span class="done">結城</span>
+          <span class="done">小池</span>
+          <span class="done">山城</span>
+          <span>松本</span>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

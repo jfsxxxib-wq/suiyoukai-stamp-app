@@ -1,0 +1,16 @@
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import postcss from 'postcss';
+import tailwind from '@tailwindcss/postcss';
+const root=process.cwd();
+const dist=path.join(root,'dist');
+if(path.dirname(dist)!==root)throw new Error('Invalid output');
+await fs.mkdir(path.join(dist,'server'),{recursive:true});await fs.mkdir(path.join(dist,'client'),{recursive:true});
+await fs.cp('public',path.join(dist,'client/public'),{recursive:true});
+await fs.copyFile('portal.html',path.join(dist,'client/index.html'));
+const css=await fs.readFile('public/portal.css','utf8');const result=await postcss([tailwind({base:root})]).process(css,{from:path.join(root,'public/portal.css')});
+await fs.writeFile(path.join(dist,'client/public/portal.css'),result.css);
+await fs.copyFile('server/gate.mjs',path.join(dist,'server/index.js'));
+await fs.writeFile(path.join(dist,'server/wrangler.json'),JSON.stringify({name:'suiyoukai-portal',main:'index.js',compatibility_date:'2026-09-01',compatibility_flags:['nodejs_compat'],assets:{directory:'../client',binding:'ASSETS',run_worker_first:true},d1_databases:[{binding:'DB',database_name:'site-creator-d1',database_id:'00000000-0000-4000-8000-000000000000'}]},null,2));
+await fs.mkdir(path.join(dist,'.openai'),{recursive:true});await fs.copyFile('.openai/hosting.json',path.join(dist,'.openai/hosting.json'));
+console.log('Portal Worker and assets built.');

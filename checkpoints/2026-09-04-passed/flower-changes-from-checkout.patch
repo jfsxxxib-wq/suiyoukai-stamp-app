@@ -1,0 +1,184 @@
+diff --git a/index.html b/index.html
+index ad6b564..ebd9bfd 100644
+--- a/index.html
++++ b/index.html
+@@ -17,6 +17,14 @@
+     <link rel="icon" type="image/png" sizes="192x192" href="assets/app-icon-192.png?v=20260705-home-screen-01">
+     <link rel="stylesheet" href="styles.css?v=20260724-safari-guide-01">
+     <link rel="stylesheet" href="linkage-client.css?v=20260903-01">
++
++    <style>
++      .info-dock { grid-template-rows:auto auto 1fr; }
++      .info-dock.is-collapsed { transform:rotate(-0.5deg); }
++      .portal-return-link { display:flex; align-items:center; justify-content:center; gap:10px; min-height:48px; box-sizing:border-box; margin:10px 0 0; padding:12px 16px; border:1px solid #87a294; border-radius:12px; background:#fffdf5; color:#285b4c; font-size:16px; font-weight:700; line-height:1.5; text-decoration:none; box-shadow:0 3px 10px #244d3810; }
++      .portal-return-link:hover { background:#edf4ed; }
++      .portal-return-link:focus-visible { outline:3px solid #285b4c; outline-offset:3px; }
++    </style>
+   </head>
+   <body>
+     <section class="browser-install-guide" data-browser-install-guide hidden aria-label="Safari利用の案内" role="dialog" aria-modal="true">
+@@ -87,7 +95,7 @@
+           <div class="participation-start-header">
+             <div>
+               <small>水曜会に参加する</small>
+-              <h2>受付番号を持って記入へ進む</h2>
++              <h2>サイトの登録を確認する</h2>
+             </div>
+             <button type="button" class="participation-start-close" data-participation-start-close aria-label="閉じる">×</button>
+           </div>
+@@ -96,9 +104,9 @@
+             <span class="participation-start-copy">
+               <small>参加スタンプ</small>
+               <strong data-participation-start-flower-name>コスモス</strong>
+-              <em>フォーム送信後はこのアプリの画面に戻ります</em>
++              <em>お名前の登録は水曜会のサイトで行います</em>
+               <span class="participation-start-code">
+-                <small>フォームに書く受付番号</small>
++                <small>この花記録の番号</small>
+                 <strong data-participation-start-reception-code>00000000</strong>
+               </span>
+               <span class="participation-start-status-line">
+@@ -106,9 +114,9 @@
+                 <span data-participation-start-status>まだ未達成</span>
+               </span>
+             </span>
+-            <button type="button" class="participation-start-button" data-participation-start-form>受付番号をコピーして記入へ進む</button>
++            <button type="button" class="participation-start-button" data-participation-start-form>サイトの登録を確認する</button>
+             <p class="participation-start-guide" data-participation-start-guide>
+-              フォーム記入だけでは花は入りません。送信後、このアプリの画面に戻り、受付で参加QRを読んでください。
++              サイトでお名前を登録し、会場で参加QRを読み取ってください。登録だけでは参加スタンプは付きません。
+             </p>
+           </section>
+         </div>
+@@ -145,6 +153,8 @@
+           <button type="button" class="info-tab admin-tab" data-panel="admin" aria-pressed="false" aria-label="運営画面" hidden>管理</button>
+         </nav>
+ 
++        <a class="portal-return-link" href="https://suiyoukai-portal.c84s4n967v.chatgpt.site" target="_self" rel="noreferrer"><span aria-hidden="true">←</span> 水曜会ポータルへ戻る</a>
++
+         <section class="info-panel" aria-live="polite" hidden>
+           <button type="button" class="close-panel">地図に戻る</button>
+ 
+@@ -176,7 +186,7 @@
+                   <div class="adventurer-reception-code">
+                     <span>受付番号</span>
+                     <strong data-adventurer-reception-code>00000000</strong>
+-                    <small>Googleフォームにもこの番号を書いてください。</small>
++                    <small>この花記録を識別する番号です。</small>
+                   </div>
+                 </div>
+               </div>
+@@ -366,9 +376,9 @@
+                 <span class="participation-stamp-count" data-participation-count>0/10回</span>
+                 <span class="participation-stamp-status" data-participation-status>まだ未達成</span>
+               </span>
+-              <button type="button" class="participation-stamp-button" data-participation-stamp-button>受付番号をコピーして記入へ進む</button>
++              <button type="button" class="participation-stamp-button" data-participation-stamp-button>サイトの登録を確認する</button>
+               <p class="participation-stamp-guide" data-participation-stamp-guide>
+-                フォーム記入だけでは花は入りません。送信後、このアプリの画面に戻り、受付で参加QRを読んでください。
++                サイトでお名前を登録し、会場で参加QRを読み取ってください。登録だけでは参加スタンプは付きません。
+               </p>
+             </section>
+             <div class="teacher-layout" data-teacher-mode="list">
+@@ -1459,8 +1469,11 @@
+       });
+     </script>
+     <script src="stamp-rules.js?v=20260719-teacher-photos-01"></script>
+-    <script src="script.js?v=20260903-linkage-01"></script>
++    <script src="history-merge.js?v=20260904-01"></script>
++    <script src="script.js?v=20260904-participation-02"></script>
+     <script src="linkage-client.js?v=20260903-01"></script>
++    <script src="gate-client.js?v=20260904-01"></script>
++    <script src="history-client.js?v=20260904-02"></script>
+   </body>
+ </html>
+ 
+diff --git a/script.js b/script.js
+index cbcc1fe..3f96926 100644
+--- a/script.js
++++ b/script.js
+@@ -6936,16 +6936,8 @@ const closeParticipationStartSheet = () => {
+ };
+ 
+ const openParticipationForm = () => {
+-  const code = loadReceptionCode();
+-  markParticipationFormOpened();
+   closeParticipationStartSheet();
+-  try {
+-    navigator.clipboard?.writeText(code)?.catch(() => {});
+-  } catch {
+-    // The visible code remains the fallback when clipboard access is unavailable.
+-  }
+-
+-  window.open(participationFormUrl, "_blank", "noopener,noreferrer");
++  window.location.assign("https://suiyoukai-portal.c84s4n967v.chatgpt.site");
+ };
+ 
+ const updateParticipationStampCard = () => {
+@@ -6959,7 +6951,8 @@ const updateParticipationStampCard = () => {
+   const isFirstAchievementAchieved = currentCount >= goal;
+   const isMaxAchieved = currentCount >= cycleProgress.maxCount;
+   const isStampedToday = hasParticipationStampToday();
+-  const shouldShowPostFormGuide = hasOpenedParticipationForm() && !isStampedToday;
++  const registered = window.suiyoukaiGate?.status === "registered";
++  const shouldShowPostFormGuide = registered && !isStampedToday;
+ 
+   if (participationFlowerName) {
+     participationFlowerName.textContent = cycleProgress.cycle.flowerName;
+@@ -6988,7 +6981,7 @@ const updateParticipationStampCard = () => {
+   }
+   participationStampButton.textContent = isMaxAchieved
+     ? "参加スタンプ達成済み"
+-    : "受付番号をコピーして記入へ進む";
++    : "サイトの登録を確認する";
+   participationStampButton.disabled = isMaxAchieved;
+   if (participationStartFormButton) {
+     participationStartFormButton.textContent = participationStampButton.textContent;
+@@ -6999,8 +6992,8 @@ const updateParticipationStampCard = () => {
+     participationStampGuide.textContent = isStampedToday
+       ? "今日の花は入っています。次からも同じブラウザで水曜会アプリを開いてください。"
+       : shouldShowPostFormGuide
+-        ? "フォーム送信後は、このアプリの画面に戻り、受付で参加QRを読んでください。フォーム記入だけでは花は入りません。"
+-        : "フォーム記入だけでは花は入りません。送信後、このアプリの画面に戻り、受付で参加QRを読んでください。";
++        ? "お名前の登録はサイトで済んでいます。会場で参加QRを読み取ってください。"
++        : "サイトでお名前を登録し、会場で参加QRを読み取ってください。登録だけでは参加スタンプは付きません。";
+     participationStampGuide.classList.toggle("is-urgent", shouldShowPostFormGuide);
+     participationStampGuide.classList.toggle("is-complete", isStampedToday);
+   }
+@@ -8921,7 +8914,7 @@ for (const flowerCard of flowerGuideCards) {
+     const flowerMeta = flowerCard.querySelector(".flower-guide-meta")?.textContent ?? "";
+ 
+     if (target === "participation") {
+-      showParticipationStampEntry("参加フォームはこの参加スタンプ欄から開きます");
++      openParticipationStartSheet();
+       return;
+     }
+ 
+@@ -10113,11 +10106,27 @@ renderAdminInstallQr();
+ if (!isFixedTeacherQrEventDay()) {
+   clearAdminFixedTeacherQrOutput();
+ }
++window.addEventListener("suiyoukai-gate-change", updateParticipationStampCard);
+ window.suiyoukaiLinkage = Object.freeze({
+   getAppNumber: loadReceptionCode,
+   getDisplayName: loadAdventurerName,
+   applyParticipationStamp: applyParticipationStampPayload,
+   showTodayRecord: showProfileTodayRecord,
++  getHistorySnapshot: () => ({progress:JSON.parse(JSON.stringify(userProgress)),records:JSON.parse(JSON.stringify(gameRecords)),appliedQrIds:[...appliedStampQrIds],receipts:JSON.parse(localStorage.getItem('suiyoukai-history-receipts-v1')||'{}')}),
++  applyHistoryRecord: (record) => {
++    const key='suiyoukai-history-receipts-v1';const receipts=JSON.parse(localStorage.getItem(key)||'{}');
++    const plan=window.suiyoukaiHistoryMerge.plan({progress:userProgress,records:gameRecords,appliedQrIds:[...appliedStampQrIds],receipts},record);
++    if(plan.already)return plan;
++    if(!receipts[record.id]){receipts[record.id]={applied:false,beforeProgress:JSON.parse(JSON.stringify(userProgress)),beforeRecords:JSON.parse(JSON.stringify(gameRecords))};localStorage.setItem(key,JSON.stringify(receipts));}
++    // Do not acknowledge success until every required browser write succeeds.
++    localStorage.setItem(progressStorageKey,JSON.stringify(plan.progress));localStorage.setItem(gameRecordsStorageKey,JSON.stringify(plan.records));
++    userProgress=plan.progress;gameRecords=plan.records;userProgress.stamps.teacherCircleRounds=getTeacherCircleRoundsFromCounts(userProgress.stamps.teacherLessonCounts);
++    syncTeacherDetailsFromProgress();syncProgressRewards();localStorage.setItem(progressStorageKey,JSON.stringify(userProgress));
++    receipts[record.id].applied=true;receipts[record.id].appliedAt=new Date().toISOString();localStorage.setItem(key,JSON.stringify(receipts));
++    syncAdminDraftFromProgress();updateParticipationStampCard();updateTeacherCards();updateRoundProgress();updateProfileCard();updateAdminPanel();
++    return plan;
++  },
++  openHistoryCatalog: () => showPanel('field-guide'),
+ });
+ 
+ applyStampQrFromLocation();

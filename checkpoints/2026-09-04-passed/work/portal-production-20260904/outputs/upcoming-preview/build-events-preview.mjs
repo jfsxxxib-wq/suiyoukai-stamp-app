@@ -1,0 +1,10 @@
+import {readFileSync,writeFileSync} from 'node:fs';
+const root=new URL('../../',import.meta.url);let html=readFileSync(new URL('portal.html',root),'utf8');
+const entries=[{date:'2026-09-23',day:'23',weekday:'水',time:'12:30',title:'交流戦',place:'三鷹洪道場',teacher:''},{date:'2026-09-26',day:'26',weekday:'土',time:'13:00',title:'指導碁＆定例会',place:'囲碁サロン湘南',teacher:'常石隆志六段'}];
+const cards=entries.map(e=>`<details class="event-card" data-confirmed-event="${e.date}"><summary><span class="event-date-tile"><small>9月</small><strong>${e.day}</strong><span>${e.weekday}</span></span><span class="event-card-title"><small>2026年9月</small><strong>${e.title}</strong><span>${e.time}　${e.place}</span>${e.teacher?`<span>${e.teacher}</span>`:''}</span><span class="event-chevron">⌄</span></summary><div class="event-card-details"><p><strong>日時</strong><br><time datetime="${e.date}T${e.time}:00+09:00">9月${e.day}日（${e.weekday}）${e.time} 開始</time></p><p><strong>会場</strong><br>${e.place}</p>${e.teacher?`<p><strong>指導棋士</strong><br>${e.teacher}</p>`:''}</div></details>`).join('\n');
+const marker='      <details class="event-card" data-main-event-card hidden>';
+if(!html.includes(marker))throw Error('Existing event template missing');
+html=html.replace(marker,'      '+cards+'\n'+marker).replace('class="empty-state" data-event-empty>','class="empty-state" data-event-empty hidden>');
+html=html.replace('<span>📅 開催予定を掲載します</span><span>新しい順</span>','<span>📅 2026年9月の開催予定</span><span>開催日順</span>');
+html=html.replace('<p>開催日・会場などのお知らせをここに表示します。</p>','<p>9/23 交流戦・9/26 指導碁＆定例会</p>');
+writeFileSync(new URL('index.html',import.meta.url),html);console.log('Updated existing event page with two entries. Upper regular meeting schedule and scripts unchanged.');

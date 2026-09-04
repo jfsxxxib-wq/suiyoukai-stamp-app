@@ -1,0 +1,21 @@
+(() => {
+ 'use strict';
+ const form=document.querySelector('[data-gate-form]'), returning=document.querySelector('[data-gate-returning]'),error=document.querySelector('[data-gate-error]'),status=document.querySelector('[data-gate-status]'),retry=document.querySelector('[data-gate-retry]');
+ const pendingKey='suiyoukai-registration-request-v1';let saved=null,busy=false;
+ function setBusy(value){busy=value;const submit=form.querySelector('button');submit.disabled=value;submit.textContent=value?'台帳への保存を確認しています…':'登録して花図鑑へ ›';document.querySelectorAll('[data-gate-open]').forEach(b=>b.disabled=value);retry.disabled=value;}
+ function render(){form.hidden=!!saved;returning.hidden=!saved;document.querySelector('#flower-handoff h1').textContent=saved?'花図鑑へようこそ':'お名前を登録して、花図鑑へ';document.querySelector('#flower-handoff .lead').textContent=saved?'お名前は登録済みです。そのまま花図鑑へお進みください。':'初めての方は、ここでお名前を登録します。花図鑑で同じ内容を入力する必要はありません。';if(saved){document.querySelector('[data-gate-name]').textContent=saved.familyName+' '+saved.givenName;document.querySelector('[data-gate-complete-name]').textContent=saved.familyName+' '+saved.givenName;}retry.hidden=!saved||saved.synced;document.querySelectorAll('[data-gate-open]').forEach(b=>b.disabled=busy||!saved?.synced);}
+ async function call(path,body){const response=await fetch(path,{method:body?'POST':'GET',credentials:'same-origin',cache:'no-store',headers:body?{'Content-Type':'application/json'}:undefined,body:body?JSON.stringify(body):undefined,signal:AbortSignal.timeout(30000)});const data=await response.json();if(!response.ok){if(data.participant)saved=data.participant;const failure=new Error(data.error||'保存できませんでした。再確認してください。');failure.status=response.status;throw failure;}return data;}
+ async function confirmRegistration(body){
+  for(let attempt=0;attempt<3;attempt++){
+   try{const data=await call('/api/registration',body);if(!data.participant||data.participant.synced)return data;saved=data.participant;throw new Error('台帳への記録を確認中です。少し待ってから再確認してください。');}
+   catch(failure){if(attempt===2||(failure.status&&failure.status<500))throw failure;status.textContent='お名前の登録を確認しています。そのままお待ちください。';form.querySelector('button').textContent='台帳への保存を再確認しています…';await new Promise(resolve=>setTimeout(resolve,1500));}
+  }
+ }
+ async function restore(){setBusy(true);form.hidden=true;returning.hidden=true;status.textContent='登録を確認しています…';try{const data=await confirmRegistration();saved=data.participant||null;error.hidden=true;status.textContent=saved?'正式受付台帳に保存済みです。':'お名前は水曜会の受付管理に使用します。';setBusy(false);render();}catch(e){setBusy(false);render();status.textContent=e.message;retry.hidden=false;}}
+ function requestKey(){let key=localStorage.getItem(pendingKey);if(!/^[a-f0-9]{64}$/.test(key||'')){key=Array.from(crypto.getRandomValues(new Uint8Array(32)),b=>b.toString(16).padStart(2,'0')).join('');localStorage.setItem(pendingKey,key);}return key;}
+ form.addEventListener('submit',async event=>{event.preventDefault();if(busy)return;setBusy(true);error.hidden=true;try{const data=await confirmRegistration({familyName:form.elements.familyName.value,givenName:form.elements.givenName.value,requestKey:requestKey()});saved=data.participant;setBusy(false);render();document.querySelectorAll('.view').forEach(v=>v.hidden=true);document.getElementById('gate-complete').hidden=false;window.scrollTo(0,0);}catch(e){setBusy(false);if(saved){render();status.textContent=e.message;retry.hidden=false;}else{error.textContent=e.message;error.hidden=false;}}});
+ document.querySelector('[data-gate-edit]').addEventListener('click',()=>{if(busy||!saved)return;form.elements.familyName.value=saved.familyName;form.elements.givenName.value=saved.givenName;form.hidden=false;returning.hidden=true;form.elements.familyName.focus();});
+ retry.addEventListener('click',restore);
+ document.querySelectorAll('[data-gate-open]').forEach(button=>button.addEventListener('click',async()=>{if(busy)return;setBusy(true);try{const data=await call('/api/handoff',{});const url=new URL(data.url);if(url.origin!=='https://jfsxxxib-wq.github.io'||url.pathname!=='/suiyoukai-stamp-app/')throw new Error('接続先を確認できませんでした。');location.assign(url.href);}catch(e){status.textContent=e.message;document.querySelector('[data-gate-complete-status]').textContent=e.message;setBusy(false);render();retry.hidden=false;}}));
+ restore();
+})();

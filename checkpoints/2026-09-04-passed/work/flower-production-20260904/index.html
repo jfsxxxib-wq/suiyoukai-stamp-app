@@ -1,0 +1,1479 @@
+﻿<!doctype html>
+<html lang="ja" translate="no" class="notranslate">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Language" content="ja">
+    <meta name="google" content="notranslate">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#f6f2e4">
+    <meta name="description" content="水曜会で参加と指導碁の花スタンプを記録する冒険者カードアプリです。">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="水曜会 花記録">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>水曜会 花記録</title>
+    <link rel="manifest" href="manifest.webmanifest?v=20260707-same-day-records-01">
+    <link rel="apple-touch-icon" href="assets/app-icon-180.png?v=20260705-home-screen-01">
+    <link rel="icon" type="image/png" sizes="192x192" href="assets/app-icon-192.png?v=20260705-home-screen-01">
+    <link rel="stylesheet" href="styles.css?v=20260724-safari-guide-01">
+    <link rel="stylesheet" href="linkage-client.css?v=20260903-01">
+
+    <style>
+      .info-dock { grid-template-rows:auto auto 1fr; }
+      .info-dock.is-collapsed { transform:rotate(-0.5deg); }
+      .portal-return-link { display:flex; align-items:center; justify-content:center; gap:10px; min-height:48px; box-sizing:border-box; margin:10px 0 0; padding:12px 16px; border:1px solid #87a294; border-radius:12px; background:#fffdf5; color:#285b4c; font-size:16px; font-weight:700; line-height:1.5; text-decoration:none; box-shadow:0 3px 10px #244d3810; }
+      .portal-return-link:hover { background:#edf4ed; }
+      .portal-return-link:focus-visible { outline:3px solid #285b4c; outline-offset:3px; }
+    </style>
+  </head>
+  <body>
+    <section class="browser-install-guide" data-browser-install-guide hidden aria-label="Safari利用の案内" role="dialog" aria-modal="true">
+      <div class="browser-install-guide-card">
+        <div class="browser-install-guide-accent" aria-hidden="true"></div>
+        <div class="browser-install-guide-content">
+          <p class="browser-install-guide-label">iPhoneの方へ</p>
+          <h1>Safariで<br>お使いください</h1>
+          <p class="browser-install-guide-intro">
+            このアプリはSafariで開いたままお使いください。
+          </p>
+          <div class="browser-install-guide-note">
+            <p>ホーム画面へ追加すると、Safariとは別の記録として保存される場合があります。</p>
+            <p>名前・受付番号・花やスタンプを同じ場所に残すため、Safariからご利用ください。</p>
+          </div>
+          <div class="browser-install-guide-actions">
+            <button class="browser-install-guide-button is-primary" type="button" data-browser-install-guide-dismiss>このまま使う</button>
+            <button class="browser-install-guide-button is-secondary" type="button" data-browser-install-guide-dismiss>案内を閉じる</button>
+          </div>
+        </div>
+      </div>
+    </section>
+    <main class="record-book" aria-label="冒険記録帳">
+      <section class="map-hero" aria-label="水曜会探索マップ">
+        <img src="assets/shonan-watercolor-map.png" alt="" aria-hidden="true">
+        <div class="map-veil"></div>
+        <div class="map-destination-links" aria-label="地図の目的地">
+          <button type="button" class="map-destination-button is-participation" data-map-destination="participation">
+            <span class="map-pin" aria-hidden="true"></span>
+            <span>
+              <small>水曜会</small>
+              <strong>参加する</strong>
+            </span>
+          </button>
+          <button type="button" class="map-destination-button is-shrine" data-map-destination="shrine">
+            <span class="map-pin" aria-hidden="true"></span>
+            <span>
+              <small>次の目的地</small>
+              <strong>組み合わせ神社</strong>
+            </span>
+          </button>
+        </div>
+        <div class="journey-title">
+          <p>水曜会探索マップ</p>
+          <h1>花を見つける小さな旅</h1>
+        </div>
+        <button type="button" class="next-adventure-card" data-next-adventure-button>
+          <span class="next-adventure-text">
+            <small>次の冒険</small>
+            <strong data-next-adventure-title>最初の花を見つけよう</strong>
+            <span class="next-adventure-copy" data-next-adventure-copy>参加または先生との指導碁を記録すると、冒険が始まります。</span>
+            <span class="next-adventure-action">次の冒険へ&nbsp;›</span>
+          </span>
+          <span class="next-adventure-guide" data-next-adventure-guide aria-hidden="true">
+            <span class="next-adventure-guide-speech" data-next-adventure-guide-speech>次の花へ行こう</span>
+            <img src="assets/fairy-apollon-guide.png" alt="" data-next-adventure-guide-image>
+          </span>
+        </button>
+        <button type="button" class="guidebook-button" aria-label="冒険の書">
+          <span aria-hidden="true">□</span>
+          冒険の書
+        </button>
+      </section>
+
+      <section class="participation-start-sheet" data-participation-start-sheet hidden aria-label="水曜会参加の入口">
+        <button type="button" class="participation-start-backdrop" data-participation-start-close aria-label="参加の入口を閉じる"></button>
+        <div class="participation-start-card">
+          <div class="participation-start-header">
+            <div>
+              <small>水曜会に参加する</small>
+              <h2>サイトの登録を確認する</h2>
+            </div>
+            <button type="button" class="participation-start-close" data-participation-start-close aria-label="閉じる">×</button>
+          </div>
+          <section class="participation-start-stamp" aria-label="参加スタンプ">
+            <span class="stamp-flower" data-participation-start-flower aria-hidden="true"></span>
+            <span class="participation-start-copy">
+              <small>参加スタンプ</small>
+              <strong data-participation-start-flower-name>コスモス</strong>
+              <em>お名前の登録は水曜会のサイトで行います</em>
+              <span class="participation-start-code">
+                <small>この花記録の番号</small>
+                <strong data-participation-start-reception-code>00000000</strong>
+              </span>
+              <span class="participation-start-status-line">
+                <span data-participation-start-count>0/10回</span>
+                <span data-participation-start-status>まだ未達成</span>
+              </span>
+            </span>
+            <button type="button" class="participation-start-button" data-participation-start-form>サイトの登録を確認する</button>
+            <p class="participation-start-guide" data-participation-start-guide>
+              サイトでお名前を登録し、会場で参加QRを読み取ってください。登録だけでは参加スタンプは付きません。
+            </p>
+          </section>
+        </div>
+      </section>
+
+      <section class="shrine-intro" data-shrine-intro hidden aria-label="組み合わせ神社への導入">
+        <div class="shrine-intro-stage" aria-hidden="true">
+          <div class="shrine-intro-scene is-approach"></div>
+          <div class="shrine-intro-scene is-torii"></div>
+          <div class="shrine-intro-scene is-otter"></div>
+          <div class="shrine-intro-scene is-blessing"></div>
+          <div class="shrine-intro-scene is-portal"></div>
+          <div class="shrine-intro-petals"></div>
+          <div class="shrine-intro-ring">
+            <span></span>
+          </div>
+          <div class="shrine-intro-doors">
+            <span></span>
+            <span></span>
+          </div>
+          <p class="shrine-intro-caption" data-shrine-intro-caption>参道を進みます</p>
+        </div>
+        <button type="button" class="shrine-intro-skip" data-shrine-intro-skip>すぐ参拝する</button>
+      </section>
+
+      <section class="info-dock is-collapsed" aria-label="冒険情報">
+        <nav class="info-tabs" aria-label="表示する情報">
+          <button type="button" class="info-tab" data-panel="profile" aria-pressed="false">冒険者カード</button>
+          <button type="button" class="info-tab start-tab" data-panel="field-guide" aria-pressed="false">
+            <span>花図鑑</span>
+            <small>まずここ</small>
+          </button>
+          <button type="button" class="info-tab" data-panel="titles" aria-pressed="false">書庫</button>
+          <button type="button" class="info-tab admin-tab" data-panel="admin" aria-pressed="false" aria-label="運営画面" hidden>管理</button>
+        </nav>
+
+        <a class="portal-return-link" href="https://suiyoukai-portal.c84s4n967v.chatgpt.site" target="_self" rel="noreferrer"><span aria-hidden="true">←</span> 水曜会ポータルへ戻る</a>
+
+        <section class="info-panel" aria-live="polite" hidden>
+          <button type="button" class="close-panel">地図に戻る</button>
+
+          <div class="panel-view" data-view="profile" hidden>
+            <article class="adventurer-card" aria-label="冒険者カード">
+              <div class="card-header">
+                <p class="card-label">冒険者カード</p>
+                <p class="stamp-count" data-total-stamps>スタンプ 7</p>
+              </div>
+              <p class="browser-storage-warning" data-browser-storage-warning hidden>
+                Edgeで開いています。Safariとは別の記録として保存される場合があります。Safariからご利用ください。
+              </p>
+
+              <div class="adventurer-name-block">
+                <span class="adventurer-seal" aria-hidden="true"></span>
+                <div>
+                  <small>冒険者名</small>
+                  <h1 data-adventurer-name>みずの しずく</h1>
+                  <p class="adventurer-name-hint" data-adventurer-name-hint>見本の名前です。好きな名前に変えられます。</p>
+                  <button type="button" class="adventurer-name-edit" data-adventurer-name-edit>名前を入れる</button>
+                  <form class="adventurer-name-form" data-adventurer-name-form hidden>
+                    <label>
+                      <span>このスマホで使う名前</span>
+                      <input type="text" data-adventurer-name-input autocomplete="name" maxlength="20" placeholder="お名前">
+                    </label>
+                    <button type="submit">保存</button>
+                  </form>
+                  <p class="adventurer-name-message" data-adventurer-name-message hidden></p>
+                  <div class="adventurer-reception-code">
+                    <span>受付番号</span>
+                    <strong data-adventurer-reception-code>00000000</strong>
+                    <small>この花記録を識別する番号です。</small>
+                  </div>
+                </div>
+              </div>
+
+              <section class="current-title" aria-label="現在の称号">
+                <small>現在の称号</small>
+                <strong data-profile-title>コスモスの友</strong>
+              </section>
+
+              <dl class="profile-list">
+                <div class="profile-rank-card">
+                  <dt>冒険者ランク</dt>
+                  <dd data-profile-rank>初級冒険者</dd>
+                </div>
+                <div class="profile-medal-entry">
+                  <dt>勲章</dt>
+                  <dd>
+                    <span class="medal-row">
+                      <img class="profile-medal" src="assets/medal-stage-02.png" alt="" data-profile-medal-icon hidden>
+                      <span data-profile-medal>まだ勲章なし</span>
+                    </span>
+                  </dd>
+                </div>
+                <div>
+                  <dt>花図鑑達成率</dt>
+                  <dd>
+                    <span class="guide-progress-number" data-profile-guide-progress>0/18</span>
+                    <span class="guide-progress-track" aria-hidden="true">
+                      <span data-profile-guide-progress-track style="width: 0%"></span>
+                    </span>
+                  </dd>
+                </div>
+                <div class="profile-today-record" data-profile-latest-stamp hidden>
+                  <dt>今日の記録</dt>
+                  <dd>
+                    <div class="profile-today-record-row">
+                      <span>参加スタンプ</span>
+                      <span class="profile-today-record-flower">
+                        <span class="profile-today-record-mark" data-profile-today-participation-mark>🌸</span>
+                      </span>
+                    </div>
+                    <div class="profile-today-record-row">
+                      <span>指導碁スタンプ</span>
+                      <div class="profile-today-record-stamp-sheet" data-profile-latest-teacher-stamp-sheet aria-label="今日の指導碁スタンプ台紙">
+                        <button type="button" class="profile-today-record-flower is-empty" data-profile-latest-teacher-flower aria-label="1つ目の指導碁スタンプ">
+                          <span class="profile-today-record-slot-number">1</span>
+                        </button>
+                        <button type="button" class="profile-today-record-flower is-empty" data-profile-latest-teacher-flower aria-label="2つ目の指導碁スタンプ">
+                          <span class="profile-today-record-slot-number">2</span>
+                        </button>
+                        <button type="button" class="profile-today-record-flower is-empty" data-profile-latest-teacher-flower aria-label="3つ目の指導碁スタンプ">
+                          <span class="profile-today-record-slot-number">3</span>
+                        </button>
+                      </div>
+                    </div>
+                    <small data-profile-latest-stamp-copy>先生スタンプが 0/5 から 1/5 に増えました。</small>
+                    <div class="profile-today-game-records" data-profile-today-game-records hidden></div>
+                  </dd>
+                </div>
+              </dl>
+
+              <div class="profile-section-header profile-rewards-header">
+                <p>獲得した勲章・称号</p>
+                <button type="button" class="profile-toggle-button" data-profile-toggle="rewards" aria-expanded="false" aria-controls="profile-rewards-list">開く</button>
+              </div>
+              <section class="profile-badges is-collapsed" id="profile-rewards-list" aria-label="獲得した勲章" data-profile-collapsible="rewards">
+                <span class="badge-chip is-locked" data-circle-badge>🥉 一巡目の輪</span>
+                <span class="badge-chip">🎖️ コスモスの友</span>
+                <span class="badge-chip is-locked">🥈 二巡目の輪</span>
+              </section>
+              <section class="profile-fairies" aria-label="達成した妖精" data-profile-fairies>
+                <div class="profile-section-header">
+                  <p>達成した妖精</p>
+                  <button type="button" class="profile-toggle-button" data-profile-toggle="fairies" aria-expanded="false" aria-controls="profile-fairy-list">開く</button>
+                </div>
+                <div class="profile-fairy-list is-collapsed" id="profile-fairy-list" data-profile-fairy-list data-profile-collapsible="fairies">
+                  <span class="profile-empty">まだ妖精達成はありません</span>
+                </div>
+              </section>
+              <section class="profile-special-companions" aria-label="特別な仲間" data-profile-special-companions>
+                <p>特別な仲間</p>
+                <div class="profile-special-companion-list" data-profile-special-companion-list>
+                  <span class="profile-empty">まだ特別な仲間はいません</span>
+                </div>
+              </section>
+            </article>
+          </div>
+
+          <div class="panel-view" data-view="field-guide" hidden>
+            <p class="panel-kicker">花図鑑</p>
+            <h2>花を育てよう</h2>
+            <section class="flower-guide-intro" aria-label="花を育てる案内">
+              <div class="flower-guide-copy">
+                <strong>参加や指導碁で花が咲きます</strong>
+                <p>花が満開になると、妖精や称号に出会えます。次に育てる花は「次の冒険」が案内します。</p>
+              </div>
+              <div class="flower-guide-showcase" aria-label="水曜会で育つ花">
+                <section class="flower-guide-group flower-guide-group-primary" aria-label="水曜会の基本の花">
+                  <h3 class="flower-guide-group-title">水曜会の基本</h3>
+                  <p class="flower-guide-group-note">いつもの参加と5人の先生で育つ花です。</p>
+                  <div class="flower-guide-group-grid">
+                    <button type="button" class="flower-guide-card" data-flower-guide-target="participation" aria-label="コスモスの参加スタンプへ移動">
+                      <img src="assets/cosmos-stamp-stage-05-v2.png" alt="コスモス" loading="eager" decoding="async">
+                      <span class="flower-guide-name">コスモス</span>
+                      <span class="flower-guide-meta">参加スタンプ</span>
+                      <span class="flower-guide-action">1巡目を見る</span>
+                    </button>
+                    <button type="button" class="flower-guide-card" data-flower-guide-target="tsuneishi" aria-label="菖蒲の常石先生スタンプへ移動">
+                      <img src="assets/iris-stamp-stage-05-list.png" alt="菖蒲" loading="eager" decoding="async">
+                      <span class="flower-guide-name">菖蒲</span>
+                      <span class="flower-guide-meta">常石先生</span>
+                      <span class="flower-guide-action">1巡目を見る</span>
+                    </button>
+                    <button type="button" class="flower-guide-card" data-flower-guide-target="yuki" aria-label="椿の結城先生スタンプへ移動">
+                      <img src="assets/camellia-stamp-stage-05-list.png" alt="椿" loading="eager" decoding="async">
+                      <span class="flower-guide-name">椿</span>
+                      <span class="flower-guide-meta">結城先生</span>
+                      <span class="flower-guide-action">1巡目を見る</span>
+                    </button>
+                    <button type="button" class="flower-guide-card" data-flower-guide-target="koike" aria-label="ひまわりの小池先生スタンプへ移動">
+                      <img src="assets/sunflower-stamp-stage-05-list.png" alt="ひまわり" loading="eager" decoding="async">
+                      <span class="flower-guide-name">ひまわり</span>
+                      <span class="flower-guide-meta">小池先生</span>
+                      <span class="flower-guide-action">1巡目を見る</span>
+                    </button>
+                    <button type="button" class="flower-guide-card" data-flower-guide-target="yamashiro" aria-label="紫陽花の山城先生スタンプへ移動">
+                      <img src="assets/hydrangea-stamp-stage-05-list.png" alt="紫陽花" loading="eager" decoding="async">
+                      <span class="flower-guide-name">紫陽花</span>
+                      <span class="flower-guide-meta">山城先生</span>
+                      <span class="flower-guide-action">1巡目を見る</span>
+                    </button>
+                    <button type="button" class="flower-guide-card" data-flower-guide-target="matsumoto" aria-label="桜の松本先生スタンプへ移動">
+                      <img src="assets/sakura-stamp-stage-05-list.png" alt="桜" loading="eager" decoding="async">
+                      <span class="flower-guide-name">桜</span>
+                      <span class="flower-guide-meta">松本先生</span>
+                      <span class="flower-guide-action">1巡目を見る</span>
+                    </button>
+                  </div>
+                </section>
+                <section class="flower-guide-group flower-guide-group-extra" aria-label="新しい先生の輪の花">
+                  <h3 class="flower-guide-group-title">新しい先生の輪</h3>
+                  <p class="flower-guide-group-note">観察期間中です。基本5人の輪とは別に、新しい先生との出会いを記録していきます。</p>
+                  <div class="flower-guide-group-grid">
+                    <button type="button" class="flower-guide-card" data-flower-guide-target="teacher_extra_01" aria-label="すずらんの徐文燕三段スタンプへ移動">
+                      <img src="assets/suzuran-stamp-stage-05-list.png" alt="すずらん" loading="eager" decoding="async">
+                      <span class="flower-guide-name">すずらん</span>
+                      <span class="flower-guide-meta">徐 文燕 三段</span>
+                      <span class="flower-guide-action">記録を見る</span>
+                    </button>
+                    <button type="button" class="flower-guide-card" data-flower-guide-target="teacher_extra_02" aria-label="白詰草の大西竜平七段スタンプへ移動">
+                      <img src="assets/shirotsumekusa-stamp-stage-05-list.png" alt="白詰草" loading="eager" decoding="async">
+                      <span class="flower-guide-name">白詰草</span>
+                      <span class="flower-guide-meta">大西 竜平 七段</span>
+                      <span class="flower-guide-action">記録を見る</span>
+                    </button>
+                    <button type="button" class="flower-guide-card" data-flower-guide-target="teacher_extra_03" aria-label="山吹の追加先生Cスタンプへ移動">
+                      <img src="assets/yamabuki-stamp-stage-05-list.png" alt="山吹" loading="eager" decoding="async">
+                      <span class="flower-guide-name">山吹</span>
+                      <span class="flower-guide-meta">追加先生C</span>
+                      <span class="flower-guide-action">記録を見る</span>
+                    </button>
+                    <button type="button" class="flower-guide-card" data-flower-guide-target="teacher_extra_04" aria-label="金魚草の追加先生Dスタンプへ移動">
+                      <img src="assets/kingyosou-stamp-stage-05-list.png" alt="金魚草" loading="eager" decoding="async">
+                      <span class="flower-guide-name">金魚草</span>
+                      <span class="flower-guide-meta">追加先生D</span>
+                      <span class="flower-guide-action">記録を見る</span>
+                    </button>
+                    <button type="button" class="flower-guide-card" data-flower-guide-target="teacher_extra_05" aria-label="露草の追加先生Eスタンプへ移動">
+                      <img src="assets/tsuyukusa-stamp-stage-05-list.png" alt="露草" loading="eager" decoding="async">
+                      <span class="flower-guide-name">露草</span>
+                      <span class="flower-guide-meta">追加先生E</span>
+                      <span class="flower-guide-action">記録を見る</span>
+                    </button>
+                  </div>
+                </section>
+              </div>
+            </section>
+            <h3 class="teacher-guide-heading">先生を選んで花を育てる</h3>
+            <p class="first-step-note">初参加の方は、先生を選んで指導碁スタンプを記録します。</p>
+            <section class="participation-stamp" aria-label="参加スタンプ" hidden aria-hidden="true">
+              <span class="stamp-flower" aria-hidden="true"></span>
+              <span class="participation-stamp-copy">
+                <strong data-participation-flower-name>コスモス</strong>
+                <span class="participation-reception-reminder">
+                  <strong data-participation-reception-code>00000000</strong>
+                </span>
+                <span class="participation-stamp-count" data-participation-count>0/10回</span>
+                <span class="participation-stamp-status" data-participation-status>まだ未達成</span>
+              </span>
+              <button type="button" class="participation-stamp-button" data-participation-stamp-button>サイトの登録を確認する</button>
+              <p class="participation-stamp-guide" data-participation-stamp-guide>
+                サイトでお名前を登録し、会場で参加QRを読み取ってください。登録だけでは参加スタンプは付きません。
+              </p>
+            </section>
+            <div class="teacher-layout" data-teacher-mode="list">
+              <section class="teacher-list teacher-screen is-active" aria-label="先生一覧">
+                <div class="teacher-list-header">
+                  <h3>1. 先生を選ぶ</h3>
+                  <span data-round-summary>あと1人で勲章</span>
+                </div>
+                <button type="button" class="teacher-card" data-teacher="tsuneishi" aria-pressed="false">
+                  <span class="teacher-flower" aria-hidden="true"></span>
+                  <span>
+                    <strong>常石 隆志 六段</strong>
+                    <small>記録済み・花を育てる案内人</small>
+                  </span>
+                  <span class="teacher-card-action">見る&nbsp;›</span>
+                </button>
+                <button type="button" class="teacher-card" data-teacher="yuki" aria-pressed="false">
+                  <span class="teacher-flower teacher-flower-camellia" aria-hidden="true"></span>
+                  <span>
+                    <strong>結城 聡 九段</strong>
+                    <small>記録済み・読みをほどく案内人</small>
+                  </span>
+                  <span class="teacher-card-action">見る&nbsp;›</span>
+                </button>
+                <button type="button" class="teacher-card" data-teacher="koike" aria-pressed="false">
+                  <span class="teacher-flower teacher-flower-sun" aria-hidden="true"></span>
+                  <span>
+                    <strong>小池 芳弘 七段</strong>
+                    <small>記録済み・一手を照らす案内人</small>
+                  </span>
+                  <span class="teacher-card-action">見る&nbsp;›</span>
+                </button>
+                <button type="button" class="teacher-card" data-teacher="yamashiro" aria-pressed="false">
+                  <span class="teacher-flower teacher-flower-hydrangea" aria-hidden="true"></span>
+                  <span>
+                    <strong>山城 宏 九段</strong>
+                    <small>記録済み・読みを導く庭師</small>
+                  </span>
+                  <span class="teacher-card-action">見る&nbsp;›</span>
+                </button>
+                <button type="button" class="teacher-card next-teacher" data-teacher="matsumoto" aria-pressed="false">
+                  <span class="teacher-flower teacher-flower-sakura" aria-hidden="true"></span>
+                  <span>
+                    <strong>松本 武久 八段</strong>
+                    <small>未記録・ここをタップして一巡目を達成</small>
+                  </span>
+                  <span class="teacher-card-action">見る&nbsp;›</span>
+                </button>
+                <section class="teacher-list-group teacher-list-group-extra" aria-label="新しい先生の輪">
+                  <h4>新しい先生の輪</h4>
+                  <p>観察期間中の出会いを、基本5人の輪とは別に残します。</p>
+                  <button type="button" class="teacher-card next-teacher" data-teacher="teacher_extra_01" aria-pressed="false">
+                    <span class="teacher-flower" aria-hidden="true"></span>
+                    <span>
+                      <strong>徐 文燕 三段</strong>
+                      <small>新しい先生の輪・すずらんから始まる花巡り</small>
+                    </span>
+                    <span class="teacher-card-action">見る&nbsp;›</span>
+                  </button>
+                  <button type="button" class="teacher-card next-teacher" data-teacher="teacher_extra_02" aria-pressed="false">
+                    <span class="teacher-flower" aria-hidden="true"></span>
+                    <span>
+                      <strong>大西 竜平 七段</strong>
+                      <small>新しい先生の輪・白詰草から始まる花巡り</small>
+                    </span>
+                    <span class="teacher-card-action">見る&nbsp;›</span>
+                  </button>
+                  <button type="button" class="teacher-card next-teacher" data-teacher="teacher_extra_03" aria-pressed="false">
+                    <span class="teacher-flower" aria-hidden="true"></span>
+                    <span>
+                      <strong>追加先生C</strong>
+                      <small>新しい先生の輪・山吹から始まる花巡り</small>
+                    </span>
+                    <span class="teacher-card-action">見る&nbsp;›</span>
+                  </button>
+                  <button type="button" class="teacher-card next-teacher" data-teacher="teacher_extra_04" aria-pressed="false">
+                    <span class="teacher-flower" aria-hidden="true"></span>
+                    <span>
+                      <strong>追加先生D</strong>
+                      <small>新しい先生の輪・金魚草から始まる花巡り</small>
+                    </span>
+                    <span class="teacher-card-action">見る&nbsp;›</span>
+                  </button>
+                  <button type="button" class="teacher-card next-teacher" data-teacher="teacher_extra_05" aria-pressed="false">
+                    <span class="teacher-flower" aria-hidden="true"></span>
+                    <span>
+                      <strong>追加先生E</strong>
+                      <small>新しい先生の輪・露草から始まる花巡り</small>
+                    </span>
+                    <span class="teacher-card-action">見る&nbsp;›</span>
+                  </button>
+                </section>
+                <section class="circle-stamps" aria-label="全員の先生と1回対局スタンプ">
+                  <div class="circle-stamps-header">
+                    <h4>全員の先生と1回対局スタンプ</h4>
+                    <span data-round-remaining>あと1人</span>
+                  </div>
+                  <div class="circle-stamp-grid">
+                    <article class="circle-stamp circle-stamp-feature is-next" data-circle-stamp="first">
+                      <span class="circle-medal" aria-hidden="true">
+                        <i></i><i></i><i></i><i></i><i></i>
+                      </span>
+                      <span class="circle-stamp-copy">
+                        <strong>一巡目の輪</strong>
+                        <small>5人の先生と1回ずつ対局すると開く特別スタンプ</small>
+                      </span>
+                      <span class="circle-stamp-status" data-circle-status>4/5人 達成中</span>
+                    </article>
+                    <div class="circle-stamp-nexts" aria-label="次に開くスタンプ">
+                      <article class="circle-stamp is-next">
+                        <span class="circle-medal" aria-hidden="true">
+                          <i></i><i></i><i></i><i></i><i></i>
+                        </span>
+                        <strong>二巡目の輪</strong>
+                      </article>
+                      <article class="circle-stamp is-observation">
+                        <span class="circle-observation-mark" aria-hidden="true">
+                          <i></i><i></i><i></i><i></i><i></i>
+                        </span>
+                        <strong>新しい先生の記録</strong>
+                        <small>観察期間</small>
+                      </article>
+                    </div>
+                  </div>
+                </section>
+              </section>
+
+              <section class="teacher-detail teacher-screen" aria-label="先生詳細" hidden>
+                <button type="button" class="back-to-list">先生一覧に戻る</button>
+                <p class="detail-label">先生詳細</p>
+                <h3 data-teacher-name>常石 隆志 六段</h3>
+                <section class="current-flower-card" aria-label="いま育てている花">
+                  <img src="assets/iris-stamp-stage-05-list.png" alt="菖蒲" data-current-flower-image>
+                  <span>
+                    <small>いま育てている花</small>
+                    <strong data-current-flower-name>菖蒲の花 1巡目</strong>
+                    <em data-current-flower-progress>3/5回 あと2回で満開</em>
+                    <span class="current-flower-stamps" data-current-flower-stamps aria-label="押したスタンプ数"></span>
+                  </span>
+                </section>
+                <div class="teacher-photo-card" data-bloom-count="3" data-fairy="false" data-flower="cosmos">
+                  <div class="teacher-card-heading">
+                    <strong data-teacher-card-name>常石 隆志 六段</strong>
+                    <span>囲碁指導者</span>
+                  </div>
+                  <div class="teacher-photo" data-teacher-photo="akari" aria-label="先生写真">
+                    <span data-photo-initial>常</span>
+                  </div>
+                  <div class="bloom-ring" aria-hidden="true">
+                    <span class="bloom bloom-1"></span>
+                    <span class="bloom bloom-2"></span>
+                    <span class="bloom bloom-3"></span>
+                    <span class="bloom bloom-4"></span>
+                    <span class="bloom bloom-5"></span>
+                    <span class="bloom bloom-6"></span>
+                    <span class="bloom bloom-7"></span>
+                    <span class="bloom bloom-8"></span>
+                  </div>
+                  <span class="fairy-badge" aria-hidden="true"></span>
+                  <section class="card-stamp-count" aria-label="指導囲碁を受けた回数">
+                    <small>指導囲碁を受けた回数</small>
+                    <strong><span data-card-stamp-current>3</span> / <span data-card-stamp-goal>5</span> 回</strong>
+                  </section>
+                  <section class="fairy-achievement" data-fairy-achievement hidden aria-label="妖精スタンプ達成">
+                    <div class="achievement-petal-field" aria-hidden="true">
+                      <span></span>
+                      <span></span>
+                      <span></span>
+                      <span></span>
+                      <span></span>
+                      <span></span>
+                      <span></span>
+                      <span></span>
+                      <span></span>
+                      <span></span>
+                      <span></span>
+                      <span></span>
+                    </div>
+                    <p class="achievement-ribbon" data-achievement-title>妖精スタンプ達成</p>
+                    <img class="achievement-fairy" data-achievement-fairy src="assets/fairy-companion-iris-v2.png" alt="">
+                    <p class="achievement-copy" data-achievement-copy>5回目の指導スタンプで妖精があらわれました。</p>
+                  </section>
+                  <div class="detail-actions">
+                    <ol class="stamp-flow-steps" aria-label="スタンプ記録の流れ" hidden>
+                      <li class="is-complete">先生選択</li>
+                      <li data-flow-step="confirm">対局記録</li>
+                      <li data-flow-step="done">確認待ち</li>
+                    </ol>
+                    <section class="game-record-form" data-game-record-form hidden aria-label="対局記録の入力">
+                      <label>
+                        <span>対局日</span>
+                        <input type="date" lang="ja" data-game-record-date aria-label="対局日">
+                      </label>
+                      <label>
+                        <span>ハンデ</span>
+                        <select data-game-record-handicap>
+                          <option value="互先">互先</option>
+                          <option value="先">先</option>
+                          <option value="先逆コミ6.5目">先逆コミ6.5目</option>
+                          <option value="2子">2子</option>
+                          <option value="3子">3子</option>
+                          <option value="4子">4子</option>
+                          <option value="5子">5子</option>
+                          <option value="6子">6子</option>
+                          <option value="7子">7子</option>
+                          <option value="8子">8子</option>
+                          <option value="9子">9子</option>
+                        </select>
+                      </label>
+                      <label>
+                        <span>勝敗</span>
+                        <select data-game-record-result>
+                          <option value="記録なし">記録なし</option>
+                          <option value="勝ち">勝ち</option>
+                          <option value="負け">負け</option>
+                          <option value="持碁">持碁</option>
+                        </select>
+                      </label>
+                    </section>
+                    <section class="stamp-confirm-card" data-confirm-card aria-label="記録内容の確認" hidden>
+                      <small data-confirm-label>これから記録する内容</small>
+                      <strong data-confirm-teacher>常石 隆志 六段</strong>
+                      <span data-confirm-effect>指導後スタンプを1つ追加します。</span>
+                    </section>
+                    <a
+                      class="google-form-link"
+                      href="https://docs.google.com/forms/d/e/1FAIpQLSegoLkRkzQTTsj90BbVBdUOzocBhzh452_XsQ183cFLve9Glw/viewform?usp=dialog"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >詳しく残す時だけ対局記録フォームを開く</a>
+                    <p class="event-first-note" data-teacher-event-first-note>
+                      ふだんは先生席のQRで花を入れます。ハンデや勝敗まで残す時だけフォームを使います。
+                    </p>
+                    <button type="button" class="complete-teacher" hidden>2. 対局記録を入力</button>
+                    <p data-flow-message>先生席のQRで花が入ります。対局内容まで残す時だけフォームを使います。</p>
+                  </div>
+                </div>
+                <section class="teacher-game-records" data-teacher-game-records aria-label="保存した対局記録">
+                  <h4>対局記録</h4>
+                  <div data-teacher-game-record-list>
+                    <p class="game-record-empty">まだ対局記録はありません</p>
+                  </div>
+                </section>
+                <dl>
+                  <div>
+                    <dt>指導後</dt>
+                    <dd><strong data-teacher-stamp>妖精まで 3/5</strong><br>5回で妖精スタンプが出現</dd>
+                  </div>
+                  <div>
+                    <dt>棋風</dt>
+                    <dd data-teacher-style>読みの筋道をやさしく整える</dd>
+                  </div>
+                  <div>
+                    <dt>レッスン</dt>
+                    <dd data-teacher-lesson>一手の意味をたどりながら、花を育てるように進む指導</dd>
+                  </div>
+                  <div>
+                    <dt>おすすめ</dt>
+                    <dd data-teacher-note>落ち着いて考えたい冒険者へ</dd>
+                  </div>
+                </dl>
+              </section>
+            </div>
+
+          </div>
+
+          <div class="panel-view" data-view="shrine" hidden>
+            <section class="kumiawase-shrine" aria-label="組み合わせ神社">
+              <header class="shrine-header">
+                <div>
+                  <p class="panel-kicker">次の目的地</p>
+                  <h2>組み合わせ神社</h2>
+                  <p>水曜会の組み合わせ案を作ります。</p>
+                </div>
+                <span class="shrine-torii-mark" aria-hidden="true"></span>
+              </header>
+
+              <section class="shrine-guide-card" aria-label="組み合わせ神社の案内">
+                <figure class="shrine-guide-companion is-fox">
+                  <span class="shrine-guide-orb" aria-hidden="true">
+                    <img src="assets/special-fox-miko-connection-c.png" alt="">
+                  </span>
+                  <figcaption data-shrine-fox-speech>今日はどんな
+ご縁を結ぶ？</figcaption>
+                </figure>
+                <figure class="shrine-guide-companion is-otter">
+                  <span class="shrine-guide-orb" aria-hidden="true">
+                    <img src="assets/shrine-otter-miko.png" alt="">
+                  </span>
+                  <figcaption data-shrine-otter-speech>石の準備
+できてるよ！</figcaption>
+                </figure>
+              </section>
+
+              <nav class="shrine-path-steps" aria-label="組み合わせ神社の流れ">
+                <button type="button" data-shrine-path-mode="pairgo">
+                  <small>1</small>
+                  <strong>組を作る</strong>
+                </button>
+                <button type="button" data-shrine-path-mode="amateur">
+                  <small>2</small>
+                  <strong>対戦を決める</strong>
+                </button>
+                <button type="button" data-shrine-path-result>
+                  <small>3</small>
+                  <strong>結果を見る</strong>
+                </button>
+              </nav>
+
+              <section class="shrine-card shrine-event-card" aria-label="今日の会">
+                <small data-shrine-mode-kicker>水曜会プリセット</small>
+                <strong data-shrine-mode-title>先生ごとの多面打ちで組み合わせ</strong>
+                <span data-shrine-mode-copy>先生ごとに面数と回数を決め、指導碁の組み合わせを出します。</span>
+                <div class="shrine-mode-switch" aria-label="組み合わせモード">
+                  <button type="button" class="is-active" data-shrine-mode="lesson" aria-pressed="true">指導碁 多面打ち</button>
+                  <button type="button" data-shrine-mode="amateur" aria-pressed="false">大会対戦</button>
+                  <button type="button" data-shrine-mode="pairgo" aria-pressed="false">ペア・団体づくり</button>
+                </div>
+              </section>
+
+              <section class="shrine-card shrine-pairgo-builder" aria-label="ペア・団体づくり" data-shrine-pairgo-only hidden>
+                <div class="shrine-section-heading">
+                  <h3>ペア・団体づくり</h3>
+                  <button type="button" data-shrine-collapsible-toggle="pairgo-settings" aria-expanded="false" aria-controls="shrine-pairgo-settings">細かい設定を開く</button>
+                </div>
+                <small class="shrine-form-hint">2人組ならこのまま使えます。決まっている組や3人組以上は開いて設定します。</small>
+                <small class="shrine-form-hint shrine-use-tip" data-shrine-pairgo-only hidden>大人数の時は4人組を作り、各組の代表を決めてから代表トーナメントに進めます。</small>
+                <div class="shrine-collapsible-panel" id="shrine-pairgo-settings" data-shrine-collapsible="pairgo-settings" hidden>
+                  <label class="shrine-fixed-groups">
+                    <span>決まっているペア・団体</span>
+                    <textarea data-shrine-fixed-groups rows="4" placeholder="例&#10;佐藤さん・鈴木さん&#10;田中さん・山本さん"></textarea>
+                  </label>
+                  <label class="shrine-group-size">
+                    <span>1組の人数</span>
+                    <select data-shrine-group-size aria-label="1組の人数">
+                      <option value="2" selected>2人組</option>
+                      <option value="3">3人組</option>
+                      <option value="4">4人組</option>
+                      <option value="5">5人組</option>
+                      <option value="6">6人組</option>
+                      <option value="7">7人組</option>
+                      <option value="8">8人組</option>
+                      <option value="9">9人組</option>
+                      <option value="10">10人組</option>
+                      <option value="11">11人組</option>
+                      <option value="12">12人組</option>
+                      <option value="13">13人組</option>
+                      <option value="14">14人組</option>
+                      <option value="15">15人組</option>
+                    </select>
+                  </label>
+                  <small class="shrine-form-hint">決まっていない人は参加者欄に1人ずつ入れてください。空いている人を自動で組にします。</small>
+                </div>
+              </section>
+
+              <section class="shrine-card shrine-tournament-builder" aria-label="大会対戦の設定" data-shrine-amateur-only hidden>
+                <div class="shrine-section-heading">
+                  <h3>大会対戦</h3>
+                  <small>個人名や組番号で対戦を作ります</small>
+                </div>
+                <label class="shrine-match-method">
+                  <span>対戦方式</span>
+                  <select data-shrine-match-method aria-label="対戦方式">
+                    <option value="shuffle" selected>交流戦・遊びイベント</option>
+                    <option value="tournament">トーナメント初回</option>
+                    <option value="swiss">スイス方式初回</option>
+                  </select>
+                </label>
+                <small class="shrine-form-hint">ペア・団体づくりで出した番号や、個人戦の出場番号も参加者として入力できます。リーグ戦はここでは扱いません。</small>
+                <small class="shrine-form-hint shrine-use-tip" data-shrine-amateur-only hidden>32人なら4人×8組で代表を決め、代表8人でトーナメントにすると扱いやすいです。</small>
+              </section>
+
+              <section class="shrine-card shrine-number-entry" aria-label="組番号の一括入力" data-shrine-amateur-only hidden>
+                <div class="shrine-section-heading">
+                  <h3>番号を使う</h3>
+                  <small>個人戦にもペア・団体にも使えます</small>
+                </div>
+                <div class="shrine-number-entry-row">
+                  <label>
+                    <span>最後の番号</span>
+                    <input type="number" min="2" max="200" value="8" inputmode="numeric" data-shrine-number-count aria-label="最後の番号">
+                  </label>
+                  <button type="button" data-shrine-number-apply>番号を参加者欄へ入れる</button>
+                </div>
+                <small class="shrine-form-hint" data-shrine-number-message>例: 8なら 1番から8番までを入れます。個人戦では個人番号として使えます。</small>
+              </section>
+
+              <section class="shrine-card" aria-label="先生選択" data-shrine-lesson-only>
+                <div class="shrine-section-heading">
+                  <h3>今日の先生</h3>
+                  <div class="shrine-teacher-heading-actions">
+                    <span data-shrine-teacher-count>0面</span>
+                    <button type="button" data-shrine-teacher-editor-toggle aria-expanded="false" aria-controls="shrine-teacher-editor">参加先生を選ぶ</button>
+                  </div>
+                </div>
+                <div class="shrine-active-teacher-list" data-shrine-active-teachers></div>
+                <label class="shrine-round-count" data-shrine-round-count-wrap>
+                  <span>回数</span>
+                  <select data-shrine-round-count aria-label="組み合わせの回数">
+                    <option value="1">1回</option>
+                    <option value="2">2回</option>
+                    <option value="3" selected>3回</option>
+                    <option value="4">4回</option>
+                  </select>
+                </label>
+                <div class="shrine-teacher-list" id="shrine-teacher-editor" data-shrine-teachers hidden></div>
+              </section>
+
+              <section class="shrine-card" aria-label="参加者入力" data-shrine-participant-card>
+                <div class="shrine-section-heading">
+                  <h3>参加者</h3>
+                  <div class="shrine-participant-actions">
+                    <button type="button" data-shrine-roster-toggle aria-expanded="false">よく来る人を開く</button>
+                    <button type="button" data-shrine-sample>見本を入れる</button>
+                    <button type="button" data-shrine-reset>リセット</button>
+                  </div>
+                </div>
+                <section class="shrine-roster-panel" data-shrine-roster-panel hidden aria-label="よく来る人の名簿">
+                  <div class="shrine-roster-actions">
+                    <button type="button" data-shrine-roster-apply>選んだ人を参加者欄へ入れる</button>
+                    <button type="button" data-shrine-roster-edit-toggle aria-expanded="false">登録する</button>
+                  </div>
+                  <div class="shrine-roster-editor" data-shrine-roster-editor hidden>
+                    <strong>よく来る人を登録</strong>
+                    <div class="shrine-roster-form-grid">
+                      <label>
+                        <span>名前</span>
+                        <input type="text" data-shrine-roster-form-name autocomplete="off" placeholder="佐藤さん">
+                      </label>
+                      <label>
+                        <span>性別</span>
+                        <select data-shrine-roster-form-gender>
+                          <option value="">未設定</option>
+                          <option value="female">女</option>
+                          <option value="male">男</option>
+                        </select>
+                      </label>
+                      <label>
+                        <span>段級位</span>
+                        <select data-shrine-roster-form-strength-type>
+                          <option value="">未設定</option>
+                          <option value="kyu">級</option>
+                          <option value="dan">段</option>
+                          <option value="point">点</option>
+                        </select>
+                      </label>
+                      <label>
+                        <span>数字入力</span>
+                        <input type="text" data-shrine-roster-form-strength-value inputmode="text" pattern="-?[0-9]*" placeholder="0">
+                      </label>
+                    </div>
+                    <div class="shrine-roster-form-actions">
+                      <button type="button" data-shrine-roster-save>登録</button>
+                      <button type="button" data-shrine-roster-delete>消去</button>
+                    </div>
+                  </div>
+                  <label class="shrine-roster-search">
+                    <span>探す</span>
+                    <input type="search" data-shrine-roster-search placeholder="名前・性別・棋力">
+                  </label>
+                  <div class="shrine-roster-list" data-shrine-roster-list></div>
+                  <small data-shrine-roster-message>来ている人にチェックしてください。</small>
+                </section>
+                <section class="shrine-participant-quick-add" aria-label="参加者を1人ずつ追加">
+                  <div class="shrine-quick-add-heading">
+                    <strong>1人ずつ追加</strong>
+                    <small>名前だけでも入れられます</small>
+                  </div>
+                  <div class="shrine-quick-add-grid">
+                    <label>
+                      <span>名前</span>
+                      <input type="text" data-shrine-quick-name placeholder="佐藤さん" autocomplete="off">
+                    </label>
+                    <label>
+                      <span>性別</span>
+                      <select data-shrine-quick-gender aria-label="性別">
+                        <option value="">未設定</option>
+                        <option value="female">女</option>
+                        <option value="male">男</option>
+                      </select>
+                    </label>
+                    <label>
+                      <span>棋力</span>
+                      <select data-shrine-quick-strength-type aria-label="棋力方式">
+                        <option value="">未設定</option>
+                        <option value="kyu">級</option>
+                        <option value="dan">段</option>
+                        <option value="point">点</option>
+                      </select>
+                    </label>
+                    <label>
+                      <span>数値</span>
+                      <input type="text" data-shrine-quick-strength-value inputmode="text" pattern="-?[0-9]*" placeholder="0">
+                    </label>
+                    <button type="button" data-shrine-quick-add>参加者欄へ追加</button>
+                  </div>
+                  <small data-shrine-quick-message>名前を入れて追加してください。</small>
+                </section>
+                <label class="shrine-participant-input">
+                  <span>参加者欄</span>
+                  <textarea data-shrine-participants rows="7" placeholder="例&#10;佐藤花子さん 女 3級&#10;鈴木太郎さん 男 1200点&#10;田中一郎さん 2段"></textarea>
+                </label>
+              </section>
+
+              <section class="shrine-card shrine-wish-card" aria-label="希望条件">
+                <div class="shrine-section-heading">
+                  <h3>希望条件</h3>
+                  <button type="button" data-shrine-collapsible-toggle="wishes" aria-expanded="false" aria-controls="shrine-wish-options">希望条件を開く</button>
+                </div>
+                <small class="shrine-form-hint">いつものおすすめ条件で作ります。変えたい時だけ開きます。</small>
+                <div class="shrine-collapsible-panel" id="shrine-wish-options" data-shrine-collapsible="wishes" hidden>
+                  <div class="shrine-wish-list" data-shrine-lesson-only>
+                    <label><input type="checkbox" checked disabled> 先生をなるべく均等に使う</label>
+                    <label><input type="checkbox" checked disabled> 先生の面数まで割り当てる</label>
+                    <label><input type="checkbox" checked disabled> 回ごとに順番をずらす</label>
+                    <label><input type="checkbox" checked disabled> 余った方は待機にする</label>
+                  </div>
+                  <div class="shrine-wish-list" data-shrine-amateur-only hidden>
+                    <label><input type="checkbox" checked disabled> 個人名や組番号で1対1を作る</label>
+                    <label><input type="checkbox" checked disabled> 個人にも出場番号を付ける</label>
+                    <label><input type="checkbox" checked disabled> 交流戦は相手を変えやすくする</label>
+                    <label><input type="checkbox" checked disabled> リーグ戦はここでは扱わない</label>
+                  </div>
+                  <div class="shrine-wish-list" data-shrine-pairgo-only hidden>
+                    <label><input type="checkbox" checked disabled> ペア・団体を作る</label>
+                    <label><input type="checkbox" checked data-shrine-mixed-gender-pairs> 男女のペアを優先する</label>
+                    <label><input type="checkbox" checked data-shrine-close-strength-pairs> 棋力が近いを優先する</label>
+                    <label><input type="checkbox" checked data-shrine-balanced-team-strength> 全チームの平均棋力が近くなる</label>
+                    <label><input type="checkbox" checked disabled> 決まっている組を先に使う</label>
+                    <label><input type="checkbox" checked disabled> 作った組に番号を付ける</label>
+                    <label><input type="checkbox" checked disabled> 余りは控えにする</label>
+                  </div>
+                </div>
+              </section>
+
+              <section class="shrine-card shrine-oracle-panel" aria-label="組み合わせを出す前の確認">
+                <label class="shrine-match-method shrine-match-method-shortcut" data-shrine-amateur-only hidden>
+                  <span>対戦方式</span>
+                  <select data-shrine-match-method-shortcut aria-label="下の対戦方式">
+                    <option value="shuffle" selected>交流戦・遊びイベント</option>
+                    <option value="tournament">トーナメント初回</option>
+                    <option value="swiss">スイス方式初回</option>
+                  </select>
+                </label>
+                <button type="button" class="shrine-oracle-button" data-shrine-generate>組み合わせを出す</button>
+              </section>
+
+              <section class="shrine-result" data-shrine-result aria-live="polite">
+                <p>参加者と先生を入れると、ここに組み合わせ案が出ます。</p>
+              </section>
+
+              <section class="shrine-card shrine-records" aria-label="保存した組み合わせ">
+                <div class="shrine-card-heading">
+                  <h3>今日の組み合わせ</h3>
+                  <small>必要な案だけ残せます</small>
+                </div>
+                <div class="shrine-record-actions">
+                  <button type="button" data-shrine-record-save disabled>今の組み合わせを残す</button>
+                  <button type="button" data-shrine-record-clear>保存を空にする</button>
+                </div>
+                <small data-shrine-record-message>結果を出すと保存できるようになります。</small>
+                <div class="shrine-record-list" data-shrine-record-list></div>
+              </section>
+            </section>
+          </div>
+
+          <div class="panel-view owl-library" data-view="titles" hidden>
+            <header class="owl-library-header">
+              <div class="owl-library-heading">
+                <p class="panel-kicker">知恵と達成の記録</p>
+                <h2>フクロウの書庫</h2>
+                <p data-library-guide hidden>知恵の見守り役が、旅の記録を大切に収めています。</p>
+              </div>
+              <section class="library-current-title" aria-label="現在の称号">
+                <small>現在ひらいている称号</small>
+                <strong data-library-current-title>まだ称号はありません</strong>
+                <span data-library-summary>称号 0冊・勲章 0点</span>
+              </section>
+              <div class="library-owl-guide">
+                <p class="owl-library-speech" data-library-speech>「ようこそ書庫へ。」</p>
+                <button type="button" class="library-owl-button" data-library-owl-viewer aria-label="知恵の見守り役を大きく見る">
+                  <img data-library-owl src="assets/special-companion-owl-a.png" alt="知恵の見守り役">
+                </button>
+              </div>
+              <section class="library-next-shelf" aria-label="冒険日誌">
+                <div class="library-journal-copy">
+                  <small>次の開架予定</small>
+                  <strong>冒険日誌</strong>
+                  <span>今日の出来事と小さなひとことをしまえます。</span>
+                </div>
+                <div class="library-journal-keeper">
+                  <p class="library-journal-keeper-speech" data-library-journal-keeper-speech>思い出が増えてきたね。</p>
+                  <button type="button" class="library-journal-keeper-button" data-library-journal-keeper-viewer aria-label="冒険日誌の記録係を大きく見る">
+                    <img class="library-journal-keeper-art" src="assets/library-journal-hedgehog-with-book.png" alt="" aria-hidden="true">
+                  </button>
+                </div>
+                <ul class="library-journal-records" id="library-journal-records" data-library-journal-records>
+                  <li>最初の記録を準備しています。</li>
+                </ul>
+                <div class="library-journal-prompt" id="library-journal-prompt">
+                  <p data-library-journal-prompt>今日の思い出、しまっておく？</p>
+                  <div class="library-journal-actions">
+                    <button type="button" data-library-journal-skip>今日は書かない</button>
+                    <button type="button" data-library-journal-note>ひとこと残す</button>
+                  </div>
+                  <div class="library-journal-note-form" data-library-journal-note-form hidden>
+                    <input type="text" data-library-journal-note-input aria-label="今日のひとこと" maxlength="80" placeholder="今日のひとこと">
+                    <button type="button" data-library-journal-note-save>残す</button>
+                  </div>
+                  <button type="button" class="library-journal-book" data-library-journal-toggle aria-expanded="true" aria-controls="library-journal-records library-journal-prompt" aria-label="冒険日誌を閉じる">
+                    <span class="library-journal-state" data-library-journal-state>とじる</span>
+                    <span data-library-journal-pages>1頁</span>
+                  </button>
+                </div>
+              </section>
+            </header>
+
+            <section class="library-section" aria-labelledby="library-title-heading">
+              <div class="library-section-heading">
+                <div>
+                  <small>第一書架</small>
+                  <h3 id="library-title-heading">称号の書架<span class="library-heading-count" data-library-title-count>0冊</span></h3>
+                </div>
+                <button type="button" class="library-title-shelf-button" data-library-title-art-toggle aria-expanded="false" aria-controls="library-title-list" aria-label="称号の書架を開く">
+                  <img class="library-title-shelf-art" src="assets/library-bookshelf.png" alt="" aria-hidden="true">
+                </button>
+                <button type="button" class="profile-toggle-button" data-library-title-toggle aria-expanded="false" aria-controls="library-title-list">開く</button>
+              </div>
+              <div class="library-title-list is-collapsed" id="library-title-list" data-library-title-list>
+                <p class="library-empty">まだ収められた称号はありません</p>
+              </div>
+            </section>
+
+            <section class="library-section" aria-labelledby="library-medal-heading">
+              <div class="library-section-heading library-medal-heading">
+                <div>
+                  <small>記念品棚</small>
+                  <h3 id="library-medal-heading">勲章の棚<span class="library-heading-count" data-library-medal-count>0点</span></h3>
+                </div>
+                <button type="button" class="library-medal-case-button" data-library-medal-art-toggle aria-expanded="false" aria-controls="library-medal-list" aria-label="勲章の棚を開く">
+                  <img class="library-medal-case-art" src="assets/library-medal-case.png" alt="" aria-hidden="true">
+                </button>
+                <button type="button" class="profile-toggle-button" data-library-medal-toggle aria-expanded="false" aria-controls="library-medal-list">開く</button>
+              </div>
+              <div class="library-medal-list is-collapsed" id="library-medal-list" data-library-medal-list>
+                <p class="library-empty">まだ収められた勲章はありません</p>
+              </div>
+            </section>
+
+            <section class="library-section" aria-labelledby="library-record-heading">
+              <div class="library-section-heading">
+                <div>
+                  <small>閲覧台帳</small>
+                  <h3 id="library-record-heading">達成の記録</h3>
+                </div>
+              </div>
+              <div class="library-achievement-list" data-library-achievement-list></div>
+            </section>
+
+          </div>
+
+          <div class="panel-view" data-view="admin" hidden>
+            <p class="panel-kicker">運営画面</p>
+            <h2>スタンプ管理</h2>
+            <section class="admin-lock-card" data-admin-lock-card aria-label="運営画面ロック">
+              <p>運営端末で設定したパスコードを入力してください。</p>
+              <div class="admin-passcode-row">
+                <input type="password" data-admin-passcode-input aria-label="運営用パスコード" autocomplete="off">
+                <button type="button" data-admin-passcode-button>解除</button>
+              </div>
+              <small data-admin-passcode-message>公開用コードにはパスコードを入れていません。初回だけ、この運営端末でパスコードを設定します。</small>
+            </section>
+            <section class="admin-card" aria-label="運営画面モック" hidden>
+              <div class="admin-status">
+                <span data-admin-state>確認中</span>
+                <strong data-admin-summary>一巡目の輪まであと1人</strong>
+              </div>
+
+              <section class="admin-identity-card" aria-label="操作対象の確認">
+                <div class="admin-identity-heading">
+                  <strong>操作対象</strong>
+                  <span>QR以外で反映・修正する前に確認</span>
+                </div>
+                <dl class="admin-identity-list">
+                  <div>
+                    <dt>受付番号</dt>
+                    <dd>
+                      <input type="text" data-admin-identity-code aria-label="操作対象の受付番号" inputmode="numeric" autocomplete="off" placeholder="受付番号">
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>画面名</dt>
+                    <dd>
+                      <input type="text" data-admin-identity-display-name aria-label="操作対象の画面名" autocomplete="off" placeholder="画面の名前">
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>本名・確認名</dt>
+                    <dd>
+                      <input type="text" data-admin-identity-real-name aria-label="本名または確認名" autocomplete="off" placeholder="未確認">
+                    </dd>
+                  </div>
+                </dl>
+                <p class="admin-identity-note" data-admin-identity-note>この端末の記録を操作します。</p>
+              </section>
+
+              <section class="admin-operation-card" aria-label="反映内容のまとめ">
+                <div class="admin-operation-heading">
+                  <strong>反映内容</strong>
+                  <span>上の人に入れる内容を確認</span>
+                </div>
+                <dl class="admin-check-list">
+                  <div>
+                    <dt>参加者</dt>
+                    <dd data-admin-participant-name>みずの しずく</dd>
+                  </div>
+                  <div>
+                    <dt>参加</dt>
+                    <dd data-admin-participation>今日の参加スタンプを入れる</dd>
+                  </div>
+                  <div>
+                    <dt>対局</dt>
+                    <dd data-admin-teacher>松本 武久 八段</dd>
+                  </div>
+                  <div>
+                    <dt>内容</dt>
+                    <dd data-admin-result>対局内容を確認中</dd>
+                  </div>
+                </dl>
+                <button type="button" class="admin-combined-apply" data-admin-combined-apply>この内容をまとめて反映</button>
+                <button type="button" class="admin-duplicate-teacher-apply" data-admin-duplicate-teacher-apply hidden>同じ条件でもう1局として追加</button>
+                <small data-admin-combined-message>参加スタンプと対局内容を確認してから押してください。</small>
+              </section>
+
+              <div class="admin-section-heading">
+                <strong>今日の運営</strong>
+                <span>本人スマホでSafariから開く入口QRを先に使う</span>
+              </div>
+              <section class="admin-participation-apply" aria-label="Safariで開くアプリ入口QR">
+                <div class="admin-adjustments-header">
+                  <strong>Safariで開くアプリ入口QR</strong>
+                  <span>新規参加者用</span>
+                </div>
+                <p class="admin-form-confirm-note">
+                  iPhoneの方は、このQRをSafariで開き、そのまま利用します。受付用 参加QRや先生QRは、花や記録を入れるために使います。
+                </p>
+                <div class="admin-stamp-qr" data-admin-install-qr aria-live="polite">
+                  <strong>アプリ入口QR</strong>
+                  <img data-admin-install-qr-image alt="水曜会 花記録をSafariで開くためのQRコード">
+                  <a data-admin-install-qr-link href="#" target="_blank" rel="noopener noreferrer">アプリ入口を開く</a>
+                  <small data-admin-install-qr-message>このQRはSafariで開くアプリ入口です。花を入れる時は、Safariで水曜会アプリを開いたまま受付QRを読みます。</small>
+                </div>
+              </section>
+
+              <section class="admin-participation-apply" aria-label="参加スタンプ反映">
+                <div class="admin-adjustments-header">
+                  <strong>受付用 参加QR</strong>
+                  <span data-admin-participation-date>本日</span>
+                </div>
+                <p class="admin-form-confirm-note">
+                  受付が済んだ人に、Safariで水曜会アプリを開いている本人スマホで読み取ってもらいます。その日の参加スタンプが1つ入り、同じ日にもう一度読んでも二重には増えません。このQRはアプリ入口ではありません。
+                </p>
+                <button type="button" class="admin-stamp-qr-button" data-admin-participation-qr-create>受付用 参加QRを作る</button>
+                <div class="admin-stamp-qr" data-admin-participation-qr hidden aria-live="polite">
+                  <strong>受付用 参加QR</strong>
+                  <img data-admin-participation-qr-image alt="参加スタンプ反映用QRコード">
+                  <a data-admin-participation-qr-link href="#" target="_blank" rel="noopener noreferrer">読み取り用リンクを開く</a>
+                  <small data-admin-participation-qr-message>受付後に本人スマホで読み取ると、今日の参加スタンプが1つ入ります。</small>
+                </div>
+                <div class="admin-secondary-action">
+                  <strong>フォーム回答を見てこの端末へ入れる時</strong>
+                <a
+                  class="admin-participation-form-link"
+                  href="https://docs.google.com/forms/d/e/1FAIpQLSdEqwXBhF3jDi-YUizfnNnLDfTzD7QJTK469-xwQwA21Gl_rA/viewform?usp=publish-editor"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >参加者用フォームを開く</a>
+                <p class="admin-form-confirm-note">
+                  回答確認はGoogleフォームの回答画面、または回答スプレッドシートで見ます。ここでは確認した名前を入力して反映します。
+                </p>
+                <label class="admin-participation-name">
+                  <span>お名前</span>
+                  <input type="text" data-admin-participation-name aria-label="参加者のお名前" autocomplete="off" placeholder="フォームの名前を入力">
+                </label>
+                <button type="button" data-admin-participation-apply>今日の参加スタンプを反映</button>
+                <small data-admin-participation-message>フォーム回答を確認してから押してください。</small>
+                </div>
+              </section>
+
+              <section class="admin-game-record-apply" aria-label="対局記録フォーム反映">
+                <div class="admin-adjustments-header">
+                  <strong>先生ごとの固定QR</strong>
+                  <span data-admin-game-record-date-label>本日</span>
+                </div>
+                <p class="admin-form-confirm-note">
+                  先生席や受付に置く用です。本人スマホで読んだ先生のスタンプが1つ入り、今日の記録へ着地します。
+                </p>
+                <button type="button" class="admin-stamp-qr-button admin-stamp-qr-button-primary" data-admin-fixed-teacher-qr-create>先生ごとの固定QRを作る</button>
+                <div class="admin-fixed-teacher-qr" data-admin-fixed-teacher-qr hidden aria-live="polite">
+                  <strong>今日の先生別QR</strong>
+                  <p>先生席や受付に置く用です。本人スマホで読んだ先生のスタンプが1つ入ります。</p>
+                  <div class="admin-fixed-teacher-qr-actions">
+                    <button type="button" class="admin-fixed-teacher-qr-print" data-admin-fixed-teacher-qr-print>印刷用に表示する</button>
+                    <button type="button" class="admin-fixed-teacher-qr-print" data-admin-fixed-teacher-qr-pdf>PDF用ページを開く</button>
+                    <button type="button" class="admin-fixed-teacher-qr-print" data-admin-fixed-teacher-qr-preview-close hidden>通常表示に戻る</button>
+                  </div>
+                  <p class="admin-fixed-teacher-qr-print-help">印刷用表示にした後、印刷画面が開かない時は Ctrl+P、またはブラウザのメニューから印刷してください。</p>
+                  <div class="admin-fixed-teacher-qr-list" data-admin-fixed-teacher-qr-list></div>
+                  <small>同じスマホで同じ先生QRをもう一度読んでも、二重には増えません。</small>
+                </div>
+                <div class="admin-secondary-action">
+                  <strong>対局内容を確認してQRを作る時</strong>
+                <a
+                  class="admin-game-record-form-link"
+                  href="https://docs.google.com/forms/d/e/1FAIpQLSegoLkRkzQTTsj90BbVBdUOzocBhzh452_XsQ183cFLve9Glw/viewform?usp=dialog"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >参加者用 対局記録フォームを開く</a>
+                <p class="admin-form-confirm-note">
+                  回答確認はGoogleフォームの回答画面、または回答スプレッドシートで見ます。本人スマホへ入れる時は、確認した内容を選んでQRを作ります。
+                </p>
+                <div class="admin-game-record-grid">
+                  <label>
+                    <span>先生</span>
+                    <select data-admin-game-record-teacher aria-label="先生を選択"></select>
+                  </label>
+                  <label>
+                    <span>対局日</span>
+                    <input type="date" data-admin-game-record-date aria-label="対局日">
+                  </label>
+                  <label>
+                    <span>ハンデ</span>
+                    <select data-admin-game-record-handicap aria-label="ハンデ">
+                      <option value="互先">互先</option>
+                      <option value="先">先</option>
+                      <option value="先逆コミ6.5目">先逆コミ6.5目</option>
+                      <option value="2子">2子</option>
+                      <option value="3子">3子</option>
+                      <option value="4子">4子</option>
+                      <option value="5子">5子</option>
+                      <option value="6子">6子</option>
+                      <option value="7子">7子</option>
+                      <option value="8子">8子</option>
+                      <option value="9子">9子</option>
+                    </select>
+                  </label>
+                  <label>
+                    <span>勝敗</span>
+                    <select data-admin-game-record-result aria-label="勝敗">
+                      <option value="記録なし">記録なし</option>
+                      <option value="勝ち">勝ち</option>
+                      <option value="負け">負け</option>
+                      <option value="持碁">持碁</option>
+                    </select>
+                  </label>
+                </div>
+                <button type="button" class="admin-stamp-qr-button" data-admin-stamp-qr-create>本人スマホに入れるQRを作る</button>
+                <div class="admin-stamp-qr" data-admin-stamp-qr hidden aria-live="polite">
+                  <strong>本人スマホ用QR</strong>
+                  <img data-admin-stamp-qr-image alt="先生スタンプ反映用QRコード">
+                  <a data-admin-stamp-qr-link href="#" target="_blank" rel="noopener noreferrer">読み取り用リンクを開く</a>
+                  <small data-admin-stamp-qr-message>本人のスマホで読み取ると、今日の記録に先生スタンプが入ります。</small>
+                </div>
+                </div>
+                <div class="admin-secondary-action">
+                  <strong>この端末だけで確認する時</strong>
+                  <button type="button" data-admin-game-record-apply>この端末で確認反映</button>
+                  <small>運営端末で画面確認するための操作です。本人スマホには入りません。</small>
+                </div>
+                <button type="button" class="admin-show-profile-button" data-admin-show-profile hidden>冒険者カードを見る</button>
+                <button type="button" class="admin-undo-game-record-button" data-admin-undo-game-record hidden>直前の先生スタンプを取り消す</button>
+                <small data-admin-game-record-message>本人スマホへ入れる時は、QRを作って読み取ってもらいます。</small>
+              </section>
+
+              <div class="admin-section-heading admin-section-heading-secondary">
+                <div>
+                  <strong>間違えた時・調整する時</strong>
+                  <span>通常は閉じたままで大丈夫</span>
+                </div>
+                <button type="button" class="admin-section-toggle" data-admin-trouble-toggle aria-expanded="true">閉じる</button>
+              </div>
+              <div class="admin-collapsible-group" data-admin-trouble-panel>
+                <section class="admin-adjustments" aria-label="スタンプ数の調整">
+                  <div class="admin-adjustments-header">
+                    <strong>スタンプ数を調整</strong>
+                    <span data-admin-draft-state>保存済み</span>
+                  </div>
+                  <div class="admin-adjustment-list" data-admin-adjustment-list></div>
+                </section>
+
+                <section class="admin-history" aria-label="直近の操作履歴">
+                  <div class="admin-adjustments-header">
+                    <strong>直近の操作履歴</strong>
+                    <span>最新10件</span>
+                  </div>
+                  <div class="admin-history-list" data-admin-history-list>
+                    <p>まだ押印履歴はありません。</p>
+                  </div>
+                </section>
+              </div>
+
+              <div class="admin-section-heading admin-section-heading-secondary">
+                <div>
+                  <strong>設定・保管</strong>
+                  <span>準備や終了後に使う</span>
+                </div>
+                <button type="button" class="admin-section-toggle" data-admin-settings-toggle aria-expanded="true">閉じる</button>
+              </div>
+              <div class="admin-collapsible-group" data-admin-settings-panel>
+                <section class="admin-teacher-profile-editor" aria-label="先生紹介の編集">
+                  <div class="admin-adjustments-header">
+                    <strong>先生紹介を編集</strong>
+                    <span data-admin-teacher-profile-state>保存済み</span>
+                  </div>
+                  <label>
+                    <span>先生</span>
+                    <select data-admin-teacher-profile-select aria-label="紹介文を編集する先生"></select>
+                  </label>
+                  <label>
+                    <span>棋風</span>
+                    <textarea data-admin-teacher-profile-style rows="2" aria-label="棋風の紹介文"></textarea>
+                  </label>
+                  <label>
+                    <span>レッスン</span>
+                    <textarea data-admin-teacher-profile-lesson rows="2" aria-label="レッスンの紹介文"></textarea>
+                  </label>
+                  <label>
+                    <span>おすすめ</span>
+                    <textarea data-admin-teacher-profile-note rows="2" aria-label="おすすめの紹介文"></textarea>
+                  </label>
+                  <div class="admin-teacher-profile-actions">
+                    <button type="button" data-admin-teacher-profile-save>紹介文を保存</button>
+                    <button type="button" data-admin-teacher-profile-reset>初期文に戻す</button>
+                  </div>
+                  <small data-admin-teacher-profile-message>花図鑑の先生紹介に反映されます。</small>
+                </section>
+
+                <section class="admin-backup" aria-label="バックアップと復元">
+                  <div class="admin-adjustments-header">
+                    <strong>バックアップ・復元</strong>
+                    <span>端末ファイル</span>
+                  </div>
+                  <p>スタンプ、獲得済み報酬、操作履歴、先生紹介を小さなファイルに保存します。対局記録の明細や今日のQR読み取り表示は含みません。</p>
+                  <div class="admin-backup-actions">
+                    <button type="button" data-admin-backup-save>バックアップを保存</button>
+                    <button type="button" data-admin-backup-select>バックアップから復元</button>
+                    <input type="file" accept="application/json,.json" data-admin-backup-file hidden>
+                  </div>
+                  <small data-admin-backup-message>パスコード、個人情報、対局記録の明細は保存しません。</small>
+                </section>
+              </div>
+
+              <section class="admin-restore-confirm" data-admin-restore-confirm hidden aria-label="バックアップ復元確認">
+                <h3>復元する内容を確認</h3>
+                <dl data-admin-restore-summary></dl>
+                <p>現在の記録は、復元前バックアップとして先に保存されます。</p>
+                <label>
+                  <span>実行するには「復元」と入力してください。</span>
+                  <input type="text" data-admin-restore-input aria-label="復元確認入力" autocomplete="off">
+                </label>
+                <div class="admin-reset-confirm-actions">
+                  <button type="button" data-admin-restore-cancel>やめる</button>
+                  <button type="button" data-admin-restore-confirm-button disabled>復元を実行</button>
+                </div>
+              </section>
+
+              <div class="admin-actions">
+                <button type="button" class="admin-stamp-button" data-admin-save-button>手動調整を保存</button>
+                <button type="button" class="admin-reset-button" data-admin-reset-button>すべての記録をリセット</button>
+              </div>
+              <section class="admin-reset-confirm" data-admin-reset-confirm hidden aria-label="記録リセット確認">
+                <p>実行するには「リセット」と入力してください。</p>
+                <input type="text" data-admin-reset-input aria-label="リセット確認入力" autocomplete="off">
+                <div class="admin-reset-confirm-actions">
+                  <button type="button" data-admin-reset-cancel>やめる</button>
+                  <button type="button" data-admin-reset-confirm-button disabled>リセットを実行</button>
+                </div>
+              </section>
+              <p class="admin-note" data-admin-note>押すと利用者側の冒険者カードに勲章が反映されます。</p>
+            </section>
+          </div>
+        </section>
+      </section>
+      <section class="operator-auth-modal" data-operator-auth hidden aria-label="運営確認">
+        <div class="operator-auth-backdrop" data-operator-auth-cancel></div>
+        <article class="operator-auth-card" role="dialog" aria-modal="true" aria-labelledby="operator-auth-title">
+          <p class="panel-kicker">運営専用押印</p>
+          <h2 id="operator-auth-title" data-operator-auth-title>押印を確認</h2>
+          <p data-operator-auth-summary>保存内容を確認し、運営用パスコードを入力してください。</p>
+          <label>
+            <span>運営端末で設定したパスコード</span>
+            <input type="password" data-operator-auth-input autocomplete="off">
+          </label>
+          <small data-operator-auth-message>認証後、この1件だけを保存して自動で再ロックします。</small>
+          <div class="operator-auth-actions">
+            <button type="button" data-operator-auth-cancel>やめる</button>
+            <button type="button" data-operator-auth-confirm>認証して押印</button>
+          </div>
+        </article>
+      </section>
+      <section class="teacher-sharing-modal" data-teacher-sharing-modal hidden aria-label="一局のご縁帳への共有確認">
+        <div class="teacher-sharing-backdrop" data-teacher-sharing-close></div>
+        <article class="teacher-sharing-card" role="dialog" aria-modal="true" aria-labelledby="teacher-sharing-title">
+          <div class="teacher-sharing-flower" aria-hidden="true">🌸</div>
+          <p class="teacher-sharing-kicker" data-teacher-sharing-kicker>今日の記録</p>
+          <h2 id="teacher-sharing-title" data-teacher-sharing-title>今日の花が入りました</h2>
+          <p class="teacher-sharing-lead" data-teacher-sharing-lead></p>
+          <dl class="teacher-sharing-summary" data-teacher-sharing-summary hidden>
+            <div>
+              <dt>先生に表示される名前</dt>
+              <dd data-teacher-sharing-name></dd>
+            </div>
+            <div>
+              <dt>対局日</dt>
+              <dd data-teacher-sharing-date></dd>
+            </div>
+          </dl>
+          <label class="teacher-sharing-handicap" data-teacher-sharing-handicap-wrap hidden>
+            <span>置き石</span>
+            <select data-teacher-sharing-handicap>
+              <option value="">選んでください</option>
+              <option value="互先">互先</option>
+              <option value="先">先</option>
+              <option value="2子">2子</option>
+              <option value="3子">3子</option>
+              <option value="4子">4子</option>
+              <option value="5子">5子</option>
+              <option value="6子以上">6子以上</option>
+              <option value="分からない">分からない</option>
+            </select>
+          </label>
+          <p class="teacher-sharing-privacy" data-teacher-sharing-privacy hidden>
+            この記録は先生本人の「一局のご縁帳」に表示されます。住所・電話番号・メールアドレス・受付番号は先生には表示されません。
+          </p>
+          <p class="teacher-sharing-message" data-teacher-sharing-message aria-live="polite"></p>
+          <div class="teacher-sharing-actions" data-teacher-sharing-actions>
+            <button type="button" data-teacher-sharing-primary>ご縁帳への記録を確認</button>
+            <button type="button" data-teacher-sharing-secondary>今日の記録を見る</button>
+          </div>
+        </article>
+      </section>
+      <section class="achievement-modal" data-achievement-modal hidden aria-label="5回達成">
+        <div class="achievement-modal-backdrop" data-achievement-close></div>
+        <article class="achievement-modal-card">
+          <div class="achievement-modal-petals" aria-hidden="true">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+          <button type="button" class="achievement-modal-close" data-achievement-close aria-label="閉じる">×</button>
+          <p class="achievement-modal-kicker">5回達成</p>
+          <h2 data-achievement-title>妖精スタンプ達成</h2>
+          <p class="achievement-modal-teacher" data-achievement-teacher>先生名</p>
+          <img class="achievement-modal-fairy" data-achievement-fairy src="assets/fairy-companion-iris-v2.png" alt="">
+          <p class="achievement-modal-copy" data-achievement-copy>5回目の指導後スタンプで妖精があらわれました。</p>
+          <button type="button" class="achievement-modal-profile" data-achievement-profile>冒険者カードを見る</button>
+        </article>
+      </section>
+      <section class="fairy-viewer" data-fairy-viewer hidden aria-label="妖精を大きく見る">
+        <button type="button" class="fairy-viewer-backdrop" data-fairy-viewer-close aria-label="戻る"></button>
+        <article class="fairy-viewer-card">
+          <button type="button" class="fairy-viewer-close" data-fairy-viewer-close aria-label="戻る">×</button>
+          <img class="fairy-viewer-image" data-fairy-viewer-image src="assets/fairy-apollon-flower-style.png" alt="">
+          <h2 data-fairy-viewer-name>妖精</h2>
+          <p class="fairy-viewer-quote" data-fairy-viewer-quote>はじめての花が咲いたね！</p>
+          <p data-fairy-viewer-status>達成済み</p>
+        </article>
+      </section>
+    </main>
+    <div class="app-load-status" data-app-load-status>画面の操作を読み込み中です。</div>
+    <script>
+      window.addEventListener("error", function (event) {
+        var status = document.querySelector("[data-app-load-status]");
+        if (!status) {
+          return;
+        }
+        status.hidden = false;
+        status.textContent = "画面の操作が止まりました。Codexにこの表示を見せてください: " + event.message;
+      });
+    </script>
+    <script src="stamp-rules.js?v=20260719-teacher-photos-01"></script>
+    <script src="history-merge.js?v=20260904-01"></script>
+    <script src="script.js?v=20260904-participation-02"></script>
+    <script src="linkage-client.js?v=20260903-01"></script>
+    <script src="gate-client.js?v=20260904-01"></script>
+    <script src="history-client.js?v=20260904-02"></script>
+  </body>
+</html>
+

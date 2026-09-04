@@ -1,0 +1,32 @@
+import assert from 'node:assert/strict';
+import {randomBytes} from 'node:crypto';
+const portal='https://suiyoukai-portal.c84s4n967v.chatgpt.site';
+const flower='https://jfsxxxib-wq.github.io';
+const requestKey=randomBytes(32).toString('hex');
+let cookie='';
+async function call(path,body,from=portal,token){
+ const start=Date.now();
+ const r=await fetch(portal+path,{method:body?'POST':'GET',headers:{Origin:from,...(body?{'Content-Type':'application/json'}:{}),...(cookie&&from===portal?{Cookie:cookie}:{}),...(token?{Authorization:'Bearer '+token}:{})},body:body?JSON.stringify(body):undefined,signal:AbortSignal.timeout(80000)});
+ const data=await r.json();
+ if(r.headers.get('set-cookie'))cookie=r.headers.get('set-cookie').split(';')[0];
+ console.log(JSON.stringify({path,status:r.status,ms:Date.now()-start,registered:data.registered,synced:data.participant?.synced,error:data.error}));
+ return {r,data};
+}
+const registration={familyName:'接続確認',givenName:'試験専用',requestKey};
+let result=await call('/api/registration',registration);
+if(!result.r.ok)result=await call('/api/registration');
+assert.equal(result.data.participant?.synced,true,'Live ledger acknowledgement must succeed');
+const number=result.data.participant.participantNumber;
+result=await call('/api/registration',registration);
+assert.equal(result.data.participant.participantNumber,number);
+result=await call('/api/handoff',{});
+assert.equal(result.r.status,200);
+const ticket=new URL(result.data.url).hash.split('=')[1];
+result=await call('/api/flower/redeem',{ticket,deviceKey:randomBytes(32).toString('hex'),appNumber:'90000003'},flower);
+const token=result.data.token;
+assert.ok(token);
+if(!result.data.participant.synced)result=await call('/api/flower/session',undefined,flower,token);
+assert.equal(result.data.participant?.synced,true,'Flower number must reach real ledger');
+result=await call('/api/flower/session',undefined,flower,token);
+assert.equal(result.data.participant.participantNumber,number);
+console.log('PASS: live registration, duplicate retry, handoff, flower exchange, authenticated session; test participant '+number);

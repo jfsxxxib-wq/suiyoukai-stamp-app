@@ -1,0 +1,30 @@
+[
+  {
+    "Path": "C:\\Users\\akane\\Documents\\Codex\\2026-06-14\\new-chat\\suiyoukai-stamp-app\\outputs\\event-reservation-flow-test\\passed-v2\\build.cjs",
+    "Hash": "D074423619A39DE6C037F3947ACF11B178CCE0D666471475F77A87ECFF87EDDE"
+  },
+  {
+    "Path": "C:\\Users\\akane\\Documents\\Codex\\2026-06-14\\new-chat\\suiyoukai-stamp-app\\outputs\\event-reservation-flow-test\\passed-v2\\Code.gs",
+    "Hash": "94F40CB1835F046D258BCBD1563E614D3BE9B9C7F53E06AD4C2F4BE009A14900"
+  },
+  {
+    "Path": "C:\\Users\\akane\\Documents\\Codex\\2026-06-14\\new-chat\\suiyoukai-stamp-app\\outputs\\event-reservation-flow-test\\passed-v2\\Flow.gs",
+    "Hash": "BA5EDBE31075F94B6A48E5854ABBEFB7ECEFF108AF66E8BDE75FE5D13B74222E"
+  },
+  {
+    "Path": "C:\\Users\\akane\\Documents\\Codex\\2026-06-14\\new-chat\\suiyoukai-stamp-app\\outputs\\event-reservation-flow-test\\passed-v2\\google-final-readback.json",
+    "Hash": "992430604DCC1CD18FC449EF97354BAFDB0493875EAC1DBDD4AA8F30BDA5172C"
+  },
+  {
+    "Path": "C:\\Users\\akane\\Documents\\Codex\\2026-06-14\\new-chat\\suiyoukai-stamp-app\\outputs\\event-reservation-flow-test\\passed-v2\\google-initial-readback.json",
+    "Hash": "6B7BA20E735BD75AE7408483E5EF73F4C9FA6235A66E8E1CD6B4E0C509FCDA3A"
+  },
+  {
+    "Path": "C:\\Users\\akane\\Documents\\Codex\\2026-06-14\\new-chat\\suiyoukai-stamp-app\\outputs\\event-reservation-flow-test\\passed-v2\\ui.html",
+    "Hash": "F33E12E61EB2578627DD6F29666689BC79FA470184B90053F939C518E177675B"
+  },
+  {
+    "Path": "C:\\Users\\akane\\Documents\\Codex\\2026-06-14\\new-chat\\suiyoukai-stamp-app\\outputs\\event-reservation-flow-test\\passed-v2\\verify.cjs",
+    "Hash": "198462B210ECC54A59FC86B86A595855816D24DC8DF75A293FE438C028A2FBB8"
+  }
+]

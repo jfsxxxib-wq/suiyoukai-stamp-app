@@ -1,0 +1,11 @@
+const fs=require('fs'),path=require('path'),vm=require('vm');
+const root=__dirname;
+const old=fs.readFileSync(path.join(root,'../event-reservation-test/passed-v1/Code.gs'),'utf8').replace('function doGet()', 'function legacyDoGet_()');
+const flow=fs.readFileSync(path.join(root,'Flow.gs'),'utf8');
+const html=fs.readFileSync(path.join(root,'ui.html'),'utf8');
+new vm.Script(html.match(/<script>([\s\S]*?)<\/script>/)[1]);
+const code=old+'\n'+flow+'\nfunction doGet(){return HtmlService.createHtmlOutput('+JSON.stringify(html)+').setTitle("水曜会・非公開の台帳接続確認");}\n';
+new vm.Script(code);fs.writeFileSync(path.join(root,'Code.gs'),code);
+const escaped=code.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+fs.writeFileSync(path.join(root,'../recovery-20260904/flow-test-source.html'),'<!doctype html><meta charset="utf-8"><pre>'+escaped+'</pre>');
+console.log('Built syntax-checked private test Code.gs:',code.length,'characters');

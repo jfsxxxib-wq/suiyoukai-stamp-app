@@ -1,0 +1,144 @@
+.linkage-connect-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  overflow-y: auto;
+  padding: max(22px, env(safe-area-inset-top)) 16px max(34px, env(safe-area-inset-bottom));
+  color: #173f36;
+  background:
+    radial-gradient(circle at 90% 8%, #dfefe0, transparent 34%),
+    radial-gradient(circle at 4% 12%, #fde5d8, transparent 30%),
+    #f5f4ec;
+}
+
+.linkage-connect-card {
+  width: min(100%, 420px);
+  margin: 0 auto;
+  padding: 24px 21px;
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 28px;
+  background: rgba(255, 253, 247, 0.97);
+  box-shadow: 0 14px 36px rgba(49, 72, 58, 0.12);
+}
+
+.linkage-connect-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0 0 18px;
+  padding: 0;
+  border: 0;
+  color: #173f36;
+  background: transparent;
+  font: inherit;
+  font-weight: 800;
+}
+
+.linkage-connect-icon {
+  display: grid;
+  width: 64px;
+  height: 64px;
+  margin-bottom: 18px;
+  place-items: center;
+  border-radius: 21px;
+  background: #e7f2e4;
+  font-size: 32px;
+}
+
+.linkage-connect-kicker {
+  margin: 0 0 10px;
+  color: #a26a31;
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+}
+
+.linkage-connect-card h1,
+.linkage-connect-card h2 {
+  margin: 0;
+  color: #173f36;
+  font-family: "Yu Mincho", "Hiragino Mincho ProN", serif;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.linkage-connect-card h1 { font-size: clamp(27px, 8vw, 32px); }
+.linkage-connect-card h2 { font-size: 27px; }
+
+.linkage-connect-lead,
+.linkage-connect-complete-copy {
+  margin: 13px 0 19px;
+  color: #6f7f77;
+  font-size: 15px;
+  line-height: 1.8;
+}
+
+.linkage-connect-identity {
+  padding: 16px 17px;
+  border: 1px solid #d9ded2;
+  border-radius: 19px;
+  background: #f7f8f2;
+}
+
+.linkage-connect-identity div {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+}
+
+.linkage-connect-identity div + div { margin-top: 13px; }
+.linkage-connect-identity span { color: #738079; font-size: 13px; font-weight: 800; }
+.linkage-connect-identity strong { text-align: right; font-size: 15px; overflow-wrap: anywhere; }
+
+.linkage-connect-number { margin: 19px 0 8px; }
+.linkage-connect-number > span { display: block; margin-bottom: 9px; font-size: 13px; font-weight: 900; }
+
+.linkage-connect-number-box {
+  display: flex;
+  min-height: 70px;
+  padding: 0 15px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border: 1px solid #d9ded2;
+  border-radius: 17px;
+  background: #fff;
+}
+
+.linkage-connect-number-box strong { font-size: 22px; letter-spacing: 0.17em; }
+.linkage-connect-number-box small { flex: none; padding: 7px 9px; border-radius: 999px; color: #397966; background: #e4f3e8; font-weight: 900; }
+
+.linkage-connect-privacy,
+.linkage-connect-safe {
+  color: #728078;
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.linkage-connect-privacy { margin: 8px 0 17px; }
+.linkage-connect-safe { display: flex; gap: 9px; margin: 18px 2px 0; align-items: flex-start; }
+.linkage-connect-safe b { color: #4f8b79; font-size: 17px; }
+
+.linkage-connect-action {
+  width: 100%;
+  min-height: 57px;
+  border: 0;
+  border-radius: 17px;
+  color: #fff;
+  background: #197d6c;
+  font: inherit;
+  font-weight: 900;
+  box-shadow: 0 8px 18px rgba(25, 125, 108, 0.2);
+}
+
+.linkage-connect-action:disabled { opacity: 0.58; }
+.linkage-connect-cancel { width: 100%; min-height: 50px; margin-top: 9px; border: 1px solid #cbd5ce; border-radius: 16px; color: #567067; background: transparent; font: inherit; font-weight: 800; }
+.linkage-connect-error { margin: 12px 0 0; padding: 12px 13px; border-radius: 13px; color: #934d41; background: #f8e9e4; font-size: 13px; line-height: 1.65; }
+.linkage-connect-complete { text-align: center; }
+.linkage-connect-check { display: grid; width: 74px; height: 74px; margin: 0 auto 17px; place-items: center; border-radius: 50%; color: #fff; background: #197d6c; font-size: 38px; }
+
+@media (max-width: 360px) {
+  .linkage-connect-card { padding-inline: 18px; }
+  .linkage-connect-number-box { align-items: flex-start; flex-direction: column; padding-block: 14px; }
+}
