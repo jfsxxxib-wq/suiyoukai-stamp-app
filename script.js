@@ -10112,6 +10112,21 @@ window.suiyoukaiLinkage = Object.freeze({
   getDisplayName: loadAdventurerName,
   applyParticipationStamp: applyParticipationStampPayload,
   showTodayRecord: showProfileTodayRecord,
+  getHistorySnapshot: () => ({progress:JSON.parse(JSON.stringify(userProgress)),records:JSON.parse(JSON.stringify(gameRecords)),appliedQrIds:[...appliedStampQrIds],receipts:JSON.parse(localStorage.getItem('suiyoukai-history-receipts-v1')||'{}')}),
+  applyHistoryRecord: (record) => {
+    const key='suiyoukai-history-receipts-v1';const receipts=JSON.parse(localStorage.getItem(key)||'{}');
+    const plan=window.suiyoukaiHistoryMerge.plan({progress:userProgress,records:gameRecords,appliedQrIds:[...appliedStampQrIds],receipts},record);
+    if(plan.already)return plan;
+    if(!receipts[record.id]){receipts[record.id]={applied:false,beforeProgress:JSON.parse(JSON.stringify(userProgress)),beforeRecords:JSON.parse(JSON.stringify(gameRecords))};localStorage.setItem(key,JSON.stringify(receipts));}
+    // Do not acknowledge success until every required browser write succeeds.
+    localStorage.setItem(progressStorageKey,JSON.stringify(plan.progress));localStorage.setItem(gameRecordsStorageKey,JSON.stringify(plan.records));
+    userProgress=plan.progress;gameRecords=plan.records;userProgress.stamps.teacherCircleRounds=getTeacherCircleRoundsFromCounts(userProgress.stamps.teacherLessonCounts);
+    syncTeacherDetailsFromProgress();syncProgressRewards();localStorage.setItem(progressStorageKey,JSON.stringify(userProgress));
+    receipts[record.id].applied=true;receipts[record.id].appliedAt=new Date().toISOString();localStorage.setItem(key,JSON.stringify(receipts));
+    syncAdminDraftFromProgress();updateParticipationStampCard();updateTeacherCards();updateRoundProgress();updateProfileCard();updateAdminPanel();
+    return plan;
+  },
+  openHistoryCatalog: () => showPanel('field-guide'),
 });
 
 applyStampQrFromLocation();
