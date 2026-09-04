@@ -2,7 +2,7 @@
  'use strict';
  const app=window.suiyoukaiLinkage;if(!app?.applyHistoryRecord)return;
  const portal='https://suiyoukai-portal.c84s4n967v.chatgpt.site';
- const key='suiyoukai-history-access-v1';const incoming=new URLSearchParams(location.hash.slice(1)).get('history-ticket');
+ const key='suiyoukai-history-access-v1';
  let access={};let current;let layer;let busy=false;
  const random=()=>Array.from(crypto.getRandomValues(new Uint8Array(32)),b=>b.toString(16).padStart(2,'0')).join('');
  function save(){localStorage.setItem(key,JSON.stringify(access));}
@@ -31,9 +31,20 @@
   }catch(e){notice.textContent=e.message||'保存できませんでした。履歴を消さずに、もう一度お試しください。';button.disabled=false;button.textContent='もう一度受け取る';}finally{busy=false;}};
   const close=element('button','今は受け取らない','history-close');close.onclick=()=>{if(!busy)layer.remove();};card.append(notice,button,close);layer.append(card);
  }
+ function openIncoming(){
+  const incoming=new URLSearchParams(location.hash.slice(1)).get('history-ticket');
+  if(busy||!incoming||!/^[a-f0-9]{64}$/.test(incoming))return;
+  try{
+   access=JSON.parse(localStorage.getItem(key)||'{}');
+   current=access[incoming]||{ticket:incoming,deviceKey:random(),synced:false,applied:false};access[incoming]=current;save();
+   history.replaceState(null,'',location.pathname+location.search);layer?.remove();
+   const item=current;call('preview',item).then(data=>{if(current===item)show(data.record);}).catch(e=>{if(current===item)showError(e.message);});
+  }catch{showError('このブラウザに記録を保存できません。通常のSafariまたはChromeで開いてください。');}
+ }
+ window.addEventListener('hashchange',openIncoming);
+ openIncoming();
  try{
   access=JSON.parse(localStorage.getItem(key)||'{}');
-  if(incoming&&/^[a-f0-9]{64}$/.test(incoming)){history.replaceState(null,'',location.pathname+location.search);current=access[incoming]||{ticket:incoming,deviceKey:random(),synced:false,applied:false};access[incoming]=current;save();call('preview',current).then(data=>show(data.record)).catch(e=>showError(e.message));}
   for(const item of Object.values(access)){if(item.applied&&!item.synced)receipt(item);}
- }catch{if(incoming)showError('このブラウザに記録を保存できません。通常のSafariまたはChromeで開いてください。');}
+ }catch{}
 })();
