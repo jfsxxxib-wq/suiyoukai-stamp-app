@@ -8914,7 +8914,7 @@ for (const flowerCard of flowerGuideCards) {
     const flowerMeta = flowerCard.querySelector(".flower-guide-meta")?.textContent ?? "";
 
     if (target === "participation") {
-      showParticipationStampEntry("参加フォームはこの参加スタンプ欄から開きます");
+      openParticipationStartSheet();
       return;
     }
 
