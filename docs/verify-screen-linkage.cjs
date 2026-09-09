@@ -9,6 +9,8 @@ const outputDir = path.join(__dirname, "screen-linkage-check-2026-06-18");
 const storageKey = "suiyoukai-stamp-progress-v1";
 const gameRecordsStorageKey = "suiyoukai-game-records-v1";
 const teacherIds = ["tsuneishi", "yuki", "koike", "yamashiro", "matsumoto"];
+const encodePayload = (payload) => Buffer.from(JSON.stringify(payload), "utf8").toString("base64url");
+const withStamp = (payload) => `${appUrl}?stamp=${encodePayload(payload)}`;
 
 fs.mkdirSync(outputDir, { recursive: true });
 
@@ -35,12 +37,6 @@ const seed = async (page, value) => {
   await page.waitForTimeout(850);
 };
 
-const authenticateOperator = async (page) => {
-  await page.locator("[data-operator-auth]").waitFor({ state: "visible" });
-  await page.locator("[data-operator-auth-input]").fill("運営端末で設定したパスコード");
-  await page.locator("[data-operator-auth-confirm]").click();
-};
-
 const openProfile = async (page) => {
   await page.locator('[data-panel="profile"]').evaluate((button) => button.click());
   await page.waitForTimeout(120);
@@ -55,7 +51,9 @@ const collectProfile = async (page) => ({
   total: await text(page, "[data-total-stamps]"),
   guideProgress: await text(page, "[data-profile-guide-progress]"),
   title: await text(page, "[data-profile-title]"),
-  fairies: await page.locator("[data-profile-fairy-list] strong").allTextContents(),
+  fairies: await page.locator("[data-profile-fairy-list] strong, [data-profile-fairy-list] img").evaluateAll((items) =>
+    items.map((item) => item.tagName === "IMG" ? item.alt : item.textContent)
+  ),
   companions: await page.locator("[data-profile-special-companion-list] strong").allTextContents(),
   results: await page.locator("[data-profile-achievement-list] article").evaluateAll((items) =>
     items.map((item) => item.textContent.replace(/\s+/g, " ").trim())
@@ -91,9 +89,9 @@ const checks = [];
 
 try {
   for (const scenario of [
-    { count: 10, flower: "藤", fairy: "コスモスの妖精", achieved: "1/3巡 達成", guide: "1/18" },
-    { count: 20, flower: "金木犀", fairy: "藤の妖精", achieved: "2/3巡 達成", guide: "2/18" },
-    { count: 30, flower: "金木犀", fairy: "金木犀の妖精", achieved: "3/3巡 達成", guide: "3/18" },
+    { count: 10, flower: "コスモス", fairy: "コスモスの妖精", achieved: "1/3巡 達成", guide: "1/33" },
+    { count: 20, flower: "藤", fairy: "藤の妖精", achieved: "2/3巡 達成", guide: "2/33" },
+    { count: 30, flower: "金木犀", fairy: "金木犀の妖精", achieved: "3/3巡 達成", guide: "3/33" },
   ]) {
     await seed(page, progress(scenario.count));
     const flower = await text(page, "[data-participation-flower-name]");
@@ -112,9 +110,9 @@ try {
   }
 
   for (const scenario of [
-    { count: 5, flower: "蓮", fairy: "菖蒲の妖精", achieved: "5/15妖精 達成", guide: "5/18" },
-    { count: 10, flower: "菫", fairy: "蓮の妖精", achieved: "10/15妖精 達成", guide: "10/18" },
-    { count: 15, flower: "菫", fairy: "菫の妖精", achieved: "15/15妖精 達成", guide: "15/18" },
+    { count: 5, flower: "蓮", fairy: "菖蒲の妖精", achieved: "5/30妖精 達成", guide: "5/33" },
+    { count: 10, flower: "菫", fairy: "蓮の妖精", achieved: "10/30妖精 達成", guide: "10/33" },
+    { count: 15, flower: "菫", fairy: "菫の妖精", achieved: "15/30妖精 達成", guide: "15/33" },
   ]) {
     await seed(page, progress(0, scenario.count));
     await page.locator('[data-panel="field-guide"]').evaluate((button) => button.click());
@@ -144,48 +142,33 @@ try {
     const data = progress(0, 0);
     data.stamps.teacherLessonCounts.tsuneishi = scenario.before;
     await seed(page, data);
-    await page.locator('[data-panel="field-guide"]').evaluate((button) => button.click());
-    await page.locator('[data-teacher="tsuneishi"]').click();
-    await page.locator(".complete-teacher").click();
-    await page.locator(".complete-teacher").click();
-    await authenticateOperator(page);
-    await page.locator("[data-achievement-modal]").waitFor({ state: "visible" });
-
-    const modal = await text(page, "[data-achievement-modal] .achievement-modal-card");
-    const imageLoaded = await page.locator("[data-achievement-modal] [data-achievement-fairy]").evaluate((image) => image.complete && image.naturalWidth > 0);
-    assertIncludes(modal, scenario.fairy, `先生${scenario.count}回の達成画面`);
-    if (!imageLoaded) throw new Error(`先生${scenario.count}回の達成画像が読み込めません。`);
-    checks.push({ kind: "達成画面", count: scenario.count, modal, imageLoaded, result: "OK" });
+    await page.goto(withStamp({
+      type: "teacher_stamp",
+      id: `qr-tsuneishi-2026-06-18-achievement-${scenario.count}`,
+      teacherId: "tsuneishi",
+      date: "2026-06-18",
+      handicap: "記録なし",
+      result: "記録なし",
+    }), { waitUntil: "load" });
+    await openProfile(page);
+    const profile = await collectProfile(page);
+    const stored = await page.evaluate((key) => JSON.parse(localStorage.getItem(key)), storageKey);
+    assertIncludes(profile.fairies.join(" / "), scenario.fairy, `先生${scenario.count}回の妖精表示`);
+    assertIncludes(JSON.stringify(stored.earned.fairies), scenario.fairy, `先生${scenario.count}回の妖精保存`);
+    checks.push({ kind: "先生QR達成保存", count: scenario.count, fairy: scenario.fairy, profile, result: "OK" });
   }
 
   await seed(page, progress(0, 0));
+  await page.goto(withStamp({
+    type: "teacher_stamp",
+    id: "qr-tsuneishi-2026-06-18-screen-linkage",
+    teacherId: "tsuneishi",
+    date: "2026-06-18",
+    handicap: "2子",
+    result: "勝ち",
+  }), { waitUntil: "load" });
   await page.locator('[data-panel="field-guide"]').evaluate((button) => button.click());
   await page.locator('[data-teacher="tsuneishi"]').click();
-  const recordButton = page.locator(".complete-teacher");
-  await recordButton.dblclick();
-  await page.waitForTimeout(150);
-
-  const countAfterOpening = await text(page, "[data-card-stamp-current]");
-  const storedAfterOpening = await page.evaluate((key) => JSON.parse(localStorage.getItem(key)), storageKey);
-  const recordFormVisible = await page.locator("[data-game-record-form]").isVisible();
-  if (countAfterOpening !== "0" || storedAfterOpening.stamps.teacherLessonCounts.tsuneishi !== 0 || !recordFormVisible) {
-    throw new Error("対局記録を開いただけでスタンプ数が変わりました。");
-  }
-
-  await page.locator("[data-game-record-date]").fill("2026-06-18");
-  await page.locator("[data-game-record-handicap]").selectOption("2子");
-  await page.locator("[data-game-record-result]").selectOption("勝ち");
-  await page.locator(".teacher-detail").screenshot({ path: path.join(outputDir, "game-record-input.png") });
-  await page.waitForTimeout(750);
-  await recordButton.click();
-  await page.locator("[data-operator-auth]").waitFor({ state: "visible" });
-  await page.locator("[data-operator-auth-input]").fill("wrong-code");
-  await page.locator("[data-operator-auth-confirm]").click();
-  const storedAfterWrongPasscode = await page.evaluate((key) => JSON.parse(localStorage.getItem(key)), storageKey);
-  if (storedAfterWrongPasscode.stamps.teacherLessonCounts.tsuneishi !== 0) {
-    throw new Error("誤った運営パスコードで指導碁スタンプが保存されました。");
-  }
-  await authenticateOperator(page);
 
   const countAfterSaving = await text(page, "[data-card-stamp-current]");
   const savedRecords = await page.evaluate((key) => JSON.parse(localStorage.getItem(key)), gameRecordsStorageKey);
@@ -202,7 +185,7 @@ try {
   const historyAfterReload = await text(page, "[data-teacher-game-record-list]");
   assertIncludes(historyAfterReload, "2子・勝ち", "再読み込み後の対局記録");
   await page.locator(".teacher-detail").screenshot({ path: path.join(outputDir, "game-record-saved.png") });
-  checks.push({ kind: "対局記録", countAfterOpening, countAfterSaving, savedRecords, result: "OK" });
+  checks.push({ kind: "受付済み対局QR", countAfterSaving, savedRecords, result: "OK" });
 
   await seed(page, progress(9, 0));
   const nextAdventure = await text(page, "[data-next-adventure-button]");
@@ -245,12 +228,12 @@ try {
 
   for (const scenario of [
     { label: "記録なし", data: progress(0, 0), speech: "ようこそ書庫へ。", owl: "special-companion-owl-a.png", screenshot: "owl-library-empty.png" },
-    { label: "初スタンプ", data: progress(1, 0), speech: "旅の最初の一頁ですね。", owl: "special-companion-owl-a.png" },
-    { label: "初称号", data: progress(10, 0), speech: "新しい書が加わりました。", owl: "special-companion-owl-a.png" },
-    { label: "花の記録", data: progress(20, 0), speech: "花の記録が集まっています。", owl: "special-companion-owl-a.png" },
-    { label: "勲章", data: progress(30, 0), speech: "旅の証を大切に収めました。", owl: "special-companion-owl-a.png" },
-    { label: "先生の輪", data: progress(0, 1), speech: "よく学び、よく歩みましたね。", owl: "special-companion-owl-b.png" },
-    { label: "全達成", data: progress(30, 15), speech: "立派な冒険記録になりました。", owl: "special-companion-owl-b.png", screenshot: "owl-library-complete.png" },
+    { label: "初スタンプ", data: progress(1, 0), speech: "一頁目です", owl: "special-companion-owl-a.png" },
+    { label: "初称号", data: progress(10, 0), speech: "書が増えました", owl: "special-companion-owl-a.png" },
+    { label: "花の記録", data: progress(20, 0), speech: "花が集まりました", owl: "special-companion-owl-a.png" },
+    { label: "勲章", data: progress(30, 0), speech: "証を収めました", owl: "special-companion-owl-a.png" },
+    { label: "先生の輪", data: progress(0, 1), speech: "よく学びましたね", owl: "special-companion-owl-b.png" },
+    { label: "全達成", data: progress(30, 15), speech: "見事な記録です", owl: "special-companion-owl-b.png", screenshot: "owl-library-complete.png" },
   ]) {
     await seed(page, scenario.data);
     await openLibrary(page);

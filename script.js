@@ -8193,42 +8193,7 @@ const renderProfileRewardBadges = (achievementResult) => {
 };
 
 const ensureProfileAchievementResults = () => {
-  if (!profileFairies || document.querySelector("[data-profile-achievement-results]")) {
-    return document.querySelector("[data-profile-achievement-results]");
-  }
-
-  const section = document.createElement("section");
-  section.className = "profile-achievement-results";
-  section.dataset.profileAchievementResults = "";
-  section.setAttribute("aria-label", "達成判定結果");
-
-  const header = document.createElement("div");
-  header.className = "profile-section-header";
-
-  const heading = document.createElement("p");
-  heading.textContent = "達成判定結果";
-
-  const toggleButton = document.createElement("button");
-  toggleButton.type = "button";
-  toggleButton.className = "profile-toggle-button";
-  toggleButton.dataset.profileToggle = "achievements";
-  toggleButton.setAttribute("aria-expanded", "false");
-  toggleButton.setAttribute("aria-controls", "profile-achievement-list");
-  toggleButton.textContent = "開く";
-  toggleButton.addEventListener("click", () => toggleProfileSection(toggleButton));
-
-  const list = document.createElement("div");
-  list.className = "profile-achievement-list is-collapsed";
-  list.id = "profile-achievement-list";
-  list.dataset.profileAchievementList = "";
-  list.dataset.profileCollapsible = "achievements";
-
-  header.append(heading, toggleButton);
-  section.append(header, list);
-  (profileSpecialCompanions ?? profileFairies).after(section);
-  syncProfileToggleButton(toggleButton, list);
-
-  return section;
+  return document.querySelector("[data-profile-achievement-results]");
 };
 
 const renderProfileAchievementResults = (achievementResult) => {

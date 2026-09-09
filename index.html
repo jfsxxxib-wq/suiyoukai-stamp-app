@@ -15,7 +15,7 @@
     <link rel="manifest" href="manifest.webmanifest?v=20260707-same-day-records-01">
     <link rel="apple-touch-icon" href="assets/app-icon-180.png?v=20260705-home-screen-01">
     <link rel="icon" type="image/png" sizes="192x192" href="assets/app-icon-192.png?v=20260705-home-screen-01">
-    <link rel="stylesheet" href="styles.css?v=20260910-participation-ledger-01">
+    <link rel="stylesheet" href="styles.css?v=20260910-profile-organization-01">
     <link rel="stylesheet" href="linkage-client.css?v=20260903-01">
 
     <style>
@@ -184,34 +184,9 @@
                 </div>
               </div>
 
-              <section class="current-title" aria-label="現在の称号">
-                <small>現在の称号</small>
-                <strong data-profile-title>コスモスの友</strong>
-              </section>
+              <section class="profile-landscape-space" data-profile-landscape-space aria-label="景色が育つ場所"></section>
 
-              <dl class="profile-list">
-                <div class="profile-rank-card">
-                  <dt>冒険者ランク</dt>
-                  <dd data-profile-rank>初級冒険者</dd>
-                </div>
-                <div class="profile-medal-entry">
-                  <dt>勲章</dt>
-                  <dd>
-                    <span class="medal-row">
-                      <img class="profile-medal" src="assets/medal-stage-02.png" alt="" data-profile-medal-icon hidden>
-                      <span data-profile-medal>まだ勲章なし</span>
-                    </span>
-                  </dd>
-                </div>
-                <div>
-                  <dt>花図鑑達成率</dt>
-                  <dd>
-                    <span class="guide-progress-number" data-profile-guide-progress>0/18</span>
-                    <span class="guide-progress-track" aria-hidden="true">
-                      <span data-profile-guide-progress-track style="width: 0%"></span>
-                    </span>
-                  </dd>
-                </div>
+              <dl class="profile-list profile-today-list">
                 <div class="profile-today-record" data-profile-latest-stamp hidden>
                   <dt>今日の記録</dt>
                   <dd>
@@ -241,28 +216,67 @@
                 </div>
               </dl>
 
-              <div class="profile-section-header profile-rewards-header">
-                <p>獲得した勲章・称号</p>
-                <button type="button" class="profile-toggle-button" data-profile-toggle="rewards" aria-expanded="false" aria-controls="profile-rewards-list">開く</button>
-              </div>
-              <section class="profile-badges is-collapsed" id="profile-rewards-list" aria-label="獲得した勲章" data-profile-collapsible="rewards">
-                <span class="badge-chip is-locked" data-circle-badge>🥉 一巡目の輪</span>
-                <span class="badge-chip">🎖️ コスモスの友</span>
-                <span class="badge-chip is-locked">🥈 二巡目の輪</span>
-              </section>
-              <section class="profile-fairies" aria-label="達成した妖精" data-profile-fairies>
+              <section class="profile-achievement-results" data-profile-achievement-results aria-label="達成判定結果">
                 <div class="profile-section-header">
-                  <p>達成した妖精</p>
-                  <button type="button" class="profile-toggle-button" data-profile-toggle="fairies" aria-expanded="false" aria-controls="profile-fairy-list">開く</button>
+                  <p>達成判定結果</p>
+                  <button type="button" class="profile-toggle-button" data-profile-toggle="achievements" aria-expanded="false" aria-controls="profile-achievement-content">開く</button>
                 </div>
-                <div class="profile-fairy-list is-collapsed" id="profile-fairy-list" data-profile-fairy-list data-profile-collapsible="fairies">
-                  <span class="profile-empty">まだ妖精達成はありません</span>
-                </div>
-              </section>
-              <section class="profile-special-companions" aria-label="特別な仲間" data-profile-special-companions>
-                <p>特別な仲間</p>
-                <div class="profile-special-companion-list" data-profile-special-companion-list>
-                  <span class="profile-empty">まだ特別な仲間はいません</span>
+                <div class="profile-achievement-content is-collapsed" id="profile-achievement-content" data-profile-collapsible="achievements">
+                  <section class="current-title" aria-label="現在の称号">
+                    <small>現在の称号</small>
+                    <strong data-profile-title>コスモスの友</strong>
+                  </section>
+
+                  <dl class="profile-list profile-summary-list">
+                    <div class="profile-rank-card">
+                      <dt>冒険者ランク</dt>
+                      <dd data-profile-rank>初級冒険者</dd>
+                    </div>
+                    <div class="profile-medal-entry">
+                      <dt>勲章</dt>
+                      <dd>
+                        <span class="medal-row">
+                          <img class="profile-medal" src="assets/medal-stage-02.png" alt="" data-profile-medal-icon hidden>
+                          <span data-profile-medal>まだ勲章なし</span>
+                        </span>
+                      </dd>
+                    </div>
+                    <div>
+                      <dt>花図鑑達成率</dt>
+                      <dd>
+                        <span class="guide-progress-number" data-profile-guide-progress>0/18</span>
+                        <span class="guide-progress-track" aria-hidden="true">
+                          <span data-profile-guide-progress-track style="width: 0%"></span>
+                        </span>
+                      </dd>
+                    </div>
+                  </dl>
+
+                  <div class="profile-section-header profile-rewards-header">
+                    <p>獲得した勲章・称号</p>
+                    <button type="button" class="profile-toggle-button" data-profile-toggle="rewards" aria-expanded="false" aria-controls="profile-rewards-list">開く</button>
+                  </div>
+                  <section class="profile-badges is-collapsed" id="profile-rewards-list" aria-label="獲得した勲章" data-profile-collapsible="rewards">
+                    <span class="badge-chip is-locked" data-circle-badge>🥉 一巡目の輪</span>
+                    <span class="badge-chip">🎖️ コスモスの友</span>
+                    <span class="badge-chip is-locked">🥈 二巡目の輪</span>
+                  </section>
+                  <section class="profile-fairies" aria-label="達成した妖精" data-profile-fairies>
+                    <div class="profile-section-header">
+                      <p>達成した妖精</p>
+                      <button type="button" class="profile-toggle-button" data-profile-toggle="fairies" aria-expanded="false" aria-controls="profile-fairy-list">開く</button>
+                    </div>
+                    <div class="profile-fairy-list is-collapsed" id="profile-fairy-list" data-profile-fairy-list data-profile-collapsible="fairies">
+                      <span class="profile-empty">まだ妖精達成はありません</span>
+                    </div>
+                  </section>
+                  <section class="profile-special-companions" aria-label="特別な仲間" data-profile-special-companions>
+                    <p>特別な仲間</p>
+                    <div class="profile-special-companion-list" data-profile-special-companion-list>
+                      <span class="profile-empty">まだ特別な仲間はいません</span>
+                    </div>
+                  </section>
+                  <div class="profile-achievement-list" id="profile-achievement-list" data-profile-achievement-list></div>
                 </div>
               </section>
             </article>
@@ -1417,7 +1431,7 @@
     </script>
     <script src="stamp-rules.js?v=20260719-teacher-photos-01"></script>
     <script src="history-merge.js?v=20260904-01"></script>
-    <script src="script.js?v=20260910-participation-ledger-01"></script>
+    <script src="script.js?v=20260910-profile-organization-01"></script>
     <script src="linkage-client.js?v=20260903-01"></script>
     <script src="gate-client.js?v=20260904-01"></script>
     <script src="history-client.js?v=20260904-02"></script>

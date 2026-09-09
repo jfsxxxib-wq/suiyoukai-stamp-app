@@ -22,11 +22,19 @@ const assert = (condition, message) => {
 };
 
 const unlockAdmin = async (page) => {
-  await page.evaluate(() => {
-    window.location.hash = "#admin";
-    window.dispatchEvent(new HashChangeEvent("hashchange"));
-  });
-  await page.locator('[data-panel="admin"]').click();
+  const adminTab = page.locator('[data-panel="admin"]');
+  if (!(await adminTab.isVisible())) {
+    const infoPanel = page.locator(".info-panel");
+    if (await infoPanel.isVisible()) {
+      await page.locator(".close-panel").click();
+    }
+    const guidebookButton = page.locator(".guidebook-button");
+    await guidebookButton.click();
+    await guidebookButton.click();
+    await guidebookButton.click();
+    await adminTab.waitFor({ state: "visible" });
+  }
+  await adminTab.click();
   await page.locator("[data-admin-passcode-input]").fill("運営端末で設定したパスコード");
   await page.locator("[data-admin-passcode-button]").click();
 };

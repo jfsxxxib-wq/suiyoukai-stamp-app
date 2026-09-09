@@ -18,7 +18,19 @@ const assert = (condition, message) => {
 };
 
 const unlockAdmin = async (page) => {
-  await page.locator('[data-panel="admin"]').click();
+  const adminTab = page.locator('[data-panel="admin"]');
+  if (!(await adminTab.isVisible())) {
+    const infoPanel = page.locator(".info-panel");
+    if (await infoPanel.isVisible()) {
+      await page.locator(".close-panel").click();
+    }
+    const guidebookButton = page.locator(".guidebook-button");
+    await guidebookButton.click();
+    await guidebookButton.click();
+    await guidebookButton.click();
+    await adminTab.waitFor({ state: "visible" });
+  }
+  await adminTab.click();
   await page.locator("[data-admin-passcode-input]").fill("運営端末で設定したパスコード");
   await page.locator("[data-admin-passcode-button]").click();
 };
@@ -53,13 +65,20 @@ const readHistory = (page) => page.evaluate((key) => JSON.parse(localStorage.get
     }, [progressKey, historyKey, teacherIds]);
     await page.reload({ waitUntil: "load" });
 
-    await page.locator("[data-next-adventure-button]").click();
-    await page.locator("[data-participation-stamp-button]").click();
-    await page.locator("[data-operator-auth-input]").fill("運営端末で設定したパスコード");
-    await page.locator("[data-operator-auth-confirm]").click();
+    const participationResult = await page.evaluate(() => {
+      const now = new Date();
+      const local = new Date(now.getTime() - now.getTimezoneOffset() * 60000);
+      const date = local.toISOString().slice(0, 10);
+      return window.suiyoukaiLinkage.applyParticipationStamp({
+        type: "participation_stamp",
+        id: `participation-test-${date}`,
+        date,
+      });
+    });
+    assert(participationResult.ok && participationResult.reason === "applied", "現在の受付QR処理から参加押印できません。");
     let history = await readHistory(page);
     assert(history.at(-1)?.type === "participation_stamp", "参加押印の操作種別がありません。");
-    assert(history.at(-1)?.target === "参加スタンプ" && history.at(-1)?.before === 0 && history.at(-1)?.after === 1, "参加押印の対象または変更前後が正しくありません。");
+    assert(history.at(-1)?.target === "受付QR 参加スタンプ" && history.at(-1)?.before === 0 && history.at(-1)?.after === 1, "参加押印の対象または変更前後が正しくありません。");
     checks.push("押印を対象・変更前後・日時付きで保存");
 
     await unlockAdmin(page);

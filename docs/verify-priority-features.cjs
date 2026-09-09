@@ -16,6 +16,24 @@ const assert = (condition, message) => {
   if (!condition) throw new Error(message);
 };
 
+const unlockAdmin = async (page) => {
+  const adminTab = page.locator('[data-panel="admin"]');
+  if (!(await adminTab.isVisible())) {
+    const participationStartClose = page.locator("[data-participation-start-close]").first();
+    if (await participationStartClose.isVisible()) await participationStartClose.click();
+    const infoPanel = page.locator(".info-panel");
+    if (await infoPanel.isVisible()) await page.locator(".close-panel").click();
+    const guidebookButton = page.locator(".guidebook-button");
+    await guidebookButton.click();
+    await guidebookButton.click();
+    await guidebookButton.click();
+    await adminTab.waitFor({ state: "visible" });
+  }
+  await adminTab.click();
+  await page.locator("[data-admin-passcode-input]").fill("運営端末で設定したパスコード");
+  await page.locator("[data-admin-passcode-button]").click();
+};
+
 (async () => {
   const browser = await chromium.launch({ channel: "msedge", headless: true });
   const context = await browser.newContext({ viewport: { width: 430, height: 932 } });
@@ -54,28 +72,23 @@ const assert = (condition, message) => {
     assert(await page.locator('[data-view="field-guide"]').isVisible(), "次の冒険から花図鑑へ移動できません。");
     checks.push("次の冒険から対象画面へ移動");
 
-    await page.locator("[data-participation-stamp-button]").click();
-    assert(await page.locator("[data-operator-auth]").isVisible(), "参加押印前に運営認証が表示されません。");
-    await page.locator("[data-operator-auth]").screenshot({ path: path.join(outputDir, "operator-auth-participation.png") });
-
-    await page.locator("[data-operator-auth-input]").fill("wrong-code");
-    await page.locator("[data-operator-auth-confirm]").click();
-    const afterWrong = await page.evaluate((key) => JSON.parse(localStorage.getItem(key)).stamps.participationCount, storageKey);
-    assert(afterWrong === 9, "誤ったパスコードで参加スタンプが保存されました。");
-    checks.push("誤ったパスコードでは保存しない");
-
-    await page.locator("[data-operator-auth-input]").fill("運営端末で設定したパスコード");
-    await page.locator("[data-operator-auth-confirm]").click();
+    const receptionResult = await page.evaluate(() => {
+      const now = new Date();
+      const date = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+      const payload = { type: "participation_stamp", id: `priority-participation-${date}`, date };
+      const first = window.suiyoukaiLinkage.applyParticipationStamp(payload);
+      const duplicate = window.suiyoukaiLinkage.applyParticipationStamp(payload);
+      return { first, duplicate };
+    });
     const afterCorrect = await page.evaluate((key) => JSON.parse(localStorage.getItem(key)).stamps.participationCount, storageKey);
-    assert(afterCorrect === 10, "正しい運営認証後に参加スタンプが保存されません。");
-    assert(await page.locator("[data-operator-auth]").isHidden(), "押印後に運営認証が閉じません。");
-    checks.push("正しい認証後の1件だけ保存して再ロック");
+    assert(receptionResult.first.ok && receptionResult.first.reason === "applied", "受付QRの初回反映が正しくありません。");
+    assert(receptionResult.duplicate.ok && receptionResult.duplicate.reason === "already_applied", "受付QRの当日重複防止が正しくありません。");
+    assert(afterCorrect === 10, "受付QRで参加スタンプが保存されません。");
+    checks.push("受付QRで1件だけ保存し当日重複を防止");
 
-    await page.locator('[data-panel="admin"]').click();
-    await page.locator("[data-admin-passcode-input]").fill("運営端末で設定したパスコード");
-    await page.locator("[data-admin-passcode-button]").click();
+    await unlockAdmin(page);
     const history = (await page.locator("[data-admin-history-list]").textContent()).replace(/\s+/g, " ");
-    assert(history.includes("参加スタンプ") && history.includes("9 → 10"), "押印履歴に参加スタンプの変更がありません。");
+    assert(history.includes("受付QR 参加スタンプ") && history.includes("9 → 10"), "押印履歴に受付QRの参加スタンプ変更がありません。");
     checks.push("管理画面に直近の押印履歴を表示");
 
     const earnedAtTen = await page.evaluate((key) => JSON.parse(localStorage.getItem(key)).earned, storageKey);
@@ -93,7 +106,7 @@ const assert = (condition, message) => {
     await page.locator('[data-panel="profile"]').click();
     const profileText = (await page.locator('[data-view="profile"]').textContent()).replace(/\s+/g, " ");
     assert(profileText.includes("コスモスの妖精"), "減算後の冒険者カードに妖精が残りません。");
-    assert((await page.locator("[data-profile-guide-progress]").textContent()).trim() === "1/18", "減算後の花図鑑件数が保持されません。");
+    assert((await page.locator("[data-profile-guide-progress]").textContent()).trim() === "1/33", "減算後の花図鑑件数が保持されません。");
     checks.push("減算後も冒険者カードと花図鑑に表示");
 
     await page.locator('[data-panel="admin"]').click();
