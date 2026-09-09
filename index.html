@@ -15,7 +15,7 @@
     <link rel="manifest" href="manifest.webmanifest?v=20260707-same-day-records-01">
     <link rel="apple-touch-icon" href="assets/app-icon-180.png?v=20260705-home-screen-01">
     <link rel="icon" type="image/png" sizes="192x192" href="assets/app-icon-192.png?v=20260705-home-screen-01">
-    <link rel="stylesheet" href="styles.css?v=20260724-safari-guide-01">
+    <link rel="stylesheet" href="styles.css?v=20260910-participation-ledger-01">
     <link rel="stylesheet" href="linkage-client.css?v=20260903-01">
 
     <style>
@@ -52,13 +52,6 @@
         <img src="assets/shonan-watercolor-map.png" alt="" aria-hidden="true">
         <div class="map-veil"></div>
         <div class="map-destination-links" aria-label="地図の目的地">
-          <button type="button" class="map-destination-button is-participation" data-map-destination="participation">
-            <span class="map-pin" aria-hidden="true"></span>
-            <span>
-              <small>水曜会</small>
-              <strong>参加する</strong>
-            </span>
-          </button>
           <button type="button" class="map-destination-button is-shrine" data-map-destination="shrine">
             <span class="map-pin" aria-hidden="true"></span>
             <span>
@@ -278,90 +271,44 @@
           <div class="panel-view" data-view="field-guide" hidden>
             <p class="panel-kicker">花図鑑</p>
             <h2>花を育てよう</h2>
+            <section class="participation-ledger" data-participation-ledger aria-label="水曜会参加スタンプ台帳">
+              <div class="participation-ledger-back-row" data-participation-ledger-back-row hidden>
+                <button type="button" class="participation-ledger-back" data-participation-ledger-previous>← 前のスタンプ帳を見る</button>
+              </div>
+              <article class="participation-ledger-sheet" data-participation-ledger-sheet>
+                <div class="participation-ledger-header">
+                  <h3 data-participation-ledger-name>第1帳　コスモス</h3>
+                  <span class="participation-ledger-count"><strong data-participation-ledger-count>0</strong><span>/10</span></span>
+                </div>
+                <ol class="participation-ledger-grid" data-participation-ledger-grid aria-label="コスモスの参加スタンプ10枠">
+                  <li class="participation-ledger-slot">1</li>
+                  <li class="participation-ledger-slot">2</li>
+                  <li class="participation-ledger-slot">3</li>
+                  <li class="participation-ledger-slot">4</li>
+                  <li class="participation-ledger-slot">5</li>
+                  <li class="participation-ledger-slot">6</li>
+                  <li class="participation-ledger-slot">7</li>
+                  <li class="participation-ledger-slot">8</li>
+                  <li class="participation-ledger-slot">9</li>
+                  <li class="participation-ledger-slot">10</li>
+                </ol>
+                <p class="participation-ledger-complete" data-participation-ledger-complete hidden>コスモス 満開</p>
+              </article>
+              <section class="participation-ledger-fairy" data-participation-ledger-fairy hidden aria-label="参加スタンプで出会った妖精">
+                <span class="participation-ledger-fairy-halo">
+                  <img data-participation-ledger-fairy-image src="assets/fairy-apollon-flower-style.png" alt="コスモスの妖精">
+                </span>
+                <small>旅の仲間</small>
+                <h3 data-participation-ledger-fairy-name>コスモスの妖精</h3>
+                <p>冒険者カードに残っています</p>
+              </section>
+              <button type="button" class="participation-ledger-next" data-participation-ledger-next hidden>次のスタンプ帳へ</button>
+              <p class="participation-ledger-position" data-participation-ledger-position>1冊目 / 3冊</p>
+            </section>
             <section class="flower-guide-intro" aria-label="花を育てる案内">
               <div class="flower-guide-copy">
                 <strong>参加や指導碁で花が咲きます</strong>
                 <p>花が満開になると、妖精や称号に出会えます。次に育てる花は「次の冒険」が案内します。</p>
-              </div>
-              <div class="flower-guide-showcase" aria-label="水曜会で育つ花">
-                <section class="flower-guide-group flower-guide-group-primary" aria-label="水曜会の基本の花">
-                  <h3 class="flower-guide-group-title">水曜会の基本</h3>
-                  <p class="flower-guide-group-note">いつもの参加と5人の先生で育つ花です。</p>
-                  <div class="flower-guide-group-grid">
-                    <button type="button" class="flower-guide-card" data-flower-guide-target="participation" aria-label="コスモスの参加スタンプへ移動">
-                      <img src="assets/cosmos-stamp-stage-05-v2.png" alt="コスモス" loading="eager" decoding="async">
-                      <span class="flower-guide-name">コスモス</span>
-                      <span class="flower-guide-meta">参加スタンプ</span>
-                      <span class="flower-guide-action">1巡目を見る</span>
-                    </button>
-                    <button type="button" class="flower-guide-card" data-flower-guide-target="tsuneishi" aria-label="菖蒲の常石先生スタンプへ移動">
-                      <img src="assets/iris-stamp-stage-05-list.png" alt="菖蒲" loading="eager" decoding="async">
-                      <span class="flower-guide-name">菖蒲</span>
-                      <span class="flower-guide-meta">常石先生</span>
-                      <span class="flower-guide-action">1巡目を見る</span>
-                    </button>
-                    <button type="button" class="flower-guide-card" data-flower-guide-target="yuki" aria-label="椿の結城先生スタンプへ移動">
-                      <img src="assets/camellia-stamp-stage-05-list.png" alt="椿" loading="eager" decoding="async">
-                      <span class="flower-guide-name">椿</span>
-                      <span class="flower-guide-meta">結城先生</span>
-                      <span class="flower-guide-action">1巡目を見る</span>
-                    </button>
-                    <button type="button" class="flower-guide-card" data-flower-guide-target="koike" aria-label="ひまわりの小池先生スタンプへ移動">
-                      <img src="assets/sunflower-stamp-stage-05-list.png" alt="ひまわり" loading="eager" decoding="async">
-                      <span class="flower-guide-name">ひまわり</span>
-                      <span class="flower-guide-meta">小池先生</span>
-                      <span class="flower-guide-action">1巡目を見る</span>
-                    </button>
-                    <button type="button" class="flower-guide-card" data-flower-guide-target="yamashiro" aria-label="紫陽花の山城先生スタンプへ移動">
-                      <img src="assets/hydrangea-stamp-stage-05-list.png" alt="紫陽花" loading="eager" decoding="async">
-                      <span class="flower-guide-name">紫陽花</span>
-                      <span class="flower-guide-meta">山城先生</span>
-                      <span class="flower-guide-action">1巡目を見る</span>
-                    </button>
-                    <button type="button" class="flower-guide-card" data-flower-guide-target="matsumoto" aria-label="桜の松本先生スタンプへ移動">
-                      <img src="assets/sakura-stamp-stage-05-list.png" alt="桜" loading="eager" decoding="async">
-                      <span class="flower-guide-name">桜</span>
-                      <span class="flower-guide-meta">松本先生</span>
-                      <span class="flower-guide-action">1巡目を見る</span>
-                    </button>
-                  </div>
-                </section>
-                <section class="flower-guide-group flower-guide-group-extra" aria-label="新しい先生の輪の花">
-                  <h3 class="flower-guide-group-title">新しい先生の輪</h3>
-                  <p class="flower-guide-group-note">観察期間中です。基本5人の輪とは別に、新しい先生との出会いを記録していきます。</p>
-                  <div class="flower-guide-group-grid">
-                    <button type="button" class="flower-guide-card" data-flower-guide-target="teacher_extra_01" aria-label="すずらんの徐文燕三段スタンプへ移動">
-                      <img src="assets/suzuran-stamp-stage-05-list.png" alt="すずらん" loading="eager" decoding="async">
-                      <span class="flower-guide-name">すずらん</span>
-                      <span class="flower-guide-meta">徐 文燕 三段</span>
-                      <span class="flower-guide-action">記録を見る</span>
-                    </button>
-                    <button type="button" class="flower-guide-card" data-flower-guide-target="teacher_extra_02" aria-label="白詰草の大西竜平七段スタンプへ移動">
-                      <img src="assets/shirotsumekusa-stamp-stage-05-list.png" alt="白詰草" loading="eager" decoding="async">
-                      <span class="flower-guide-name">白詰草</span>
-                      <span class="flower-guide-meta">大西 竜平 七段</span>
-                      <span class="flower-guide-action">記録を見る</span>
-                    </button>
-                    <button type="button" class="flower-guide-card" data-flower-guide-target="teacher_extra_03" aria-label="山吹の金艶四段スタンプへ移動">
-                      <img src="assets/yamabuki-stamp-stage-05-list.png" alt="山吹" loading="eager" decoding="async">
-                      <span class="flower-guide-name">山吹</span>
-                      <span class="flower-guide-meta">金 艶 四段</span>
-                      <span class="flower-guide-action">記録を見る</span>
-                    </button>
-                    <button type="button" class="flower-guide-card" data-flower-guide-target="teacher_extra_04" aria-label="金魚草の追加先生Dスタンプへ移動">
-                      <img src="assets/kingyosou-stamp-stage-05-list.png" alt="金魚草" loading="eager" decoding="async">
-                      <span class="flower-guide-name">金魚草</span>
-                      <span class="flower-guide-meta">追加先生D</span>
-                      <span class="flower-guide-action">記録を見る</span>
-                    </button>
-                    <button type="button" class="flower-guide-card" data-flower-guide-target="teacher_extra_05" aria-label="露草の追加先生Eスタンプへ移動">
-                      <img src="assets/tsuyukusa-stamp-stage-05-list.png" alt="露草" loading="eager" decoding="async">
-                      <span class="flower-guide-name">露草</span>
-                      <span class="flower-guide-meta">追加先生E</span>
-                      <span class="flower-guide-action">記録を見る</span>
-                    </button>
-                  </div>
-                </section>
               </div>
             </section>
             <h3 class="teacher-guide-heading">先生を選んで花を育てる</h3>
@@ -1470,7 +1417,7 @@
     </script>
     <script src="stamp-rules.js?v=20260719-teacher-photos-01"></script>
     <script src="history-merge.js?v=20260904-01"></script>
-    <script src="script.js?v=20260904-participation-02"></script>
+    <script src="script.js?v=20260910-participation-ledger-01"></script>
     <script src="linkage-client.js?v=20260903-01"></script>
     <script src="gate-client.js?v=20260904-01"></script>
     <script src="history-client.js?v=20260904-02"></script>

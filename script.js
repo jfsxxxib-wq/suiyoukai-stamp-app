@@ -124,6 +124,19 @@ const participationStartCount = document.querySelector("[data-participation-star
 const participationStartStatus = document.querySelector("[data-participation-start-status]");
 const participationStartFormButton = document.querySelector("[data-participation-start-form]");
 const participationStartGuide = document.querySelector("[data-participation-start-guide]");
+const participationLedger = document.querySelector("[data-participation-ledger]");
+const participationLedgerBackRow = document.querySelector("[data-participation-ledger-back-row]");
+const participationLedgerPreviousButton = document.querySelector("[data-participation-ledger-previous]");
+const participationLedgerSheet = document.querySelector("[data-participation-ledger-sheet]");
+const participationLedgerName = document.querySelector("[data-participation-ledger-name]");
+const participationLedgerCount = document.querySelector("[data-participation-ledger-count]");
+const participationLedgerGrid = document.querySelector("[data-participation-ledger-grid]");
+const participationLedgerComplete = document.querySelector("[data-participation-ledger-complete]");
+const participationLedgerFairy = document.querySelector("[data-participation-ledger-fairy]");
+const participationLedgerFairyImage = document.querySelector("[data-participation-ledger-fairy-image]");
+const participationLedgerFairyName = document.querySelector("[data-participation-ledger-fairy-name]");
+const participationLedgerNextButton = document.querySelector("[data-participation-ledger-next]");
+const participationLedgerPosition = document.querySelector("[data-participation-ledger-position]");
 const flowerGuideCards = document.querySelectorAll("[data-flower-guide-target]");
 const circleStamp = document.querySelector("[data-circle-stamp='first']");
 const circleStatus = document.querySelector("[data-circle-status]");
@@ -717,6 +730,37 @@ const getCycleProgress = (count, perCycleGoal, cycles) => {
   };
 };
 
+const getParticipationLedgerMaxCycleIndex = (participationCount) => {
+  const goal = getParticipationGoal();
+  const lastCycleIndex = Math.max(0, participationFlowerCycles.length - 1);
+  const currentCount = clampProgressCount(participationCount, getParticipationMaxCount());
+
+  return Math.min(Math.floor(currentCount / goal), lastCycleIndex);
+};
+
+const inferLegacyParticipationLedgerCycleIndex = (participationCount) => {
+  const goal = getParticipationGoal();
+  const lastCycleIndex = Math.max(0, participationFlowerCycles.length - 1);
+  const currentCount = clampProgressCount(participationCount, getParticipationMaxCount());
+
+  if (currentCount <= 0) {
+    return 0;
+  }
+
+  return Math.min(Math.ceil(currentCount / goal) - 1, lastCycleIndex);
+};
+
+const sanitizeParticipationLedgerCycleIndex = (value, participationCount) => {
+  const parsedValue = Number(value);
+  const fallback = inferLegacyParticipationLedgerCycleIndex(participationCount);
+  const cycleIndex = Number.isInteger(parsedValue) ? parsedValue : fallback;
+
+  return Math.min(
+    Math.max(0, cycleIndex),
+    getParticipationLedgerMaxCycleIndex(participationCount)
+  );
+};
+
 const getFlowerVisualBackground = (flower = {}) => {
   const main = flower.flowerColor ?? "#d86a83";
   const accent = flower.accentColor ?? "#f4c06a";
@@ -1035,6 +1079,9 @@ const getStoredParticipationCount = (progress = {}) =>
 const getStoredLastParticipationStampDate = (progress = {}) =>
   progress.stamps?.lastParticipationStampDate ?? progress.lastParticipationStampDate ?? "";
 
+const getStoredParticipationLedgerCycleIndex = (progress = {}) =>
+  progress.display?.participationLedgerCycleIndex ?? progress.participationLedgerCycleIndex;
+
 const sanitizeStampDate = (value) =>
   typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value) ? value : "";
 
@@ -1083,6 +1130,10 @@ const sanitizeProgress = (progress = {}) => {
   const template = createInitialProgressFromTeacherDetails();
   const teacherLessonCounts = { ...template.stamps.teacherLessonCounts };
   const storedTeacherLessonCounts = getStoredTeacherLessonCounts(progress);
+  const participationCount = clampProgressCount(
+    getStoredParticipationCount(progress) ?? template.stamps.participationCount,
+    getParticipationMaxCount()
+  );
 
   for (const teacherId of Object.keys(teacherLessonCounts)) {
     const teacher = teacherDetails[teacherId];
@@ -1095,13 +1146,16 @@ const sanitizeProgress = (progress = {}) => {
   return {
     schemaVersion: template.schemaVersion,
     stamps: {
-      participationCount: clampProgressCount(
-        getStoredParticipationCount(progress) ?? template.stamps.participationCount,
-        getParticipationMaxCount()
-      ),
+      participationCount,
       lastParticipationStampDate: sanitizeStampDate(getStoredLastParticipationStampDate(progress)),
       teacherLessonCounts,
       teacherCircleRounds: getTeacherCircleRoundsFromCounts(teacherLessonCounts),
+    },
+    display: {
+      participationLedgerCycleIndex: sanitizeParticipationLedgerCycleIndex(
+        getStoredParticipationLedgerCycleIndex(progress),
+        participationCount
+      ),
     },
     earned: {
       fairies: Array.isArray(getStoredEarnedFairies(progress)) ? getStoredEarnedFairies(progress) : template.earned.fairies,
@@ -1125,6 +1179,9 @@ const createResetProgress = () => {
       lastParticipationStampDate: "",
       teacherLessonCounts,
       teacherCircleRounds: 0,
+    },
+    display: {
+      participationLedgerCycleIndex: 0,
     },
     earned: {
       fairies: [],
@@ -1150,6 +1207,7 @@ const loadUserProgress = () => {
 };
 
 let userProgress = loadUserProgress();
+let viewedParticipationLedgerCycleIndex = userProgress.display.participationLedgerCycleIndex;
 
 const sanitizeGameRecord = (record = {}) => {
   const teacherId = typeof record.teacherId === "string" ? record.teacherId : "";
@@ -2925,7 +2983,31 @@ const syncTeacherDetailsFromProgress = () => {
   }
 };
 
+const syncParticipationLedgerState = ({ resetView = false } = {}) => {
+  const currentCount = normalizeProgressCount(userProgress.stamps.participationCount);
+  const activeCycleIndex = sanitizeParticipationLedgerCycleIndex(
+    userProgress.display?.participationLedgerCycleIndex,
+    currentCount
+  );
+
+  userProgress.display = {
+    ...(userProgress.display ?? {}),
+    participationLedgerCycleIndex: activeCycleIndex,
+  };
+
+  if (resetView || !Number.isInteger(viewedParticipationLedgerCycleIndex)) {
+    viewedParticipationLedgerCycleIndex = activeCycleIndex;
+    return;
+  }
+
+  viewedParticipationLedgerCycleIndex = Math.min(
+    Math.max(0, viewedParticipationLedgerCycleIndex),
+    activeCycleIndex
+  );
+};
+
 const syncProgressRewards = () => {
+  syncParticipationLedgerState();
   const achievementResult = window.achievementEvaluators.evaluateAllAchievements(userProgress);
 
   userProgress.earned.fairies = achievementResult.earnedFairies;
@@ -6940,14 +7022,138 @@ const openParticipationForm = () => {
   window.location.assign("https://suiyoukai-portal.c84s4n967v.chatgpt.site");
 };
 
+const getParticipationLedgerCycle = (cycleIndex) =>
+  window.participationStampCycles?.[cycleIndex] ?? participationFlowerCycles[cycleIndex];
+
+const getParticipationLedgerCount = (cycleIndex) => {
+  const goal = getParticipationGoal();
+  const currentCount = normalizeProgressCount(userProgress.stamps.participationCount);
+
+  return clampProgressCount(currentCount - (cycleIndex * goal), goal);
+};
+
+const getParticipationLedgerFairy = (cycleIndex) =>
+  userProgress.earned.fairies.find((fairy) =>
+    fairy.teacherId === null && (fairy.cycleNumber ?? 1) === cycleIndex + 1
+  ) ?? null;
+
+const updateParticipationLedger = () => {
+  if (!participationLedger || !participationLedgerGrid) {
+    return;
+  }
+
+  syncParticipationLedgerState();
+  const activeCycleIndex = userProgress.display.participationLedgerCycleIndex;
+  viewedParticipationLedgerCycleIndex = Math.min(
+    Math.max(0, viewedParticipationLedgerCycleIndex),
+    activeCycleIndex
+  );
+
+  const cycleIndex = viewedParticipationLedgerCycleIndex;
+  const cycle = getParticipationLedgerCycle(cycleIndex);
+  const goal = getParticipationGoal();
+  const countInLedger = getParticipationLedgerCount(cycleIndex);
+  const isComplete = countInLedger >= goal;
+  const isPastLedger = cycleIndex < activeCycleIndex;
+  const canAdvanceCurrentLedger = !isPastLedger
+    && isComplete
+    && activeCycleIndex < participationFlowerCycles.length - 1;
+  const shouldShowNextButton = isPastLedger || canAdvanceCurrentLedger;
+  const flowerName = cycle.flowerName ?? "花";
+  const flowerAsset = cycle.flowerAsset ?? "cosmos-stamp-stage-05-v2.png";
+  const fairy = isComplete ? getParticipationLedgerFairy(cycleIndex) : null;
+  const fairyName = fairy?.name ?? cycle.fairyName ?? `${flowerName}の妖精`;
+  const fairyAsset = fairy?.fairyAsset ?? cycle.fairyAsset ?? "fairy-apollon-flower-style.png";
+
+  participationLedgerName.textContent = `第${cycleIndex + 1}帳　${flowerName}`;
+  participationLedgerCount.textContent = String(countInLedger);
+  participationLedgerPosition.textContent = `${cycleIndex + 1}冊目 / ${participationFlowerCycles.length}冊`;
+  participationLedgerSheet.classList.toggle("is-current", !isComplete);
+  participationLedger.setAttribute(
+    "aria-label",
+    `${flowerName}の水曜会参加スタンプ台帳、${countInLedger}/${goal}`
+  );
+  participationLedgerGrid.setAttribute(
+    "aria-label",
+    `${flowerName}の参加スタンプ${goal}枠、${countInLedger}個押印済み、10番目は中央配置`
+  );
+  participationLedgerGrid.textContent = "";
+
+  for (let stampNumber = 1; stampNumber <= goal; stampNumber += 1) {
+    const slot = document.createElement("li");
+    slot.className = "participation-ledger-slot";
+
+    if (stampNumber <= countInLedger) {
+      const image = document.createElement("img");
+      slot.classList.add("is-filled");
+      slot.setAttribute("aria-label", `${stampNumber}個目：${flowerName}印・記録済み`);
+      image.src = `assets/${flowerAsset}`;
+      image.alt = "";
+      image.setAttribute("aria-hidden", "true");
+      slot.append(image);
+    } else {
+      slot.textContent = String(stampNumber);
+      slot.setAttribute("aria-label", `${stampNumber}個目：未押印`);
+    }
+
+    participationLedgerGrid.append(slot);
+  }
+
+  participationLedgerBackRow.hidden = cycleIndex === 0;
+  participationLedgerComplete.hidden = !isComplete;
+  participationLedgerComplete.textContent = `${flowerName} 満開`;
+  participationLedgerFairy.hidden = !isComplete;
+  participationLedgerFairyName.textContent = fairyName;
+  participationLedgerFairyImage.src = `assets/${fairyAsset}`;
+  participationLedgerFairyImage.alt = fairyName;
+  participationLedgerNextButton.hidden = !shouldShowNextButton;
+};
+
+const showPreviousParticipationLedger = () => {
+  if (viewedParticipationLedgerCycleIndex <= 0) {
+    return;
+  }
+
+  viewedParticipationLedgerCycleIndex -= 1;
+  updateParticipationLedger();
+};
+
+const showNextParticipationLedger = () => {
+  const activeCycleIndex = userProgress.display.participationLedgerCycleIndex;
+
+  if (viewedParticipationLedgerCycleIndex < activeCycleIndex) {
+    viewedParticipationLedgerCycleIndex += 1;
+    updateParticipationLedger();
+    return;
+  }
+
+  const isCurrentLedgerComplete = getParticipationLedgerCount(activeCycleIndex) >= getParticipationGoal();
+  if (!isCurrentLedgerComplete || activeCycleIndex >= participationFlowerCycles.length - 1) {
+    return;
+  }
+
+  userProgress.display.participationLedgerCycleIndex = activeCycleIndex + 1;
+  viewedParticipationLedgerCycleIndex = activeCycleIndex + 1;
+  saveUserProgress();
+  updateParticipationLedger();
+};
+
 const updateParticipationStampCard = () => {
+  updateParticipationLedger();
   if (!participationCount || !participationStatus || !participationStampButton) {
     return;
   }
 
   const currentCount = normalizeProgressCount(userProgress.stamps.participationCount);
   const goal = getParticipationGoal();
-  const cycleProgress = getCycleProgress(currentCount, goal, participationFlowerCycles);
+  const activeCycleIndex = userProgress.display.participationLedgerCycleIndex;
+  const cycleProgress = {
+    cycleIndex: activeCycleIndex,
+    cycleNumber: activeCycleIndex + 1,
+    countInCycle: getParticipationLedgerCount(activeCycleIndex),
+    maxCount: getParticipationMaxCount(),
+    cycle: participationFlowerCycles[activeCycleIndex],
+  };
   const isFirstAchievementAchieved = currentCount >= goal;
   const isMaxAchieved = currentCount >= cycleProgress.maxCount;
   const isStampedToday = hasParticipationStampToday();
@@ -6967,7 +7173,9 @@ const updateParticipationStampCard = () => {
   participationCount.textContent = `${cycleProgress.countInCycle}/${goal}回`;
   participationStatus.textContent = isStampedToday
     ? "本日は押印済み"
-    : isFirstAchievementAchieved
+    : cycleProgress.countInCycle >= goal
+      ? `${cycleProgress.cycle.flowerName} 満開`
+      : isFirstAchievementAchieved
       ? `${cycleProgress.cycleNumber}巡目 ${cycleProgress.cycle.flowerName}`
       : `あと${Math.max(0, goal - cycleProgress.countInCycle)}回`;
   if (participationStartReceptionCode) {
@@ -9705,6 +9913,9 @@ for (const input of [gameRecordDate, gameRecordHandicap, gameRecordResult]) {
 participationStampButton.addEventListener("click", () => {
   openParticipationForm();
 });
+
+participationLedgerPreviousButton?.addEventListener("click", showPreviousParticipationLedger);
+participationLedgerNextButton?.addEventListener("click", showNextParticipationLedger);
 
 participationStartFormButton?.addEventListener("click", () => {
   openParticipationForm();
