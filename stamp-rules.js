@@ -141,7 +141,7 @@ const achievementRules = {
       },
       {
         teacherId: "teacher_extra_03",
-        teacherName: "追加先生C",
+        teacherName: "金 艶 四段",
         flower: "yamabuki",
         flowerName: "山吹",
         flowerAsset: "yamabuki-stamp-stage-05-list.png",
@@ -152,7 +152,7 @@ const achievementRules = {
           medal: null,
           title: {
             id: "title_teacher_extra_03_yamabuki_fairy_friend",
-            name: "追加先生C 山吹の柴犬妖精と出会った人",
+            name: "金 艶 四段 山吹の柴犬妖精と出会った人",
           },
         },
       },

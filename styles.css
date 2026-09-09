@@ -12032,6 +12032,11 @@ body {
   --teacher-photo-bg: #f3efe8;
 }
 
+.teacher-photo[data-teacher-photo="kin-en"] {
+  --teacher-photo-image: url("assets/teacher-kin-en-20260910.png?v=20260910-teacher-photo-source-01");
+  --teacher-photo-bg: #f3efe8;
+}
+
 .teacher-photo[data-teacher-photo]::after,
 .info-dock.is-detail-open .teacher-detail .teacher-photo-card:not(.progress-card) .teacher-photo[data-teacher-photo]::after {
   content: "" !important;
