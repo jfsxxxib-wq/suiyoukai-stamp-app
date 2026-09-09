@@ -59,6 +59,8 @@ const readProgress = (page) => page.evaluate((key) => JSON.parse(localStorage.ge
       const content = document.querySelector("[data-profile-collapsible='achievements']");
       const today = document.querySelector("[data-profile-latest-stamp]");
       const landscape = document.querySelector("[data-profile-landscape-space]");
+      const landscapeImage = landscape?.querySelector(".profile-landscape-image");
+      const landscapeButton = landscape?.querySelector("[data-profile-landscape-viewer]");
       const selectors = [
         "[data-profile-title]",
         "[data-profile-rank]",
@@ -72,7 +74,11 @@ const readProgress = (page) => page.evaluate((key) => JSON.parse(localStorage.ge
       return {
         fixedResultCount: document.querySelectorAll("[data-profile-achievement-results]").length,
         landscapeCount: document.querySelectorAll("[data-profile-landscape-space]").length,
-        landscapeIsEmpty: landscape?.childElementCount === 0 && !landscape?.querySelector("img, button"),
+        landscapeHasViewerOnly: landscape?.childElementCount === 1
+          && Boolean(landscapeButton)
+          && Boolean(landscapeImage)
+          && landscapeButton?.querySelectorAll("img").length === 1,
+        landscapeImageLoaded: Boolean(landscapeImage?.complete && landscapeImage?.naturalWidth > 0),
         landscapeAfterIdentity: card && landscape
           ? card.querySelector(".adventurer-name-block")?.nextElementSibling === landscape
           : false,
@@ -86,13 +92,32 @@ const readProgress = (page) => page.evaluate((key) => JSON.parse(localStorage.ge
     });
 
     assert(structure.fixedResultCount === 1, "固定の達成判定結果が1件ではありません。");
-    assert(structure.landscapeCount === 1 && structure.landscapeIsEmpty, "景色用の空領域に画像・宝箱・要素が入っています。");
-    assert(structure.landscapeAfterIdentity, "景色用の空領域が冒険者名・受付番号の直後にありません。");
+    assert(structure.landscapeCount === 1 && structure.landscapeHasViewerOnly, "景色枠が0スタンプ風景の拡大ボタン1件だけの構造ではありません。");
+    assert(structure.landscapeImageLoaded, "0スタンプ風景画像を読み込めません。");
+    assert(structure.landscapeAfterIdentity, "景色枠が冒険者名・受付番号の直後にありません。");
     assert(structure.todayOutsideResults, "今日の記録が達成判定結果の中へ移動しています。");
     assert(structure.resultPartsInside, "称号から達成判定内訳までが同じ要素のまま下部へ整理されていません。");
     assert(structure.resultStartsCollapsed, "達成判定結果の初期状態が閉じていません。");
 
     await page.locator('[data-panel="profile"]').click();
+    const landscapeButton = page.locator("[data-profile-landscape-viewer]");
+    await landscapeButton.scrollIntoViewIfNeeded();
+    const landscapeScrollY = await page.evaluate(() => window.scrollY);
+    await landscapeButton.click();
+    assert(await page.locator("[data-fairy-viewer]").isVisible(), "景色をタップしても拡大表示が開きません。");
+    assert(await page.locator("[data-fairy-viewer]").getAttribute("data-viewer-type") === "landscape", "景色用の拡大表示になっていません。");
+    assert(await page.locator(".fairy-viewer-card.is-landscape-viewer h2").isHidden(), "景色の拡大表示に見出し文字が残っています。");
+    assert(await page.locator(".fairy-viewer-card.is-landscape-viewer p").first().isHidden(), "景色の拡大表示に説明文が残っています。");
+    await page.locator(".fairy-viewer-close").click();
+    assert(await page.locator("[data-fairy-viewer]").isHidden(), "×で景色の拡大表示を閉じられません。");
+    assert(await landscapeButton.evaluate((button) => document.activeElement === button), "×で閉じた後に景色枠へ戻りません。");
+    assert(Math.abs((await page.evaluate(() => window.scrollY)) - landscapeScrollY) <= 2, "×で閉じた後に元の画面位置へ戻りません。");
+
+    await landscapeButton.click();
+    await page.locator(".fairy-viewer-backdrop").click({ position: { x: 8, y: 8 } });
+    assert(await page.locator("[data-fairy-viewer]").isHidden(), "背景タップで景色の拡大表示を閉じられません。");
+    assert(await landscapeButton.evaluate((button) => document.activeElement === button), "背景タップで閉じた後に景色枠へ戻りません。");
+
     await page.locator('[data-profile-toggle="achievements"]').click();
     assert(await page.locator("#profile-achievement-content").isVisible(), "達成判定結果を開けません。");
 
@@ -120,6 +145,12 @@ const readProgress = (page) => page.evaluate((key) => JSON.parse(localStorage.ge
     assert(todayVisible, "今日の記録が現行どおり表示されません。");
     assert(await page.locator("[data-participation-ledger-grid] img").count() === 10, "大きな台帳に10個の既存スタンプが表示されません。");
     assert(await page.locator("[data-participation-ledger-fairy]").evaluate((element) => !element.hidden), "10/10の妖精完成表示がありません。");
+
+    await page.locator('[data-profile-toggle="fairies"]').click();
+    await page.locator(".profile-fairy-item").first().click();
+    assert(await page.locator("[data-fairy-viewer]").getAttribute("data-viewer-type") === "fairy", "既存の妖精拡大表示が景色表示と混ざっています。");
+    assert(await page.locator("[data-fairy-viewer-name]").isVisible(), "既存の妖精拡大表示から名前が消えています。");
+    await page.locator(".fairy-viewer-close").click();
 
     const beforeDuplicateRewards = JSON.stringify(completed.earned);
     const duplicateResult = await page.evaluate(() => {
@@ -160,7 +191,7 @@ const readProgress = (page) => page.evaluate((key) => JSON.parse(localStorage.ge
     assert(qrIds.length === 1, "受付QRの重複防止IDが正しく保存されていません。");
     assert(errors.length === 0, `画面エラー: ${errors.join(" / ")}`);
 
-    console.log("PASS: fixed profile results; empty landscape slot; today record preserved; rewards, QR duplicate guard and ledger state unchanged.");
+    console.log("PASS: fixed profile results; zero-stamp landscape viewer; close and return behavior; today record, rewards, QR duplicate guard and ledger state unchanged.");
   } finally {
     await browser.close();
   }

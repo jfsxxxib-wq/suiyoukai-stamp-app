@@ -72,6 +72,7 @@ const profileFairyList = document.querySelector("[data-profile-fairy-list]");
 const profileFairies = document.querySelector("[data-profile-fairies]");
 const profileToggleButtons = document.querySelectorAll("[data-profile-toggle]");
 const profileSpecialCompanions = document.querySelector("[data-profile-special-companions]");
+const profileLandscapeViewerButton = document.querySelector("[data-profile-landscape-viewer]");
 const fairyViewer = document.querySelector("[data-fairy-viewer]");
 const fairyViewerImage = document.querySelector("[data-fairy-viewer-image]");
 const fairyViewerName = document.querySelector("[data-fairy-viewer-name]");
@@ -79,6 +80,8 @@ const fairyViewerStatus = document.querySelector("[data-fairy-viewer-status]");
 const fairyViewerQuote = document.querySelector("[data-fairy-viewer-quote]");
 const fairyViewerCard = document.querySelector(".fairy-viewer-card");
 const fairyViewerCloseButtons = document.querySelectorAll("[data-fairy-viewer-close]");
+let fairyViewerReturnTarget = null;
+let fairyViewerReturnScrollY = 0;
 const profileSpecialCompanionList = document.querySelector("[data-profile-special-companion-list]");
 const libraryOwl = document.querySelector("[data-library-owl]");
 const libraryOwlViewerButton = document.querySelector("[data-library-owl-viewer]");
@@ -7318,7 +7321,7 @@ const getFairyCardFrame = ({ type = "fairy", flower = "", companionId = "" } = {
   return fairyCardFrames[flower] ?? fairyCardFrames.cosmos;
 };
 
-const openFairyViewer = ({ src, alt, name, status, quote = "", type = "fairy", flower = "", background = "", companionId = "" }) => {
+const openFairyViewer = ({ src, alt, name, status, quote = "", type = "fairy", flower = "", background = "", companionId = "", returnTarget = null }) => {
   if (!fairyViewer || !fairyViewerImage || !fairyViewerName || !fairyViewerStatus) {
     return;
   }
@@ -7356,8 +7359,12 @@ const openFairyViewer = ({ src, alt, name, status, quote = "", type = "fairy", f
   fairyViewerCard?.classList.toggle("is-special-companion", type === "special");
   fairyViewerCard?.classList.toggle("is-medal-viewer", type === "medal");
   fairyViewerCard?.classList.toggle("is-title-book-viewer", type === "title-book");
+  fairyViewerCard?.classList.toggle("is-landscape-viewer", type === "landscape");
+  fairyViewerReturnTarget = returnTarget instanceof HTMLElement ? returnTarget : null;
+  fairyViewerReturnScrollY = window.scrollY;
   fairyViewer.hidden = false;
   document.body.classList.add("is-fairy-viewer-open");
+  fairyViewer.querySelector(".fairy-viewer-close")?.focus({ preventScroll: true });
 };
 
 const closeFairyViewer = () => {
@@ -7365,15 +7372,38 @@ const closeFairyViewer = () => {
     return;
   }
 
+  const returnTarget = fairyViewerReturnTarget;
+  const returnScrollY = fairyViewerReturnScrollY;
   fairyViewer.hidden = true;
   fairyViewer.dataset.viewerType = "";
   fairyViewer.dataset.viewerFlower = "";
-  fairyViewerCard?.classList.remove("is-special-companion", "is-medal-viewer", "is-title-book-viewer");
+  fairyViewerCard?.classList.remove("is-special-companion", "is-medal-viewer", "is-title-book-viewer", "is-landscape-viewer");
   fairyViewerCard?.style.removeProperty("--viewer-flower-color");
   fairyViewerCard?.style.removeProperty("--viewer-flower-accent");
   fairyViewerCard?.style.removeProperty("--viewer-book-bg");
   fairyViewerCard?.style.removeProperty("--viewer-frame");
   document.body.classList.remove("is-fairy-viewer-open");
+  fairyViewerReturnTarget = null;
+  if (returnTarget?.isConnected) {
+    window.scrollTo({ top: returnScrollY, behavior: "auto" });
+    returnTarget.focus({ preventScroll: true });
+  }
+};
+
+const openProfileLandscapeViewer = () => {
+  const image = profileLandscapeViewerButton?.querySelector(".profile-landscape-image");
+  if (!image) {
+    return;
+  }
+
+  openFairyViewer({
+    src: image.currentSrc || image.src,
+    alt: image.alt,
+    name: "",
+    status: "",
+    type: "landscape",
+    returnTarget: profileLandscapeViewerButton,
+  });
 };
 
 const getTitleBookDetail = (title, achievementResult) => {
@@ -9731,6 +9761,7 @@ libraryMedalArtToggle?.addEventListener("click", toggleLibraryMedalList);
 syncLibraryMedalToggle();
 libraryOwlViewerButton?.addEventListener("click", openLibraryOwlViewer);
 libraryJournalKeeperViewerButton?.addEventListener("click", openLibraryJournalKeeperViewer);
+profileLandscapeViewerButton?.addEventListener("click", openProfileLandscapeViewer);
 libraryJournalToggle?.addEventListener("click", toggleLibraryJournal);
 syncLibraryJournalToggle();
 libraryJournalSkip?.addEventListener("click", () => setJournalPrompt("わかった。今日もちゃんとしまっておくね。"));

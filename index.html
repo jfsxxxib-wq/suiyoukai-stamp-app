@@ -15,7 +15,7 @@
     <link rel="manifest" href="manifest.webmanifest?v=20260707-same-day-records-01">
     <link rel="apple-touch-icon" href="assets/app-icon-180.png?v=20260705-home-screen-01">
     <link rel="icon" type="image/png" sizes="192x192" href="assets/app-icon-192.png?v=20260705-home-screen-01">
-    <link rel="stylesheet" href="styles.css?v=20260910-profile-organization-01">
+    <link rel="stylesheet" href="styles.css?v=20260910-landscape-viewer-01">
     <link rel="stylesheet" href="linkage-client.css?v=20260903-01">
 
     <style>
@@ -184,7 +184,18 @@
                 </div>
               </div>
 
-              <section class="profile-landscape-space" data-profile-landscape-space aria-label="景色が育つ場所"></section>
+              <section class="profile-landscape-space" data-profile-landscape-space aria-label="景色が育つ場所">
+                <button type="button" class="profile-landscape-viewer-button" data-profile-landscape-viewer aria-label="景色を大きく見る">
+                  <img
+                    class="profile-landscape-image"
+                    src="assets/adventure-landscape-zero.png"
+                    alt="海と遠景が広がる冒険の始まりの風景"
+                    decoding="async"
+                    draggable="false"
+                  >
+                  <span class="profile-landscape-expand-mark" aria-hidden="true">⛶</span>
+                </button>
+              </section>
 
               <dl class="profile-list profile-today-list">
                 <div class="profile-today-record" data-profile-latest-stamp hidden>
@@ -1431,7 +1442,7 @@
     </script>
     <script src="stamp-rules.js?v=20260719-teacher-photos-01"></script>
     <script src="history-merge.js?v=20260904-01"></script>
-    <script src="script.js?v=20260910-profile-organization-01"></script>
+    <script src="script.js?v=20260910-landscape-viewer-01"></script>
     <script src="linkage-client.js?v=20260903-01"></script>
     <script src="gate-client.js?v=20260904-01"></script>
     <script src="history-client.js?v=20260904-02"></script>

@@ -4132,6 +4132,8 @@ button {
 }
 
 .profile-landscape-space {
+  position: relative;
+  height: 230px;
   min-height: 230px;
   margin: 2px 0 14px;
   overflow: hidden;
@@ -4142,6 +4144,55 @@ button {
   box-shadow:
     inset 0 0 0 5px rgba(255, 255, 255, 0.32),
     0 8px 20px rgba(48, 38, 26, 0.06);
+}
+
+.profile-landscape-viewer-button {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  background: transparent;
+  cursor: zoom-in;
+}
+
+.profile-landscape-viewer-button:focus-visible {
+  outline: 2px solid rgba(38, 104, 76, 0.7);
+  outline-offset: -4px;
+}
+
+.profile-landscape-image {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 68% 58%;
+  transform: scale(1.85);
+  transform-origin: 58% 62%;
+  user-select: none;
+}
+
+.profile-landscape-expand-mark {
+  position: absolute;
+  top: 9px;
+  right: 9px;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 50%;
+  background: rgba(42, 66, 55, 0.24);
+  color: rgba(255, 255, 255, 0.84);
+  font-size: 1rem;
+  line-height: 1;
+  text-shadow: 0 1px 3px rgba(27, 39, 32, 0.36);
+  pointer-events: none;
 }
 
 .current-title::before,
@@ -10447,6 +10498,7 @@ button.library-collection-item.is-title.is-opening-book > span {
   }
 
   .profile-landscape-space {
+    height: 245px;
     min-height: 245px;
   }
 
@@ -12325,11 +12377,11 @@ body {
   text-align: center;
 }
 
-.fairy-viewer-card:not(.is-title-book-viewer):not(.is-medal-viewer) {
+.fairy-viewer-card:not(.is-title-book-viewer):not(.is-medal-viewer):not(.is-landscape-viewer) {
   overflow: hidden;
 }
 
-.fairy-viewer-card:not(.is-title-book-viewer):not(.is-medal-viewer)::before {
+.fairy-viewer-card:not(.is-title-book-viewer):not(.is-medal-viewer):not(.is-landscape-viewer)::before {
   content: "";
   position: absolute;
   inset: 0;
@@ -12341,7 +12393,7 @@ body {
   pointer-events: none;
 }
 
-.fairy-viewer-card:not(.is-title-book-viewer):not(.is-medal-viewer) > * {
+.fairy-viewer-card:not(.is-title-book-viewer):not(.is-medal-viewer):not(.is-landscape-viewer) > * {
   position: relative;
   z-index: 1;
 }
@@ -12405,6 +12457,43 @@ body {
   font-size: 1.35rem;
   line-height: 1;
   cursor: pointer;
+}
+
+.fairy-viewer-card.is-landscape-viewer {
+  width: min(96vw, 760px);
+  aspect-ratio: 1.2;
+  padding: 0;
+  overflow: hidden;
+  border-color: rgba(255, 252, 242, 0.72);
+  border-radius: 12px;
+  background: rgba(245, 248, 239, 0.96);
+}
+
+.fairy-viewer-card.is-landscape-viewer .fairy-viewer-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  object-fit: cover;
+  object-position: 68% 58%;
+  transform: scale(1.88);
+  transform-origin: 56% 65%;
+  filter: none;
+}
+
+.fairy-viewer-card.is-landscape-viewer h2,
+.fairy-viewer-card.is-landscape-viewer p {
+  display: none;
+}
+
+.fairy-viewer-card.is-landscape-viewer .fairy-viewer-close {
+  z-index: 3;
+  top: 9px;
+  right: 9px;
+  border-color: rgba(255, 255, 255, 0.58);
+  background: rgba(31, 48, 40, 0.5);
+  color: #fff;
 }
 
 .fairy-viewer-image {
