@@ -1057,34 +1057,6 @@
                 <p class="admin-identity-note" data-admin-identity-note>この端末の記録を操作します。</p>
               </section>
 
-              <section class="admin-operation-card" aria-label="反映内容のまとめ">
-                <div class="admin-operation-heading">
-                  <strong>反映内容</strong>
-                  <span>上の人に入れる内容を確認</span>
-                </div>
-                <dl class="admin-check-list">
-                  <div>
-                    <dt>参加者</dt>
-                    <dd data-admin-participant-name>みずの しずく</dd>
-                  </div>
-                  <div>
-                    <dt>参加</dt>
-                    <dd data-admin-participation>今日の参加スタンプを入れる</dd>
-                  </div>
-                  <div>
-                    <dt>対局</dt>
-                    <dd data-admin-teacher>松本 武久 八段</dd>
-                  </div>
-                  <div>
-                    <dt>内容</dt>
-                    <dd data-admin-result>対局内容を確認中</dd>
-                  </div>
-                </dl>
-                <button type="button" class="admin-combined-apply" data-admin-combined-apply>この内容をまとめて反映</button>
-                <button type="button" class="admin-duplicate-teacher-apply" data-admin-duplicate-teacher-apply hidden>同じ条件でもう1局として追加</button>
-                <small data-admin-combined-message>参加スタンプと対局内容を確認してから押してください。</small>
-              </section>
-
               <div class="admin-section-heading">
                 <strong>今日の運営</strong>
                 <span>本人スマホでSafariから開く入口QRを先に使う</span>
@@ -1121,7 +1093,7 @@
                   <small data-admin-participation-qr-message>受付後に本人スマホで読み取ると、今日の参加スタンプが1つ入ります。</small>
                 </div>
                 <div class="admin-secondary-action">
-                  <strong>フォーム回答を見てこの端末へ入れる時</strong>
+                  <strong>フォーム回答を確認する時</strong>
                 <a
                   class="admin-participation-form-link"
                   href="https://docs.google.com/forms/d/e/1FAIpQLSdEqwXBhF3jDi-YUizfnNnLDfTzD7QJTK469-xwQwA21Gl_rA/viewform?usp=publish-editor"
@@ -1129,40 +1101,21 @@
                   rel="noopener noreferrer"
                 >参加者用フォームを開く</a>
                 <p class="admin-form-confirm-note">
-                  回答確認はGoogleフォームの回答画面、または回答スプレッドシートで見ます。ここでは確認した名前を入力して反映します。
+                  回答確認はGoogleフォームの回答画面、または回答スプレッドシートで見ます。この画面から管理端末へ直接反映はしません。
                 </p>
-                <label class="admin-participation-name">
-                  <span>お名前</span>
-                  <input type="text" data-admin-participation-name aria-label="参加者のお名前" autocomplete="off" placeholder="フォームの名前を入力">
-                </label>
-                <button type="button" data-admin-participation-apply>今日の参加スタンプを反映</button>
-                <small data-admin-participation-message>フォーム回答を確認してから押してください。</small>
                 </div>
               </section>
 
               <section class="admin-game-record-apply" aria-label="対局記録フォーム反映">
                 <div class="admin-adjustments-header">
-                  <strong>先生ごとの固定QR</strong>
+                  <strong>本人スマホ用QR</strong>
                   <span data-admin-game-record-date-label>本日</span>
                 </div>
                 <p class="admin-form-confirm-note">
-                  先生席や受付に置く用です。本人スマホで読んだ先生のスタンプが1つ入り、今日の記録へ着地します。
+                  先生・対局日・ハンデ・勝敗を確認し、本人スマホで読み取ってもらいます。
                 </p>
-                <button type="button" class="admin-stamp-qr-button admin-stamp-qr-button-primary" data-admin-fixed-teacher-qr-create>先生ごとの固定QRを作る</button>
-                <div class="admin-fixed-teacher-qr" data-admin-fixed-teacher-qr hidden aria-live="polite">
-                  <strong>今日の先生別QR</strong>
-                  <p>先生席や受付に置く用です。本人スマホで読んだ先生のスタンプが1つ入ります。</p>
-                  <div class="admin-fixed-teacher-qr-actions">
-                    <button type="button" class="admin-fixed-teacher-qr-print" data-admin-fixed-teacher-qr-print>印刷用に表示する</button>
-                    <button type="button" class="admin-fixed-teacher-qr-print" data-admin-fixed-teacher-qr-pdf>PDF用ページを開く</button>
-                    <button type="button" class="admin-fixed-teacher-qr-print" data-admin-fixed-teacher-qr-preview-close hidden>通常表示に戻る</button>
-                  </div>
-                  <p class="admin-fixed-teacher-qr-print-help">印刷用表示にした後、印刷画面が開かない時は Ctrl+P、またはブラウザのメニューから印刷してください。</p>
-                  <div class="admin-fixed-teacher-qr-list" data-admin-fixed-teacher-qr-list></div>
-                  <small>同じスマホで同じ先生QRをもう一度読んでも、二重には増えません。</small>
-                </div>
                 <div class="admin-secondary-action">
-                  <strong>対局内容を確認してQRを作る時</strong>
+                  <strong>対局内容を確認してQRを作る</strong>
                 <a
                   class="admin-game-record-form-link"
                   href="https://docs.google.com/forms/d/e/1FAIpQLSegoLkRkzQTTsj90BbVBdUOzocBhzh452_XsQ183cFLve9Glw/viewform?usp=dialog"
@@ -1207,7 +1160,7 @@
                     </select>
                   </label>
                 </div>
-                <button type="button" class="admin-stamp-qr-button" data-admin-stamp-qr-create>本人スマホに入れるQRを作る</button>
+                <button type="button" class="admin-stamp-qr-button" data-admin-stamp-qr-create>本人スマホ用QRを作る</button>
                 <div class="admin-stamp-qr" data-admin-stamp-qr hidden aria-live="polite">
                   <strong>本人スマホ用QR</strong>
                   <img data-admin-stamp-qr-image alt="先生スタンプ反映用QRコード">
@@ -1215,14 +1168,6 @@
                   <small data-admin-stamp-qr-message>本人のスマホで読み取ると、今日の記録に先生スタンプが入ります。</small>
                 </div>
                 </div>
-                <div class="admin-secondary-action">
-                  <strong>この端末だけで確認する時</strong>
-                  <button type="button" data-admin-game-record-apply>この端末で確認反映</button>
-                  <small>運営端末で画面確認するための操作です。本人スマホには入りません。</small>
-                </div>
-                <button type="button" class="admin-show-profile-button" data-admin-show-profile hidden>冒険者カードを見る</button>
-                <button type="button" class="admin-undo-game-record-button" data-admin-undo-game-record hidden>直前の先生スタンプを取り消す</button>
-                <small data-admin-game-record-message>本人スマホへ入れる時は、QRを作って読み取ってもらいます。</small>
               </section>
 
               <div class="admin-section-heading admin-section-heading-secondary">

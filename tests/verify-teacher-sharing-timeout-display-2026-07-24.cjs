@@ -73,7 +73,7 @@ let browser;
     localStorage.removeItem(sharingOutboxKey);
   }, [nameKey, receptionKey, outboxKey]);
 
-  await page.goto(stampUrl("koike", "teacher-fixed-2026-08-30-koike"), { waitUntil: "load" });
+  await page.goto(stampUrl("koike", "qr-2026-08-30-koike"), { waitUntil: "load" });
   await page.locator("[data-teacher-sharing-modal]").waitFor({ state: "visible" });
   await page.locator("[data-teacher-sharing-primary]").click();
   await page.locator("[data-teacher-sharing-handicap]").selectOption("分からない");
@@ -126,7 +126,7 @@ let browser;
     "「今日の記録を見る」で今日の記録へ移動しませんでした。",
   );
 
-  await page.goto(stampUrl("yuki", "teacher-fixed-2026-08-30-yuki"), { waitUntil: "load" });
+  await page.goto(stampUrl("yuki", "qr-2026-08-30-yuki"), { waitUntil: "load" });
   await page.locator("[data-teacher-sharing-modal]").waitFor({ state: "visible" });
   await page.locator("[data-teacher-sharing-primary]").click();
   await page.locator("[data-teacher-sharing-handicap]").selectOption("分からない");
