@@ -1,10 +1,10 @@
 # 水曜会 現在地
 
-記録日時：2026-09-17 03:49（日本時間）
+記録日時：2026-09-17 03:51（日本時間）
 対象作業：Sites version 11の公開完了、悦子さんの管理画面確認、親GitHubへの記録補完。
-引き継ぎ元：`docs/handoffs/2026-09-17-0327-対局メモversion11公開確認完了.md`
-対応するhandoff：`docs/handoffs/2026-09-17-0349-version11管理画面確認GitHub補完準備.md`
-状態：**version 11公開後に悦子さんが管理画面を確認。異常報告なし。今回の記録だけを親GitHubへ補完する。**
+引き継ぎ元：`docs/handoffs/2026-09-17-0349-version11管理画面確認GitHub補完準備.md`
+対応するhandoff：`docs/handoffs/2026-09-17-0351-version11GitHub記録補完完了.md`
+状態：**version 11公開・管理画面確認・親GitHubへの記録補完まで完了。version 11を公開継続。**
 
 ## 完了したこと
 
@@ -15,7 +15,7 @@
 - 正式D1が公開前後で完全一致することを確認。
 - rollback条件へ該当しなかったためversion 9へは戻していない。
 - 悦子さんが公開後の管理画面を確認。異常報告なし。
-- 今回の対局メモ公開履歴6ファイルだけを親GitHubへ保存する範囲を確定。
+- 今回の対局メモ公開履歴6ファイルだけを親GitHubへcommit・push済み。
 
 ## 公開後確認
 
@@ -33,13 +33,13 @@
 ## Git照合
 
 - 親branch：`codex/checkpoint-2026-09-04-passed`
-- 親HEAD：`d3b278609d3f11e2ed2fad33e99bff1467c01f3d`
+- 親HEAD／`origin/codex/checkpoint-2026-09-04-passed`：`13812588fb6700e8b3f2a5326b54892eff6d9496`
 - 親`origin/main`：`82013b5f8a1e5974601a6c212f34065c8de60bcd`
 - 正式リーグsource branch：`main`
 - 正式リーグsource HEAD／`origin/main`：`5479b578fb182fe481e43e03960982bd9239e23e`
 - 正式リーグsource worktree：clean。
-- 親GitHub補完開始前のHEAD／追跡先は`d3b278609d3f11e2ed2fad33e99bff1467c01f3d`で一致。
-- 親worktreeの他案件は保存対象外。今回の記録6ファイルだけをcommit・pushする。
+- 親GitHub補完commit `13812588fb6700e8b3f2a5326b54892eff6d9496`を同名remote branchへpush済み。
+- 親worktreeの他案件は保存対象外とし、上記commitへ含めていない。
 
 ## 公開・本番データ
 
@@ -48,12 +48,11 @@
 - version 10：保存済みだが非公開。再deployしない。
 - 水曜会ポータル：version 19公開中、変更なし。
 - 今回、正式D1、本番データ、migration、正式スプレッドシート、Apps Scriptへの書き込みなし。
-- GitHub補完工程でも公開・本番データ・外部サービスは変更しない。
+- GitHub補完工程で公開・本番データ・外部サービスは変更していない。
 
 ## 次回の安全な再開地点
 
-- 親GitHubへの記録補完を完了し、commit・push結果を新しいhandoffへ保存する。
-- その後はversion 11を通常運用し、悦子さんの実機で対局メモを使う。
+- version 11を通常運用し、悦子さんの実機で対局メモを使う。
 - 実機で2リンク、対局メモ、既存正式対局に異常が出た場合は、その時点の本番データを読み取り確認してversion 9 rollbackを検討する。
 - 正式対局の確定・訂正は、実際に登録する対局がある時だけ通常運用として行う。
 
