@@ -1,60 +1,67 @@
 # 水曜会 現在地
 
-記録日時：2026-09-16 21:06（日本時間）
-対象作業：参加者・花8桁番号の欠損／重複を安全に扱う登録修復機能。
-対応するhandoff：`docs/handoffs/2026-09-16-2106-登録修復version16公開完了.md`
-状態：**正式source push、version 16保存、deploy、公開後確認まで完了。登録修復用6表は空で、実人物・既存実績・正式台帳への変更なし。親GitHub記録のcommit・pushを終了ゲートで実行する。**
+記録日時：2026-09-17 03:49（日本時間）
+対象作業：Sites version 11の公開完了、悦子さんの管理画面確認、親GitHubへの記録補完。
+引き継ぎ元：`docs/handoffs/2026-09-17-0327-対局メモversion11公開確認完了.md`
+対応するhandoff：`docs/handoffs/2026-09-17-0349-version11管理画面確認GitHub補完準備.md`
+状態：**version 11公開後に悦子さんが管理画面を確認。異常報告なし。今回の記録だけを親GitHubへ補完する。**
 
 ## 完了したこと
 
-- A〜E分類、修復案件ID、根拠、正本候補、記録ID照合、追記監査を実装。
-- 使用停止・再開に、案件、操作者、日時、理由、根拠、前後状態、取消元を保存。
-- 修復画面は番号を発行せず、正式登録でシステム発行済みの番号だけを扱う。
-- 既存実績は削除・移動せず、記録ID単位で確認する。
-- 修復専用試験、既存回帰5系統、対象lint、build、配布物検査が合格。
-- 正式Sites source `main`へpush済み：`47b7a15a213abeb0ed5c16a6b9eec2ab2a24996c`。
-- 水曜会ポータルversion 16をpublicの既存範囲で公開。
-- 管理者画面と登録修復画面を公開URLで確認。案件0件。
+- version 11とrollback先version 9の保存状態・source・archive・deploymentを再確認。
+- 正式D1の公開前基準を取得。
+- 悦子さんの承認に基づき、保存済みversion 11だけをproductionへdeploy。
+- 公開後に管理画面、対局メモ、2リンク、会員・端末・復旧対象表示を確認。
+- 正式D1が公開前後で完全一致することを確認。
+- rollback条件へ該当しなかったためversion 9へは戻していない。
+- 悦子さんが公開後の管理画面を確認。異常報告なし。
+- 今回の対局メモ公開履歴6ファイルだけを親GitHubへ保存する範囲を確定。
+
+## 公開後確認
+
+- deployment：成功。
+- 公開URL：従来と同じ。
+- 「参加者画面を開く」：正常遷移。
+- 「端末復旧QRを発行」：正常遷移。
+- コピー専用対局メモ：場所省略で追加、番号付きコピー内容、コピー完了表示を確認。
+- 再読み込み後：0件へ戻り、正式保存されないことを確認。
+- 管理者画面：正式会員38名、承認済み端末2件、復旧対象3名を確認。
+- 正式対局画面：入力欄と一覧表示を確認。確定・訂正は実行していない。
+- 正式D1：13テーブル・177行、公開前後で内容完全一致。
+- Worker：5xx・例外なし。既知のfavicon 404のみ。
 
 ## Git照合
 
-親リポジトリ（今回記録commit前）：
-
-- branch：`codex/checkpoint-2026-09-04-passed`
-- HEAD：`3614d8ffc028dc31b1ee7ccbda89d9979734b434`
-- `origin/main`：`82013b5f8a1e5974601a6c212f34065c8de60bcd`
-- 既存dirty worktreeを保持。今回記録だけを選択してcommit・同名branchへpushする。
-
-正式ポータルSites source：
-
-- checkout：`work/portal-v15-site-source-20260914/`
-- branch：`main`
-- local HEAD／remote `main`：`47b7a15a213abeb0ed5c16a6b9eec2ab2a24996c`
-- worktree：clean
+- 親branch：`codex/checkpoint-2026-09-04-passed`
+- 親HEAD：`d3b278609d3f11e2ed2fad33e99bff1467c01f3d`
+- 親`origin/main`：`82013b5f8a1e5974601a6c212f34065c8de60bcd`
+- 正式リーグsource branch：`main`
+- 正式リーグsource HEAD／`origin/main`：`5479b578fb182fe481e43e03960982bd9239e23e`
+- 正式リーグsource worktree：clean。
+- 親GitHub補完開始前のHEAD／追跡先は`d3b278609d3f11e2ed2fad33e99bff1467c01f3d`で一致。
+- 親worktreeの他案件は保存対象外。今回の記録6ファイルだけをcommit・pushする。
 
 ## 公開・本番データ
 
-- 水曜会ポータル：**version 16公開中**。
-- URL：`https://suiyoukai-portal.c84s4n967v.chatgpt.site`
-- 水曜会リーグ：version 9。変更なし。
-- 本番D1：修復用6表をschema追加。全表0件。
-- 既存表の行更新・削除、8桁番号発行、正本指定、使用停止、統合：なし。
-- 正式台帳、Googleスプレッドシート、Apps Script：変更なし。
-
-## 未完了
-
-- 実人物の修復案件は未作成。
-- 悦子さん・茜さん・高野さんの成功例と荒川さんの4組を読み取り根拠で整理してから、案件単位で扱う。
+- 水曜会リーグ：version 11公開中。
+- version 9：rollback先として保存済み。
+- version 10：保存済みだが非公開。再deployしない。
+- 水曜会ポータル：version 19公開中、変更なし。
+- 今回、正式D1、本番データ、migration、正式スプレッドシート、Apps Scriptへの書き込みなし。
+- GitHub補完工程でも公開・本番データ・外部サービスは変更しない。
 
 ## 次回の安全な再開地点
 
-- 親Gitの記録commit・push結果とSites version 16を再照合する。
-- 実人物はまず読み取り調査と根拠資料の確定だけを行う。
-- 荒川さんは5組目を作らず、既存4組の履歴保存、有効組指定、旧登録停止、記録ID単位の再連携として扱う。
+- 親GitHubへの記録補完を完了し、commit・push結果を新しいhandoffへ保存する。
+- その後はversion 11を通常運用し、悦子さんの実機で対局メモを使う。
+- 実機で2リンク、対局メモ、既存正式対局に異常が出た場合は、その時点の本番データを読み取り確認してversion 9 rollbackを検討する。
+- 正式対局の確定・訂正は、実際に登録する対局がある時だけ通常運用として行う。
 
 ## 触らない
 
-- 既存実績、正式台帳行、既存参加者行の削除。
-- 8桁番号の手動発行。
-- 根拠未確認の実人物の正本指定、使用停止、統合。
-- 対象外の本番D1、正式スプレッドシート、Apps Script、秘密値。
+- 正式D1、本番データ、migration、正式スプレッドシート、Apps Scriptへの検証目的の書き込み。
+- version 10の再deploy。
+- 画面確認専用routeの正式source混入。
+- 期限切れ復旧ticketの再利用、本人不在での新QR発行。
+- 今回の記録6ファイル以外を含む親リポジトリのcommit・push、PR、merge、main。
+- 秘密値、PIN、pepper、token、実人物の行本文。
