@@ -36,6 +36,9 @@
     if (retry) {const button=document.createElement('button');button.type='button';button.textContent='再確認';button.style.marginLeft='12px';button.addEventListener('click',start);node.append(button);}
     const link=document.createElement('a');link.href=portal;link.textContent='水曜会の入口へ';link.style.marginLeft='12px';node.append(link);
   }
+  function clearMessage() {
+    document.querySelector('[data-gate-message]')?.remove();
+  }
   try {
     pending=JSON.parse(sessionStorage.getItem(pendingKey)||'null');
     if (ticket && /^[a-f0-9]{64}$/.test(ticket)) {
@@ -47,7 +50,7 @@
     if(ticket){history.replaceState(null,'',location.pathname+location.search);message('このブラウザに登録情報を保存できません。通常のSafariまたはChromeで開いてください。',false);}
   }
   async function start() {
-    status='checking';publish();
+    status='checking';clearMessage();publish();
     try {
       let data;
       if(pending?.ticket) {
@@ -62,12 +65,12 @@
         if(!token){status='unregistered';publish();return;}
         data=await call('/api/flower/session',undefined,token);
       }
-      participant=data.participant;status=participant.synced?'registered':'pending';publish();
-      if(participant.synced)document.querySelector('[data-gate-message]')?.remove();
-      else message('お名前は保存されています。台帳との接続を再確認してください。',true);
+      if(!data.participant)throw new Error('登録情報を確認できませんでした。');
+      participant=data.participant;status='registered';publish();clearMessage();
     } catch(error) {
       status=error.status===401?'unregistered':'unavailable';publish();
-      if(pending)message(error.message==='Failed to fetch'?'通信を確認して、再確認を押してください。':error.message,true);
+      if(error.status===401)message('登録情報の確認期限が切れました。水曜会の入口から開き直してください。',false);
+      else message(error.message==='Failed to fetch'?'通信を確認して、再確認を押してください。':error.message,true);
     }
   }
   start();
