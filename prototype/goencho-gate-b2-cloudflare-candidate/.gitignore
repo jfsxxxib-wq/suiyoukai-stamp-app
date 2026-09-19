@@ -1,0 +1,10 @@
+.local/
+.wrangler/
+node_modules/
+.dev.vars
+.dev.vars.*
+.env
+.env.*
+coverage/
+test-results/*.tmp
+*.log

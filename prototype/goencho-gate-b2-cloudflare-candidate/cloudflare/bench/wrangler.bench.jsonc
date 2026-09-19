@@ -1,0 +1,21 @@
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "goencho-b2-pin-benchmark-local-only",
+  "main": "pin-benchmark-worker.mjs",
+  "compatibility_date": "2026-07-21",
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": false,
+  "preview_urls": false,
+  "observability": {
+    "enabled": false,
+    "logs": {
+      "enabled": false,
+      "invocation_logs": false,
+      "head_sampling_rate": 0
+    },
+    "traces": {
+      "enabled": false,
+      "head_sampling_rate": 0
+    }
+  }
+}

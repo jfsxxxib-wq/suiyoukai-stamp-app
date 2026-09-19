@@ -1,0 +1,34 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "goencho-b2-canary-202609",
+  "main": "cloudflare/src/worker.mjs",
+  "compatibility_date": "2026-09-18",
+  "workers_dev": false,
+  "preview_urls": false,
+  "observability": {
+    "enabled": false,
+    "logs": {
+      "enabled": false,
+      "invocation_logs": false,
+      "head_sampling_rate": 0
+    },
+    "traces": {
+      "enabled": false,
+      "head_sampling_rate": 0
+    }
+  },
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS",
+    "run_worker_first": true
+  },
+  "d1_databases": [
+    {
+      "binding": "GOENCHO_DB",
+      "database_name": "goencho-b2-canary-db-202609",
+      "database_id": "00000000-0000-0000-0000-000000000000",
+      "preview_database_id": "goencho-b2-local-only",
+      "migrations_dir": "cloudflare/migrations"
+    }
+  ]
+}

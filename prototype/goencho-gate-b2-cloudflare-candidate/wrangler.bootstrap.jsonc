@@ -1,0 +1,20 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "goencho-b2-canary-202609",
+  "main": "cloudflare/bootstrap/disabled-worker.mjs",
+  "compatibility_date": "2026-09-18",
+  "workers_dev": false,
+  "preview_urls": false,
+  "observability": {
+    "enabled": false,
+    "logs": {
+      "enabled": false,
+      "invocation_logs": false,
+      "head_sampling_rate": 0
+    },
+    "traces": {
+      "enabled": false,
+      "head_sampling_rate": 0
+    }
+  }
+}

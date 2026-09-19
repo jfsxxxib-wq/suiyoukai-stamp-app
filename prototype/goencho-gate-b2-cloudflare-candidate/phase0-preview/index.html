@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <title>一局のご縁帳｜Phase 0 接続前見本</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <main class="page">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">GATE B1・PHASE 0</p>
+        <h1>画面とAPIをつなぐ前の見本</h1>
+      </div>
+      <span class="badge">架空表示のみ</span>
+    </header>
+
+    <p class="notice"><strong>確認するのは文言・順序・情報量です。</strong> ボタンは画面切替だけで、PIN、復旧コード、ticket、cookieを生成・送信・保存しません。</p>
+
+    <div class="audience-tabs" role="tablist" aria-label="端末を選ぶ">
+      <button type="button" class="active" data-audience="owner">悦子さんの管理端末</button>
+      <button type="button" data-audience="teacher">先生のスマホ</button>
+    </div>
+
+    <section class="workspace">
+      <nav id="scenario-nav" class="scenario-nav" aria-label="確認する状態"></nav>
+      <div class="phone" aria-label="スマホ画面見本">
+        <div class="speaker"></div>
+        <div id="screen"></div>
+      </div>
+    </section>
+  </main>
+  <script src="/preview.js" defer></script>
+</body>
+</html>

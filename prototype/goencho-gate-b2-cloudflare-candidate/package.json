@@ -1,0 +1,33 @@
+{
+  "name": "goencho-gate-b2-cloudflare-candidate",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "scripts": {
+    "start:b1": "node server.mjs",
+    "test": "npm run test:b1 && npm run test:cloudflare",
+    "test:b1": "node --test --test-isolation=none tests/*.test.mjs",
+    "test:cloudflare": "node --test --test-isolation=none cloudflare/tests/*.test.mjs",
+    "test:bootstrap": "node --test --test-isolation=none cloudflare/tests/08-bootstrap-worker.test.mjs",
+    "test:worker-deploy-once": "node --test --test-isolation=none diagnostics/cloudflare-worker-deploy-once-probe.test.mjs",
+    "test:portability": "node --test --test-isolation=none cloudflare/tests/06-portability-migration.test.mjs",
+    "test:auth-portability": "node --test --test-isolation=none cloudflare/tests/07-auth-write-portability.test.mjs",
+    "scope-check": "node tools/b2-scope-check.mjs",
+    "leak-scan": "node tools/leak-scan.mjs",
+    "manifest:verify": "node tools/verify-source-manifest.mjs",
+    "benchmark:pin": "node tools/benchmark-b1-pin-cost.mjs",
+    "benchmark:pin:workerd": "node tools/benchmark-pin-workerd.mjs",
+    "wrangler:dry-run": "node tools/run-wrangler-local.mjs deploy --dry-run --outdir .local/wrangler-dry-run",
+    "bootstrap:guard": "node tools/check-bootstrap-worker.mjs",
+    "bootstrap:dry-run": "node tools/run-wrangler-local.mjs deploy --dry-run --config wrangler.bootstrap.jsonc --outdir .local/bootstrap-worker-dry-run",
+    "bootstrap:inspect-dry-run": "node tools/check-bootstrap-worker.mjs .local/bootstrap-worker-dry-run",
+    "d1:init:local": "node tools/run-wrangler-local.mjs d1 execute GOENCHO_DB --local --file cloudflare/migrations/0001_goencho.sql && node tools/run-wrangler-local.mjs d1 execute GOENCHO_DB --local --file cloudflare/migrations/0002_auth_write_guards.sql"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "0.5.8",
+    "wrangler": "4.112.0"
+  }
+}

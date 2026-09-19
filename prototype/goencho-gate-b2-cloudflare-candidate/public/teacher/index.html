@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex,nofollow,noarchive" />
+  <title>一局のご縁帳｜先生端末 Gate B1</title>
+  <link rel="stylesheet" href="/shared/styles.css" />
+</head>
+<body>
+  <main class="page">
+    <header class="topbar"><div><p class="eyebrow">GATE B1・先生専用LOCALHOST</p><h1 id="teacher-title">先生の 一局のご縁帳</h1></div><span class="badge">架空データのみ</span></header>
+    <div class="notice">先生端末の承認は期限なしです。無操作後のPIN再認証とは分けて扱います。</div>
+    <div id="app-status" class="sr-only" aria-live="polite"></div>
+    <section class="shell">
+      <nav class="steps" aria-label="先生端末の登録手順">
+        <button type="button" data-stage="qr" disabled>1 QR確認</button>
+        <button type="button" data-stage="pin" disabled>2 PIN設定</button>
+        <button type="button" data-stage="pending" disabled>3 承認待ち</button>
+        <button type="button" data-stage="unlock" disabled>4 PIN認証</button>
+        <button type="button" data-stage="ready" disabled>5 利用準備</button>
+        <button type="button" data-stage="records" disabled>6 対局記録</button>
+      </nav>
+      <div class="phone"><div class="speaker"></div><div id="screen"></div></div>
+    </section>
+  </main>
+  <script src="/teacher/teacher.js" type="module"></script>
+</body>
+</html>
