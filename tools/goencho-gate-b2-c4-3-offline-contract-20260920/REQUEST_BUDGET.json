@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "client_attempts": { "preflight": 1, "secret_bulk": 1, "full_deploy": 1, "postcheck": 1 },
+  "retry": 0,
+  "direct_control_plane": [
+    { "phase": "preflight", "method": "GET", "path": "/accounts/{account}/workers/scripts/{worker}/settings", "max": 1 },
+    { "phase": "preflight", "method": "GET", "path": "/accounts/{account}/workers/scripts/{worker}", "max": 1 },
+    { "phase": "preflight", "method": "GET", "path": "/accounts/{account}/d1/database?name={d1}", "max": 1 },
+    { "phase": "postcheck", "method": "GET", "path": "/accounts/{account}/workers/scripts/{worker}/settings", "max": 1 },
+    { "phase": "postcheck", "method": "GET", "path": "/accounts/{account}/workers/scripts/{worker}/secrets", "max": 1 }
+  ],
+  "wrangler_children": [
+    {
+      "phase": "secret_bulk",
+      "command": "secret bulk",
+      "max_processes": 1,
+      "expected_internal": [
+        { "method": "PATCH", "path": "/accounts/{account}/workers/scripts/{worker}/secrets-bulk", "max": 1 }
+      ]
+    },
+    {
+      "phase": "full_deploy",
+      "command": "deploy",
+      "max_processes": 1,
+      "expected_internal": [
+        { "method": "POST", "path": "/accounts/{account}/workers/scripts/{worker}/assets-upload-session", "max": 1 },
+        { "method": "POST", "path": "{assets-upload-session-provided-url}", "max": 1, "conditional": "only when missing asset payload exists" },
+        { "method": "PUT", "path": "/accounts/{account}/workers/scripts/{worker}", "max": 1 }
+      ]
+    }
+  ],
+  "forbidden": ["D1_QUERY", "D1_RAW", "RUNTIME_REQUEST", "ROUTE_WRITE", "TOKEN_WRITE", "SECRET_DELETE", "ROLLBACK"]
+}
