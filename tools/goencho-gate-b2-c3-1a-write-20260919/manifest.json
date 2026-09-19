@@ -1,0 +1,17 @@
+{
+  "account_id": "242d67724ca0baef96a00553df0fac35",
+  "database_name": "goencho-b2-canary-db-202609",
+  "database_uuid": "f12fe289-977c-4215-ae73-40aaa34bff97",
+  "binding": "GOENCHO_DB",
+  "migration_file": "tools/goencho-gate-b2-c3-1a-write-20260919/0001_goencho.sql",
+  "migration_name": "0001_goencho.sql",
+  "migration_sha256": "0EAADB9E1A72D1947414F50A45073D0B00FD8E33DE8267E15288D10A2F6194ED",
+  "from_version": null,
+  "to_version": 2,
+  "expected_statement_count": 23,
+  "expected_tables": 17,
+  "expected_named_indexes": 4,
+  "expected_foreign_keys": 15,
+  "remote_history_authority": "schema_meta.version",
+  "wrangler_d1_migrations_authority": false
+}
