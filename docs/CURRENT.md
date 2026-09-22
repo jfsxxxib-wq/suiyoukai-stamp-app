@@ -2,7 +2,7 @@
 
 ## 記録日時
 
-- 2026-09-22 20:14（日本時間）
+- 2026-09-22 20:24（日本時間）
 
 ## 対象作業と引き継ぎ元
 
@@ -33,9 +33,11 @@
 - 記録開始時`origin/main`：`052c787b947bf5630fbd62f0ff168c8ec7a3506b`
 - Hyper-V alternative boundary comparison checkpoint：`49a901f2136d16435dfa3709925442c3caecabc5`
 - CURRENT completion checkpoint／基準commit：`e389715daa875b78e759301ebffc0c83c07eaa03`
+- Eligible Windows host requirements manifest checkpoint：`95835f686223bedf3019e11b9d232612eb5a67e2`
 - Branch／HEAD／upstream／origin/mainとcheckpoint記録は開始ゲートで一致。
 - 開始時worktree：既存tracked変更20件、既存untracked 7,839件、staged 0。既存項目は整理・変更・stageしていない。
-- 今回のmanifest／handoff／CURRENTはローカル記録のみ。commit／pushは未実施。
+- 承認されたmanifest／handoff／CURRENTだけをcheckpoint commit `95835f686223bedf3019e11b9d232612eb5a67e2`へ保存。既存worktree項目は含めていない。
+- 本CURRENTのcheckpoint完了追補commit SHA／push後HEADはGit metadataを正本とする。
 
 ## 完了したこと
 
@@ -57,7 +59,7 @@
 
 ## 公開・本番データ・外部サービス
 
-- GitHub：基準checkpoint `e389715daa875b78e759301ebffc0c83c07eaa03`から変更なし。今回の記録は未commit／未push。
+- GitHub：eligible Windows host requirements manifest checkpoint `95835f686223bedf3019e11b9d232612eb5a67e2`をcurrent branchへcommit済み。CURRENT追補とpushはこの記録時点では未完了。`main`変更なし。
 - 公開・deploy：変更なし。
 - 本番データ：変更なし。
 - 外部サービス：変更・書込みなし。Network／HTTPも未使用。
@@ -83,4 +85,4 @@
 - Candidateのinstall／move／copy／選択／有効化／変更。
 - Probe／copy／build／server／browser、`NB-G4`のPASS化、Evidence attempt `0/1`の消費。
 - 共有作業ツリーの既存tracked／untracked項目の整理・変更・stage。
-- Commit、push、PR、GitHub変更、deploy、公開、本番データ変更。
+- 今回承認範囲外のcommit、push、PR、GitHub変更、deploy、公開、本番データ変更。
