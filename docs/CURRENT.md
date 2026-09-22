@@ -2,13 +2,13 @@
 
 ## 記録日時
 
-- 2026-09-22 17:12（日本時間）
+- 2026-09-22 17:39（日本時間）
 
 ## 対象作業と引き継ぎ元
 
-- 対象：別build profile/session safety-boundary exact-plan candidateのGitHub checkpoint。
-- 引き継ぎ元：設計記録、handoff、CURRENT、必要なcheckpoint bindingだけをcommit／pushする承認。
-- 現在path state：`SEPARATE_PROFILE_SESSION_EXACT_PLAN_CANDIDATE_ESTABLISHED__ACTIVE_BOUNDARY_NOT_PROVEN__HOLD`。`NB-G0..NB-G3`はPASS、現taskの`NB-G4 = NOT PROVEN — STOP`は不変。
+- 対象：別build profile/session用candidate profile/config artifactの作成と静的検証。
+- 引き継ぎ元：GitHub checkpoint `6b4b0ba896ebe5415c0ac0a99c780c7e32c3fbd9`と、artifactを作成するだけの承認。
+- 現在path state：`CANDIDATE_PROFILE_CONFIG_ARTIFACT_STATICALLY_VALID__NOT_INSTALLED__RUNTIME_ENFORCEMENT_NOT_PROVEN__HOLD`。`NB-G0..NB-G3`はPASS、現taskの`NB-G4 = NOT PROVEN — STOP`は不変。
 - 最新Option A classification：`OPTION_A_NOT_SUFFICIENT_FOR_REQUIRED_EVIDENCE`。
 - 最新preflight classification：`GENERATED_BUILD_FIXATION_NOT_DETERMINABLE_PRE_BUILD`。
 - 最新診断classification：`NOT_DETERMINABLE_FROM_BOUNDED_EVIDENCE`。
@@ -31,21 +31,21 @@
 - Isolated-build safety plan SHA-256：`d42ac51b9032bb4b1feca1409a5546d34e7da59e9130c8d3d514f1667812875b`
 - NB-G4 loopback result：`docs/teacher-anonymous-api-nb-g4-loopback-boundary-evaluation-result-2026-09-22.md`
 - NB-G4 loopback result SHA-256：`8cba281bc3ed3a54a59f9ad924a71603976afe8d1c874d65b639dfb250eb744f`
-- Separate profile/session exact-plan candidate：`docs/teacher-anonymous-api-separate-profile-session-safety-boundary-exact-plan-candidate-2026-09-22.md`
-- Exact-plan candidate SHA-256：`c0f0d7b68a8e3258840c0b39013a7805d3cdd1144b625fd29d4f790a71ad44c9`
-- 対応handoff：`docs/handoffs/2026-09-22-1711-teacher-separate-profile-session-github-checkpoint.md`
-- Handoff SHA-256：`b01e14aba62b730e9cdf7c40ebd599142ffe8b2c6039ae24689b55497cdaa5e9`
+- Source exact-plan candidate：`docs/teacher-anonymous-api-separate-profile-session-safety-boundary-exact-plan-candidate-2026-09-22.md`／SHA-256 `c0f0d7b68a8e3258840c0b39013a7805d3cdd1144b625fd29d4f790a71ad44c9`
+- Candidate artifact：`docs/candidate-artifacts/teacher-separate-build-profile-20260922/teacher-build-evidence-offline-loopback-denied-20260922.config.toml`／SHA-256 `723e738382ad15e2da3b2577c1761f3295a1ecdf5ce661a33289a45d6ad5dc0e`
+- Artifact record：`docs/candidate-artifacts/teacher-separate-build-profile-20260922/artifact-record.md`／SHA-256 `420f2662667b4b32adadf2763cd6a593cf9f2a293154f77341a15a1558d7bd22`
+- 対応handoff：`docs/handoffs/2026-09-22-1737-teacher-candidate-profile-config-artifact-HOLD.md`／SHA-256 `61a0f19ba2df2ad0a4afdadd0e657ee4add8bd885e9375080ecf5dc4ba1c3099`
 
 ## Git照合
 
 - 保存済みbranch：`codex/checkpoint-2026-09-04-passed`
-- 記録時pre-checkpoint HEAD／upstream：`a63be09dc670bd53e1e635cf88574868fc27f480`
+- 保存済みHEAD／upstream：`6b4b0ba896ebe5415c0ac0a99c780c7e32c3fbd9`
 - 保存済み`origin/main`：`052c787b947bf5630fbd62f0ff168c8ec7a3506b`
 - 固定Gate commit：`5e402e2def68c7ab0841db27059074f82390b660`
-- Branch／pre-checkpoint HEAD／upstream／`origin/main`はcheckpoint開始時照合値と一致。
+- Branch／HEAD／upstream／`origin/main`はartifact作成開始時照合値と一致。
 - 共有作業ツリーの既存多数項目は整理・変更・stageしていない。
-- GitHub checkpoint：bounded Network Boundary commit `a63be09dc670bd53e1e635cf88574868fc27f480`は追跡branchと一致。
-- 今回のexact-plan candidate、design handoff、checkpoint handoff、本CURRENTだけが承認済みsave set。resulting commit SHA／push状態はGit metadataを正本とする。
+- GitHub checkpoint：separate profile/session design commit `6b4b0ba896ebe5415c0ac0a99c780c7e32c3fbd9`は追跡branchと一致。
+- 今回のcandidate artifact、artifact record、handoff、本CURRENTはローカル未コミット。commit／pushは未承認・未実施。
 
 ## Fixed authority
 
@@ -98,7 +98,7 @@
 - 固定build pathではloopback必要性が証明されないため、候補profileではloopbackを禁止。Vinext optional prerenderが選択された場合だけ`127.0.0.1`／ephemeral port／child serverを使う静的経路を記録。
 - Write範囲をexact isolated root内の`dist/**`、`.wrangler/**`、`node_modules/.vite/**`、`.tmp/**`だけに限定するcandidateを固定。
 - Local spawned commands／build plugins／child processは同一command sandbox境界、Codex plugins／connectors／MCP／web／browser等は別境界として明示し、future build stepでは後者を無効・不使用に固定。
-- Exact-plan candidateとimmutable handoffを保存。profile/config/sessionは作成・変更・選択・起動していない。
+- Exact-plan candidateを意味変更なしのinert TOML artifactとして専用docs配下に作成。TOML構文、schema/value allowlist、plan解析値一致、禁止キー不在、専用場所をPASSし、artifact／record／handoffをhash固定。active profile/config/sessionは未作成・未変更・未選択・未起動。
 
 ## 未完了・未確定
 
@@ -110,7 +110,7 @@
 - Loopback deny attestation、または別runtime/profileとしてのbuild固有exact loopback-only exceptionが未確定。
 - Option B safety boundaryの実評価、isolated copy、buildは未実施。
 - 現行Option A／Bの双方が不成立。新しいsafety contractなしではreal evidence path未解決。
-- Candidate profileは未作成・未選択・未起動で、active boundaryとして未証明。
+- Candidate artifactは作成済みだがactive locationへ未配置。profileは未選択・未起動で、active boundary／runtime enforcementは未証明。
 - Future pre-sessionではlegacy sandbox混在なし、全config layer、active proxy、effective empty allowlist、exact root、native-Windows elevated enforcement、separate tool surface無効化をtrusted evidenceで閉じる必要がある。
 - Permission profile機構はOpenAI Docs上beta。future schema再確認で一つでも閉じなければ`SEPARATE_PROFILE_SESSION_SAFETY_BOUNDARY_NOT_PROVEN`でHOLD。
 - Loopback許可案は未採用。必要性が固定build pathから別途証明されるまで設計・実装しない。host/IP scopeより狭いexact port制約が必要なら現機構では不成立。
@@ -119,17 +119,17 @@
 
 ## 公開・本番データ・外部サービス
 
-- GitHub：Network Boundary checkpointをcurrent branchへ保存。PR／`main`変更なし。
-- 今回のprofile/session設計checkpointはcurrent branch/upstreamだけが保存先。PR／`main`変更なし。
+- GitHub：latest design checkpointは`6b4b0ba896ebe5415c0ac0a99c780c7e32c3fbd9`。今回のartifact記録はローカル未コミット、PR／`main`変更なし。
+- Commit／push：今回は禁止・未実施。
 - 公開・deploy：変更なし。
 - 本番データ：変更なし。
 - 外部サービス：OpenAI公式文書のread-only参照のみ。書き込みなし。
 
 ## 次回の安全な再開地点
 
-1. 本CURRENT、latest handoff、separate profile/session exact-plan candidate、NB-G4 result、Git metadataを読む。
-2. 次へ進む場合は別承認でcandidate profile/config artifactの作成だけを扱う。作成承認をprofile選択・session起動承認へ拡張しない。
-3. Profile/config artifact作成後も、isolated copy、separate session start/attestation、build、post-build fixation、real attempt、rollbackをそれぞれ別承認とする。
+1. 本CURRENT、latest handoff、artifact record、inert TOML、source exact-plan、Git metadataを読む。
+2. Artifactは作成・静的検証済み。次へ進む場合は、ローカル記録をGitHub checkpointへ保存するか、別承認でfuture pre-session Gateを扱うかを先に決める。
+3. Active locationへの配置、profile選択・有効化、isolated copy、separate session start/attestation、build、post-build fixation、real attempt、rollbackをそれぞれ別承認とする。
 4. Future pre-session Gate `PS-G0..PS-G10`が全PASSしない限りsessionを起動しない。probeで不足attestationを代替しない。
 5. Attempt `0/1`を未消費のまま保持する。
 
@@ -141,7 +141,7 @@
 - 無承認のTeacher page／server／browser再起動。
 - npm／Vinext／Wrangler／別executable、別port、retry／fallback。
 - 無承認のbuild、`dist` clean／rewrite、rollback。
-- 無承認のpermission profile/config作成・変更・選択、別session起動、legacy sandbox設定変更、network proxy有効化、loopback allow entry追加。
+- Candidate docs artifact以外のprofile/config作成、active locationへのcopy／変更／選択／有効化、別session起動、legacy sandbox設定変更、network proxy有効化、loopback allow entry追加。
 - Network-on＋proxy-off、外部domain allow entry、`allow_local_binding=true`、Unix socket allow、`dangerously_*` network key、native-Windows `unelevated` fallbackでの候補実行。
 - Codex plugins／connectors／MCP／web search／browser／Computer Use／cloudをfuture buildのnetwork経路として使用すること。
 - Seed、write API、production D1、正式データ、real auth、Teacher QR target。

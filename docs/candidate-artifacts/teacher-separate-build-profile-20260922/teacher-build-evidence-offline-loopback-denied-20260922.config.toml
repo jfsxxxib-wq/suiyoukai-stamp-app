@@ -1,0 +1,37 @@
+# CANDIDATE ARTIFACT ONLY — DO NOT INSTALL, SELECT, ENABLE, OR START.
+# Stored under docs/candidate-artifacts so Codex does not discover it as an
+# active user, project, or session configuration.
+# Source plan:
+# docs/teacher-anonymous-api-separate-profile-session-safety-boundary-exact-plan-candidate-2026-09-22.md
+
+default_permissions = "teacher-build-evidence-offline-loopback-denied-20260922"
+approval_policy = "never"
+
+[features]
+network_proxy = true
+
+[permissions.teacher-build-evidence-offline-loopback-denied-20260922]
+description = "Isolated Teacher build; no external destinations and no loopback"
+
+[permissions.teacher-build-evidence-offline-loopback-denied-20260922.workspace_roots]
+'C:\Users\akane\Documents\Codex\2026-06-14\new-chat\suiyoukai-stamp-app\work\teacher-anonymous-api-safe-metadata-evidence-20260922-01\isolated-build\teacher-admin-production-candidate' = true
+
+[permissions.teacher-build-evidence-offline-loopback-denied-20260922.filesystem]
+":root" = "deny"
+":minimal" = "read"
+":tmpdir" = "deny"
+":slash_tmp" = "deny"
+
+[permissions.teacher-build-evidence-offline-loopback-denied-20260922.filesystem.":workspace_roots"]
+"." = "read"
+"dist" = "write"
+".wrangler" = "write"
+"node_modules/.vite" = "write"
+".tmp" = "write"
+
+[permissions.teacher-build-evidence-offline-loopback-denied-20260922.network]
+enabled = true
+allow_local_binding = false
+allow_upstream_proxy = false
+enable_socks5 = false
+enable_socks5_udp = false
