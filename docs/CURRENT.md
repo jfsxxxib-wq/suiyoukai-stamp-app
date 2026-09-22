@@ -2,7 +2,7 @@
 
 ## 記録日時
 
-- 2026-09-22 20:00（日本時間）
+- 2026-09-22 20:08（日本時間）
 
 ## 対象作業と引き継ぎ元
 
@@ -32,9 +32,11 @@
 - 記録開始時`origin/main`：`052c787b947bf5630fbd62f0ff168c8ec7a3506b`
 - Hyper-V host capability preflight checkpoint：`3b8105ab3ea6bd13c1099f3973df8b940ec0486e`
 - CURRENT completion checkpoint／基準commit：`7069648d3f798362901bf3683aeff790e4ee4b80`
+- Hyper-V alternative boundary comparison checkpoint：`49a901f2136d16435dfa3709925442c3caecabc5`
 - Branch／HEAD／upstream／origin/mainとcheckpoint記録は開始ゲートで一致。
 - 開始時worktree：既存tracked変更20件、既存untracked 7,839件、staged 0。既存項目は整理・変更・stageしていない。
-- 今回のcomparison／handoff／CURRENTはローカル記録のみ。commit／pushは未実施。
+- 承認されたcomparison／handoff／CURRENTだけをcheckpoint commit `49a901f2136d16435dfa3709925442c3caecabc5`へ保存。既存worktree項目は含めていない。
+- 本CURRENTのcheckpoint完了追補commit SHA／push後HEADはGit metadataを正本とする。
 
 ## 比較結果
 
@@ -64,7 +66,7 @@
 
 ## 公開・本番データ・外部サービス
 
-- GitHub：基準checkpoint `7069648d3f798362901bf3683aeff790e4ee4b80`から変更なし。今回の記録は未commit／未push。
+- GitHub：Hyper-V alternative boundary comparison checkpoint `49a901f2136d16435dfa3709925442c3caecabc5`をcurrent branchへcommit済み。CURRENT追補とpushはこの記録時点では未完了。`main`変更なし。
 - 公開・deploy：変更なし。
 - 本番データ：変更なし。
 - 外部サービス：変更・書込みなし。Browser／HTTPも未実行。
@@ -88,4 +90,4 @@
 - Network／loopback／runtime probe、copy、build、server、browser、HTTP。
 - `NB-G4`のPASS化、Evidence attempt `0/1`の消費。
 - 共有作業ツリーの既存tracked／untracked項目の整理・変更・stage。
-- Commit、push、PR、GitHub変更、deploy、公開、本番データ、外部サービス書込み。
+- 今回承認範囲外のcommit、push、PR、GitHub変更、deploy、公開、本番データ、外部サービス書込み。
