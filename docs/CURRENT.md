@@ -2,7 +2,7 @@
 
 ## 記録日時
 
-- 2026-09-22 17:59（日本時間）
+- 2026-09-22 18:07（日本時間）
 
 ## 対象作業と引き継ぎ元
 
@@ -34,10 +34,12 @@
 - 記録時upstream：`d571bb78379c5bcd07aab4a6a95d997497eb9f25`
 - 記録時`origin/main`：`052c787b947bf5630fbd62f0ff168c8ec7a3506b`
 - Candidate artifact checkpoint commit：`e8f6d11d98b300163e012c6ab670093d086ead65`
-- CURRENT completion checkpoint commit／基準commit：`d571bb78379c5bcd07aab4a6a95d997497eb9f25`
+- Incoming CURRENT checkpoint／基準commit：`d571bb78379c5bcd07aab4a6a95d997497eb9f25`
+- Pre-selection attestation checkpoint commit：`0238bd0652116dad18924d91c0f3503b534c9963`
 - 調査開始時、branch／HEAD／upstream／origin/mainはcheckpoint記録と一致。candidate／artifact record／handoffのhashも一致。
 - 調査開始時worktree：既存tracked変更20件、既存untracked 7,839件、staged 0。既存項目は整理・変更・stageしていない。
-- 本調査のresult／handoff／CURRENTはローカルのみ。commit／pushは禁止どおり未実施。
+- 承認されたresult／handoff／CURRENTだけをcheckpoint commit `0238bd0652116dad18924d91c0f3503b534c9963`へ保存。既存worktree項目は含めていない。
+- 本CURRENTのcheckpoint完了追補commit SHA／push後HEADはGit metadataを正本とする。
 
 ## 完了したこと
 
@@ -61,7 +63,7 @@
 
 ## 公開・本番データ・外部サービス
 
-- GitHub：前回checkpoint `d571bb78379c5bcd07aab4a6a95d997497eb9f25`から変更なし。本調査記録は未commit／未push。
+- GitHub：pre-selection attestation checkpoint `0238bd0652116dad18924d91c0f3503b534c9963`をcurrent branchへcommit済み。CURRENT追補とpushはこの記録時点では未完了。`main`変更なし。
 - 公開・deploy：変更なし。
 - 本番データ：変更なし。
 - 外部サービス：OpenAI公式文書のread-only参照のみ。書き込みなし。
@@ -85,4 +87,4 @@
 - Network-on＋proxy-off、外部domain allow entry、loopback／private allow、`allow_local_binding=true`、Unix socket allow、`dangerously_*` key、Windows `unelevated`でのcandidate実行。
 - Codex plugins／connectors／MCP／web search／browser／Computer Use／cloudをfuture buildのnetwork経路に使うこと。
 - 共有作業ツリーの既存tracked／untracked項目の整理・変更・stage。
-- Commit、push、PR、GitHub変更、deploy、公開、本番データ、外部サービス書込み。
+- 今回承認範囲外のcommit、push、PR、GitHub変更、deploy、公開、本番データ、外部サービス書込み。
