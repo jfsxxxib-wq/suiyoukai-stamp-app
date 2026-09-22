@@ -2,7 +2,7 @@
 
 ## 記録日時
 
-- 2026-09-22 17:39（日本時間）
+- 2026-09-22 17:48（日本時間）
 
 ## 対象作業と引き継ぎ元
 
@@ -39,13 +39,13 @@
 ## Git照合
 
 - 保存済みbranch：`codex/checkpoint-2026-09-04-passed`
-- 保存済みHEAD／upstream：`6b4b0ba896ebe5415c0ac0a99c780c7e32c3fbd9`
+- Candidate artifact checkpoint commit：`e8f6d11d98b300163e012c6ab670093d086ead65`
 - 保存済み`origin/main`：`052c787b947bf5630fbd62f0ff168c8ec7a3506b`
 - 固定Gate commit：`5e402e2def68c7ab0841db27059074f82390b660`
-- Branch／HEAD／upstream／`origin/main`はartifact作成開始時照合値と一致。
+- Artifact checkpoint push後、branch／HEAD／upstreamは`e8f6d11d98b300163e012c6ab670093d086ead65`で一致。`origin/main`は不変。
 - 共有作業ツリーの既存多数項目は整理・変更・stageしていない。
-- GitHub checkpoint：separate profile/session design commit `6b4b0ba896ebe5415c0ac0a99c780c7e32c3fbd9`は追跡branchと一致。
-- 今回のcandidate artifact、artifact record、handoff、本CURRENTはローカル未コミット。commit／pushは未承認・未実施。
+- GitHub checkpoint：candidate TOML、artifact record、handoff、CURRENTだけをcommit `e8f6d11d98b300163e012c6ab670093d086ead65`としてcurrent branchへ保存・push済み。
+- 本CURRENTのcheckpoint完了追補commit SHA／push状態はGit metadataを正本とする。既存worktree項目は含めない。
 
 ## Fixed authority
 
@@ -119,8 +119,8 @@
 
 ## 公開・本番データ・外部サービス
 
-- GitHub：latest design checkpointは`6b4b0ba896ebe5415c0ac0a99c780c7e32c3fbd9`。今回のartifact記録はローカル未コミット、PR／`main`変更なし。
-- Commit／push：今回は禁止・未実施。
+- GitHub：candidate artifact checkpoint `e8f6d11d98b300163e012c6ab670093d086ead65`をcurrent branch/upstreamへ保存済み。PR／`main`変更なし。
+- Commit／push：承認された4記録だけを保存。profile/config選択・有効化や実行系は含めていない。
 - 公開・deploy：変更なし。
 - 本番データ：変更なし。
 - 外部サービス：OpenAI公式文書のread-only参照のみ。書き込みなし。
