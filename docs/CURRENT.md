@@ -2,7 +2,7 @@
 
 ## 記録日時
 
-- 2026-09-22 18:45（日本時間）
+- 2026-09-22 18:51（日本時間）
 
 ## 対象作業と引き継ぎ元
 
@@ -33,9 +33,11 @@
 - 記録時`origin/main`：`052c787b947bf5630fbd62f0ff168c8ec7a3506b`
 - Dedicated runtime boundary checkpoint：`f555c8a89852f9d2c246ca2c0f91c7bfc67e3978`
 - CURRENT completion checkpoint／基準commit：`00ec1fea13546cc0a50ed21ce725535684d3c247`
+- No-command attestation contract checkpoint：`3cd98d7f7d758797a3c3e028ac9f3660120122a2`
 - 開始時、branch／HEAD／upstream／origin/mainとsource hashesはcheckpointに一致。
 - 開始時worktree：既存tracked変更20件、既存untracked 7,839件、staged 0。既存項目は整理・変更・stageしていない。
-- 本設計のcontract evaluation／handoff／CURRENTはローカルのみ。commit／pushは未実施。
+- 承認されたcontract evaluation／handoff／CURRENTだけをcheckpoint commit `3cd98d7f7d758797a3c3e028ac9f3660120122a2`へ保存。既存worktree項目は含めていない。
+- 本CURRENTのcheckpoint完了追補commit SHA／push後HEADはGit metadataを正本とする。
 
 ## 完了したこと
 
@@ -57,7 +59,7 @@
 
 ## 公開・本番データ・外部サービス
 
-- GitHub：checkpoint `00ec1fea13546cc0a50ed21ce725535684d3c247`から変更なし。本設計記録は未commit／未push。
+- GitHub：no-command attestation contract checkpoint `3cd98d7f7d758797a3c3e028ac9f3660120122a2`をcurrent branchへcommit済み。CURRENT追補とpushはこの記録時点では未完了。`main`変更なし。
 - 公開・deploy：変更なし。
 - 本番データ：変更なし。
 - 外部サービス：変更・書込みなし。browser／HTTPも未実行。
@@ -82,4 +84,4 @@
 - `NB-G4`のPASS化、Evidence attempt `0/1`の消費。
 - Static config、UI、agent prose、logs/env、probeによるmissing runtime metadataの代替。
 - 共有作業ツリーの既存tracked／untracked項目の整理・変更・stage。
-- Commit、push、PR、GitHub変更、deploy、公開、本番データ、外部サービス書込み。
+- 今回承認範囲外のcommit、push、PR、GitHub変更、deploy、公開、本番データ、外部サービス書込み。
