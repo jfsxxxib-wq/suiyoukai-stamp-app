@@ -2,13 +2,13 @@
 
 ## 記録日時
 
-- 2026-09-22 16:37（日本時間）
+- 2026-09-22 17:12（日本時間）
 
 ## 対象作業と引き継ぎ元
 
-- 対象：Teacher Network Boundary `NB-G4 NOT PROVEN` GitHub checkpoint。
-- 引き継ぎ元：Network Boundaryの確定済み記録／handoff／CURRENTだけをGitHubへ保存する承認。
-- 現在path state：`ISOLATED_BUILD_SAFETY_BOUNDARY_NOT_RESOLVED`。`NB-G0..NB-G3`はPASS、`NB-G4 = NOT PROVEN — STOP`。
+- 対象：別build profile/session safety-boundary exact-plan candidateのGitHub checkpoint。
+- 引き継ぎ元：設計記録、handoff、CURRENT、必要なcheckpoint bindingだけをcommit／pushする承認。
+- 現在path state：`SEPARATE_PROFILE_SESSION_EXACT_PLAN_CANDIDATE_ESTABLISHED__ACTIVE_BOUNDARY_NOT_PROVEN__HOLD`。`NB-G0..NB-G3`はPASS、現taskの`NB-G4 = NOT PROVEN — STOP`は不変。
 - 最新Option A classification：`OPTION_A_NOT_SUFFICIENT_FOR_REQUIRED_EVIDENCE`。
 - 最新preflight classification：`GENERATED_BUILD_FIXATION_NOT_DETERMINABLE_PRE_BUILD`。
 - 最新診断classification：`NOT_DETERMINABLE_FROM_BOUNDED_EVIDENCE`。
@@ -31,18 +31,21 @@
 - Isolated-build safety plan SHA-256：`d42ac51b9032bb4b1feca1409a5546d34e7da59e9130c8d3d514f1667812875b`
 - NB-G4 loopback result：`docs/teacher-anonymous-api-nb-g4-loopback-boundary-evaluation-result-2026-09-22.md`
 - NB-G4 loopback result SHA-256：`8cba281bc3ed3a54a59f9ad924a71603976afe8d1c874d65b639dfb250eb744f`
-- 対応handoff：`docs/handoffs/2026-09-22-1637-teacher-network-boundary-github-checkpoint.md`
-- Handoff SHA-256：`4e20eef8dadc5d24aba4ed8578b99324588ef1c28cb6eb9ab4cd6f21213a9b24`
+- Separate profile/session exact-plan candidate：`docs/teacher-anonymous-api-separate-profile-session-safety-boundary-exact-plan-candidate-2026-09-22.md`
+- Exact-plan candidate SHA-256：`c0f0d7b68a8e3258840c0b39013a7805d3cdd1144b625fd29d4f790a71ad44c9`
+- 対応handoff：`docs/handoffs/2026-09-22-1711-teacher-separate-profile-session-github-checkpoint.md`
+- Handoff SHA-256：`b01e14aba62b730e9cdf7c40ebd599142ffe8b2c6039ae24689b55497cdaa5e9`
 
 ## Git照合
 
 - 保存済みbranch：`codex/checkpoint-2026-09-04-passed`
-- 保存済みHEAD：`7c5c4e6f14fae9141689323cd596e7fdc5c72be3`
+- 記録時pre-checkpoint HEAD／upstream：`a63be09dc670bd53e1e635cf88574868fc27f480`
 - 保存済み`origin/main`：`052c787b947bf5630fbd62f0ff168c8ec7a3506b`
 - 固定Gate commit：`5e402e2def68c7ab0841db27059074f82390b660`
-- Branch／HEAD／`origin/main`は開始時記録値と一致。
+- Branch／pre-checkpoint HEAD／upstream／`origin/main`はcheckpoint開始時照合値と一致。
 - 共有作業ツリーの既存多数項目は整理・変更・stageしていない。
-- GitHub checkpoint：本CURRENTを含むbounded Network Boundary commitとしてcurrent branchへ保存。Commit SHAはGit metadataを正本とする。
+- GitHub checkpoint：bounded Network Boundary commit `a63be09dc670bd53e1e635cf88574868fc27f480`は追跡branchと一致。
+- 今回のexact-plan candidate、design handoff、checkpoint handoff、本CURRENTだけが承認済みsave set。resulting commit SHA／push状態はGit metadataを正本とする。
 
 ## Fixed authority
 
@@ -85,28 +88,17 @@
 
 ## 完了したこと
 
-- BF-G0〜BF-G11をfinal 12／12 PASSで確認。
-- Fixed serverとbrowser tabをattempt `1/1`で起動し、rendering／hydration到達を確認。
-- Unexpected non-JSON API response観測時点でsecond URLへ進まず停止。
-- Tab／server cleanup、port解放、hash／write post-checkを完了。
-- `GET /api/teacher/matches`だけを対象とするbounded diagnostic exact planを保存。
-- Route／auth／response construction／harness／browser observationを分離し、5分類の判定条件を固定。
-- DG-00〜DG-06を7／7 PASSで確認し、SD-00〜SD-08のread-only診断を完了。
-- Source上のanonymous JSON 401 path、build route登録、harness normal／exception pathsを静的確認。
-- Actual status／content-type／handler reachが保存されておらず、response originを一意化できないため`NOT_DETERMINABLE_FROM_BOUNDED_EVIDENCE`で停止。
-- Resultとimmutable handoffを保存。
-- Safe metadata 10 fields、future execution `0/1`、instrumentation／offline／real attemptの承認境界を固定。
-- Existing-only観測ではfull five-way distinctionが不可能で、temporary local-only instrumentationが必要と計画化。
-- Temporary instrumentation 6 filesを実装し、request-scoped fixed boolean／enum境界を固定。
-- Syntax 3／3、offline synthetic tests 17／17 PASS。Attemptは`0/1`のまま。
-- Generated build inputs、toolchain、pre-build inventory、safe-record schemaを固定。
-- Post-build expected hashes／exact allowlistを一意化できず、buildせず停止。
-- Option A `A-G0..A-G7`、Option B `B-G0..B-G11`とselection ruleを固定。
-- Candidate isolated rootは不存在を確認し、作成していない。
-- Option Aをformal評価し、A-G0／A-G1／A-G3／A-G6 FAILで不成立と記録。
-- Option Bをformal評価し、B-G5／B-G7 FAILで不採用と記録。
-- Effective runtime variablesを秘密値なしで限定確認し、NB-G3をprobeなしでauthoritativeにPASS。
-- NB-G4を再評価し未証明で停止。Attempt `0/1`、source hashes 6／6、既存`dist` 135 files／2,239,925 bytes不変を確認し、Network Boundary記録だけをcheckpoint対象に固定。
+- Browser follow-upはBF-G0〜G11を12／12 PASS、rendering／hydration到達後にunexpected non-JSONで停止し、cleanup／port解放／post-checkを完了。消費済みattempt `1/1`は再利用しない。
+- Bounded diagnosticはDG 7／7 PASSとSD-00〜08を完了したが、actual status／content-type／handler reach不足により`NOT_DETERMINABLE_FROM_BOUNDED_EVIDENCE`で停止。
+- Safe metadata 10 fields、temporary instrumentation 6 files、syntax 3／3、offline synthetic tests 17／17 PASSを固定。Evidence attemptは`0/1`。
+- Build inputs／toolchain／pre-build inventoryを固定したがpost-build値は未確定。Option AはA-G0／1／3／6 FAIL、Option BはB-G5／7 FAILで不採用。isolated rootは未作成。
+- Effective runtime variablesからNB-G3をprobeなしでPASS。NB-G4は未証明で停止し、source hashes 6／6と既存`dist` 135 files／2,239,925 bytes不変を確認。
+- OpenAI Docsのpermission profile、network proxy、filesystem、child-process、Windows enforcement境界をread-onlyで再確認。
+- 別profile/session候補を、network-on＋active proxy＋外部allow entryなし＋local/private guard有効のfail-closed設計として固定。
+- 固定build pathではloopback必要性が証明されないため、候補profileではloopbackを禁止。Vinext optional prerenderが選択された場合だけ`127.0.0.1`／ephemeral port／child serverを使う静的経路を記録。
+- Write範囲をexact isolated root内の`dist/**`、`.wrangler/**`、`node_modules/.vite/**`、`.tmp/**`だけに限定するcandidateを固定。
+- Local spawned commands／build plugins／child processは同一command sandbox境界、Codex plugins／connectors／MCP／web／browser等は別境界として明示し、future build stepでは後者を無効・不使用に固定。
+- Exact-plan candidateとimmutable handoffを保存。profile/config/sessionは作成・変更・選択・起動していない。
 
 ## 未完了・未確定
 
@@ -118,22 +110,27 @@
 - Loopback deny attestation、または別runtime/profileとしてのbuild固有exact loopback-only exceptionが未確定。
 - Option B safety boundaryの実評価、isolated copy、buildは未実施。
 - 現行Option A／Bの双方が不成立。新しいsafety contractなしではreal evidence path未解決。
+- Candidate profileは未作成・未選択・未起動で、active boundaryとして未証明。
+- Future pre-sessionではlegacy sandbox混在なし、全config layer、active proxy、effective empty allowlist、exact root、native-Windows elevated enforcement、separate tool surface無効化をtrusted evidenceで閉じる必要がある。
+- Permission profile機構はOpenAI Docs上beta。future schema再確認で一つでも閉じなければ`SEPARATE_PROFILE_SESSION_SAFETY_BOUNDARY_NOT_PROVEN`でHOLD。
+- Loopback許可案は未採用。必要性が固定build pathから別途証明されるまで設計・実装しない。host/IP scopeより狭いexact port制約が必要なら現機構では不成立。
 - Populated data、Teacher QR、real auth／production D1、deploy／公開確認は別境界。
 - GitHubへ保存するかの判断と別承認。
 
 ## 公開・本番データ・外部サービス
 
 - GitHub：Network Boundary checkpointをcurrent branchへ保存。PR／`main`変更なし。
+- 今回のprofile/session設計checkpointはcurrent branch/upstreamだけが保存先。PR／`main`変更なし。
 - 公開・deploy：変更なし。
 - 本番データ：変更なし。
-- 外部サービス：書き込みなし。
+- 外部サービス：OpenAI公式文書のread-only参照のみ。書き込みなし。
 
 ## 次回の安全な再開地点
 
-1. 本CURRENT、checkpoint handoff、NB-G4 loopback result、Git commit metadataを読む。
-2. 次へ進む場合は別承認で別build profile/sessionを新しい安全境界として設計する場合だけ扱う。
-3. `NB-G4`がPASSするまではNB-G5、TW、copy、buildへ進まない。
-4. Copy、build、post-build fixation、real attempt、rollbackをそれぞれ別承認とする。
+1. 本CURRENT、latest handoff、separate profile/session exact-plan candidate、NB-G4 result、Git metadataを読む。
+2. 次へ進む場合は別承認でcandidate profile/config artifactの作成だけを扱う。作成承認をprofile選択・session起動承認へ拡張しない。
+3. Profile/config artifact作成後も、isolated copy、separate session start/attestation、build、post-build fixation、real attempt、rollbackをそれぞれ別承認とする。
+4. Future pre-session Gate `PS-G0..PS-G10`が全PASSしない限りsessionを起動しない。probeで不足attestationを代替しない。
 5. Attempt `0/1`を未消費のまま保持する。
 
 ## 触らない
@@ -144,6 +141,9 @@
 - 無承認のTeacher page／server／browser再起動。
 - npm／Vinext／Wrangler／別executable、別port、retry／fallback。
 - 無承認のbuild、`dist` clean／rewrite、rollback。
+- 無承認のpermission profile/config作成・変更・選択、別session起動、legacy sandbox設定変更、network proxy有効化、loopback allow entry追加。
+- Network-on＋proxy-off、外部domain allow entry、`allow_local_binding=true`、Unix socket allow、`dangerously_*` network key、native-Windows `unelevated` fallbackでの候補実行。
+- Codex plugins／connectors／MCP／web search／browser／Computer Use／cloudをfuture buildのnetwork経路として使用すること。
 - Seed、write API、production D1、正式データ、real auth、Teacher QR target。
 - Contract／I1〜I6 source／tests／fixturesの変更。
 - 共有作業ツリー既存項目の整理・変更・stage。
