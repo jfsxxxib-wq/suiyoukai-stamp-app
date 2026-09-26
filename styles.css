@@ -12880,3 +12880,65 @@ body.is-fairy-viewer-open {
   }
 }
 
+/* Preview candidate: home actions stay on the map; a selected view fills the screen. */
+.record-book {
+  position: relative;
+  display: grid;
+  align-items: end;
+  height: 100svh;
+  min-height: 100svh;
+  padding: max(12px, env(safe-area-inset-top)) 14px max(16px, env(safe-area-inset-bottom));
+  overflow: hidden;
+}
+
+.map-hero {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.info-dock,
+.info-dock.is-collapsed {
+  position: relative;
+  align-self: end;
+  justify-self: center;
+  width: min(520px, 100%);
+  margin: 0;
+  transform: none;
+  z-index: 2;
+}
+
+.info-dock:not(.is-collapsed) {
+  position: fixed;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100dvh;
+  min-height: 100svh;
+  margin: 0;
+  padding: max(16px, env(safe-area-inset-top)) 14px max(16px, env(safe-area-inset-bottom));
+  overflow-y: auto;
+  background: #fffaf0;
+  transform: none;
+  z-index: 400;
+}
+
+.info-dock:not(.is-collapsed) .info-tabs,
+.info-dock:not(.is-collapsed) .home-secondary-actions {
+  display: none;
+}
+
+.info-dock:not(.is-collapsed) .info-panel {
+  display: block;
+  width: min(700px, 100%);
+  min-height: calc(100svh - 32px);
+  max-height: none;
+  margin: 0 auto;
+  overflow: visible;
+}
+
+.info-panel[hidden] {
+  display: none !important;
+}
+
