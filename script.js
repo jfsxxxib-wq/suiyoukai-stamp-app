@@ -6,7 +6,6 @@ const dock = document.querySelector(".info-dock");
 const infoPanel = document.querySelector(".info-panel");
 const infoTabs = document.querySelector(".info-tabs");
 const closeButton = document.querySelector(".close-panel");
-const guidebookButton = document.querySelector(".guidebook-button");
 const adminTab = document.querySelector(".admin-tab");
 const teacherCards = document.querySelectorAll(".teacher-card");
 const teacherLayout = document.querySelector(".teacher-layout");
@@ -229,7 +228,6 @@ const nextAdventureCopy = document.querySelector("[data-next-adventure-copy]");
 const nextAdventureGuide = document.querySelector("[data-next-adventure-guide]");
 const nextAdventureGuideImage = document.querySelector("[data-next-adventure-guide-image]");
 const nextAdventureGuideSpeech = document.querySelector("[data-next-adventure-guide-speech]");
-const mapDestinationButtons = document.querySelectorAll("[data-map-destination]");
 const shrineIntro = document.querySelector("[data-shrine-intro]");
 const shrineIntroCaption = document.querySelector("[data-shrine-intro-caption]");
 const shrineIntroSkip = document.querySelector("[data-shrine-intro-skip]");
@@ -1500,7 +1498,7 @@ const updateBrowserInstallGuide = () => {
   const shouldShow = isIPhoneSafari()
     && !isStandaloneDisplay()
     && !hasStampPayloadInUrl()
-    && window.location.hash !== adminEntryHash
+    && window.FlowerAdminAccess?.isAuthorized() !== true
     && !isBrowserInstallGuideClosed();
 
   browserInstallGuide.hidden = !shouldShow;
@@ -3140,6 +3138,7 @@ const lockAdminPanel = () => {
 };
 
 const unlockAdminPanel = () => {
+  if (window.FlowerAdminAccess?.isAuthorized() !== true) return;
   const enteredPasscode = adminPasscodeInput.value.trim();
 
   if (!isAdminPasscodeConfigured()) {
@@ -6018,6 +6017,9 @@ saveUserProgress();
 syncAdminDraftFromProgress();
 
 const showPanel = (target) => {
+  if (target === "admin" && window.FlowerAdminAccess?.isAuthorized() !== true) {
+    target = "field-guide";
+  }
   if (target !== "admin" && isAdminUnlocked) {
     lockAdminPanel();
   }
@@ -8256,6 +8258,12 @@ for (const tab of tabs) {
   });
 }
 
+document.querySelector("[data-home-teacher-record]")?.addEventListener("click", () => {
+  showPanel("field-guide");
+  showTeacherList();
+  window.requestAnimationFrame(() => infoPanel?.scrollIntoView({ behavior: "smooth", block: "start" }));
+});
+
 closeButton.addEventListener("click", () => {
   if (isAdminUnlocked) {
     lockAdminPanel();
@@ -8338,17 +8346,6 @@ for (const flowerCard of flowerGuideCards) {
 
     openTeacherDetailFromCard(document.querySelector(`.teacher-card[data-teacher="${target}"]`));
     showFlowerGuideArrival(teacherDetail, `${flowerName}は${flowerMeta}の1巡目の花です`);
-  });
-}
-
-for (const button of mapDestinationButtons) {
-  button.addEventListener("click", () => {
-    if (button.dataset.mapDestination === "participation") {
-      openParticipationStartSheet();
-      return;
-    }
-
-    openShrineWithIntro();
   });
 }
 
@@ -9001,99 +8998,25 @@ achievementProfileButton.addEventListener("click", () => {
   showPanel("profile");
 });
 
-let adminEntryTimer = null;
-let adminEntryTapCount = 0;
-let adminEntryTapResetTimer = null;
-const adminEntryHash = "#admin";
-
-const clearAdminEntryTimer = () => {
-  if (!adminEntryTimer) {
-    return;
+const syncAdminVisibility = () => {
+  const authorized = window.FlowerAdminAccess?.isAuthorized() === true;
+  if (adminTab) adminTab.hidden = !authorized;
+  infoTabs?.classList.toggle("is-admin-available", authorized);
+  if (!authorized) {
+    if (isAdminUnlocked) lockAdminPanel();
+    if (document.querySelector('[data-view="admin"]')?.hidden === false) showPanel("field-guide");
   }
-
-  window.clearTimeout(adminEntryTimer);
-  adminEntryTimer = null;
+  updateBrowserInstallGuide();
 };
 
-const openAdminEntry = () => {
-  clearAdminEntryTimer();
-  window.clearTimeout(adminEntryTapResetTimer);
-  adminEntryTapCount = 0;
-  if (adminTab) {
-    adminTab.hidden = false;
-  }
-  infoTabs?.classList.add("is-admin-available");
-  lockAdminPanel();
-  showPanel("admin");
-  adminPasscodeMessage.textContent = isAdminPasscodeConfigured()
-    ? "運営用パスコードを入力してください。"
-    : "初回設定です。この運営端末で使うパスコードを8文字以上で入力してください。";
-  adminPasscodeInput?.focus();
-};
-
-const syncAdminDirectEntry = () => {
-  if (adminTab) {
-    adminTab.hidden = true;
-  }
-  infoTabs?.classList.remove("is-admin-available");
-};
-
-guidebookButton?.addEventListener("pointerdown", () => {
-  clearAdminEntryTimer();
-  adminEntryTimer = window.setTimeout(openAdminEntry, 1200);
-});
-
-for (const eventName of ["pointerup", "pointerleave", "pointercancel", "blur"]) {
-  guidebookButton?.addEventListener(eventName, clearAdminEntryTimer);
-}
-
-guidebookButton?.addEventListener("click", () => {
-  if (window.location.hash === adminEntryHash) {
-    window.history.replaceState(null, "", window.location.pathname + window.location.search);
-    return;
-  }
-
-  window.clearTimeout(adminEntryTapResetTimer);
-  adminEntryTapCount += 1;
-
-  if (adminEntryTapCount >= 3) {
-    if (adminTab) {
-      adminTab.hidden = false;
-      adminTab.focus();
-    }
-    infoTabs?.classList.add("is-admin-available");
-    return;
-  }
-
-  adminEntryTapResetTimer = window.setTimeout(() => {
-    adminEntryTapCount = 0;
-  }, 1800);
-});
-
-window.addEventListener("hashchange", syncAdminDirectEntry);
+window.addEventListener("flower-admin-access-change", syncAdminVisibility);
 window.addEventListener("hashchange", applyStampQrFromLocation);
 window.addEventListener("hashchange", updateBrowserInstallGuide);
-syncAdminDirectEntry();
+syncAdminVisibility();
 updateBrowserInstallGuide();
 
 browserInstallGuideDismissButtons.forEach((button) => {
   button.addEventListener("click", closeBrowserInstallGuide);
-});
-
-nextAdventureButton.addEventListener("click", () => {
-  if (nextAdventureButton.dataset.adventureType === "complete") {
-    showPanel("titles");
-    return;
-  }
-
-  showPanel("field-guide");
-  showTeacherList();
-
-  if (nextAdventureButton.dataset.nextAdventureTeacher) {
-    document.querySelector(`.teacher-card[data-teacher="${nextAdventureButton.dataset.nextAdventureTeacher}"]`)?.click();
-  } else if (nextAdventureButton.dataset.adventureType === "participation") {
-    openParticipationStartSheet();
-  }
 });
 
 adminPasscodeButton.addEventListener("click", unlockAdminPanel);

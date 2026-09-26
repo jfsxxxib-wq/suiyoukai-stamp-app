@@ -12726,3 +12726,157 @@ body.is-fairy-viewer-open {
     gap: 7px 5px;
   }
 }
+
+/* Approved home layout: keep the existing map art and place the three main actions below it. */
+.record-book {
+  display: block;
+  min-height: 100svh;
+  padding: 0 0 max(24px, env(safe-area-inset-bottom));
+  overflow: visible;
+  background: #fffaf0;
+}
+
+.map-hero {
+  position: relative;
+  inset: auto;
+  height: clamp(440px, 65svh, 580px);
+}
+
+.map-destination-links,
+.guidebook-button,
+.next-adventure-card {
+  display: none !important;
+}
+
+.info-dock,
+.info-dock.is-collapsed {
+  display: block;
+  width: min(520px, calc(100% - 28px));
+  margin: -4px auto 0;
+  transform: none;
+}
+
+.info-dock::before,
+.info-dock::after {
+  display: none;
+}
+
+.info-tabs,
+.info-dock.is-collapsed .info-tabs {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 7px;
+  padding: 7px;
+  border: 2px solid #9fcbd0;
+  border-radius: 16px;
+  background: #e7f5f6;
+  box-shadow: 0 6px 16px #245d641a;
+  transform: none;
+}
+
+.info-tabs.is-admin-available,
+.info-dock.is-collapsed .info-tabs.is-admin-available {
+  position: relative;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.info-tabs.is-admin-available .admin-tab {
+  position: absolute;
+  top: -43px;
+  right: 0;
+  width: 62px;
+  min-height: 38px;
+  border: 1px solid #9fcbd0;
+  border-radius: 11px;
+  background: #fff;
+  color: #225762;
+  box-shadow: 0 4px 12px #245d641a;
+  font-weight: 700;
+  z-index: 1;
+}
+
+.info-tab,
+.info-tab[data-panel="field-guide"] {
+  min-height: 70px;
+  border: 1px solid #bfdcde;
+  border-radius: 11px;
+  background: #fff;
+  color: #225762;
+  box-shadow: none;
+  font-size: 0.82rem;
+}
+
+.info-tab.is-active,
+.info-tab[data-panel="field-guide"].is-active {
+  border-color: #226f7b;
+  background: #226f7b;
+  color: #fff;
+  box-shadow: none;
+}
+
+.info-tab[data-panel="field-guide"].is-active small {
+  color: #fff;
+}
+
+.home-secondary-actions {
+  display: grid;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.info-dock:not(.is-collapsed) .home-secondary-actions {
+  display: none;
+}
+
+.teacher-record-link {
+  min-height: 44px;
+  border: 0;
+  background: transparent;
+  color: #567176;
+  font-size: 0.82rem;
+  cursor: pointer;
+}
+
+.portal-return-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 52px;
+  border: 1px solid #b8d4d8;
+  border-radius: 14px;
+  background: #fff;
+  color: #225762;
+  font-size: 1rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.teacher-record-link:focus-visible,
+.portal-return-link:focus-visible {
+  outline: 3px solid #bd752c;
+  outline-offset: 2px;
+}
+
+@media (max-width: 680px) {
+  .map-hero > img {
+    object-position: 88% 88%;
+  }
+  .info-dock,
+  .info-dock.is-collapsed {
+    justify-self: auto;
+    width: calc(100% - 28px);
+    margin: -4px 14px 0;
+    transform: none;
+  }
+  .info-tabs,
+  .info-dock.is-collapsed .info-tabs {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 7px;
+    padding: 7px;
+  }
+  .info-tab,
+  .info-tab[data-panel="field-guide"] {
+    min-height: 70px;
+  }
+}
+

@@ -15,16 +15,9 @@
     <link rel="manifest" href="manifest.webmanifest?v=20260707-same-day-records-01">
     <link rel="apple-touch-icon" href="assets/app-icon-180.png?v=20260705-home-screen-01">
     <link rel="icon" type="image/png" sizes="192x192" href="assets/app-icon-192.png?v=20260705-home-screen-01">
-    <link rel="stylesheet" href="styles.css?v=20260910-landscape-viewer-01">
+    <link rel="stylesheet" href="styles.css?v=20260927-flower-admin-01">
     <link rel="stylesheet" href="linkage-client.css?v=20260903-01">
 
-    <style>
-      .info-dock { grid-template-rows:auto auto 1fr; }
-      .info-dock.is-collapsed { transform:rotate(-0.5deg); }
-      .portal-return-link { display:flex; align-items:center; justify-content:center; gap:10px; min-height:48px; box-sizing:border-box; margin:10px 0 0; padding:12px 16px; border:1px solid #87a294; border-radius:12px; background:#fffdf5; color:#285b4c; font-size:16px; font-weight:700; line-height:1.5; text-decoration:none; box-shadow:0 3px 10px #244d3810; }
-      .portal-return-link:hover { background:#edf4ed; }
-      .portal-return-link:focus-visible { outline:3px solid #285b4c; outline-offset:3px; }
-    </style>
   </head>
   <body>
     <section class="browser-install-guide" data-browser-install-guide hidden aria-label="Safari利用の案内" role="dialog" aria-modal="true">
@@ -51,31 +44,10 @@
       <section class="map-hero" aria-label="水曜会探索マップ">
         <img src="assets/shonan-watercolor-map.png" alt="" aria-hidden="true">
         <div class="map-veil"></div>
-        <div class="map-destination-links" aria-label="地図の目的地">
-          <button type="button" class="map-destination-button is-shrine" data-map-destination="shrine">
-            <span class="map-pin" aria-hidden="true"></span>
-            <span>
-              <small>次の目的地</small>
-              <strong>組み合わせ神社</strong>
-            </span>
-          </button>
-        </div>
         <div class="journey-title">
           <p>水曜会探索マップ</p>
           <h1>花を見つける小さな旅</h1>
         </div>
-        <button type="button" class="next-adventure-card" data-next-adventure-button>
-          <span class="next-adventure-text">
-            <small>次の冒険</small>
-            <strong data-next-adventure-title>最初の花を見つけよう</strong>
-            <span class="next-adventure-copy" data-next-adventure-copy>参加または先生との指導碁を記録すると、冒険が始まります。</span>
-            <span class="next-adventure-action">次の冒険へ&nbsp;›</span>
-          </span>
-          <span class="next-adventure-guide" data-next-adventure-guide aria-hidden="true">
-            <span class="next-adventure-guide-speech" data-next-adventure-guide-speech>次の花へ行こう</span>
-            <img src="assets/fairy-apollon-guide.png" alt="" data-next-adventure-guide-image>
-          </span>
-        </button>
         <button type="button" class="guidebook-button" aria-label="冒険の書">
           <span aria-hidden="true">□</span>
           冒険の書
@@ -146,7 +118,10 @@
           <button type="button" class="info-tab admin-tab" data-panel="admin" aria-pressed="false" aria-label="運営画面" hidden>管理</button>
         </nav>
 
-        <a class="portal-return-link" href="https://suiyoukai-portal.c84s4n967v.chatgpt.site" target="_self" rel="noreferrer"><span aria-hidden="true">←</span> 水曜会ポータルへ戻る</a>
+        <div class="home-secondary-actions">
+          <button type="button" class="teacher-record-link" data-home-teacher-record>先生の記録 <span aria-hidden="true">›</span></button>
+          <a class="portal-return-link" href="https://suiyoukai-portal.c84s4n967v.chatgpt.site" target="_self" rel="noreferrer"><span aria-hidden="true">←</span> 水曜会ポータルへ戻る</a>
+        </div>
 
         <section class="info-panel" aria-live="polite" hidden>
           <button type="button" class="close-panel">地図に戻る</button>
@@ -333,7 +308,7 @@
             <section class="flower-guide-intro" aria-label="花を育てる案内">
               <div class="flower-guide-copy">
                 <strong>参加や指導碁で花が咲きます</strong>
-                <p>花が満開になると、妖精や称号に出会えます。次に育てる花は「次の冒険」が案内します。</p>
+                <p>花が満開になると、妖精や称号に出会えます。次に育てる花は花図鑑で確かめられます。</p>
               </div>
             </section>
             <h3 class="teacher-guide-heading">先生を選んで花を育てる</h3>
@@ -1387,7 +1362,8 @@
     </script>
     <script src="stamp-rules.js?v=20260719-teacher-photos-01"></script>
     <script src="history-merge.js?v=20260904-01"></script>
-    <script src="script.js?v=20260910-landscape-viewer-01"></script>
+    <script src="flower-admin-access.js?v=20260927-flower-admin-01"></script>
+    <script src="script.js?v=20260927-flower-admin-01"></script>
     <script src="linkage-client.js?v=20260903-01"></script>
     <script src="gate-client.js?v=20260917-notice-01"></script>
     <script src="history-client.js?v=20260904-02"></script>
