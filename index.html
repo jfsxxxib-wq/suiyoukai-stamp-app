@@ -16,6 +16,8 @@
     <link rel="apple-touch-icon" href="assets/app-icon-180.png?v=20260705-home-screen-01">
     <link rel="icon" type="image/png" sizes="192x192" href="assets/app-icon-192.png?v=20260705-home-screen-01">
     <link rel="stylesheet" href="styles.css?v=20260927-screen-switch-02">
+    <link rel="stylesheet" href="flower-admin-refresh.css?v=20260927-admin-refresh-01">
+    <link rel="stylesheet" href="flower-stamp-qr.css?v=20260927-qr-01">
     <link rel="stylesheet" href="linkage-client.css?v=20260903-01">
 
   </head>
@@ -990,7 +992,95 @@
           <div class="panel-view" data-view="admin" hidden>
             <p class="panel-kicker">運営画面</p>
             <h2>スタンプ管理</h2>
-            <section class="admin-lock-card" data-admin-lock-card aria-label="運営画面ロック">
+            <div class="admin-refresh-screen" aria-label="花図鑑スタンプ管理の新画面">
+              <p class="admin-refresh-badge">管理者専用・本人確認後に使用</p>
+              <p class="admin-refresh-lead">ポータルで本人確認した管理者が使う画面です。QRの発行履歴はポータルへ記録されます。</p>
+              <p class="admin-refresh-status" data-stamp-admin-status role="status">管理者資格と保存先を確認しています。</p>
+
+              <section class="admin-refresh-card" aria-labelledby="admin-refresh-entrance-title">
+                <h3 id="admin-refresh-entrance-title">初めての方：水曜会サイト入口QR</h3>
+                <p>初めての方は、この共通QRから水曜会サイトを開いてお名前を登録します。iPhoneはいつものSafari、AndroidはChromeで開き、同じブラウザーで花図鑑へ進みます。</p>
+                <img class="admin-refresh-entrance-qr" src="assets/suiyoukai-entrance-qr.png" width="240" height="240" alt="初めての方向け、水曜会サイト入口の共通QR">
+                <p><a href="https://suiyoukai-portal.c84s4n967v.chatgpt.site/" target="_blank" rel="noopener noreferrer">水曜会サイト入口を開く</a></p>
+                <p class="admin-refresh-note">このQRには個人の番号は入っていません。受付後にスタンプを入れる「当日の参加スタンプQR」とは別の入口です。</p>
+              </section>
+
+              <section class="admin-refresh-card" aria-labelledby="admin-refresh-today-title">
+                <h3 id="admin-refresh-today-title">当日の参加スタンプQR</h3>
+                <p>受付が済んだ人が、自分の花図鑑を開いたスマホで読みます。同じ日の参加スタンプは二重に入りません。</p>
+                <p class="admin-refresh-note">日付：今日（固定）／対象：受付に来た参加者</p>
+                <button type="button" data-stamp-issue-today disabled>受付用の参加QRを作る</button>
+                <div class="admin-refresh-qr-result" data-stamp-today-result hidden></div>
+              </section>
+
+              <section class="admin-refresh-card" aria-labelledby="admin-refresh-baseline-title">
+                <h3 id="admin-refresh-baseline-title">本人の旧スタンプを照合して登録</h3>
+                <p>はじめて新しいスタンプQRを使う前に、本人のいつものスマホ・バックアップ・受付記録を照合します。登録後はこの初期回数を上書きできません。</p>
+                <label>対象者<select data-stamp-baseline-person disabled><option value="">登録済みの方を選ぶ</option></select></label>
+                <div class="admin-refresh-grid">
+                  <label>本人端末の参加回数<input data-stamp-baseline-participation type="number" min="0" max="30" inputmode="numeric" disabled></label>
+                  <label>最後に参加スタンプを受け取った日<input data-stamp-baseline-last-date type="date" disabled></label>
+                </div>
+                <div data-stamp-baseline-teachers></div>
+                <label>照合した根拠<input data-stamp-baseline-evidence type="text" placeholder="本人端末・バックアップ・受付記録" maxlength="200" disabled></label>
+                <p class="admin-refresh-note">本人の実際の回数が分からない場合は登録を見送り、QRを受け取らせないでください。</p>
+                <button type="button" data-stamp-baseline-save disabled>照合した初期回数を登録</button>
+                <p data-stamp-baseline-message role="status"></p>
+              </section>
+
+              <section class="admin-refresh-card" aria-labelledby="admin-refresh-games-title">
+                <h3 id="admin-refresh-games-title">同じ日の指導碁をまとめるQR</h3>
+                <p>本人一人の同じ日の対局を、必要な局数だけ追加します。各局の記録ID・先生・ハンデ・勝敗を確かめてから、本人スマホ用QRを1つ作ります。</p>
+                <div class="admin-refresh-grid">
+                  <label>対象者<select data-stamp-games-person disabled><option value="">照合済みの方を選ぶ</option></select></label>
+                  <label>対局日（全局共通）<input data-stamp-games-date type="date" disabled></label>
+                </div>
+                <div class="admin-refresh-slot">
+                  <h4>1局目</h4>
+                  <div class="admin-refresh-grid">
+                    <label>対局記録ID<input data-stamp-game-source type="text" maxlength="80" placeholder="例：20260927-01" disabled></label>
+                    <label>先生<select data-stamp-game-teacher disabled><option value="">先生を選ぶ</option></select></label>
+                    <label>ハンデ<select data-stamp-game-handicap disabled><option>記録なし</option><option>互先</option><option>先</option><option>先逆コミ6.5目</option><option>2子</option><option>3子</option><option>4子</option><option>5子</option><option>6子</option><option>7子</option><option>8子</option><option>9子</option></select></label>
+                    <label>勝敗<select data-stamp-game-result disabled><option>記録なし</option><option>勝ち</option><option>負け</option><option>持碁</option></select></label>
+                  </div>
+                </div>
+                <div data-stamp-extra-games></div>
+                <div class="admin-refresh-slot"><h4>2局目以降も追加できます</h4><p>対局ごとに先生・ハンデ・勝敗を確認します。</p><button type="button" class="admin-refresh-quiet" data-stamp-add-game disabled>＋ 同じ日の対局を追加</button></div>
+                <p class="admin-refresh-note">記録IDは、同じ方の同じ対局に毎回同じ値を使ってください。氏名は入れず、日付と記録の通し番号などで区別します。同じ記録IDや同じQRの二重反映は止まります。</p>
+                <button type="button" data-stamp-issue-games disabled>全局を確認してQRを1つ作る</button>
+                <div class="admin-refresh-qr-result" data-stamp-games-result hidden></div>
+              </section>
+
+              <section class="admin-refresh-card" aria-labelledby="admin-refresh-restore-title">
+                <h3 id="admin-refresh-restore-title">過去分を一人分まとめて復旧するQR</h3>
+                <p>本人と旧記録を照合し、参加スタンプと先生ごとの指導碁スタンプを確認します。差分を一覧で確認してから、本人専用のQRを1つ作ります。</p>
+                <p class="admin-refresh-note"><strong>ここでいう「新しい番号」：</strong>以前の登録を復旧する方に限り、サイト参加者番号と花図鑑番号という2つの8桁番号の組を指します。番号の受取を先に確認し、前のスタンプはその後に照合します。初めての方は上の共通入口QRから登録し、番号を事前に用意する必要はありません。</p>
+                <label>対象者<select data-stamp-restore-person disabled><option value="">照合済みの方を選ぶ</option></select></label>
+                <div class="admin-refresh-slot"><h4>参加スタンプ</h4><div class="admin-refresh-grid"><label>本人端末の現在の回数<input data-stamp-restore-current-participation type="number" readonly></label><label>根拠から採用する回数<input data-stamp-restore-adopted-participation type="number" min="0" max="30" inputmode="numeric" disabled></label></div><small>すでに入っている分を二重に戻しません。</small></div>
+                <div class="admin-refresh-slot"><h4>先生ごとの指導碁スタンプ</h4><div data-stamp-restore-teachers></div></div>
+                <label>採用する記録の根拠<input data-stamp-restore-evidence type="text" placeholder="手書き記録・バックアップ等を照合" maxlength="200" disabled></label>
+                <p class="admin-refresh-note">新しい番号を本人が受け取った後に、採用する回数と現在回数の差分を確認します。実際の発行は、本人・端末・紙記録・バックアップの照合が済んでから進めます。</p>
+                <button type="button" data-stamp-issue-restore disabled>全種類の回数を確認してQRを1つ作る</button>
+                <div class="admin-refresh-qr-result" data-stamp-restore-result hidden></div>
+              </section>
+
+              <section class="admin-refresh-card" aria-labelledby="admin-refresh-adjust-title">
+                <h3 id="admin-refresh-adjust-title">後日の増減調整QR</h3>
+                <p>復旧後に根拠が追加で分かった場合、一人の一種類のスタンプについて増減の理由と回数を確認して本人向けに発行します。</p>
+                <div class="admin-refresh-grid"><label>対象者<select data-stamp-adjust-person disabled><option value="">照合済みの方を選ぶ</option></select></label><label>スタンプの種類<select data-stamp-adjust-type disabled><option value="participation">参加</option><option value="teacher">指導碁</option></select></label><label>先生<select data-stamp-adjust-teacher disabled><option value="">先生を選ぶ</option></select></label><label>増減回数<input data-stamp-adjust-delta type="number" min="-10" max="10" placeholder="例：+1 または -1" inputmode="numeric" disabled></label></div>
+                <label>確認した根拠<input data-stamp-adjust-evidence type="text" placeholder="手書き記録・バックアップなど" maxlength="200" disabled></label>
+                <button type="button" data-stamp-issue-adjust disabled>本人専用の調整QRを作る</button>
+                <div class="admin-refresh-qr-result" data-stamp-adjust-result hidden></div>
+              </section>
+
+              <section class="admin-refresh-card" aria-labelledby="admin-refresh-records-title">
+                <h3 id="admin-refresh-records-title">記録の確認とバックアップ</h3>
+                <div class="admin-refresh-slot"><h4>本人端末の旧記録</h4><p>参加・先生別のスタンプ数、操作履歴、バックアップの有無を本人のスマホで確認します。運営者の端末から直接保存・復元する機能ではありません。</p><button type="button" class="admin-refresh-quiet" disabled>本人端末での保存手順</button></div>
+                <div class="admin-refresh-slot"><h4>運営側の発行・反映履歴</h4><p>発行・反映・取消の履歴をポータルに保存します。</p><button type="button" data-stamp-history-refresh disabled>履歴を読み直す</button><div data-stamp-history></div></div>
+              </section>
+            </div>
+
+            <section class="admin-lock-card" data-admin-lock-card aria-label="旧運営画面ロック" aria-hidden="true" inert style="display:none">
               <p>運営端末で設定したパスコードを入力してください。</p>
               <div class="admin-passcode-row">
                 <input type="password" data-admin-passcode-input aria-label="運営用パスコード" autocomplete="off">
@@ -998,7 +1088,7 @@
               </div>
               <small data-admin-passcode-message>公開用コードにはパスコードを入れていません。初回だけ、この運営端末でパスコードを設定します。</small>
             </section>
-            <section class="admin-card" aria-label="運営画面モック" hidden>
+            <section class="admin-card" aria-label="旧運営画面" aria-hidden="true" inert hidden style="display:none">
               <div class="admin-status">
                 <span data-admin-state>確認中</span>
                 <strong data-admin-summary>一巡目の輪まであと1人</strong>
@@ -1367,6 +1457,8 @@
     <script src="linkage-client.js?v=20260903-01"></script>
     <script src="gate-client.js?v=20260917-notice-01"></script>
     <script src="history-client.js?v=20260904-02"></script>
+    <script src="flower-stamp-admin.js?v=20260927-qr-01"></script>
+    <script src="flower-stamp-receive.js?v=20260927-qr-01"></script>
   </body>
 </html>
 

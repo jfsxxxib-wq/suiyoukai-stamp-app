@@ -2603,41 +2603,17 @@ const applyStampQrFromLocation = () => {
   if (!payload) {
     return false;
   }
-
-  const isRetiredFixedTeacherQr = typeof payload.id === "string" && payload.id.startsWith("teacher-fixed-");
-  const result = isRetiredFixedTeacherQr
-    ? applyTeacherStampPayload(payload)
-    : payload.type === "participation_stamp"
-      ? applyParticipationStampPayload(payload)
-      : applyTeacherStampPayload(payload);
   if (window.history?.replaceState) {
     window.history.replaceState(null, "", getStampQrBaseUrl());
   }
-
-  if (!result.ok) {
-    showPanel("profile");
-    latestTeacherStampReflection = null;
-    todayTeacherStampReflections = [];
-    if (profileLatestStamp) {
-      profileLatestStamp.hidden = false;
-    }
-    if (profileLatestStampCopy) {
-      profileLatestStampCopy.textContent = result.reason === "fixed_teacher_retired"
-        ? "先生固定QRの利用は終了しました。管理画面で対局内容を確認し、新しい本人スマホ用QRを作ってください。"
-        : result.reason === "max"
-          ? "この先生のスタンプはすでに達成済みです。"
-          : result.reason === "invalid"
-          ? `QRを開きましたが、先生または日付を読み取れませんでした。先生:${result.payload?.teacherId ?? "不明"} 日付:${result.payload?.date ?? "不明"}`
-          : "QRを開きましたが、先生スタンプを反映できませんでした。新しいQRを作り直してください。";
-    }
-    scrollProfileTodayRecordIntoView();
-  }
-
-  if (result.ok && result.reason === "applied" && payload.type === "teacher_stamp") {
-    window.setTimeout(() => openTeacherSharingSuccess(result.record), 350);
-  }
-
-  return result.ok;
+  showPanel("profile");
+  latestTeacherStampReflection = null;
+  todayTeacherStampReflections = [];
+  if (profileLatestStamp) profileLatestStamp.hidden = false;
+  if (profileLatestStampCopy) profileLatestStampCopy.textContent =
+    "以前のスタンプQRは終了しました。管理者に新しいQRを見せてもらってください。このQRでは回数を変えていません。";
+  scrollProfileTodayRecordIntoView();
+  return false;
 };
 
 const cloneJsonData = (value) => JSON.parse(JSON.stringify(value));
@@ -9427,6 +9403,55 @@ window.suiyoukaiLinkage = Object.freeze({
   applyParticipationStamp: applyParticipationStampPayload,
   showTodayRecord: showProfileTodayRecord,
   getHistorySnapshot: () => ({progress:JSON.parse(JSON.stringify(userProgress)),records:JSON.parse(JSON.stringify(gameRecords)),appliedQrIds:[...appliedStampQrIds],receipts:JSON.parse(localStorage.getItem('suiyoukai-history-receipts-v1')||'{}')}),
+  getStampCounts: () => ({
+    participation: normalizeProgressCount(userProgress.stamps.participationCount),
+    teachers: Object.fromEntries(window.teacherStampTargets.map(item => [item.teacherId,
+      normalizeProgressCount(userProgress.stamps.teacherLessonCounts[item.teacherId])])),
+    lastParticipationDate: normalizeStoredRecordDate(userProgress.stamps.lastParticipationStampDate) || null,
+  }),
+  renderStampQrImage: createQrCodeDataUrl,
+  applyStampResult: ({ grant, before, after }) => {
+    const snapshot = () => ({
+      participation: normalizeProgressCount(userProgress.stamps.participationCount),
+      teachers: Object.fromEntries(window.teacherStampTargets.map(item => [item.teacherId,
+        normalizeProgressCount(userProgress.stamps.teacherLessonCounts[item.teacherId])])),
+      lastParticipationDate: normalizeStoredRecordDate(userProgress.stamps.lastParticipationStampDate) || null,
+    });
+    const equal = (left, right) => left.participation === right.participation
+      && left.lastParticipationDate === right.lastParticipationDate
+      && window.teacherStampTargets.every(item => left.teachers[item.teacherId] === right.teachers[item.teacherId]);
+    const current = snapshot();
+    if (!equal(current, before) && !equal(current, after)) return false;
+    const nextRecords = JSON.parse(JSON.stringify(gameRecords));
+    if (grant.kind === 'games') {
+      grant.details.games.forEach((item, index) => {
+        const id = `game-qr-server-${grant.id}-${index}`;
+        if (!nextRecords.some(record => record.id === id)) nextRecords.push({ id, sourceRef: item.sourceRef,
+          teacherId: item.teacherId, date: grant.details.date, handicap: item.handicap,
+          result: item.result, recordedAt: new Date().toISOString() });
+      });
+    }
+    const nextProgress = JSON.parse(JSON.stringify(userProgress));
+    nextProgress.stamps.participationCount = after.participation;
+    nextProgress.stamps.teacherLessonCounts = { ...nextProgress.stamps.teacherLessonCounts, ...after.teachers };
+    nextProgress.stamps.lastParticipationStampDate = after.lastParticipationDate || '';
+    try {
+      localStorage.setItem(gameRecordsStorageKey, JSON.stringify(nextRecords));
+      localStorage.setItem(progressStorageKey, JSON.stringify(nextProgress));
+      const stored = JSON.parse(localStorage.getItem(progressStorageKey));
+      const savedRecords = JSON.parse(localStorage.getItem(gameRecordsStorageKey));
+      if (stored.stamps.participationCount !== after.participation
+        || normalizeStoredRecordDate(stored.stamps.lastParticipationStampDate) !== (after.lastParticipationDate || '')
+        || window.teacherStampTargets.some(item => stored.stamps.teacherLessonCounts[item.teacherId] !== after.teachers[item.teacherId])
+        || JSON.stringify(savedRecords) !== JSON.stringify(nextRecords)) return false;
+    } catch { return false; }
+    gameRecords = nextRecords;
+    userProgress = nextProgress;
+    userProgress.stamps.teacherCircleRounds = getTeacherCircleRoundsFromCounts(userProgress.stamps.teacherLessonCounts);
+    syncTeacherDetailsFromProgress();syncProgressRewards();saveUserProgress();
+    syncAdminDraftFromProgress();updateParticipationStampCard();updateTeacherCards();updateRoundProgress();updateProfileCard();updateAdminPanel();
+    return true;
+  },
   applyHistoryRecord: (record) => {
     const key='suiyoukai-history-receipts-v1';const receipts=JSON.parse(localStorage.getItem(key)||'{}');
     const plan=window.suiyoukaiHistoryMerge.plan({progress:userProgress,records:gameRecords,appliedQrIds:[...appliedStampQrIds],receipts},record);

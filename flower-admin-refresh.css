@@ -1,0 +1,137 @@
+.panel-view[data-view="admin"] > .admin-lock-card,
+.panel-view[data-view="admin"] > .admin-card {
+  display: none !important;
+}
+
+.admin-refresh-screen {
+  display: grid;
+  gap: 18px;
+  margin-top: 12px;
+  color: #203d34;
+  font-family: system-ui, "Yu Gothic", sans-serif;
+}
+
+.admin-refresh-screen .admin-refresh-badge {
+  justify-self: start;
+  margin: 0;
+  padding: 5px 10px;
+  border-radius: 99px;
+  background: #fff0ed;
+  color: #845d50;
+  font-size: 0.8rem;
+}
+
+.admin-refresh-screen .admin-refresh-lead {
+  margin: 0;
+  color: #63766d;
+  line-height: 1.6;
+}
+
+.admin-refresh-card {
+  min-width: 0;
+  padding: 20px;
+  border: 1px solid #e5dcd1;
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 5px 16px #625c4c0d;
+}
+
+.admin-refresh-card h3 {
+  margin: 0 0 12px;
+  color: #203d34;
+  font-size: 1.27rem;
+}
+
+.admin-refresh-card h4 {
+  margin: 0 0 8px;
+  color: #203d34;
+  font-size: 1.05rem;
+}
+
+.admin-refresh-card p,
+.admin-refresh-card small {
+  line-height: 1.6;
+}
+
+.admin-refresh-card p {
+  margin: 8px 0;
+}
+
+.admin-refresh-card small {
+  color: #68766f;
+}
+
+.admin-refresh-card a {
+  color: #176b5c;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.admin-refresh-entrance-qr {
+  display: block;
+  width: min(100%, 240px);
+  height: auto;
+  margin: 14px auto;
+  border: 1px solid #d5e5db;
+  border-radius: 12px;
+}
+
+.admin-refresh-note {
+  padding: 12px 14px;
+  border: 1px solid #d5e5db;
+  border-radius: 11px;
+  background: #f6faf7;
+}
+
+.admin-refresh-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr));
+  gap: 13px;
+}
+
+.admin-refresh-card label {
+  display: block;
+  margin: 8px 0;
+  font-size: 0.94rem;
+  font-weight: 700;
+}
+
+.admin-refresh-card input,
+.admin-refresh-card select {
+  box-sizing: border-box;
+  width: 100%;
+  margin-top: 5px;
+  padding: 11px;
+  border: 1px solid #a9c4b8;
+  border-radius: 10px;
+  background: #fff;
+  color: #203d34;
+  font-size: 1rem;
+}
+
+.admin-refresh-card button {
+  max-width: 100%;
+  margin-top: 12px;
+  padding: 12px 19px;
+  border: 0;
+  border-radius: 11px;
+  background: #a8b8b1;
+  color: #fff;
+  cursor: not-allowed;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.admin-refresh-card button.admin-refresh-quiet {
+  border: 1px solid #9abcb0;
+  background: #fff;
+  color: #176b5c;
+}
+
+.admin-refresh-slot {
+  min-width: 0;
+  margin-top: 12px;
+  padding: 14px;
+  border: 1px solid #dce9e0;
+  border-radius: 12px;
+}

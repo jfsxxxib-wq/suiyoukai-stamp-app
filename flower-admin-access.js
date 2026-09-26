@@ -9,7 +9,7 @@
   Object.defineProperty(window, 'FlowerAdminAccess', {
     configurable: false,
     writable: false,
-    value: Object.freeze({ isAuthorized }),
+    value: Object.freeze({ isAuthorized, ticket: () => isAuthorized() ? ticket : '' }),
   });
 
   const clearStoredTicket = () => {
