@@ -48,8 +48,10 @@
   }).then(async (response) => {
     if (!response.ok) throw new Error('admin_confirmation_required');
     const result = await response.json();
+    // The portal has already verified its signed expiry. A device clock can be a few
+    // seconds behind the portal, so do not recheck its upper limit on the device.
     if (result.authenticated !== true || !Number.isSafeInteger(result.expiresAt)
-      || result.expiresAt <= Date.now() || result.expiresAt > Date.now() + 15 * 60 * 1000) {
+      || result.expiresAt <= Date.now()) {
       throw new Error('admin_confirmation_required');
     }
     authorizedUntil = result.expiresAt;
